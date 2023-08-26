@@ -58,7 +58,8 @@ class UtilsPage extends StatelessWidget {
               children: [
                 ListTile(
                   leading: Text("Địa chỉ:", style: textStyleBlackRegular),
-                  title: Text("số 05 / ấp 06 //Bình Mỹ / Củ Chi / Thành phố Hồ Chí Minh",
+                  title: Text(
+                      "số 05 / ấp 06 //Bình Mỹ / Củ Chi / Thành phố Hồ Chí Minh",
                       style: textStyleBlackRegular),
                 ),
               ],
@@ -71,8 +72,7 @@ class UtilsPage extends StatelessWidget {
               children: [
                 ListTile(
                   leading: Icon(Icons.print, color: iconColor),
-                  title: Text("Thiết lập máy in",
-                      style: textStyleBlackRegular),
+                  title: Text("Thiết lập máy in", style: textStyleBlackRegular),
                   trailing:
                       Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
                 ),
@@ -85,7 +85,7 @@ class UtilsPage extends StatelessWidget {
             child: const Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.table_bar, color: iconColor),
+                  leading: Icon(Icons.chair_alt, color: iconColor),
                   title: Text("Quản lý khu vực / bàn",
                       style: textStyleBlackRegular),
                   trailing:
@@ -137,6 +137,16 @@ class UtilsPage extends StatelessWidget {
                       Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
                 ),
               ],
+            ),
+          ),
+          marginTop30,
+          InkWell(
+            onTap: () => {authController.signOut()},
+            child: Container(
+              height: buttonHeight,
+              width: MediaQuery.of(context).size.width * 0.9 ,
+              decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: primaryColor),
+              child: const Center(child: Text("ĐĂNG XUẤT", style:buttonStyleBlackBold)),
             ),
           )
         ],

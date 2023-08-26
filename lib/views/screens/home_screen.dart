@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Tổng quan',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.search, size: 30),
+            icon: Icon(Icons.notes, size: 30),
             label: 'Đơn hàng',
           ),
           BottomNavigationBarItem(
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: '',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.people, size: 30),
+            icon: Icon(Icons.table_bar_sharp, size: 30),
             label: 'Khu vực',
           ),
           const BottomNavigationBarItem(

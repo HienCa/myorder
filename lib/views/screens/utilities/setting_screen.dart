@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myorder/constants.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   TextStyle headingStyle = const TextStyle(
-      fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red);
+      fontSize: 16, fontWeight: FontWeight.w600, color: primaryColor);
 
   bool lockAppSwitchVal = true;
   bool fingerprintSwitchVal = false;
@@ -32,12 +33,16 @@ class _SettingsPageState extends State<SettingsPage> {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSwatch().copyWith(
-                primary: Colors.redAccent,
-                secondary: Colors.redAccent,
+                primary: primaryColor,
+                secondary: primaryColor,
               ),
             ),
             home: Scaffold(
               appBar: AppBar(
+                leading:  InkWell(
+                  onTap: () => {Navigator.pop(context)},
+                  child: const Icon(Icons.arrow_back_ios)
+                  ),
                 title: const Center(child: Text("CẬP NHẬT TÀI KHOẢN")),
               ),
               body: SingleChildScrollView(
@@ -121,14 +126,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text("Thông tin ứng dụng"),
                         trailing: Switch(
                             value: changePassSwitchVal,
-                            activeColor: Colors.redAccent,
+                            activeColor: primaryColor,
                             onChanged: (val) {
                               setState(() {
                                 changePassSwitchVal = val;
                               });
                             }),
                       ),
-                      
+                     
                     ],
                   ),
                 ),
@@ -139,7 +144,7 @@ class _SettingsPageState extends State<SettingsPage> {
             debugShowCheckedModeBanner: false,
             home: CupertinoPageScaffold(
               navigationBar: const CupertinoNavigationBar(
-                backgroundColor: CupertinoColors.destructiveRed,
+                backgroundColor: primaryColor,
                 middle: Text("Settings UI"),
               ),
               child: Container(
