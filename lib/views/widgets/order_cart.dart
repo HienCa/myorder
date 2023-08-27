@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
+import 'package:myorder/views/screens/payment/payment_screen.dart';
 
 class OrderCard extends StatelessWidget {
   //  const OrderCard({
@@ -55,26 +57,34 @@ class OrderCard extends StatelessWidget {
               left: -20,
               child: Hero(
                 tag: 1,
-                child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(22),
-                        topRight: Radius.circular(22),
+                child: InkWell(
+                  onTap: () => {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const OrderdetailPage()))
+                  },
+                  child: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(22),
+                          topRight: Radius.circular(22),
+                        ),
                       ),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-                    height: 160,
-                    // image is square but we add extra 20 + 20 padding thats why width is 200
-                    width: 200,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          22), // Thay đổi giá trị của borderRadius tùy theo nhu cầu
-                      child: Image.asset(
-                        "assets/images/table5.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    )),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                      height: 160,
+                      // image is square but we add extra 20 + 20 padding thats why width is 200
+                      width: 200,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            22), // Thay đổi giá trị của borderRadius tùy theo nhu cầu
+                        child: Image.asset(
+                          "assets/images/table5.jpg",
+                          fit: BoxFit.cover,
+                        ),
+                      )),
+                ),
               ),
             ),
             // order title and price
@@ -204,7 +214,7 @@ class OrderCard extends StatelessWidget {
                                 color: kBlueColor,
                               ),
                               child: InkWell(
-                                  onTap: () => {},
+                                  onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentPage()))},
                                   child:
                                       const Icon(Icons.receipt_long_outlined)),
                             ),
