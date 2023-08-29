@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/views/screens/order/options_screen.dart';
+import 'package:myorder/views/screens/order/options_list.dart';
 import 'package:myorder/views/screens/order/search_box.dart';
 import 'package:myorder/views/widgets/order_cart.dart';
 
@@ -21,7 +21,7 @@ class OrderPage extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(top: 70),
                   decoration: const BoxDecoration(
-                    color: kBackgroundColor,
+                    color: backgroundColor,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(40),
                       topRight: Radius.circular(40),

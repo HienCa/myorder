@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:myorder/constants.dart';
 
-class CustomDialogDecreasePrice extends StatefulWidget {
-  const CustomDialogDecreasePrice({super.key});
+class CustomDialogCreateUpdateArea extends StatefulWidget {
+  const CustomDialogCreateUpdateArea({super.key});
 
   @override
-  State<CustomDialogDecreasePrice> createState() =>
+  State<CustomDialogCreateUpdateArea> createState() =>
       _CustomDialogDecreasePriceState();
 }
 
-class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
+class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateArea> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController decreasePrice = TextEditingController();
@@ -36,7 +36,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
           children: [
             const Center(
               child: Text(
-                'GIẢM GIÁ HÓA ĐƠN',
+                'CẬP NHẬT KHU VỰC',
                 style: textStylePrimaryBold,
               ),
             ),

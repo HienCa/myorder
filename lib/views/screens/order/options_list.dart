@@ -7,10 +7,10 @@ class OptionList extends StatefulWidget {
   const OptionList({super.key});
 
   @override
-  _CategoryListState createState() => _CategoryListState();
+  _OptionListState createState() => _OptionListState();
 }
 
-class _CategoryListState extends State<OptionList> {
+class _OptionListState extends State<OptionList> {
   // by default first item will be selected
   int selectedIndex = 0;
   List options = ['Tất cả', 'Của tôi'];
@@ -39,7 +39,7 @@ class _CategoryListState extends State<OptionList> {
             decoration: BoxDecoration(
               color: index == selectedIndex
                   ? kBlueColor
-                  : primaryColorOpacity,
+                  : textWhiteColor,
               borderRadius: BorderRadius.circular(20),
               border: index == selectedIndex
                   ? Border.all(width: 5, color: borderColorPrimary)
@@ -47,7 +47,7 @@ class _CategoryListState extends State<OptionList> {
             ),
             child: Text(
               options[index],
-              style: index == selectedIndex ? const TextStyle(color: textWhiteColor,  fontWeight: FontWeight.bold) : const TextStyle(color: textWhiteColor,  fontWeight: FontWeight.normal),
+              style: index == selectedIndex ? const TextStyle(color: textWhiteColor,  fontWeight: FontWeight.bold) : const TextStyle(color: primaryColor,  fontWeight: FontWeight.normal),
             ),
           ),
         ),

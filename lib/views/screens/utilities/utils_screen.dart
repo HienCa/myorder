@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/views/screens/managements/area_table/area_table_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
 
 class UtilsPage extends StatelessWidget {
@@ -82,24 +83,32 @@ class UtilsPage extends StatelessWidget {
           marginTop10,
           Container(
             decoration: const BoxDecoration(color: backgroundColor),
-            child: const Column(
+            child: Column(
               children: [
-                ListTile(
-                  leading: Icon(Icons.chair_alt, color: iconColor),
-                  title: Text("Quản lý khu vực / bàn",
-                      style: textStyleBlackRegular),
-                  trailing:
-                      Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
+                InkWell(
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ManagementAreaTablePage()))
+                  },
+                  child: const ListTile(
+                    leading: Icon(Icons.chair_alt, color: iconColor),
+                    title: Text("Quản lý khu vực / bàn",
+                        style: textStyleBlackRegular),
+                    trailing: Icon(Icons.arrow_forward_ios_outlined,
+                        color: iconColor),
+                  ),
                 ),
-                Divider(),
-                ListTile(
+                const Divider(),
+                const ListTile(
                   leading: Icon(Icons.menu_book, color: iconColor),
                   title: Text("Quản lý thực đơn", style: textStyleBlackRegular),
                   trailing:
                       Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
                 ),
-                Divider(),
-                ListTile(
+                const Divider(),
+                const ListTile(
                   leading: Icon(Icons.receipt_long, color: iconColor),
                   title: Text("Quản lý hóa đơn", style: textStyleBlackRegular),
                   trailing:
@@ -144,9 +153,12 @@ class UtilsPage extends StatelessWidget {
             onTap: () => {authController.signOut()},
             child: Container(
               height: buttonHeight,
-              width: MediaQuery.of(context).size.width * 0.9 ,
-              decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: primaryColor),
-              child: const Center(child: Text("ĐĂNG XUẤT", style:buttonStyleBlackBold)),
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: primaryColor),
+              child: const Center(
+                  child: Text("ĐĂNG XUẤT", style: buttonStyleBlackBold)),
             ),
           )
         ],

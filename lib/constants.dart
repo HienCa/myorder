@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myorder/controllers/auth_controller.dart';
+import 'package:myorder/views/screens/area/area_screen.dart';
 import 'package:myorder/views/screens/order/order_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/utilities/utils_screen.dart';
@@ -11,7 +12,7 @@ List pages = [
   const OrderdetailPage(),
   const OrderPage(),
   const Text(""),
-  const Text(""),
+  const AreaPage(),
   // ProfileScreen(uid: authController.user.uid),
   const UtilsPage()
 ];
