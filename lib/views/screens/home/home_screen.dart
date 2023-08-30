@@ -1,181 +1,257 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:myorder/views/screens/home/app_colors.dart';
+import 'package:myorder/constants.dart';
+import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
 
-class PieChartSample3 extends StatefulWidget {
-  const PieChartSample3({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<StatefulWidget> createState() => PieChartSample3State();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class PieChartSample3State extends State {
-  int touchedIndex = 0;
-
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.3,
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: PieChart(
-          PieChartData(
-            pieTouchData: PieTouchData(
-              touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                setState(() {
-                  if (!event.isInterestedForInteractions ||
-                      pieTouchResponse == null ||
-                      pieTouchResponse.touchedSection == null) {
-                    touchedIndex = -1;
-                    return;
-                  }
-                  touchedIndex =
-                      pieTouchResponse.touchedSection!.touchedSectionIndex;
-                });
-              },
+    return SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
+        children: [
+          //ĐƠN HÀNG HÔM NAY
+          const SizedBox(
+            height: 40,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title: Text("ĐƠN HÀNG HÔM NAY", style: textStyleTitleGrayBold20),
             ),
-            borderData: FlBorderData(
-              show: false,
-            ),
-            sectionsSpace: 0,
-            centerSpaceRadius: 0,
-            sections: showingSections(),
           ),
-        ),
-      ),
-    );
-  }
+          const ListTile(
+            title: Text("Đã thanh toán", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingSuccessRegular16),
+          ),
+          const ListTile(
+            title: Text("Đang phục vụ", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
 
-  List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
-      final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 20.0 : 16.0;
-      final radius = isTouched ? 110.0 : 100.0;
-      final widgetSize = isTouched ? 55.0 : 40.0;
-      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+          //TIỀN THU TRONG NGÀY
+          const SizedBox(
+            height: 40,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title:
+                  Text("TIỀN THU TRONG NGÀY", style: textStyleTitleGrayBold20),
+            ),
+          ),
+          const ListTile(
+            title: Text("Tiền mặt", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          const ListTile(
+            title: Text("Thẻ", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          const ListTile(
+            title: Text("Chuyển khoản", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          const ListTile(
+            title: Text("Sử dụng điểm", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          const ListTile(
+            title: Text("Bán hàng", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          const ListTile(
+            title: Text("Đặt cọc", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
 
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: AppColors.contentColorBlue,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
+          //DOANH THU TẠM TÍNH HÔM NAY
+           const SizedBox(
+            height: 40,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title: Text("DOANH THU TẠM TÍNH HÔM NAY",
+                  style: textStyleTitleGrayBold20),
             ),
-            badgeWidget: _Badge(
-              'assets/icons/ophthalmology-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 1:
-          return PieChartSectionData(
-            color: AppColors.contentColorYellow,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/librarian-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 2:
-          return PieChartSectionData(
-            color: AppColors.contentColorPurple,
-            value: 16,
-            title: '16%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/fitness-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 3:
-          return PieChartSectionData(
-            color: AppColors.contentColorGreen,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/worker-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        default:
-          throw Exception('Oh no');
-      }
-    });
-  }
-}
+          ),
+          const ListTile(
+            title: Text("Đã thanh toán", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingSuccessRegular16),
+          ),
+          const ListTile(
+            title: Text("Đang phục vụ", style: textStyleTitleGrayRegular16),
+            trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+          ),
+          //line char
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
 
-class _Badge extends StatelessWidget {
-  const _Badge(
-    this.svgAsset, {
-    required this.size,
-    required this.borderColor,
-  });
-  final String svgAsset;
-  final double size;
-  final Color borderColor;
+          //DOANH THU HÔM QUA
+           const SizedBox(
+            height: 60,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title: Text("DOANH THU HÔM QUA", style: textStyleTitleGrayBold20),
+              subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+            ),
+          ),
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: PieChart.defaultDuration,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: borderColor,
-          width: 2,
-        ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withOpacity(.5),
-            offset: const Offset(3, 3),
-            blurRadius: 3,
+          //line char
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
+
+          //DOANH THU TUẦN NÀY
+           const SizedBox(
+            height: 60,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title: Text("DOANH THU TUẦN NÀY", style: textStyleTitleGrayBold20),
+              subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+            ),
+          ),
+          
+          //line char
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
+
+          //DOANH THU THÁNG NÀY
+           const SizedBox(
+            height: 60,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title: Text("DOANH THU THÁNG NÀY", style: textStyleTitleGrayBold20),
+              subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+            ),
+          ),
+          
+          //line char
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
+
+          //DOANH THU 3 THÁNG GẦN NHẤT
+           const SizedBox(
+            height: 60,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title: Text("DOANH THU 3 THÁNG GẦN NHẤT", style: textStyleTitleGrayBold20),
+              subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+            ),
+          ),
+          
+          //line char
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
+
+          //DOANH THU NĂM NAY
+           const SizedBox(
+            height: 60,
+            child: ListTile(
+              leading: Icon(
+                Icons.bookmark,
+                color: iconColor,
+              ),
+              title: Text("DOANH THU NĂM NAY", style: textStyleTitleGrayBold20),
+              subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+            ),
+          ),
+          
+          //line char
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
+          ),
+
+           //CHỌN LỊCH BÁO CÁO DOANH THU - CHI PHÍ - LỢI NHUẬN
+           const SizedBox(
+            // height: 240,
+            height: 640,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.bookmark,
+                    color: iconColor,
+                  ),
+                  title: Text("DOANH THU - CHI PHÍ - LỢI NHUẬN", style: textStyleTitleGrayBold20),
+                  subtitle: Text("100,000,000", style: textStyleSubTitleGrayRegular16),
+                ),
+                ListTile(
+                 
+                  title: Text("Doanh thu", style: textStyleTrailingPrimaryRegular16),
+                  trailing: Text("999,000,000", style: textStyleTrailingPrimaryRegular16),
+                ),
+                ListTile(
+                 
+                  title: Text("Chi phí", style: textStyleTrailingCostRegular16),
+                  trailing: Text("100,000,000", style: textStyleTrailingCostRegular16),
+                ),
+                ListTile(
+                 
+                  title: Text("Lợi nhuận", style: textStyleTrailingProfitRegular16),
+                  trailing: Text("800,000,000", style: textStyleTrailingProfitRegular16),
+                ),
+                PieChartSample3()
+              ],
+            ),
+          ),
+          
+          //line char
+          Container(
+            height: 10,
+            decoration:
+                const BoxDecoration(color: Color.fromARGB(255, 248, 246, 246)),
           ),
         ],
       ),
-      padding: EdgeInsets.all(size * .15),
-      child: Center(
-        child: SvgPicture.asset(
-          svgAsset,
-        ),
-      ),
-    );
+    ));
   }
 }

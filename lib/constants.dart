@@ -9,7 +9,7 @@ import 'package:myorder/views/screens/order/order_screen.dart';
 import 'package:myorder/views/screens/utilities/utils_screen.dart';
 
 List pages = [
-  const PieChartSample3(),
+  const HomePage(),
   const OrderPage(),
   const Text(""),
   const AreaPage(),
@@ -17,6 +17,7 @@ List pages = [
   const UtilsPage()
 ];
 
+// height chart = 400
 // list of colors that we use in our app
 const kBackgroundColor = Color(0xFFF1EFF1);
 const kPrimaryColor = Color(0xFF035AA6);
@@ -60,6 +61,14 @@ const labelBlackColor = Colors.black45;
 const borderColor = Colors.grey;
 
 //text style
+const textStyleTitleGrayBold20 = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
+const textStyleTitleGrayRegular16 = TextStyle(fontSize: 16, color: Colors.grey);
+const textStyleSubTitleGrayRegular16 = TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor);
+const textStyleTrailingPrimaryRegular16 = TextStyle(fontSize: 16, color: primaryColor);
+const textStyleTrailingSuccessRegular16 = TextStyle(fontSize: 16, color: Colors.green);
+const textStyleTrailingCostRegular16 = TextStyle(fontSize: 16, color: Colors.redAccent);
+const textStyleTrailingProfitRegular16 = TextStyle(fontSize: 16, color: Colors.orangeAccent);
+
 const textStyleWhiteRegular16 =
     TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400);
 const textStyleWhiteBold16 =
