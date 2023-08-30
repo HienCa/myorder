@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:myorder/constants.dart';
 
 class CustomDialogCreateUpdateArea extends StatefulWidget {
-  const CustomDialogCreateUpdateArea({super.key});
+  final bool isUpdate;
 
+  const CustomDialogCreateUpdateArea({Key? key, required this.isUpdate})
+      : super(key: key);
   @override
   State<CustomDialogCreateUpdateArea> createState() =>
-      _CustomDialogDecreasePriceState();
+      _CustomDialogCreateUpdateAreaState();
 }
 
-class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateArea> {
+class _CustomDialogCreateUpdateAreaState
+    extends State<CustomDialogCreateUpdateArea> {
+  var isActive = true;
+
+  late final bool isUpdate; // Declare isUpdate here
+  @override
+  void initState() {
+    super.initState();
+    isUpdate =
+        widget.isUpdate; // Initialize isUpdate with the value from the widget
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController decreasePrice = TextEditingController();
+    final TextEditingController areaNameController = TextEditingController();
 
-    final TextEditingController textEditingController = TextEditingController(text: "");
-    final List<String> items = [
-      'Khách quen',
-      'Ngày khuyến mãi',
-      'Hóa đơn trên 5 triệu',
-      'Khác'
-    ];
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
@@ -36,7 +41,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateArea
           children: [
             const Center(
               child: Text(
-                'CẬP NHẬT KHU VỰC',
+                'KHU VỰC',
                 style: textStylePrimaryBold,
               ),
             ),
@@ -47,60 +52,40 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateArea
               height: 50,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.grey),
+                  border: Border.all(width: 0.05, color: Colors.grey),
                   borderRadius: const BorderRadius.all(Radius.circular(5))),
               margin: const EdgeInsets.symmetric(horizontal: 12),
               child: TextField(
-                controller: decreasePrice,
+                controller: areaNameController,
                 style: const TextStyle(color: textColor),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(
                       borderSide: BorderSide(width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(5))),
-                  label: Text("Vui lòng nhập % muốn giảm ...",
-                      style: textStylePlaceholder),
-                  hintStyle: TextStyle(
-                      fontWeight: FontWeight.w300, color: Colors.grey),
+                  label: Text("Tên khu vực ...", style: textStylePlaceholder),
+                  hintStyle: TextStyle(color: Colors.grey),
                 ),
               ),
             ),
             const SizedBox(
               height: 10,
             ),
-            Container(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.grey),
-                  borderRadius: const BorderRadius.all(Radius.circular(5))),
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              child: TypeAheadField<String>(
-                textFieldConfiguration: TextFieldConfiguration(
-                  controller: textEditingController,
-                  
-                  decoration: InputDecoration(
-                    labelText: textEditingController.text.isEmpty ? 'Vui lòng chọn khuyến mãi' : "",
-
-                    border: const OutlineInputBorder(),
-                    labelStyle: const TextStyle(color: tableemptyColor),
-                  ),
-                  style: const TextStyle(color: textColor),
+            ListTile(
+              leading: Theme(
+                data: ThemeData(unselectedWidgetColor: primaryColor),
+                child: Checkbox(
+                  value: isActive,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isActive = value!;
+                    });
+                  },
+                  activeColor: primaryColor,
                 ),
-                suggestionsCallback: (pattern) async {
-                  return items.where((item) =>
-                      item.toLowerCase().contains(pattern.toLowerCase()));
-                },
-                itemBuilder: (context, suggestion) {
-                  return ListTile(
-                    title: Text(suggestion,),
-                  );
-                },
-                onSuggestionSelected: (suggestion) {
-                  setState(() {
-                    textEditingController.text =
-                        suggestion; // Set the input value
-                  });
-                },
+              ),
+              title: const Text(
+                "Đang hoạt động",
+                style: textStylePriceBold16,
               ),
             ),
             const SizedBox(
@@ -137,11 +122,16 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateArea
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: primaryColor,
                       ),
-                      child: const Center(
-                        child: Text(
-                          'XÁC NHẬN',
-                          style: textStyleWhiteBold20,
-                        ),
+                      child: Center(
+                        child: isUpdate == true
+                            ? const Text(
+                                'CẬP NHẬT',
+                                style: textStyleWhiteBold20,
+                              )
+                            : const Text(
+                                'THÊM',
+                                style: textStyleWhiteBold20,
+                              ),
                       ),
                     ),
                   )
@@ -149,7 +139,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateArea
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
           ],
         ),

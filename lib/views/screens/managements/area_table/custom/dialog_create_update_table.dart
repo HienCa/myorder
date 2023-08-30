@@ -3,25 +3,34 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:myorder/constants.dart';
 
 class CustomDialogCreateUpdateTable extends StatefulWidget {
-  const CustomDialogCreateUpdateTable({super.key});
+  final bool isUpdate;
+
+  const CustomDialogCreateUpdateTable({Key? key, required this.isUpdate})
+      : super(key: key);
 
   @override
   State<CustomDialogCreateUpdateTable> createState() =>
       _CustomDialogDecreasePriceState();
 }
 
-class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateTable> {
+class _CustomDialogDecreasePriceState
+    extends State<CustomDialogCreateUpdateTable> {
+  late final bool isUpdate;
+  var isActive = true;
+
+  @override
+  void initState() {
+    super.initState();
+    isUpdate = widget.isUpdate;
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController decreasePrice = TextEditingController();
 
-    final TextEditingController textEditingController = TextEditingController(text: "");
-    final List<String> items = [
-      'Khách quen',
-      'Ngày khuyến mãi',
-      'Hóa đơn trên 5 triệu',
-      'Khác'
-    ];
+    final TextEditingController textEditingController =
+        TextEditingController(text: "");
+    final List<String> items = ['Khu A', 'Khu B', 'Khu C', 'Khu D'];
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
@@ -36,7 +45,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateTabl
           children: [
             const Center(
               child: Text(
-                'CẬP NHẬT KHU VỰC',
+                'CẬP NHẬT THÔNG TIN BÀN',
                 style: textStylePrimaryBold,
               ),
             ),
@@ -57,7 +66,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateTabl
                   border: OutlineInputBorder(
                       borderSide: BorderSide(width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(5))),
-                  label: Text("Vui lòng nhập % muốn giảm ...",
+                  label: Text("Tên bàn ...",
                       style: textStylePlaceholder),
                   hintStyle: TextStyle(
                       fontWeight: FontWeight.w300, color: Colors.grey),
@@ -77,10 +86,10 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateTabl
               child: TypeAheadField<String>(
                 textFieldConfiguration: TextFieldConfiguration(
                   controller: textEditingController,
-                  
                   decoration: InputDecoration(
-                    labelText: textEditingController.text.isEmpty ? 'Vui lòng chọn khuyến mãi' : "",
-
+                    labelText: textEditingController.text.isEmpty
+                        ? 'Chọn khu vực'
+                        : "",
                     border: const OutlineInputBorder(),
                     labelStyle: const TextStyle(color: tableemptyColor),
                   ),
@@ -92,7 +101,9 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateTabl
                 },
                 itemBuilder: (context, suggestion) {
                   return ListTile(
-                    title: Text(suggestion,),
+                    title: Text(
+                      suggestion,
+                    ),
                   );
                 },
                 onSuggestionSelected: (suggestion) {
@@ -101,6 +112,48 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateTabl
                         suggestion; // Set the input value
                   });
                 },
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              height: 30,
+              child: ListTile(
+                leading: const Text('Số khách:'),
+                title: TextField(
+                  controller: decreasePrice,
+                  style: const TextStyle(color: textColor),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(width: 0.2),
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                  
+                    hintStyle: TextStyle(
+                         color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ListTile(
+              leading: Theme(
+                data: ThemeData(unselectedWidgetColor: primaryColor),
+                child: Checkbox(
+                  value: isActive,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isActive = value!;
+                    });
+                  },
+                  activeColor: primaryColor,
+                ),
+              ),
+              title: const Text(
+                "Đang hoạt động",
+                style: textStylePriceBold16,
               ),
             ),
             const SizedBox(
@@ -137,11 +190,16 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogCreateUpdateTabl
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: primaryColor,
                       ),
-                      child: const Center(
-                        child: Text(
-                          'XÁC NHẬN',
-                          style: textStyleWhiteBold20,
-                        ),
+                      child: Center(
+                        child: isUpdate == true
+                            ? const Text(
+                                'CẬP NHẬT',
+                                style: textStyleWhiteBold20,
+                              )
+                            : const Text(
+                                'THÊM',
+                                style: textStyleWhiteBold20,
+                              ),
                       ),
                     ),
                   )
