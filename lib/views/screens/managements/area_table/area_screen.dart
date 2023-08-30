@@ -58,7 +58,7 @@ class ManagementAreaPage extends StatelessWidget {
             ),
             child: const Center(
               child: Text(
-                "THÊM KHU VỰC",
+                "+ THÊM KHU VỰC",
                 style: textStyleWhiteBold20,
               ),
             ),

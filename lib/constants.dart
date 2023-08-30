@@ -4,12 +4,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myorder/controllers/auth_controller.dart';
 import 'package:myorder/views/screens/area/area_screen.dart';
+import 'package:myorder/views/screens/home/home_screen.dart';
 import 'package:myorder/views/screens/order/order_screen.dart';
-import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/utilities/utils_screen.dart';
 
 List pages = [
-  const OrderdetailPage(),
+  const PieChartSample3(),
   const OrderPage(),
   const Text(""),
   const AreaPage(),
@@ -46,6 +46,7 @@ const cancelFoodColor = Color.fromARGB(255, 224, 24, 24);
 
 //border color
 const borderColorPrimary = Color(0xFF40BAD5);
+const borderColorTextField = Color.fromARGB(255, 232, 236, 237);
 
 // background
 const backgroundColor = Colors.white;

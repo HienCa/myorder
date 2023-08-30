@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/managements/area_table/area_screen.dart';
 import 'package:myorder/views/screens/managements/area_table/table_screen.dart';
-import 'package:myorder/views/screens/utilities/setting_screen.dart';
 
 class ManagementAreaTablePage extends StatefulWidget {
   const ManagementAreaTablePage({Key? key}) : super(key: key);
@@ -50,6 +49,7 @@ class AreaTableTab extends StatelessWidget {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             leading: InkWell(
                 onTap: () => {Navigator.pop(context)},

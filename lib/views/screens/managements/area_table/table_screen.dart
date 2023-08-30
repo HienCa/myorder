@@ -76,7 +76,7 @@ class ManagementTablePage extends StatelessWidget {
             ),
             child: const Center(
               child: Text(
-                "THÊM BÀN",
+                "+ THÊM BÀN",
                 style: textStyleWhiteBold20,
               ),
             ),
