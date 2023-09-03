@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myorder/views/screens/profile_screen.dart';
+import 'package:myorder/views/screens/utilities/profile/profile_screen.dart';
 import '../../constants.dart';
 import 'package:myorder/controllers/profile_controller.dart';
 import 'package:myorder/models/employee.dart' as model;
@@ -220,7 +220,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           profileController.profilePhoto),
                       Navigator.pop(context),
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ProfileScreen(uid: widget.uid),
+                        builder: (context) => ProfilePage(uid: widget.uid),
                       )),
                     },
                     child: Container(

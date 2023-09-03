@@ -10,10 +10,10 @@ class CustomDialogCreateUpdateTable extends StatefulWidget {
 
   @override
   State<CustomDialogCreateUpdateTable> createState() =>
-      _CustomDialogDecreasePriceState();
+      _CustomDialogCreateUpdateTableState();
 }
 
-class _CustomDialogDecreasePriceState
+class _CustomDialogCreateUpdateTableState
     extends State<CustomDialogCreateUpdateTable> {
   late final bool isUpdate;
   var isActive = true;

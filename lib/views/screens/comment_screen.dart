@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 // import 'package:marquee/marquee.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/comment_controller.dart';
+import 'package:myorder/views/screens/utilities/profile/profile_screen.dart';
 import 'package:timeago/timeago.dart' as tago;
-import 'package:myorder/views/screens/profile_screen.dart';
 
 class CommentScreen extends StatefulWidget {
   final String id;
@@ -64,7 +64,7 @@ class _CommentScreenState extends State<CommentScreen> {
                     onTap: () => {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(uid: uid),
+                              builder: (context) => ProfilePage(uid: uid),
                             ),
                           ),
                         },
@@ -159,7 +159,7 @@ class _CommentScreenState extends State<CommentScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        ProfileScreen(uid: comment.uid))),
+                                        ProfilePage(uid: comment.uid))),
                             child: CircleAvatar(
                               backgroundColor: Colors.black,
                               backgroundImage:
@@ -173,7 +173,7 @@ class _CommentScreenState extends State<CommentScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ProfileScreen(uid: comment.uid))),
+                                            ProfilePage(uid: comment.uid))),
                                 child: Text(
                                   "${comment.username}  ",
                                   style: const TextStyle(
@@ -183,33 +183,7 @@ class _CommentScreenState extends State<CommentScreen> {
                                   ),
                                 ),
                               ),
-                              // Marquee(
-                              //   text: "${comment.username}  ",
-                              //   style: const TextStyle(
-                              //     fontSize: 20,
-                              //     color: Colors.red,
-                              //     fontWeight: FontWeight.w700,
-                              //   ),
-                              //   scrollAxis: Axis.horizontal,
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   blankSpace: 20.0,
-                              //   velocity: 100.0,
-                              // ),
-                              // Marquee(
-                              //   text: 'Some sample text that takes some space.',
-                              //   style: const TextStyle(fontWeight: FontWeight.bold),
-                              //   scrollAxis: Axis.horizontal,
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   blankSpace: 20.0,
-                              //   velocity: 100.0,
-                              //   pauseAfterRound: const Duration(seconds: 1),
-                              //   startPadding: 10.0,
-                              //   accelerationDuration: const Duration(seconds: 1),
-                              //   accelerationCurve: Curves.linear,
-                              //   decelerationDuration:
-                              //       const Duration(milliseconds: 500),
-                              //   decelerationCurve: Curves.easeOut,
-                              // ),
+                             
                               Row(
                                 children: [
                                   Text(

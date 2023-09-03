@@ -59,15 +59,24 @@ const textWhiteColor = Colors.white;
 const unselectedItemColor = Colors.black45;
 const labelBlackColor = Colors.black45;
 const borderColor = Colors.grey;
+const dividerColor = Color.fromARGB(255, 221, 221, 221);
 
 //text style
-const textStyleTitleGrayBold20 = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
+const textStyleTitleGrayBold20 =
+    TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
+    const textStyleTitlePrimaryBold20 =
+    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor);
 const textStyleTitleGrayRegular16 = TextStyle(fontSize: 16, color: Colors.grey);
-const textStyleSubTitleGrayRegular16 = TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor);
-const textStyleTrailingPrimaryRegular16 = TextStyle(fontSize: 16, color: primaryColor);
-const textStyleTrailingSuccessRegular16 = TextStyle(fontSize: 16, color: Colors.green);
-const textStyleTrailingCostRegular16 = TextStyle(fontSize: 16, color: Colors.redAccent);
-const textStyleTrailingProfitRegular16 = TextStyle(fontSize: 16, color: Colors.orangeAccent);
+const textStyleSubTitleGrayRegular16 =
+    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor);
+const textStyleTrailingPrimaryRegular16 =
+    TextStyle(fontSize: 16, color: primaryColor);
+const textStyleTrailingSuccessRegular16 =
+    TextStyle(fontSize: 16, color: Colors.green);
+const textStyleTrailingCostRegular16 =
+    TextStyle(fontSize: 16, color: Colors.redAccent);
+const textStyleTrailingProfitRegular16 =
+    TextStyle(fontSize: 16, color: Colors.orangeAccent);
 
 const textStyleWhiteRegular16 =
     TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400);
@@ -91,11 +100,17 @@ const textStylePriceBlackRegular16 = TextStyle(
 
 const textStyleFoodNameBold16 = TextStyle(
     color: Colors.black54, fontSize: 16, fontWeight: FontWeight.normal);
-
+const textStyleFoodNameBold20 =
+    TextStyle(color: Colors.black54, fontSize: 20, fontWeight: FontWeight.bold);
 const textStyleBlackRegular = TextStyle(
     color: Color.fromARGB(196, 20, 19, 19),
     fontSize: 16,
     fontWeight: FontWeight.w400);
+
+const textRegular = TextStyle(
+  color: Color.fromARGB(196, 20, 19, 19),
+  fontSize: 16,
+);
 
 const textStyleBlackBold =
     TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold);
@@ -114,12 +129,16 @@ const textStyleSeccess =
 
 const textStyleMaking = TextStyle(
     color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
-    
+
 const textStyleCancel = TextStyle(
     color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold);
 
 const textStylePlaceholder = TextStyle(
     color: tableemptyColor, fontSize: 14, fontWeight: FontWeight.bold);
+
+const textStyleInput = TextStyle(
+    color: tableemptyColor, fontSize: 16, fontWeight: FontWeight.normal);
+
 //button
 var buttonColor = const Color(0xFF40BAD5);
 const buttonStyleBlackBold =
@@ -127,6 +146,9 @@ const buttonStyleBlackBold =
 double buttonHeight = 50;
 double buttonWidth = 300;
 
+//border button
+
+const boderButtonPrimary = BorderRadius.all(Radius.circular(10));
 //icon
 const iconColor = Colors.grey;
 const iconWhiteColor = Colors.white;
@@ -137,6 +159,7 @@ const marginTop5 = SizedBox(height: 5);
 const marginTop10 = SizedBox(height: 10);
 const marginTop20 = SizedBox(height: 20);
 const marginTop30 = SizedBox(height: 30);
+const marginBottom30 = SizedBox(height: 30);
 const marginRight10 = SizedBox(width: 10);
 const marginRight20 = SizedBox(width: 20);
 
