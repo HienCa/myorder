@@ -17,6 +17,20 @@ List pages = [
   const UtilsPage()
 ];
 
+// text length
+const maxlengthName = 50;
+const minlengthName = 2;
+
+const maxlengthCCCD = 12;
+const minlengthCCCD = 10;
+
+const maxlengthPhone = 12;
+const minlengthPhone = 10;
+
+const maxlengthAddress = 255;
+const minlengthAddress = 4;
+
+//============================================================================
 // height chart = 400
 // list of colors that we use in our app
 const kBackgroundColor = Color(0xFFF1EFF1);
@@ -61,10 +75,14 @@ const labelBlackColor = Colors.black45;
 const borderColor = Colors.grey;
 const dividerColor = Color.fromARGB(255, 221, 221, 221);
 
+//text style error
+const textStyleErrorInput = TextStyle(
+    fontSize: 14, fontWeight: FontWeight.normal, color: Colors.redAccent);
+
 //text style
 const textStyleTitleGrayBold20 =
     TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
-    const textStyleTitlePrimaryBold20 =
+const textStyleTitlePrimaryBold20 =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor);
 const textStyleTitleGrayRegular16 = TextStyle(fontSize: 16, color: Colors.grey);
 const textStyleSubTitleGrayRegular16 =
@@ -143,6 +161,9 @@ const textStyleInput = TextStyle(
 var buttonColor = const Color(0xFF40BAD5);
 const buttonStyleBlackBold =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+
+const buttonStyleCancel =
+    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.redAccent);
 double buttonHeight = 50;
 double buttonWidth = 300;
 

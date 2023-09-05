@@ -1,46 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:myorder/constants.dart';
 
-class TextInputField extends StatelessWidget {
+class MyTextField extends StatefulWidget {
   final TextEditingController controller;
-  final String labelText;
-  final bool isObscure;
-  final IconData icon;
-  const TextInputField({
+  final String hintText;
+  final int maxLength;
+  final bool isError;
+  final String errorText;
+  final ValueChanged<String>? onChanged;
+
+  const MyTextField({
     Key? key,
     required this.controller,
-    required this.labelText,
-    this.isObscure = false,
-    required this.icon,
+    required this.hintText,
+    this.maxLength = 50,
+    this.isError = false,
+    this.errorText = "",
+    this.onChanged,
   }) : super(key: key);
 
   @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<MyTextField> {
+  @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller,
-      style: const TextStyle(color: textColor),
+      controller: widget.controller,
+      style: const TextStyle(color: Colors.black), // Điều chỉnh màu sắc văn bản
       decoration: InputDecoration(
-        label: Text(labelText, style: const TextStyle(color: Colors.redAccent)),
-        // labelText: labelText,
-        prefixIcon: const Icon(
-                    Icons.lock,
-                    color: Colors.redAccent,
-                  ),
-        labelStyle: const TextStyle(
-          fontSize: 20,
-        ),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: const BorderSide(
-              color: borderColor,
-            )),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: const BorderSide(
-              color: borderColor,
-            )),
+        hintText: widget.hintText,
+        hintStyle: const TextStyle(color: Colors.grey),
+        errorText: widget.isError ? widget.errorText : null,
+        errorStyle:
+            const TextStyle(color: Colors.red), // Điều chỉnh màu sắc lỗi
+        border: InputBorder.none,
       ),
-      obscureText: isObscure,
+      maxLength: widget.maxLength,
+      onChanged: widget.onChanged,
     );
   }
 }

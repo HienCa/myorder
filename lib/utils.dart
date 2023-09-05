@@ -73,4 +73,13 @@ class Utils {
     final RegExp regex = RegExp(r'[a-zA-Z0-9]');
     return input.split('').where((char) => regex.hasMatch(char)).join('');
   }
+
+  // get valid string 
+  String getValidText(String input) {
+    final RegExp regex = RegExp(r'[a-zA-Z]+');
+    final Iterable<Match> matches = regex.allMatches(input);
+    final List<String> validMatches = matches.map((match) => match.group(0)!).toList();
+    final String validText = validMatches.join('');
+  return validText;
+}
 }
