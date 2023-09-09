@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/area/areas_controller.dart';
 import 'package:myorder/views/screens/managements/area_table/area_screen.dart';
 import 'package:myorder/views/screens/managements/area_table/table_screen.dart';
 
@@ -41,11 +43,19 @@ class _ManagementAreaTablePageState extends State<ManagementAreaTablePage> {
   }
 }
 
-class AreaTableTab extends StatelessWidget {
+class AreaTableTab extends StatefulWidget {
   const AreaTableTab({Key? key}) : super(key: key);
 
   @override
+  State<AreaTableTab> createState() => _AreaTableTabState();
+}
+
+class _AreaTableTabState extends State<AreaTableTab> {
+  AreaController areaController = Get.put(AreaController());
+
+  @override
   Widget build(BuildContext context) {
+    areaController.getAreas();
     return DefaultTabController(
         length: 2,
         child: Scaffold(

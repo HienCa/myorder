@@ -50,6 +50,9 @@ const minlengthUnitName = 1;
 const maxlengthCategoryName = 50;
 const minlengthCategoryName = 1;
 
+const maxlengthAreaName = 50;
+const minlengthAreaName = 1;
+
 final List<String> ROLE_OPTION = <String>[
   'Nhân viên',
   'Quản lý',

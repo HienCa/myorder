@@ -1,10 +1,19 @@
+// ignore_for_file: avoid_print, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/area/areas_controller.dart';
 
 class CustomDialogCreateUpdateArea extends StatefulWidget {
   final bool isUpdate;
+  final String? area_id;
+  final String? name;
+  final int? active;
 
-  const CustomDialogCreateUpdateArea({Key? key, required this.isUpdate})
+  const CustomDialogCreateUpdateArea(
+      {Key? key, required this.isUpdate, this.area_id, this.name, this.active})
       : super(key: key);
   @override
   State<CustomDialogCreateUpdateArea> createState() =>
@@ -14,19 +23,27 @@ class CustomDialogCreateUpdateArea extends StatefulWidget {
 class _CustomDialogCreateUpdateAreaState
     extends State<CustomDialogCreateUpdateArea> {
   var isActive = true;
+  String? errorTextName = "";
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController activeController = TextEditingController();
+  AreaController areaController = Get.put(AreaController());
 
+  bool isErrorTextName = false;
   late final bool isUpdate; // Declare isUpdate here
   @override
   void initState() {
     super.initState();
     isUpdate =
         widget.isUpdate; // Initialize isUpdate with the value from the widget
+    if (widget.area_id != null) {
+      nameController.text = widget.name ?? "";
+      isActive = widget.active == ACTIVE ? true : false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController areaNameController = TextEditingController();
-
+    areaController.getAreas();
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
@@ -48,46 +65,64 @@ class _CustomDialogCreateUpdateAreaState
             const SizedBox(
               height: 20,
             ),
-            Container(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                  border: Border.all(width: 0.05, color: Colors.grey),
-                  borderRadius: const BorderRadius.all(Radius.circular(5))),
-              margin: const EdgeInsets.symmetric(horizontal: 12),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
               child: TextField(
-                controller: areaNameController,
-                style: const TextStyle(color: textColor),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  label: Text("Tên khu vực ...", style: textStylePlaceholder),
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
-              ),
+                  controller: nameController,
+                  style: textStyleInput,
+                  decoration: InputDecoration(
+                      labelStyle: textStyleInput,
+                      labelText: "Tên khu vực",
+                      hintText: 'Nhập tên khu vực',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      border: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey)),
+                      errorText: isErrorTextName ? errorTextName : null,
+                      errorStyle: textStyleErrorInput),
+                  maxLength: 50,
+                  autofocus: true,
+                  onChanged: (value) => {
+                        if (value.trim().length > maxlengthAreaName ||
+                            value.trim().length <= minlengthAreaName)
+                          {
+                            setState(() {
+                              errorTextName =
+                                  "Từ $minlengthAreaName đến $maxlengthAreaName ký tự.";
+                              isErrorTextName = true;
+                            })
+                          }
+                        else
+                          {
+                            setState(() {
+                              errorTextName = "";
+                              isErrorTextName = false;
+                            })
+                          }
+                      }),
             ),
             const SizedBox(
               height: 10,
             ),
-            ListTile(
-              leading: Theme(
-                data: ThemeData(unselectedWidgetColor: primaryColor),
-                child: Checkbox(
-                  value: isActive,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isActive = value!;
-                    });
-                  },
-                  activeColor: primaryColor,
-                ),
-              ),
-              title: const Text(
-                "Đang hoạt động",
-                style: textStylePriceBold16,
-              ),
-            ),
+            isUpdate
+                ? ListTile(
+                    leading: Theme(
+                      data: ThemeData(unselectedWidgetColor: primaryColor),
+                      child: Checkbox(
+                        value: isActive,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isActive = value!;
+                          });
+                        },
+                        activeColor: primaryColor,
+                      ),
+                    ),
+                    title: const Text(
+                      "Đang hoạt động",
+                      style: textStylePriceBold16,
+                    ),
+                  )
+                : const SizedBox(),
             const SizedBox(
               height: 20,
             ),
@@ -114,7 +149,25 @@ class _CustomDialogCreateUpdateAreaState
                     ),
                   ),
                   InkWell(
-                    onTap: () => {},
+                    onTap: () => {
+                      if (!isErrorTextName)
+                        {
+                          if (widget.area_id != null)
+                            {
+                              areaController.updateArea(widget.area_id!,
+                                  nameController.text, isActive)
+                            }
+                          else
+                            {
+                              areaController.createArea(nameController.text),
+                            },
+                          Navigator.pop(context),
+                        }
+                      else
+                        {
+                          print("Chưa nhập đủ trường"),
+                        }
+                    },
                     child: Container(
                       height: 50,
                       width: 136,
