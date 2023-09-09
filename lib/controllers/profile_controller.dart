@@ -34,7 +34,6 @@ class ProfileController extends GetxController {
   updateUserId(String uid) {
     _uid.value = uid;
     print(uid);
-    print("111111111111111111111111111111111111111111");
     getUserData();
   }
 
@@ -49,13 +48,14 @@ class ProfileController extends GetxController {
           String avatar = userData['avatar'] ?? '';
           String cccd = userData['cccd'] ?? '';
           String gender = userData['gender'] ?? '';
-          DateTime birthday = userData['birthday'] ?? '';
+          String birthday = userData['birthday'] ?? '';
           String phone = userData['phone'] ?? '';
           String email = userData['email'] ?? '';
           String password = userData['password'] ?? '';
           String city = userData['city'] ?? '';
           String district = userData['district'] ?? '';
           String ward = userData['ward'] ?? '';
+          String address = userData['address'] ?? '';
           String role = userData['role'] ?? '';
           int active = userData['active'] ?? 1;
 
@@ -72,6 +72,7 @@ class ProfileController extends GetxController {
           city: city,
           district: district,
           ward: ward,
+          address: address,
           role: role,
           active: active,
         );

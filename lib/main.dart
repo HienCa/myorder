@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/auth_controller.dart';
 import 'package:myorder/views/screens/auth/login_screen.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +27,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: backgroundColor,
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('vi', 'VN'), // Thêm ngôn ngữ tiếng Việt vào đây
+      ],
       home: LoginScreen(),
     );
   }

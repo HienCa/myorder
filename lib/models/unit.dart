@@ -14,7 +14,7 @@ class Unit {
   });
 
   Map<String, dynamic> toJson() => {
-        "area_id": unit_id,
+        "unit_id": unit_id,
         "name": name,
         "active": active,
       };

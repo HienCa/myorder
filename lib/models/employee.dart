@@ -8,13 +8,14 @@ class Employee {
   String? avatar;
   String cccd;
   String gender;
-  DateTime birthday;
+  String birthday;
   String phone;
   String email;
   String password;
-  String city;
-  String district;
-  String ward;
+  String? city;
+  String? district;
+  String? ward;
+  String address;
   String role;
   int active;
 
@@ -29,9 +30,10 @@ class Employee {
       required this.phone,
       required this.email,
       required this.password,
-      required this.city,
-      required this.district,
-      required this.ward,
+                this.city,
+                this.district,
+                this.ward,
+      required this.address,
       required this.role,
       required this.active,
       
@@ -50,6 +52,7 @@ class Employee {
         "city": city,
         "district": district,
         "ward": ward,
+        "address": address,
         "role": role,
         "active": active,
       };
@@ -69,6 +72,7 @@ class Employee {
       city: snapshot['city'],
       district: snapshot['district'],
       ward: snapshot['ward'],
+      address: snapshot['address'],
       role: snapshot['role'],
       active: snapshot['active'],
     );

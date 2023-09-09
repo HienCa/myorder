@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/employees/employees_controller.dart';
 import 'package:myorder/utils.dart';
 
 class CustomDialogCreateEmployeee extends StatefulWidget {
@@ -16,14 +18,12 @@ class CustomDialogCreateEmployeee extends StatefulWidget {
 
 class _CustomDialogCreateEmployeeeState
     extends State<CustomDialogCreateEmployeee> {
+  EmployeeController employeeController = Get.put(EmployeeController());
+
   var isActive = true;
   String? selectedImagePath;
   final Rx<File?> _pickedImage = Rx<File?>(null);
-  final List<String> roleOptions = <String>[
-    'Nhân viên',
-    'Thu ngân',
-    'Chủ nhà hàng'
-  ];
+  final List<String> roleOptions = ROLE_OPTION;
   String? errorTextName = "";
   String? errorTextRole = "";
   String? errorTextCCCD = "";
@@ -31,12 +31,12 @@ class _CustomDialogCreateEmployeeeState
   String? errorTextEmail = "";
   String? errorTextAddress = "";
 
-  bool isErrorTextName = true;
-  bool isErrorTextRole = true;
-  bool isErrorTextCCCD = true;
-  bool isErrorTextPhone = true;
-  bool isErrorTextEmail = true;
-  bool isErrorTextAddress = true;
+  bool isErrorTextName = false;
+  bool isErrorTextRole = false;
+  bool isErrorTextCCCD = false;
+  bool isErrorTextPhone = false;
+  bool isErrorTextEmail = false;
+  bool isErrorTextAddress = false;
 
   bool isMaleSelected = true;
   bool isFemaleSelected = false;
@@ -44,6 +44,7 @@ class _CustomDialogCreateEmployeeeState
   void initState() {
     super.initState();
     birthdayController.text = "dd/MM/yyyy";
+    genderController.text = "Nam";
   }
 
   final TextEditingController nameController = TextEditingController();
@@ -54,7 +55,7 @@ class _CustomDialogCreateEmployeeeState
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-
+  String birthday = "";
   DateTime? _selectedDate;
   Future<void> pickImage() async {
     final pickedImage =
@@ -81,6 +82,9 @@ class _CustomDialogCreateEmployeeeState
       setState(() {
         _selectedDate = picked;
         birthdayController.text =
+            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+
+        birthday =
             "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       });
     }
@@ -179,64 +183,41 @@ class _CustomDialogCreateEmployeeeState
               const SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Tên nhân viên:',
-                            style: textStyleInput,
-                          ),
-                          marginRight10,
-                          Expanded(
-                              child: TextField(
-                                  controller: nameController,
-                                  style: textStyleInput,
-                                  decoration: InputDecoration(
-                                      // prefix:Icon(Icons.home, color: iconColor,),
-                                      hintText: 'Nhập tên nhân viên',
-                                      hintStyle:
-                                          const TextStyle(color: Colors.grey),
-                                      border: InputBorder
-                                          .none, // Xóa border của TextField
-                                      errorText: isErrorTextName
-                                          ? errorTextName
-                                          : null,
-                                      errorStyle: textStyleErrorInput),
-                                  maxLength: 50,
-                                  autofocus: true,
-                                  onChanged: (value) => {
-                                        if (value.trim().length >
-                                                maxlengthName ||
-                                            value.trim().length <=
-                                                minlengthName)
-                                          {
-                                            setState(() {
-                                              errorTextName =
-                                                  "Từ $minlengthName đến $maxlengthName ký tự.";
-                                              isErrorTextName = true;
-                                            })
-                                          }
-                                        else
-                                          {
-                                            setState(() {
-                                              errorTextName = "";
-                                              isErrorTextName = false;
-                                            })
-                                          }
-                                      })),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(color: dividerColor, height: 0.05),
-              SizedBox(
-                height: 60,
+              TextField(
+                  controller: nameController,
+                  style: textStyleInput,
+                  decoration: InputDecoration(
+                      labelStyle: textStyleInput,
+                      labelText: "Họ tên",
+                      hintText: 'Nhập tên nhân viên',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      border: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey)),
+                      errorText: isErrorTextName ? errorTextName : null,
+                      errorStyle: textStyleErrorInput),
+                  maxLength: 50,
+                  autofocus: true,
+                  onChanged: (value) => {
+                        if (value.trim().length > maxlengthName ||
+                            value.trim().length <= minlengthName)
+                          {
+                            setState(() {
+                              errorTextName =
+                                  "Từ $minlengthName đến $maxlengthName ký tự.";
+                              isErrorTextName = true;
+                            })
+                          }
+                        else
+                          {
+                            setState(() {
+                              errorTextName = "";
+                              isErrorTextName = false;
+                            })
+                          }
+                      }),
+              Container(
+                margin: const EdgeInsets.only(left: 10),
+                height: 50,
                 child: Row(
                   children: [
                     Expanded(
@@ -253,17 +234,30 @@ class _CustomDialogCreateEmployeeeState
                             onSelected: (String? value) {
                               // This is called when the user selects an item.
                               setState(() {
-                                roleController.text = value!;
-                                print(roleController.text);
+                                if (value != null) {
+                                  if (value != "titleRole") {
+                                    setState(() {
+                                      roleController.text = value;
+                                      print(roleController.text);
+                                      isErrorTextRole = false;
+                                    });
+                                  }
+                                }
                               });
                             },
-                            dropdownMenuEntries: roleOptions
-                                .map<DropdownMenuEntry<String>>((String value) {
-                              return DropdownMenuEntry<String>(
-                                value: value,
-                                label: value,
-                              );
-                            }).toList(),
+                            dropdownMenuEntries: [
+                              const DropdownMenuEntry<String>(
+                                value: "titleRole",
+                                label: "Chọn chức vụ",
+                              ),
+                              ...roleOptions.map<DropdownMenuEntry<String>>(
+                                  (String value) {
+                                return DropdownMenuEntry<String>(
+                                  value: value,
+                                  label: value,
+                                );
+                              }).toList(),
+                            ],
                             textStyle: textStyleInput,
                           )),
                         ],
@@ -272,62 +266,50 @@ class _CustomDialogCreateEmployeeeState
                   ],
                 ),
               ),
-              const Divider(color: dividerColor, height: 0.05),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          const Text(
-                            'CCCD/CMND:',
-                            style: textStyleInput,
-                          ),
-                          marginRight10,
-                          Expanded(
-                            child: TextField(
-                                controller: cccdController,
-                                keyboardType: TextInputType.number,
-                                maxLength: maxlengthCCCD,
-                                style: textStyleInput,
-                                decoration: InputDecoration(
-                                  hintText: 'Nhập CCCD',
-                                  hintStyle:
-                                      const TextStyle(color: Colors.grey),
-                                  border: InputBorder.none,
-                                  errorText:
-                                      isErrorTextCCCD ? errorTextCCCD : null,
-                                  errorStyle: textStyleErrorInput,
-                                ),
-                                onChanged: (value) => {
-                                      if (value.trim().length > maxlengthCCCD ||
-                                          value.trim().length <= minlengthCCCD)
-                                        {
-                                          setState(() {
-                                            errorTextCCCD =
-                                                "Từ $minlengthCCCD đến $maxlengthCCCD ký tự.";
-                                            isErrorTextCCCD = true;
-                                          })
-                                        }
-                                      else
-                                        {
-                                          setState(() {
-                                            errorTextCCCD = "";
-                                            isErrorTextCCCD = false;
-                                          })
-                                        }
-                                    }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(
+                height: 10,
               ),
-              const Divider(color: dividerColor, height: 0.05),
-              SizedBox(
-                height: 60,
+              TextField(
+                  controller: cccdController,
+                  keyboardType: TextInputType.number,
+                  maxLength: maxlengthCCCD,
+                  style: textStyleInput,
+                  decoration: InputDecoration(
+                    labelStyle: textStyleInput,
+                    labelText: "Mã định danh",
+                    hintText: 'Nhập CCCD',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey)),
+                    errorText: isErrorTextCCCD ? errorTextCCCD : null,
+                    errorStyle: textStyleErrorInput,
+                  ),
+                  onChanged: (value) => {
+                        if (value.trim().length > maxlengthCCCD ||
+                            value.trim().length <= minlengthCCCD)
+                          {
+                            setState(() {
+                              errorTextCCCD =
+                                  "Từ $minlengthCCCD đến $maxlengthCCCD ký tự.";
+                              isErrorTextCCCD = true;
+                              print(isErrorTextCCCD);
+                            })
+                          }
+                        else
+                          {
+                            setState(() {
+                              errorTextCCCD = "";
+                              isErrorTextCCCD = false;
+                              print(isErrorTextCCCD);
+                            })
+                          }
+                      }),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 10),
+                height: 30,
                 child: Row(
                   children: [
                     Expanded(
@@ -382,201 +364,133 @@ class _CustomDialogCreateEmployeeeState
                   ],
                 ),
               ),
-              const Divider(color: dividerColor, height: 0.05),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: [
-                    const Text(
-                      'Ngày sinh:',
-                      style: textStyleInput,
-                    ),
-                    marginRight10,
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: birthdayController,
-                              readOnly: true,
-                              onTap: () {
-                                _selectDate(context);
-                              },
-                              keyboardType: TextInputType.datetime,
-                              style: textStyleInput,
-                              decoration: const InputDecoration(
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(
+                height: 20,
               ),
-              const Divider(color: dividerColor, height: 0.05),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: [
-                    const Text(
-                      'Số điện thoại:',
-                      style: textStyleInput,
-                    ),
-                    marginRight10,
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                                controller: phoneController,
-                                style: textStyleInput,
-                                keyboardType: TextInputType.phone,
-                                maxLength: maxlengthPhone,
-                                decoration: InputDecoration(
-                                  hintText: 'Nhập số điện thoại',
-                                  hintStyle:
-                                      const TextStyle(color: Colors.grey),
-                                  border: InputBorder.none,
-                                  errorText:
-                                      isErrorTextPhone ? errorTextPhone : null,
-                                  errorStyle: textStyleErrorInput,
-                                ),
-                                onChanged: (value) => {
-                                      if (value.trim().length >
-                                              maxlengthPhone ||
-                                          value.trim().length < minlengthPhone)
-                                        {
-                                          setState(() {
-                                            errorTextPhone =
-                                                "Từ $minlengthPhone đến $maxlengthPhone ký tự.";
-                                            isErrorTextPhone = true;
-                                          })
-                                        }
-                                      else
-                                        {
-                                          setState(() {
-                                            errorTextPhone = "";
-                                            isErrorTextPhone = false;
-                                          })
-                                        }
-                                    }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              TextField(
+                controller: birthdayController,
+                readOnly: true,
+                onTap: () {
+                  _selectDate(context);
+                },
+                keyboardType: TextInputType.datetime,
+                style: textStyleInput,
+                decoration: const InputDecoration(
+                    hintStyle: TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                    suffixIcon: Icon(Icons.calendar_today),
+                    suffixStyle: textStyleInput),
               ),
-              const Divider(color: dividerColor, height: 0.05),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: [
-                    const Text(
-                      'Email:',
-                      style: textStyleInput,
-                    ),
-                    marginRight10,
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                                controller: emailController,
-                                style: textStyleInput,
-                                decoration: InputDecoration(
-                                  hintText: 'Nhập email',
-                                  hintStyle:
-                                      const TextStyle(color: Colors.grey),
-                                  border: InputBorder.none,
-                                  errorText:
-                                      isErrorTextEmail ? errorTextEmail : null,
-                                  errorStyle: textStyleErrorInput,
-                                ),
-                                onChanged: (value) => {
-                                      if (!Utils.isValidEmail(value))
-                                        {
-                                          setState(() {
-                                            errorTextEmail =
-                                                "Email không hợp lệ!";
-                                            isErrorTextEmail = true;
-                                          })
-                                        }
-                                      else
-                                        {
-                                          setState(() {
-                                            errorTextEmail = "";
-                                            isErrorTextEmail = false;
-                                          })
-                                        }
-                                    }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(
+                height: 20,
               ),
-              const Divider(color: dividerColor, height: 0.05),
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Địa chỉ:',
-                            style: textStyleInput,
-                          ),
-                          marginRight10,
-                          Expanded(
-                            child: TextField(
-                                controller: addressController,
-                                style: textStyleInput,
-                                keyboardType: TextInputType.streetAddress,
-                                maxLength: maxlengthAddress,
-                                decoration: InputDecoration(
-                                  hintText: 'Nhập địa chỉ',
-                                  hintStyle:
-                                      const TextStyle(color: Colors.grey),
-                                  border: InputBorder.none,
-                                  errorText: isErrorTextAddress
-                                      ? errorTextAddress
-                                      : null,
-                                  errorStyle: textStyleErrorInput,
-                                ),
-                                onChanged: (value) => {
-                                      if (value.trim().length >
-                                              maxlengthAddress ||
-                                          value.trim().length <
-                                              minlengthAddress)
-                                        {
-                                          setState(() {
-                                            errorTextAddress =
-                                                "Từ $minlengthAddress đến $maxlengthAddress ký tự.";
-                                            isErrorTextAddress = true;
-                                          })
-                                        }
-                                      else
-                                        {
-                                          setState(() {
-                                            errorTextAddress = "";
-                                            isErrorTextAddress = false;
-                                          })
-                                        }
-                                    }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              TextField(
+                  controller: phoneController,
+                  style: textStyleInput,
+                  keyboardType: TextInputType.phone,
+                  maxLength: maxlengthPhone,
+                  decoration: InputDecoration(
+                    labelStyle: textStyleInput,
+                    labelText: "Số điện thoại",
+                    hintText: 'Nhập số điện thoại',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey)),
+                    errorText: isErrorTextPhone ? errorTextPhone : null,
+                    errorStyle: textStyleErrorInput,
+                  ),
+                  onChanged: (value) => {
+                        if (value.trim().length > maxlengthPhone ||
+                            value.trim().length < minlengthPhone)
+                          {
+                            setState(() {
+                              errorTextPhone =
+                                  "Từ $minlengthPhone đến $maxlengthPhone ký tự.";
+                              isErrorTextPhone = true;
+
+                              if (!value.startsWith('0', 0)) {
+                                errorTextPhone = "Số điện thoại không hợp lệ";
+                                isErrorTextPhone = true;
+                              }
+                            }),
+                          }
+                        else
+                          {
+                            setState(() {
+                              errorTextPhone = "";
+                              isErrorTextPhone = false;
+                              if (!value.startsWith('0', 0)) {
+                                errorTextPhone = "Số điện thoại không hợp lệ";
+                                isErrorTextPhone = true;
+                              }
+                            })
+                          }
+                      }),
+              TextField(
+                  controller: emailController,
+                  style: textStyleInput,
+                  decoration: InputDecoration(
+                    labelStyle: textStyleInput,
+                    labelText: "Email",
+                    hintText: 'Nhập email',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey)),
+                    errorText: isErrorTextEmail ? errorTextEmail : null,
+                    errorStyle: textStyleErrorInput,
+                  ),
+                  onChanged: (value) => {
+                        if (!Utils.isValidEmail(value))
+                          {
+                            setState(() {
+                              errorTextEmail = "Email không hợp lệ!";
+                              isErrorTextEmail = true;
+                            })
+                          }
+                        else
+                          {
+                            setState(() {
+                              errorTextEmail = "";
+                              isErrorTextEmail = false;
+                            })
+                          }
+                      }),
+              const SizedBox(
+                height: 20,
               ),
+              TextField(
+                  controller: addressController,
+                  style: textStyleInput,
+                  keyboardType: TextInputType.streetAddress,
+                  maxLength: maxlengthAddress,
+                  decoration: InputDecoration(
+                    labelStyle: textStyleInput,
+                    labelText: "Địa chỉ",
+                    hintText: 'Nhập địa chỉ',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 1)),
+                    errorText: isErrorTextAddress ? errorTextAddress : null,
+                    errorStyle: textStyleErrorInput,
+                  ),
+                  onChanged: (value) => {
+                        if (value.trim().length > maxlengthAddress ||
+                            value.trim().length < minlengthAddress)
+                          {
+                            setState(() {
+                              errorTextAddress =
+                                  "Từ $minlengthAddress đến $maxlengthAddress ký tự.";
+                              isErrorTextAddress = true;
+                            })
+                          }
+                        else
+                          {
+                            setState(() {
+                              errorTextAddress = "";
+                              isErrorTextAddress = false;
+                            })
+                          }
+                      }),
               const SizedBox(
                 height: 50,
               ),
@@ -602,7 +516,35 @@ class _CustomDialogCreateEmployeeeState
                     ),
                     Expanded(
                       child: InkWell(
-                        onTap: () => {},
+                        onTap: () => {
+                          if (!isErrorTextName &&
+                              !isErrorTextCCCD &&
+                              !isErrorTextPhone &&
+                              !isErrorTextEmail &&
+                              !isErrorTextRole &&
+                              !isErrorTextAddress)
+                            {
+                              employeeController.createEmployee(
+                                  nameController.text,
+                                  _pickedImage.value,
+                                  cccdController.text,
+                                  genderController.text,
+                                  birthdayController.text,
+                                  phoneController.text,
+                                  emailController.text,
+                                  "00000000",
+                                  "city",
+                                  "district",
+                                  "ward",
+                                  addressController.text,
+                                  roleController.text),
+                              Navigator.pop(context)
+                            }
+                          else
+                            {
+                              print("Chưa nhập đủ trường"),
+                            }
+                        },
                         child: Container(
                           height: 50,
                           decoration: const BoxDecoration(

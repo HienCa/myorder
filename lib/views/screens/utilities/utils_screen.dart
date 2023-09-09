@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/managements/area_table/area_table_screen.dart';
-import 'package:myorder/views/screens/managements/employees/employees.dart';
+import 'package:myorder/views/screens/managements/categories/categories_screen.dart';
+import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
+import 'package:myorder/views/screens/managements/units/units_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
 
 class UtilsPage extends StatelessWidget {
@@ -11,15 +13,15 @@ class UtilsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-              decoration: const BoxDecoration(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
               color: backgroundColorGray,
-              ),
-              child: Column(
+            ),
+            child: Column(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
@@ -54,7 +56,8 @@ class UtilsPage extends StatelessWidget {
                             style: textStyleBlackBold,
                           ),
                         ),
-                        const Icon(Icons.settings, color: iconColorPrimary, size: 30),
+                        const Icon(Icons.settings,
+                            color: iconColorPrimary, size: 30),
                       ],
                     ),
                   ),
@@ -79,9 +82,10 @@ class UtilsPage extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: Icon(Icons.print, color: iconColor),
-                        title: Text("Thiết lập máy in", style: textStyleBlackRegular),
-                        trailing:
-                            Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
+                        title: Text("Thiết lập máy in",
+                            style: textStyleBlackRegular),
+                        trailing: Icon(Icons.arrow_forward_ios_outlined,
+                            color: iconColor),
                       ),
                     ],
                   ),
@@ -97,12 +101,46 @@ class UtilsPage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
+                                      const ManagementCategoriesPage()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.ad_units, color: iconColor),
+                          title: Text("Quản lý danh mục",
+                              style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
+                      ),
+                      const Divider(),
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManagementUnitsPage()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.ad_units, color: iconColor),
+                          title: Text("Quản lý đơn vị",
+                              style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
+                      ),
+                      const Divider(),
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
                                       const ManagementEmployeesPage()))
                         },
                         child: const ListTile(
                           leading: Icon(Icons.people, color: iconColor),
-                          title:
-                              Text("Quản lý nhân viên", style: textStyleBlackRegular),
+                          title: Text("Quản lý nhân viên",
+                              style: textStyleBlackRegular),
                           trailing: Icon(Icons.arrow_forward_ios_outlined,
                               color: iconColor),
                         ),
@@ -127,16 +165,18 @@ class UtilsPage extends StatelessWidget {
                       const Divider(),
                       const ListTile(
                         leading: Icon(Icons.menu_book, color: iconColor),
-                        title: Text("Quản lý thực đơn", style: textStyleBlackRegular),
-                        trailing:
-                            Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
+                        title: Text("Quản lý thực đơn",
+                            style: textStyleBlackRegular),
+                        trailing: Icon(Icons.arrow_forward_ios_outlined,
+                            color: iconColor),
                       ),
                       const Divider(),
                       const ListTile(
                         leading: Icon(Icons.receipt_long, color: iconColor),
-                        title: Text("Quản lý hóa đơn", style: textStyleBlackRegular),
-                        trailing:
-                            Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
+                        title: Text("Quản lý hóa đơn",
+                            style: textStyleBlackRegular),
+                        trailing: Icon(Icons.arrow_forward_ios_outlined,
+                            color: iconColor),
                       ),
                     ],
                   ),
@@ -148,26 +188,26 @@ class UtilsPage extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: Icon(Icons.bar_chart, color: iconColor),
-                        title:
-                            Text("Phân tích Doanh Thu", style: textStyleBlackRegular),
-                        trailing:
-                            Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
+                        title: Text("Phân tích Doanh Thu",
+                            style: textStyleBlackRegular),
+                        trailing: Icon(Icons.arrow_forward_ios_outlined,
+                            color: iconColor),
                       ),
                       Divider(),
                       ListTile(
                         leading: Icon(Icons.pie_chart, color: iconColor),
-                        title:
-                            Text("Thống kê Kinh Doanh", style: textStyleBlackRegular),
-                        trailing:
-                            Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
+                        title: Text("Thống kê Kinh Doanh",
+                            style: textStyleBlackRegular),
+                        trailing: Icon(Icons.arrow_forward_ios_outlined,
+                            color: iconColor),
                       ),
                       Divider(),
                       ListTile(
                         leading: Icon(Icons.waterfall_chart, color: iconColor),
-                        title:
-                            Text("Báo cáo Kinh Doanh", style: textStyleBlackRegular),
-                        trailing:
-                            Icon(Icons.arrow_forward_ios_outlined, color: iconColor),
+                        title: Text("Báo cáo Kinh Doanh",
+                            style: textStyleBlackRegular),
+                        trailing: Icon(Icons.arrow_forward_ios_outlined,
+                            color: iconColor),
                       ),
                     ],
                   ),
@@ -187,10 +227,10 @@ class UtilsPage extends StatelessWidget {
                 ),
                 marginBottom30
               ],
-              ),
             ),
-            ],
           ),
-        ));
+        ],
+      ),
+    ));
   }
 }

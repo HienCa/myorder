@@ -17,18 +17,6 @@ List pages = [
   const UtilsPage()
 ];
 
-// text length
-const maxlengthName = 50;
-const minlengthName = 2;
-
-const maxlengthCCCD = 12;
-const minlengthCCCD = 10;
-
-const maxlengthPhone = 12;
-const minlengthPhone = 10;
-
-const maxlengthAddress = 255;
-const minlengthAddress = 4;
 
 //============================================================================
 // height chart = 400
@@ -50,6 +38,9 @@ const kDefaultShadow = BoxShadow(
 );
 //corlor
 const primaryColor = Color(0xFF40BAD5);
+const activeColor = Color(0xFF40BAD5);
+const deActiveColor = Colors.grey;
+
 var primaryColorOpacity = const Color(0xFF40BAD5).withOpacity(0.2);
 var chooseColorOpacity = const Color(0xFF40BAD5);
 
@@ -66,6 +57,10 @@ const borderColorTextField = Color.fromARGB(255, 232, 236, 237);
 // background
 const backgroundColor = Colors.white;
 const backgroundColorGray = Color.fromARGB(255, 245, 241, 241);
+const backgroundSuccessColor = Colors.green;
+const backgroundFailureColor = Colors.redAccent;
+
+
 
 //text
 const textColor = Colors.black;
@@ -125,6 +120,11 @@ const textStyleBlackRegular = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400);
 
+const textStyleNameBlackRegular = TextStyle(
+    color: Color.fromARGB(196, 20, 19, 19),
+    fontSize: 20,
+    fontWeight: FontWeight.w400);
+
 const textRegular = TextStyle(
   color: Color.fromARGB(196, 20, 19, 19),
   fontSize: 16,
@@ -161,9 +161,10 @@ const textStyleInput = TextStyle(
 var buttonColor = const Color(0xFF40BAD5);
 const buttonStyleBlackBold =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-
-const buttonStyleCancel =
-    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.redAccent);
+const buttonStyleWhiteBold =
+    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white);
+const buttonStyleCancel = TextStyle(
+    fontSize: 20, fontWeight: FontWeight.bold, color: Colors.redAccent);
 double buttonHeight = 50;
 double buttonWidth = 300;
 

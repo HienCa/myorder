@@ -1,0 +1,198 @@
+// ignore_for_file: avoid_single_cascade_in_expression_statements, avoid_print
+
+// import 'package:awesome_dialog/awesome_dialog.dart';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:myorder/config.dart';
+import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/units/units_controller.dart';
+import 'package:myorder/models/unit.dart';
+
+class UnitDetailPage extends StatefulWidget {
+  final String unitId;
+  const UnitDetailPage({
+    Key? key,
+    required this.unitId,
+  }) : super(key: key);
+
+  @override
+  State<UnitDetailPage> createState() => _UnitDetailPageState();
+}
+
+class _UnitDetailPageState extends State<UnitDetailPage> {
+  var isActive = true;
+  String? selectedImagePath;
+  final List<String> roleOptions = ROLE_OPTION;
+  String? errorTextName = "";
+
+  bool isErrorTextName = false;
+
+  UnitController unitController = Get.put(UnitController());
+  late Unit unit;
+  @override
+  void initState() {
+    super.initState();
+    unit = Unit(unit_id: '', name: '', active: 1);
+  }
+
+  Future<void> loadUnit() async {
+    final Unit result = await unitController.getUnitById(widget.unitId);
+    if (result.unit_id != "") {
+      setState(() {
+        unit = result;
+        nameController.text = unit.name;
+      });
+    }
+  }
+
+  final TextEditingController nameController = TextEditingController();
+  @override
+  void dispose() {
+    nameController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (unit.unit_id == "") {
+      loadUnit();
+
+      return Scaffold(
+        backgroundColor: backgroundColor,
+        appBar: AppBar(
+          leading: InkWell(
+              onTap: () => {Navigator.pop(context)},
+              child: const Icon(Icons.arrow_back_ios)),
+          title: const Center(child: Text("ĐƠN VỊ TÍNH")),
+          backgroundColor: primaryColor,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(), // Display a loading indicator.
+        ),
+      );
+    }
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        leading: InkWell(
+            onTap: () => {Navigator.pop(context)},
+            child: const Icon(Icons.arrow_back_ios)),
+        title: const Center(child: Text("ĐƠN VỊ TÍNH")),
+        backgroundColor: primaryColor,
+      ),
+      body: SingleChildScrollView(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextField(
+                          controller: nameController,
+                          style: textStyleInput,
+                          decoration: InputDecoration(
+                              labelStyle: textStyleInput,
+                              labelText: "Tên đơn vị tính",
+                              hintText: 'Nhập tên đơn vị tính',
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              errorText: isErrorTextName ? errorTextName : null,
+                              errorStyle: textStyleErrorInput),
+                          maxLength: 50,
+                          // autofocus: true,
+                          onChanged: (value) => {
+                                if (value.trim().length > maxlengthUnitName ||
+                                    value.trim().length <= minlengthUnitName)
+                                  {
+                                    setState(() {
+                                      errorTextName =
+                                          "Từ $minlengthUnitName đến $maxlengthUnitName ký tự.";
+                                      isErrorTextName = true;
+                                    })
+                                  }
+                                else
+                                  {
+                                    setState(() {
+                                      errorTextName = "";
+                                      isErrorTextName = false;
+                                    })
+                                  }
+                              }),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () => {Navigator.pop(context)},
+                                child: Container(
+                                  height: 50,
+                                  decoration: const BoxDecoration(
+                                      color: dividerColor,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5))),
+                                  child: const Align(
+                                    alignment: Alignment.center,
+                                    child:
+                                        Text("HỦY", style: buttonStyleCancel),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () => {
+                                  if (!isErrorTextName)
+                                    {
+                                      unitController.updateUnit(
+                                        unit.unit_id,
+                                        nameController.text,
+                                      ),
+                                      Navigator.pop(context)
+                                    }
+                                  else
+                                    {
+                                      print("Chưa nhập đủ trường"),
+                                    }
+                                },
+                                child: Container(
+                                  height: 50,
+                                  decoration: const BoxDecoration(
+                                      color: primaryColor,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5))),
+                                  child: const Align(
+                                    alignment: Alignment.center,
+                                    child: Text("CẬP NHẬT",
+                                        style: buttonStyleWhiteBold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          )),
+    );
+  }
+}

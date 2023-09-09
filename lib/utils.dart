@@ -1,37 +1,5 @@
-//Gía trị cố định của biến
-// ignore_for_file: non_constant_identifier_names
 
-class Config {
-  //chung
-  static int ACTIVE = 1; // HOẠT ĐỘNG
-  static int DEACTIVE = 0; // NGỪNG HOẠT ĐỘNG
 
-  //EMPLOYEE:
-  static int MALE = 1; // NAM
-  static int FEMALE = 2; // NỮ
-  static int OTHER = 3; //KHÁC
-
-  //ROLE:
-  static int OWNER = 1; // CHỦ NHÀ HÀNG
-  static int EMPLOYEE = 2; // NHÂN VIÊN
-
-  //ORDER:
-  static int ORDER_STATUS_SERVING = 1; // ĐANG PHỤC VỤ
-  static int ORDER_STATUS_PAID = 2; // ĐÃ THANH TÓAN
-  static int ORDER_STATUS_CANCEL = 3; // ĐÃ HỦY BÀN
-
-  //ORDER_DETAIL
-  static int FOOD_STATUS_IN_CHEFT = 1; // CHỜ CHẾ BIẾN
-  static int FOOD_STATUS_FINISH = 2; // ĐÃ HOÀN THÀNH
-  static int FOOD_STATUS_CANCEL = 3; // ĐÃ HỦY
-
-  //TABLE:
-  static int TABLE_STATUS_EMPTY = 1; // BÀN TRỐNG
-  static int TABLE_STATUS_SERVING = 2; // ĐANG PHỤC VỤ
-  static int TABLE_STATUS_MERGED = 3; // GỘP BÀN
-  static int TABLE_STATUS_SPLIT = 4; // TÁCH BÀN
-  static int TABLE_STATUS_CANCEL = 5; // HỦY BÀN
-}
 
 //Các phương phức hay dùng
 class Utils {
@@ -59,7 +27,7 @@ class Utils {
     int length = input.length;
     return length >= minLength && length <= maxLength;
   }
-  
+
   static getValidSubstring(String input, int maxLength) {
     if (input.length > maxLength) {
       return input.substring(0, maxLength);
@@ -74,12 +42,13 @@ class Utils {
     return input.split('').where((char) => regex.hasMatch(char)).join('');
   }
 
-  // get valid string 
+  // get valid string
   String getValidText(String input) {
     final RegExp regex = RegExp(r'[a-zA-Z]+');
     final Iterable<Match> matches = regex.allMatches(input);
-    final List<String> validMatches = matches.map((match) => match.group(0)!).toList();
+    final List<String> validMatches =
+        matches.map((match) => match.group(0)!).toList();
     final String validText = validMatches.join('');
-  return validText;
-}
+    return validText;
+  }
 }

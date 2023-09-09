@@ -78,6 +78,7 @@ class SearchControllerCustom extends GetxController {
               city: employeeSnapshot.data()!['city'] ?? '',
               district: employeeSnapshot.data()!['district'] ?? '',
               ward: employeeSnapshot.data()!['ward'] ?? '',
+              address: employeeSnapshot.data()!['address'] ?? '',
               role: employeeSnapshot.data()!['role'] ?? '',
               active: employeeSnapshot.data()!['active'] ?? '',
             );

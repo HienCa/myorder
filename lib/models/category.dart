@@ -15,7 +15,7 @@ class Category {
   });
 
   Map<String, dynamic> toJson() => {
-        "area_id": category_id,
+        "category_id": category_id,
         "name": name,
         "active": active,
       };

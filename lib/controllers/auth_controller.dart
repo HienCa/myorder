@@ -58,7 +58,7 @@ class AuthController extends GetxController {
 
   // registering the user
   void registerUser(
-      String username, File? image, String cccd, String gender, DateTime birthday, String phone, String email, String password, String city, String district, String ward, String role) async {
+      String username, File? image, String cccd, String gender, String birthday, String phone, String email, String password, String city, String district, String ward, String address, String role) async {
     try {
       if (username.isNotEmpty &&
           email.isNotEmpty &&
@@ -72,19 +72,20 @@ class AuthController extends GetxController {
         String downloadUrl = await _uploadToStorage(image);
         
         model.Employee employee = model.Employee(
-          employee_id: cred.user!.uid,
+           employee_id: cred.user!.uid,
           name: username,
           avatar: downloadUrl,
-          cccd: "",
-          gender: "",
-          birthday: DateTime.now(),
-          phone: "",
+          cccd: cccd,
+          gender: gender,
+          birthday: birthday,
+          phone: phone,
           email: email,
-          password: "",
-          city: "",
-          district: "",
-          ward: "",
-          role: "",
+          password: password,
+          city: city,
+          district: district,
+          ward: ward,
+          address: address,
+          role: role,
           active: 1,
         );
         // Get a reference to the 'users' collection in Firestore

@@ -26,13 +26,14 @@ class _UpdateProfileState extends State<UpdateProfile> {
         avatar: "",
         cccd: "",
         gender: "",
-        birthday: DateTime.now(),
+        birthday: "",
         phone: "",
         email: "",
         password: "",
         city: "",
         district: "",
         ward: "",
+        address: "",
         role: "",
         active: 1,);
 
