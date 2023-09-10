@@ -45,13 +45,21 @@ const maxlengthAddress = 255;
 const minlengthAddress = 4;
 
 const maxlengthUnitName = 50;
-const minlengthUnitName = 1;
+const minlengthUnitName = 2;
 
 const maxlengthCategoryName = 50;
-const minlengthCategoryName = 1;
+const minlengthCategoryName = 2;
+
+const maxlengthAreaTableName = 2;
+const minlengthAreaTableName = 1;
 
 const maxlengthAreaName = 50;
-const minlengthAreaName = 1;
+const minlengthAreaName = 2;
+
+const maxlength50 = 50;
+const maxlength255 = 50;
+const minlength1 = 1;
+const minlength0 = 0;
 
 final List<String> ROLE_OPTION = <String>[
   'Nhân viên',

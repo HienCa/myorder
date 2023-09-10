@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AddCategoryPage extends StatefulWidget {
   const AddCategoryPage({
@@ -136,6 +137,17 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                                   else
                                     {
                                       print("Chưa nhập đủ trường"),
+                                      Alert(
+                            context: context,
+                            title: "THÔNG BÁO",
+                            desc: "Thông tin chưa chính xác!",
+                            image: alertImageError,
+                            buttons: [],
+                            
+                          ).show(),
+                          Future.delayed(const Duration(seconds: 2), () {
+                            Navigator.pop(context);
+                          })
                                     }
                                 },
                                 child: Container(

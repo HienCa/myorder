@@ -8,6 +8,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/models/unit.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class UnitDetailPage extends StatefulWidget {
   final String unitId;
@@ -168,6 +169,17 @@ class _UnitDetailPageState extends State<UnitDetailPage> {
                                   else
                                     {
                                       print("Chưa nhập đủ trường"),
+                                      Alert(
+                                        context: context,
+                                        title: "THÔNG BÁO",
+                                        desc: "Thông tin chưa chính xác!",
+                                        image: alertImageError,
+                                        buttons: [],
+                                      ).show(),
+                                      Future.delayed(const Duration(seconds: 2),
+                                          () {
+                                        Navigator.pop(context);
+                                      })
                                     }
                                 },
                                 child: Container(

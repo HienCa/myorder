@@ -11,6 +11,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/employees/employees_controller.dart';
 import 'package:myorder/models/employee.dart';
 import 'package:myorder/utils.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class EmployeeDetailPage extends StatefulWidget {
   final String employeeId;
@@ -650,6 +651,17 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
                                   else
                                     {
                                       print("Chưa nhập đủ trường"),
+                                      Alert(
+                                        context: context,
+                                        title: "THÔNG BÁO",
+                                        desc: "Thông tin chưa chính xác!",
+                                        image: alertImageError,
+                                        buttons: [],
+                                      ).show(),
+                                      Future.delayed(const Duration(seconds: 2),
+                                          () {
+                                        Navigator.pop(context);
+                                      })
                                     }
                                 },
                                 child: Container(

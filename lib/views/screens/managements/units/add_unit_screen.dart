@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AddUnitPage extends StatefulWidget {
   const AddUnitPage({
@@ -112,8 +113,8 @@ class _AddUnitPageState extends State<AddUnitPage> {
                                           BorderRadius.all(Radius.circular(5))),
                                   child: const Align(
                                     alignment: Alignment.center,
-                                    child:
-                                        Text("QUAY LẠI", style: buttonStyleCancel),
+                                    child: Text("QUAY LẠI",
+                                        style: buttonStyleCancel),
                                   ),
                                 ),
                               ),
@@ -134,6 +135,17 @@ class _AddUnitPageState extends State<AddUnitPage> {
                                   else
                                     {
                                       print("Chưa nhập đủ trường"),
+                                      Alert(
+                                        context: context,
+                                        title: "THÔNG BÁO",
+                                        desc: "Thông tin chưa chính xác!",
+                                        image: alertImageError,
+                                        buttons: [],
+                                      ).show(),
+                                      Future.delayed(const Duration(seconds: 2),
+                                          () {
+                                        Navigator.pop(context);
+                                      })
                                     }
                                 },
                                 child: Container(

@@ -53,24 +53,38 @@ class AreaController extends GetxController {
   ) async {
     try {
       if (name.isNotEmpty) {
-        var allDocs = await firestore.collection('areas').get();
-        int len = allDocs.docs.length;
+        final tableCollection = FirebaseFirestore.instance.collection('areas');
 
-        model.Area Area = model.Area(
-          area_id: 'Area-$len',
-          name: name.toUpperCase(),
-          active: 1,
-        );
-        CollectionReference usersCollection =
-            FirebaseFirestore.instance.collection('areas');
+        final existingTableQuery =
+            await tableCollection.where('name', isEqualTo: name).limit(1).get();
 
-        await usersCollection.doc('Area-$len').set(Area.toJson());
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Thêm đơn vị tính mới thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+        if (existingTableQuery.docs.isNotEmpty) {
+          Get.snackbar(
+            'Thất bại!',
+            'Tên khu vực đã tồn tại!',
+            backgroundColor: backgroundFailureColor,
+            colorText: Colors.white,
+          );
+        } else {
+          var allDocs = await firestore.collection('areas').get();
+          int len = allDocs.docs.length;
+
+          model.Area Area = model.Area(
+            area_id: 'Area-$len',
+            name: name.trim().toUpperCase(),
+            active: 1,
+          );
+          CollectionReference usersCollection =
+              FirebaseFirestore.instance.collection('areas');
+
+          await usersCollection.doc('Area-$len').set(Area.toJson());
+          Get.snackbar(
+            'THÀNH CÔNG!',
+            'Thêm đơn vị tính mới thành công!',
+            backgroundColor: backgroundSuccessColor,
+            colorText: Colors.white,
+          );
+        }
       } else {
         Get.snackbar(
           'Error!',
@@ -98,18 +112,43 @@ class AreaController extends GetxController {
     bool active,
   ) async {
     try {
-      await firestore.collection('areas').doc(area_id).update({
-        "name": name,
-        "active": active ? ACTIVE : DEACTIVE,
-      });
-      getAreas();
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Cập nhật thông tin thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
-      update();
+      final tableCollection = FirebaseFirestore.instance.collection('areas');
+      bool isFound = false;
+      final List<QueryDocumentSnapshot> notMatchingAreaDocs = [];
+
+      final existingTableQuery =
+          await tableCollection.where('area_id', isNotEqualTo: area_id).get();
+      for (final doc in existingTableQuery.docs) {
+        notMatchingAreaDocs.add(doc);
+      }
+      for (final doc in notMatchingAreaDocs) {
+        final String namedb = doc.get('name') as String;
+        if (namedb == name) {
+          isFound = true;
+          break; 
+        }
+      }
+
+      if (isFound) {
+        Get.snackbar(
+          'Thất bại!',
+          'Tên khu vực đã tồn tại!',
+          backgroundColor: backgroundFailureColor,
+          colorText: Colors.white,
+        );
+      } else {
+        await firestore.collection('areas').doc(area_id).update({
+          "name": name.trim(),
+          "active": active ? ACTIVE : DEACTIVE,
+        });
+        Get.snackbar(
+          'THÀNH CÔNG!',
+          'Cập nhật thông tin thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+        update();
+      }
     } catch (e) {
       Get.snackbar(
         'Cập nhật thất bại!',

@@ -49,6 +49,8 @@ dependencies:
   fl_chart: ^0.63.0
   flutter_svg: ^2.0.7
   flutter_localization: ^0.1.13
+  dropdown_button2: ^2.3.9
+  rflutter_alert: ^2.0.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
 
@@ -80,6 +82,9 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/
+    - assets/images/alert/
+    - assets/images/alert/2.0x/
+    - assets/images/alert/3.0x/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

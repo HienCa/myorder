@@ -7,6 +7,7 @@ import 'package:myorder/views/screens/area/area_screen.dart';
 import 'package:myorder/views/screens/home/home_screen.dart';
 import 'package:myorder/views/screens/order/order_screen.dart';
 import 'package:myorder/views/screens/utilities/utils_screen.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 List pages = [
   const HomePage(),
@@ -187,6 +188,34 @@ const marginRight20 = SizedBox(width: 20);
 
 const sizeIconLarge = 30;
 const sizeIconSmall = 20;
+
+
+
+//alert
+var alertStyle = AlertStyle(
+      animationType: AnimationType.fromTop,
+      isCloseButton: false,
+      isOverlayTapDismiss: false,
+      descStyle: const TextStyle(fontWeight: FontWeight.bold),
+      descTextAlign: TextAlign.start,
+      animationDuration: const Duration(milliseconds: 400),
+      alertBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0.0),
+        side: const BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      titleStyle: const TextStyle(
+        color: Colors.red,
+      ),
+      alertAlignment: Alignment.topCenter,
+    );
+
+var alertImageSuccess = Image.asset("assets/images/alert/3.0x/icon_success.png");
+var alertImageWarning = Image.asset("assets/images/alert/3.0x/icon_warning.png");
+var alertImageError = Image.asset("assets/images/alert/3.0x/icon_error.png");
+var alertImageInfo = Image.asset("assets/images/alert/3.0x/icon_info.png");
+
 
 // FIREBASE
 var firebaseAuth = FirebaseAuth.instance;

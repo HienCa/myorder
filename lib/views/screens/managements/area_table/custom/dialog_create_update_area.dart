@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/area/areas_controller.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class CustomDialogCreateUpdateArea extends StatefulWidget {
   final bool isUpdate;
@@ -79,15 +80,14 @@ class _CustomDialogCreateUpdateAreaState
                           borderSide: BorderSide(color: Colors.grey)),
                       errorText: isErrorTextName ? errorTextName : null,
                       errorStyle: textStyleErrorInput),
-                  maxLength: 50,
-                  autofocus: true,
+                  maxLength: maxlengthAreaName,
                   onChanged: (value) => {
                         if (value.trim().length > maxlengthAreaName ||
-                            value.trim().length <= minlengthAreaName)
+                            value.trim().length <= minlengthAreaTableName)
                           {
                             setState(() {
                               errorTextName =
-                                  "Từ $minlengthAreaName đến $maxlengthAreaName ký tự.";
+                                  "Từ $minlengthAreaTableName đến $maxlengthAreaName ký tự.";
                               isErrorTextName = true;
                             })
                           }
@@ -166,7 +166,19 @@ class _CustomDialogCreateUpdateAreaState
                       else
                         {
                           print("Chưa nhập đủ trường"),
+                          Alert(
+                            context: context,
+                            title: "THÔNG BÁO",
+                            desc: "Thông tin chưa chính xác!",
+                            image: alertImageError,
+                            buttons: [],
+                            
+                          ).show(),
+                          Future.delayed(const Duration(seconds: 2), () {
+                            Navigator.pop(context);
+                          })
                         }
+                        
                     },
                     child: Container(
                       height: 50,

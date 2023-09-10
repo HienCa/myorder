@@ -11,6 +11,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/employees/employees_controller.dart';
 
 import 'package:myorder/utils.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AddEmployeePage extends StatefulWidget {
   const AddEmployeePage({
@@ -543,8 +544,8 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
                                           BorderRadius.all(Radius.circular(5))),
                                   child: const Align(
                                     alignment: Alignment.center,
-                                    child:
-                                        Text("QUAY LẠI", style: buttonStyleCancel),
+                                    child: Text("QUAY LẠI",
+                                        style: buttonStyleCancel),
                                   ),
                                 ),
                               ),
@@ -581,6 +582,17 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
                                   else
                                     {
                                       print("Chưa nhập đủ trường"),
+                                      Alert(
+                                        context: context,
+                                        title: "THÔNG BÁO",
+                                        desc: "Thông tin chưa chính xác!",
+                                        image: alertImageError,
+                                        buttons: [],
+                                      ).show(),
+                                      Future.delayed(const Duration(seconds: 2),
+                                          () {
+                                        Navigator.pop(context);
+                                      })
                                     }
                                 },
                                 child: Container(

@@ -58,7 +58,7 @@ class UnitController extends GetxController {
 
         model.Unit unit = model.Unit(
           unit_id: 'Unit-$len',
-          name: name,
+          name: name.trim(),
           active: 1,
         );
         CollectionReference usersCollection =
@@ -98,7 +98,7 @@ class UnitController extends GetxController {
   ) async {
     try {
       await firestore.collection('units').doc(unit_id).update({
-        "name": name,
+        "name": name.trim(),
       });
       Get.snackbar(
         'THÀNH CÔNG!',

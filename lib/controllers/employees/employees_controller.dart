@@ -141,7 +141,7 @@ class EmployeeController extends GetxController {
           address.isNotEmpty &&
           role.isNotEmpty) {
         UserCredential cred = await firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
+          email: email.trim(),
           password: password,
         );
 
@@ -152,19 +152,19 @@ class EmployeeController extends GetxController {
 
         model.Employee employee = model.Employee(
           employee_id: cred.user!.uid,
-          name: name,
+          name: name.trim(),
           avatar: downloadUrl,
-          cccd: cccd,
+          cccd: cccd.trim(),
           gender: gender,
-          birthday: birthday,
-          phone: phone,
-          email: email,
-          password: password,
-          city: city,
-          district: district,
-          ward: ward,
-          address: address,
-          role: role,
+          birthday: birthday.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
+          password: password.trim(),
+          city: city.trim(),
+          district: district.trim(),
+          ward: ward.trim(),
+          address: address.trim(),
+          role: role.trim(),
           active: 1,
         );
         CollectionReference usersCollection =
@@ -227,19 +227,19 @@ class EmployeeController extends GetxController {
         downloadUrl = await _uploadToStorage(image);
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
         await firestore.collection('employees').doc(employee_id).update({
-          "name": name,
+          "name": name.trim(),
           "avatar": downloadUrl,
-          "cccd": cccd,
-          "gender": gender,
-          "birthday": birthday,
-          "phone": phone,
-          "email": email,
-          "password": password,
-          "city": city,
-          "district": district,
-          "ward": ward,
-          "address": address,
-          "role": role,
+          "cccd": cccd.trim(),
+          "gender": gender.trim(),
+          "birthday": birthday.trim(),
+          "phone": phone.trim(),
+          "email": email.trim(),
+          "password": password.trim(),
+          "city": city.trim(),
+          "district": district.trim(),
+          "ward": ward.trim(),
+          "address": address.trim(),
+          "role": role.trim(),
         });
       } else {
         print("NO Image Selected");
@@ -247,19 +247,19 @@ class EmployeeController extends GetxController {
 
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
         await firestore.collection('employees').doc(employee_id).update({
-          "name": name,
+          "name": name.trim(),
           "avatar": avatar,
-          "cccd": cccd,
-          "gender": gender,
-          "birthday": birthday,
-          "phone": phone,
-          "email": email,
-          "password": password,
-          "city": city,
-          "district": district,
-          "ward": ward,
-          "address": address,
-          "role": role,
+          "cccd": cccd.trim(),
+          "gender": gender.trim(),
+          "birthday": birthday.trim(),
+          "phone": phone.trim(),
+          "email": email.trim(),
+          "password": password.trim(),
+          "city": city.trim(),
+          "district": district.trim(),
+          "ward": ward.trim(),
+          "address": address.trim(),
+          "role": role.trim(),
         });
       }
       Get.snackbar(

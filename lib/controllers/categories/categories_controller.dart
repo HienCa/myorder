@@ -58,7 +58,7 @@ class CategoryController extends GetxController {
 
         model.Category category = model.Category(
           category_id: 'Category-$len',
-          name: name,
+          name: name.trim(),
           active: 1,
         );
         CollectionReference usersCollection =
@@ -98,7 +98,7 @@ class CategoryController extends GetxController {
   ) async {
     try {
       await firestore.collection('categories').doc(category_id).update({
-        "name": name,
+        "name": name.trim(),
       });
       Get.snackbar(
         'THÀNH CÔNG!',
