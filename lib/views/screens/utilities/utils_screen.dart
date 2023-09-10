@@ -4,6 +4,7 @@ import 'package:myorder/views/screens/managements/area_table/area_table_screen.d
 import 'package:myorder/views/screens/managements/categories/categories_screen.dart';
 import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
 import 'package:myorder/views/screens/managements/units/units_screen.dart';
+import 'package:myorder/views/screens/managements/vats/vats_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
 
 class UtilsPage extends StatelessWidget {
@@ -95,6 +96,23 @@ class UtilsPage extends StatelessWidget {
                   decoration: const BoxDecoration(color: backgroundColor),
                   child: Column(
                     children: [
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManagementVatsPage()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.ad_units, color: iconColor),
+                          title: Text("Quản lý vats",
+                              style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
+                      ),
+                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(

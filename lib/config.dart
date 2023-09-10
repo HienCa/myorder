@@ -59,6 +59,7 @@ const minlengthAreaName = 2;
 const maxlength50 = 50;
 const maxlength255 = 50;
 const minlength1 = 1;
+const minlength2 = 2;
 const minlength0 = 0;
 
 final List<String> ROLE_OPTION = <String>[

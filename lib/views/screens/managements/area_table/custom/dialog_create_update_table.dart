@@ -83,6 +83,7 @@ class _CustomDialogCreateUpdateTableState
           (area) => area.area_id == widget.area_id,
           orElse: () => Area(area_id: "", name: "", active: 1),
         );
+        // textSearchAreaController.text = selectedValue!.name;
       });
     });
   }
@@ -184,8 +185,8 @@ class _CustomDialogCreateUpdateTableState
                         ],
                         decoration: InputDecoration(
                             labelStyle: textStyleInput,
-                            labelText: "Số khách",
-                            hintText: 'Nhập số khách của bàn',
+                              labelText: "Số khách",
+                                hintText: 'Nhập số khách của bàn',
                             hintStyle: const TextStyle(color: Colors.grey),
                             border: const OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.grey)),
@@ -295,7 +296,7 @@ class _CustomDialogCreateUpdateTableState
                                         child: TextFormField(
                                           expands: true,
                                           maxLines: null,
-                                          controller: areaIdController,
+                                          controller: textSearchAreaController,
                                           decoration: InputDecoration(
                                             isDense: true,
                                             contentPadding:
@@ -315,6 +316,7 @@ class _CustomDialogCreateUpdateTableState
                                       ),
                                       searchMatchFn: (item, searchValue) {
                                         print("Search Value: $searchValue");
+                                       
                                         return item.value!.name
                                             .toLowerCase()
                                             .toString()

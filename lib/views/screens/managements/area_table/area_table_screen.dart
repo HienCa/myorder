@@ -18,42 +18,6 @@ class ManagementAreaTablePage extends StatefulWidget {
 }
 
 class _ManagementAreaTablePageState extends State<ManagementAreaTablePage> {
-  TextStyle headingStyle = const TextStyle(
-      fontSize: 16, fontWeight: FontWeight.w600, color: primaryColor);
-
-  bool lockAppSwitchVal = true;
-  bool fingerprintSwitchVal = false;
-  bool changePassSwitchVal = true;
-
-  TextStyle headingStyleIOS = const TextStyle(
-    fontWeight: FontWeight.w600,
-    fontSize: 16,
-    color: CupertinoColors.inactiveGray,
-  );
-  TextStyle descStyleIOS = const TextStyle(color: CupertinoColors.inactiveGray);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: primaryColor,
-            secondary: primaryColor,
-          ),
-        ),
-        home: const AreaTableTab());
-  }
-}
-
-class AreaTableTab extends StatefulWidget {
-  const AreaTableTab({Key? key}) : super(key: key);
-
-  @override
-  State<AreaTableTab> createState() => _AreaTableTabState();
-}
-
-class _AreaTableTabState extends State<AreaTableTab> {
   AreaController areaController = Get.put(AreaController());
   TableController tableController = Get.put(TableController());
 
@@ -66,6 +30,7 @@ class _AreaTableTabState extends State<AreaTableTab> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
+            backgroundColor: primaryColor,
             leading: InkWell(
                 onTap: () => {Navigator.pop(context)},
                 child: const Icon(
@@ -73,6 +38,14 @@ class _AreaTableTabState extends State<AreaTableTab> {
                   color: Colors.white,
                 )),
             bottom: const TabBar(
+              indicator: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: backgroundColor, 
+                    width: 2.5, 
+                  ),
+                ),
+              ),
               tabs: [
                 Tab(
                   text: "QUẢN LÝ KHU VỰC",
@@ -194,11 +167,16 @@ class _AreaTableTabState extends State<AreaTableTab> {
                                           builder: (BuildContext context) {
                                             return CustomDialogCreateUpdateTable(
                                               isUpdate: true,
-                                              name:  tableController.tables[i].name,
-                                              total_slot:  tableController.tables[i].total_slot,
-                                              table_id:  tableController.tables[i].table_id,
-                                              active:  tableController.tables[i].active,
-                                              area_id:  tableController.tables[i].area_id,
+                                              name: tableController
+                                                  .tables[i].name,
+                                              total_slot: tableController
+                                                  .tables[i].total_slot,
+                                              table_id: tableController
+                                                  .tables[i].table_id,
+                                              active: tableController
+                                                  .tables[i].active,
+                                              area_id: tableController
+                                                  .tables[i].area_id,
                                             );
                                           },
                                         )
@@ -206,21 +184,24 @@ class _AreaTableTabState extends State<AreaTableTab> {
                                       child: Stack(
                                         alignment: Alignment.center,
                                         children: [
-                                          tableController.tables[i].active == ACTIVE ? ClipOval(
-                                            child: Image.asset(
-                                              "assets/images/icon-table-simple-serving.jpg",
-                                              width: 100,
-                                              height: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ): ClipOval(
-                                            child: Image.asset(
-                                              "assets/images/icon-table-simple-empty.jpg",
-                                              width: 100,
-                                              height: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
+                                          tableController.tables[i].active ==
+                                                  ACTIVE
+                                              ? ClipOval(
+                                                  child: Image.asset(
+                                                    "assets/images/icon-table-simple-serving.jpg",
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                              : ClipOval(
+                                                  child: Image.asset(
+                                                    "assets/images/icon-table-simple-empty.jpg",
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                           Text(
                                             tableController.tables[i].name,
                                             style: const TextStyle(
