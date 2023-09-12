@@ -1,31 +1,31 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Food {
   String food_id;
   String name;
-  String? avatar;
-  Double price;
-  String is_vat;
-  Double? price_with_temporary;
+  String? image;
+  double  price;
+  String vat_id;
+  double? price_with_temporary;
   DateTime? temporary_price_from_date;
   DateTime? temporary_price_to_date;
-  Double? temporary_price;
-  Double? temporary_percent;
+  double ? temporary_price;
+  double ? temporary_percent;
   int active;
   String category_id;
   String unit_id;
 
-
   Food({
       required this.food_id,
       required this.name,
-               this.avatar,
+               this.image,
       required this.price,
-      required this.is_vat,
+      required this.vat_id,
                this.price_with_temporary,
                this.temporary_price_from_date,
                this.temporary_price_to_date,
@@ -39,9 +39,9 @@ class Food {
   Map<String, dynamic> toJson() => {
         "food_id": food_id,
         "name": name,
-        "avatar": avatar,
+        "image": image,
         "price": price,
-        "is_vat": is_vat,
+        "vat_id": vat_id,
         "price_with_temporary": price_with_temporary,
         "temporary_price_from_date": temporary_price_from_date,
         "temporary_price_to_date": temporary_price_to_date,
@@ -57,9 +57,9 @@ class Food {
     return Food(
       food_id: snapshot['food_id'],
       name: snapshot['name'],
-      avatar: snapshot['avatar'],
+      image: snapshot['image'],
       price: snapshot['price'],
-      is_vat: snapshot['is_vat'],
+      vat_id: snapshot['vat_id'],
       price_with_temporary: snapshot['price_with_temporary'],
       temporary_price_from_date: snapshot['temporary_price_from_date'],
       temporary_price_to_date: snapshot['temporary_price_to_date'],

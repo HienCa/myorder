@@ -3,6 +3,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/managements/area_table/area_table_screen.dart';
 import 'package:myorder/views/screens/managements/categories/categories_screen.dart';
 import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
+import 'package:myorder/views/screens/managements/foods/foods_screen.dart';
 import 'package:myorder/views/screens/managements/units/units_screen.dart';
 import 'package:myorder/views/screens/managements/vats/vats_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
@@ -181,12 +182,21 @@ class UtilsPage extends StatelessWidget {
                         ),
                       ),
                       const Divider(),
-                      const ListTile(
-                        leading: Icon(Icons.menu_book, color: iconColor),
-                        title: Text("Quản lý thực đơn",
-                            style: textStyleBlackRegular),
-                        trailing: Icon(Icons.arrow_forward_ios_outlined,
-                            color: iconColor),
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManagementFoodsPage()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.menu_book, color: iconColor),
+                          title: Text("Quản lý thực đơn",
+                              style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
                       ),
                       const Divider(),
                       const ListTile(
