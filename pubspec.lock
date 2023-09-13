@@ -153,6 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.5"
+  f_datetimerangepicker:
+    dependency: "direct main"
+    description:
+      name: f_datetimerangepicker
+      sha256: f87b99ea45a4862038fac617d22b24c2cbe879e3634a91aed401fc0485097ff6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   fake_async:
     dependency: transitive
     description:

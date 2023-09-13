@@ -1,11 +1,14 @@
-// ignore_for_file: avoid_single_cascade_in_expression_statements, avoid_print
+// ignore_for_file: avoid_single_cascade_in_expression_statements, avoid_print, use_build_context_synchronously
 
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
@@ -18,6 +21,8 @@ import 'package:myorder/models/food.dart';
 import 'package:myorder/models/unit.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/models/category.dart' as model;
+import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/picker_date_time.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -84,25 +89,47 @@ class _AddFoodPageState extends State<AddFoodPage> {
 
   Future<void> _selectTemporaryFromDate(BuildContext context) async {
     final DateTime currentDate = DateTime.now();
-    final DateTime minDate =
-        DateTime(currentDate.year - 16, currentDate.month, currentDate.day);
-
-    final DateTime picked = (await showDatePicker(
+    final TimeOfDay currentTime = TimeOfDay.fromDateTime(currentDate);
+    final DateTime pickedDate = (await showDatePicker(
           context: context,
-          initialDate: _selectedtemporaryPriceFromDate ?? minDate,
-          firstDate: DateTime(1900), // Bất kỳ năm nào trước năm 2007
-          lastDate: minDate, // Không cho phép chọn sau ngày hiện tại - 16 năm
+          initialDate: _selectedtemporaryPriceFromDate ?? currentDate,
+          firstDate: currentDate,
+          lastDate:
+              DateTime(2200), // You can adjust this to a suitable maximum date.
         )) ??
-        minDate;
+        currentDate;
 
-    if (picked != _selectedtemporaryPriceFromDate) {
+    final TimeOfDay pickedTime = (await showTimePicker(
+          context: context,
+          initialTime:
+              TimeOfDay(hour: currentTime.hour, minute: currentTime.minute),
+        )) ??
+        TimeOfDay(hour: currentTime.hour, minute: currentTime.minute);
+
+    final DateTime pickedDateTime = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+
+    if (pickedDateTime.isAfter(currentDate)) {
       setState(() {
-        _selectedtemporaryPriceFromDate = picked;
+        isErrorTextTemporaryPriceFromDate = false;
+        errorTextTemporaryPriceFromDate = "";
+
+        _selectedtemporaryPriceFromDate = pickedDateTime;
         temporaryPriceFromDateController.text =
-            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+            "${pickedDateTime.day.toString().padLeft(2, '0')}/${pickedDateTime.month.toString().padLeft(2, '0')}/${pickedDateTime.year} ${pickedTime.format(context)}";
 
         temporaryPriceFromDate =
-            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+            "${pickedDateTime.day.toString().padLeft(2, '0')}/${pickedDateTime.month.toString().padLeft(2, '0')}/${pickedDateTime.year} ${pickedTime.format(context)}";
+      });
+    } else {
+      setState(() {
+        isErrorTextTemporaryPriceFromDate = true;
+        errorTextTemporaryPriceFromDate = "Thời gian phải lớn hơn hiện tại.";//SHOW DIALOG
       });
     }
   }
@@ -268,6 +295,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
     return categoryList;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -375,6 +403,57 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                       errorTextName = "";
                                       isErrorTextName = false;
                                     })
+                                  }
+                              }),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextField(
+                          controller: priceController,
+                          style: textStyleInput,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter
+                                .digitsOnly, // Only allows digits
+                          ],
+                          decoration: InputDecoration(
+                              labelStyle: textStyleInput,
+                              labelText: "Giá tiền",
+                              hintText: 'Nhập giá món ăn',
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              errorText:
+                                  isErrorTextPrice ? errorTextPrice : null,
+                              errorStyle: textStyleErrorInput),
+                          maxLength: 50,
+                          // autofocus: true,
+                          onChanged: (value) => {
+                                priceController.text = priceController.text
+                                    .replaceFirst(RegExp(r'0'), ''),
+                                if (int.tryParse(priceController.text)! > 100 &&
+                                    int.tryParse(priceController.text)! <=
+                                        1000000000)
+                                  {
+                                    setState(() {
+                                      errorTextPrice = "";
+                                      isErrorTextPrice = false;
+                                    })
+                                  }
+                                else
+                                  {
+                                    setState(() {
+                                      errorTextPrice =
+                                          "Giá món ăn phải lớn hơn 100đ";
+                                      isErrorTextPrice = true;
+                                    }),
+                                    if (int.tryParse(priceController.text)! >=
+                                        1000000000)
+                                      {
+                                        priceController.text = "1000000000",
+                                        errorTextPrice = "",
+                                        isErrorTextPrice = false
+                                      }
                                   }
                               }),
                       Container(
@@ -766,46 +845,33 @@ class _AddFoodPageState extends State<AddFoodPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
+                     
                       const SizedBox(
                         height: 20,
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 10),
-                        height: 30,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Ngày sinh:',
-                              style: textStyleInput,
-                            ),
-                            const Text(
-                              '     ',
-                              style: textStyleInput,
-                            ),
-                            Expanded(
-                              child: TextField(
-                                controller: temporaryPriceFromDateController,
-                                readOnly: true,
-                                onTap: () {
-                                  _selectTemporaryFromDate(context);
-                                },
-                                keyboardType: TextInputType.datetime,
-                                style: textStyleInput,
-                                decoration: const InputDecoration(
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    border: InputBorder.none,
-                                    suffixIcon: Icon(Icons.calendar_today),
-                                    suffixStyle: textStyleInput),
-                              ),
-                            ),
-                          ],
-                        ),
+                      TextField(
+                        controller: temporaryPriceFromDateController,
+                        style: textStyleInput,
+                        readOnly: true,
+                        onTap: () {
+                          _selectTemporaryFromDate(context);
+                        },
+                        keyboardType: TextInputType.datetime,
+
+                        decoration: InputDecoration(
+                            labelStyle: textStyleInput,
+                            labelText: "Thời gian bắt đầu",
+                            hintText: 'Chọn thời gian bắt đầu',
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            suffixIcon: const Icon(Icons.calendar_today),
+                            border: InputBorder.none,
+                            errorText: isErrorTextTemporaryPriceFromDate
+                                ? errorTextTemporaryPriceFromDate
+                                : null,
+                            errorStyle: textStyleErrorInput),
+                        // autofocus: true,
                       ),
+                      
                       const SizedBox(
                         height: 20,
                       ),

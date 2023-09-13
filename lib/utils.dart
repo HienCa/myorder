@@ -1,10 +1,15 @@
 
+// ignore_for_file: depend_on_referenced_packages
 
+import 'package:intl/intl.dart';
 
 //Các phương phức hay dùng
 class Utils {
   //block special characterset
-
+  static String getFormattedDateSimple(int time) {
+    DateFormat newFormat = DateFormat("MMMM dd, yyyy");
+    return newFormat.format(DateTime.fromMillisecondsSinceEpoch(time));
+  }
   //block space
   static String removeWhitespace(String input) {
     return input.replaceAll(' ', '');
