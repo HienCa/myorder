@@ -4,6 +4,7 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/foods/add_food_screen.dart';
 import 'package:myorder/views/screens/managements/foods/detail_food_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
@@ -70,15 +71,8 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                 onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => FoodDetailPage(
-                                              foodId: food.food_id,
-                                              name: '',
-                                              price: food.price,
-                                              active: food.active,
-                                              vat_id: food.vat_id,
-                                              category_id: food.category_id,
-                                              unit_id: food.unit_id,
-                                            ))),
+                                        builder: (context) =>
+                                            FoodDetailPage(food: foodController.foods[index]))),
                                 child: food.image != ""
                                     ? CircleAvatar(
                                         radius: 25,
@@ -102,13 +96,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 FoodDetailPage(
-                                                  foodId: food.food_id,
-                                                  name: '',
-                                                  price: food.price,
-                                                  active: food.active,
-                                                  vat_id: food.vat_id,
-                                                  category_id: food.category_id,
-                                                  unit_id: food.unit_id,
+                                                  food: food,
                                                 ))),
                                     child: Marquee(
                                       direction: Axis.horizontal,
@@ -134,20 +122,14 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => FoodDetailPage(
-                                              foodId: food.food_id,
-                                              name: '',
-                                              price: food.price,
-                                              active: food.active,
-                                              vat_id: food.vat_id,
-                                              category_id: food.category_id,
-                                              unit_id: food.unit_id,
+                                              food: food,
                                             ))),
                                 child: RichText(
                                   text: TextSpan(
-                                    text: "${food.price}",
+                                    text: Utils.formatCurrency(food.price),
                                     style: const TextStyle(
-                                        color: Colors
-                                            .black), // Đặt kiểu cho văn bản
+                                        color:
+                                            colorPrice), // Đặt kiểu cho văn bản
                                   ),
                                   maxLines: 5, // Giới hạn số dòng hiển thị
                                   overflow: TextOverflow

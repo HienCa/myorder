@@ -50,128 +50,132 @@ class _AddUnitPageState extends State<AddUnitPage> {
         title: const Center(child: Text("THÊM MỚI ĐƠN VỊ TÍNH")),
         backgroundColor: primaryColor,
       ),
-      body: SingleChildScrollView(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.all(10.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextField(
-                          controller: nameController,
-                          style: textStyleInput,
-                          decoration: InputDecoration(
-                              labelStyle: textStyleInput,
-                              labelText: "Tên đơn vị tính",
-                              hintText: 'Nhập tên đơn vị tính',
-                              hintStyle: const TextStyle(color: Colors.grey),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey)),
-                              errorText: isErrorTextName ? errorTextName : null,
-                              errorStyle: textStyleErrorInput),
-                          maxLength: 50,
-                          // autofocus: true,
-                          onChanged: (value) => {
-                                if (value.trim().length > maxlengthUnitName ||
-                                    value.trim().length <= minlengthUnitName)
-                                  {
-                                    setState(() {
-                                      errorTextName =
-                                          "Từ $minlengthUnitName đến $maxlengthUnitName ký tự.";
-                                      isErrorTextName = true;
-                                    })
-                                  }
-                                else
-                                  {
-                                    setState(() {
-                                      errorTextName = "";
-                                      isErrorTextName = false;
-                                    })
-                                  }
-                              }),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      SizedBox(
-                        height: 50,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () => {Navigator.pop(context)},
-                                child: Container(
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                      color: dividerColor,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5))),
-                                  child: const Align(
-                                    alignment: Alignment.center,
-                                    child: Text("QUAY LẠI",
-                                        style: buttonStyleCancel),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () => {
-                                  if (!isErrorTextName)
+      body: Theme(
+        data: ThemeData(unselectedWidgetColor: primaryColor),
+        child: SingleChildScrollView(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(10.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextField(
+                            controller: nameController,
+                            style: textStyleInput,
+                            decoration: InputDecoration(
+                                labelStyle: textStyleInput,
+                                labelText: "Tên đơn vị tính",
+                                hintText: 'Nhập tên đơn vị tính',
+                                hintStyle: const TextStyle(color: Colors.grey),
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey)),
+                                errorText:
+                                    isErrorTextName ? errorTextName : null,
+                                errorStyle: textStyleErrorInput),
+                            maxLength: 50,
+                            // autofocus: true,
+                            onChanged: (value) => {
+                                  if (value.trim().length > maxlengthUnitName ||
+                                      value.trim().length <= minlengthUnitName)
                                     {
-                                      unitController.createUnit(
-                                        nameController.text,
-                                      ),
-                                      Navigator.pop(context)
+                                      setState(() {
+                                        errorTextName =
+                                            "Từ $minlengthUnitName đến $maxlengthUnitName ký tự.";
+                                        isErrorTextName = true;
+                                      })
                                     }
                                   else
                                     {
-                                      print("Chưa nhập đủ trường"),
-                                      Alert(
-                                        context: context,
-                                        title: "THÔNG BÁO",
-                                        desc: "Thông tin chưa chính xác!",
-                                        image: alertImageError,
-                                        buttons: [],
-                                      ).show(),
-                                      Future.delayed(const Duration(seconds: 2),
-                                          () {
-                                        Navigator.pop(context);
+                                      setState(() {
+                                        errorTextName = "";
+                                        isErrorTextName = false;
                                       })
                                     }
-                                },
-                                child: Container(
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                    color: primaryColor,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  child: const Align(
-                                    alignment: Alignment.center,
-                                    child: Text("THÊM MỚI",
-                                        style: buttonStyleBlackBold),
+                                }),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.65,
+                        ),
+                        SizedBox(
+                          height: 50,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () => {Navigator.pop(context)},
+                                  child: Container(
+                                    height: 50,
+                                    decoration: const BoxDecoration(
+                                        color: dividerColor,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5))),
+                                    child: const Align(
+                                      alignment: Alignment.center,
+                                      child: Text("QUAY LẠI",
+                                          style: buttonStyleCancel),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () => {
+                                    if (!isErrorTextName)
+                                      {
+                                        unitController.createUnit(
+                                          nameController.text,
+                                        ),
+                                        Navigator.pop(context)
+                                      }
+                                    else
+                                      {
+                                        print("Chưa nhập đủ trường"),
+                                        Alert(
+                                          context: context,
+                                          title: "THÔNG BÁO",
+                                          desc: "Thông tin chưa chính xác!",
+                                          image: alertImageError,
+                                          buttons: [],
+                                        ).show(),
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
+                                          Navigator.pop(context);
+                                        })
+                                      }
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    decoration: const BoxDecoration(
+                                      color: primaryColor,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                    ),
+                                    child: const Align(
+                                      alignment: Alignment.center,
+                                      child: Text("THÊM MỚI",
+                                          style: buttonStyleBlackBold),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          )),
+              ],
+            )),
+      ),
     );
   }
 }

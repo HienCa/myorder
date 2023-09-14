@@ -1,15 +1,45 @@
-
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 //Các phương phức hay dùng
 class Utils {
+  static String convertTimestampToFormatDateVN(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate(); // Get the DateTime object
+    String formattedDateTime = DateFormat('dd/MM/yyyy HH:mm')
+        .format(dateTime); // Format DateTime as a string
+    return formattedDateTime;
+  }
+
+  static String convertTextFieldPrice(String input) {
+    final formatter = NumberFormat("#,###");
+    return formatter.format(int.parse(input));
+  }
+
+  static String formatCurrency(double amount) {
+    final currencyFormatter = NumberFormat("#,##0", "vi_VN");
+    String formattedAmount = currencyFormatter.format(amount);
+
+    // Kiểm tra và loại bỏ phần .00 nếu có
+    if (formattedAmount.endsWith('.00')) {
+      formattedAmount =
+          formattedAmount.substring(0, formattedAmount.length - 3);
+    }
+
+    return formattedAmount;
+  }
+
+  static String formatCurrencytoDouble(String amount) {
+    return amount.replaceAll(RegExp(r','), "");
+  }
+
   //block special characterset
   static String getFormattedDateSimple(int time) {
     DateFormat newFormat = DateFormat("MMMM dd, yyyy");
     return newFormat.format(DateTime.fromMillisecondsSinceEpoch(time));
   }
+
   //block space
   static String removeWhitespace(String input) {
     return input.replaceAll(' ', '');

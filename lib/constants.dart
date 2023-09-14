@@ -41,6 +41,7 @@ const kDefaultShadow = BoxShadow(
 const primaryColor = Color(0xFF40BAD5);
 const activeColor = Color(0xFF40BAD5);
 const deActiveColor = Colors.grey;
+const colorPrice = Colors.orangeAccent;
 
 var primaryColorOpacity = const Color(0xFF40BAD5).withOpacity(0.2);
 var chooseColorOpacity = const Color(0xFF40BAD5);
@@ -54,7 +55,6 @@ const cancelFoodColor = Color.fromARGB(255, 224, 24, 24);
 //border color
 const borderColorPrimary = Color(0xFF40BAD5);
 const borderColorTextField = Color.fromARGB(255, 232, 236, 237);
-
 // background
 const backgroundColor = Colors.white;
 const backgroundColorGray = Color.fromARGB(255, 245, 241, 241);

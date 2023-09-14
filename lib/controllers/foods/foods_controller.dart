@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names, avoid_print
 
-import 'dart:ffi';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/models/food.dart';
 import 'package:myorder/models/food.dart' as model;
 
 class FoodController extends GetxController {
@@ -62,12 +60,14 @@ class FoodController extends GetxController {
           String image = foodData['image'] ?? "";
           double price = foodData['price'] ?? 0;
           double price_with_temporary = foodData['price_with_temporary'] ?? 0;
-          DateTime temporary_price_from_date =
+          print(price_with_temporary);
+          print(foodData['price_with_temporary']);
+          Timestamp temporary_price_from_date =
               foodData['temporary_price_from_date'];
-          DateTime temporary_price_to_date =
+          Timestamp temporary_price_to_date =
               foodData['temporary_price_to_date'];
-          double temporary_price = foodData['temporary_price'] ?? 0;
-          double temporary_percent = foodData['temporary_percent'] ?? 0;
+          // double temporary_price = foodData['temporary_price'] ?? 0;
+          // double temporary_percent = foodData['temporary_percent'] ?? 0;
           String category_id = foodData['category_id'] ?? "";
           String unit_id = foodData['unit_id'] ?? "";
           String vat_id = foodData['vat_id'] ?? "";
@@ -81,8 +81,8 @@ class FoodController extends GetxController {
             price_with_temporary: price_with_temporary,
             temporary_price_from_date: temporary_price_from_date,
             temporary_price_to_date: temporary_price_to_date,
-            temporary_price: temporary_price,
-            temporary_percent: temporary_percent,
+            // temporary_price: temporary_price,
+            // temporary_percent: temporary_percent,
             category_id: category_id,
             unit_id: unit_id,
             vat_id: vat_id,
@@ -96,15 +96,15 @@ class FoodController extends GetxController {
     }
   }
 
-  final Rx<List<Food>> _foods = Rx<List<Food>>([]);
-  List<Food> get foods => _foods.value;
+  final Rx<List<model.Food>> _foods = Rx<List<model.Food>>([]);
+  List<model.Food> get foods => _foods.value;
   getfoods() async {
     _foods.bindStream(
       firestore.collection('foods').snapshots().map(
         (QuerySnapshot query) {
-          List<Food> retValue = [];
+          List<model.Food> retValue = [];
           for (var element in query.docs) {
-            retValue.add(Food.fromSnap(element));
+            retValue.add(model.Food.fromSnap(element));
           }
           return retValue;
         },
@@ -117,19 +117,15 @@ class FoodController extends GetxController {
     File? image,
     String price,
     String? price_with_temporary,
-    String? temporary_price_from_date,
-    String? temporary_price_to_date,
-    String? temporary_price,
-    String? temporary_percent,
+    DateTime? temporary_price_from_date,
+    DateTime? temporary_price_to_date,
+
     String category_id,
     String unit_id,
-    String vat_id,
+    String? vat_id,
   ) async {
     try {
-      if (name.isNotEmpty &&
-          vat_id.isNotEmpty &&
-          category_id.isNotEmpty &&
-          unit_id.isNotEmpty) {
+      if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
         String downloadUrl = "";
         if (image != null) {
           downloadUrl = await _uploadToStorage(image);
@@ -145,11 +141,10 @@ class FoodController extends GetxController {
             price: double.tryParse(price) ?? 0.0,
             price_with_temporary: double.tryParse(price_with_temporary!) ?? 0.0,
             temporary_price_from_date:
-                DateTime.tryParse(temporary_price_from_date!),
+                Timestamp.fromDate(temporary_price_from_date!),
             temporary_price_to_date:
-                DateTime.tryParse(temporary_price_to_date!),
-            temporary_price: double.tryParse(temporary_price!) ?? 0.0,
-            temporary_percent: double.tryParse(temporary_percent!) ?? 0.0,
+                Timestamp.fromDate(temporary_price_to_date!),
+
             category_id: category_id,
             unit_id: unit_id,
             vat_id: vat_id,
@@ -167,11 +162,10 @@ class FoodController extends GetxController {
             price: double.tryParse(price) ?? 0.0,
             price_with_temporary: double.tryParse(price_with_temporary!) ?? 0.0,
             temporary_price_from_date:
-                DateTime.tryParse(temporary_price_from_date!),
+                Timestamp.fromDate(temporary_price_from_date!),
             temporary_price_to_date:
-                DateTime.tryParse(temporary_price_to_date!),
-            temporary_price: double.tryParse(temporary_price!) ?? 0.0,
-            temporary_percent: double.tryParse(temporary_percent!) ?? 0.0,
+                Timestamp.fromDate(temporary_price_to_date!),
+
             category_id: category_id,
             unit_id: unit_id,
             vat_id: vat_id,
@@ -217,10 +211,8 @@ class FoodController extends GetxController {
     File? newImage,
     String price,
     String? price_with_temporary,
-    String? temporary_price_from_date,
-    String? temporary_price_to_date,
-    String? temporary_price,
-    String? temporary_percent,
+    DateTime? temporary_price_from_date,
+    DateTime? temporary_price_to_date,
     String category_id,
     String unit_id,
     String vat_id,
@@ -241,13 +233,12 @@ class FoodController extends GetxController {
           "food_id": food_id.trim(),
           "name": name.trim(),
           "image": downloadUrl,
-          "price": price,
+          "price": double.tryParse(price) ?? 0.0,
           "vat_id": vat_id.trim(),
-          "price_with_temporary": price_with_temporary,
+          "price_with_temporary": double.tryParse(price_with_temporary!) ?? 0.0,
           "temporary_price_from_date": temporary_price_from_date,
           "temporary_price_to_date": temporary_price_to_date,
-          "temporary_price": temporary_price,
-          "temporary_percent": temporary_percent,
+
           // "active": active,
           "category_id": category_id.trim(),
           "unit_id": unit_id.trim(),
@@ -261,13 +252,12 @@ class FoodController extends GetxController {
           "food_id": food_id.trim(),
           "name": name.trim(),
           "image": downloadUrl,
-          "price": price,
+          "price": double.tryParse(price) ?? 0.0,
           "vat_id": vat_id.trim(),
-          "price_with_temporary": price_with_temporary ?? 0,
+          "price_with_temporary": double.tryParse(price_with_temporary!) ?? 0.0,
           "temporary_price_from_date": temporary_price_from_date,
           "temporary_price_to_date": temporary_price_to_date,
-          "temporary_price": temporary_price ?? 0,
-          "temporary_percent": temporary_percent ?? 0,
+
           // "active": active,
           "category_id": category_id.trim(),
           "unit_id": unit_id.trim(),

@@ -1,8 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:ffi';
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Food {
@@ -10,12 +7,10 @@ class Food {
   String name;
   String? image;
   double  price;
-  String vat_id;
+  String? vat_id;
   double? price_with_temporary;
-  DateTime? temporary_price_from_date;
-  DateTime? temporary_price_to_date;
-  double ? temporary_price;
-  double ? temporary_percent;
+  Timestamp ? temporary_price_from_date;
+  Timestamp ? temporary_price_to_date;
   int active;
   String category_id;
   String unit_id;
@@ -25,12 +20,11 @@ class Food {
       required this.name,
                this.image,
       required this.price,
-      required this.vat_id,
+               this.vat_id,
                this.price_with_temporary,
                this.temporary_price_from_date,
                this.temporary_price_to_date,
-               this.temporary_price,
-               this.temporary_percent,
+
       required this.active,
       required this.category_id,
       required this.unit_id,      
@@ -45,8 +39,7 @@ class Food {
         "price_with_temporary": price_with_temporary,
         "temporary_price_from_date": temporary_price_from_date,
         "temporary_price_to_date": temporary_price_to_date,
-        "temporary_price": temporary_price,
-        "temporary_percent": temporary_percent,
+
         "active": active,
         "category_id": category_id,
         "unit_id": unit_id,
@@ -63,8 +56,7 @@ class Food {
       price_with_temporary: snapshot['price_with_temporary'],
       temporary_price_from_date: snapshot['temporary_price_from_date'],
       temporary_price_to_date: snapshot['temporary_price_to_date'],
-      temporary_price: snapshot['temporary_price'],
-      temporary_percent: snapshot['temporary_percent'],
+
       active: snapshot['active'],
       category_id: snapshot['category_id'],
       unit_id: snapshot['unit_id'],

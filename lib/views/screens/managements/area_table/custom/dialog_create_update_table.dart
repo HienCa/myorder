@@ -115,357 +115,360 @@ class _CustomDialogCreateUpdateTableState
       ),
       elevation: 5, // Độ nâng của bóng đổ
       backgroundColor: backgroundColor,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(top: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Center(
-                    child: Text(
-                      'BÀN',
-                      style: textStylePrimaryBold,
+      child: Theme(
+         data: ThemeData(unselectedWidgetColor: primaryColor),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'BÀN',
+                        style: textStylePrimaryBold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: TextField(
-                        controller: nameController,
-                        style: textStyleInput,
-                        decoration: InputDecoration(
-                            labelStyle: textStyleInput,
-                            labelText: "Tên bàn",
-                            hintText: 'Nhập tên bàn',
-                            hintStyle: const TextStyle(color: Colors.grey),
-                            border: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey)),
-                            errorText: isErrorTextName ? errorTextName : null,
-                            errorStyle: textStyleErrorInput),
-                        maxLength: maxlengthAreaTableName,
-                        // autofocus: true,
-                        onChanged: (value) => {
-                              if (value.trim().length >
-                                      maxlengthAreaTableName ||
-                                  value.trim().length < minlengthAreaTableName)
-                                {
-                                  setState(() {
-                                    errorTextName =
-                                        "Từ $minlengthAreaTableName đến $maxlengthAreaTableName ký tự.";
-                                    isErrorTextName = true;
-                                  })
-                                }
-                              else
-                                {
-                                  setState(() {
-                                    errorTextName = "";
-                                    isErrorTextName = false;
-                                  })
-                                }
-                            }),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: TextField(
-                        controller: totalSlotController,
-                        style: textStyleInput,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter
-                              .digitsOnly, // Only allows digits
-                        ],
-                        decoration: InputDecoration(
-                            labelStyle: textStyleInput,
-                              labelText: "Số khách",
-                                hintText: 'Nhập số khách của bàn',
-                            hintStyle: const TextStyle(color: Colors.grey),
-                            border: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey)),
-                            errorText: isErrorTextTotalSlot
-                                ? errorTextTotalSlot
-                                : null,
-                            errorStyle: textStyleErrorInput),
-                        maxLength: maxlength50,
-                        // autofocus: true,
-                        onChanged: (value) => {
-                              if (value.isEmpty || int.parse(value) <= 0)
-                                {
-                                  setState(() {
-                                    errorTextTotalSlot =
-                                        "Số lượng khách phải lơn hơn 1";
-                                    isErrorTextTotalSlot = true;
-                                  })
-                                }
-                              else
-                                {
-                                  setState(() {
-                                    errorTextTotalSlot = "";
-                                    isErrorTextTotalSlot = false;
-                                  })
-                                }
-                            }),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 10),
-                    height: 50,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              const Text(
-                                'Khu vực:',
-                                style: textStyleInput,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton2<Area>(
-                                    isExpanded: true,
-                                    hint: Text(
-                                      'Tìm kiếm khu vực',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Theme.of(context).hintColor,
-                                      ),
-                                    ),
-                                    items: areaList
-                                        .map((item) => DropdownMenuItem(
-                                              value: item,
-                                              child: Text(
-                                                item.name,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ))
-                                        .toList(),
-                                    value: selectedValue,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedValue = value;
-                                        print("area selected: " +
-                                            selectedValue!.area_id);
-                                        if (selectedValue!.area_id != "") {
-                                          isErrorTextAreaId = false;
-                                          areaIdController.text =
-                                              selectedValue!.area_id;
-                                        } else {
-                                          isErrorTextAreaId = true;
-                                        }
-                                      });
-                                    },
-                                    buttonStyleData: const ButtonStyleData(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                      height: 40,
-                                      width: 200,
-                                    ),
-                                    dropdownStyleData: const DropdownStyleData(
-                                      maxHeight: 200,
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      height: 40,
-                                    ),
-                                    dropdownSearchData: DropdownSearchData(
-                                      searchController:
-                                          textSearchAreaController,
-                                      searchInnerWidgetHeight: 50,
-                                      searchInnerWidget: Container(
-                                        height: 50,
-                                        padding: const EdgeInsets.only(
-                                          top: 8,
-                                          bottom: 4,
-                                          right: 8,
-                                          left: 8,
-                                        ),
-                                        child: TextFormField(
-                                          expands: true,
-                                          maxLines: null,
-                                          controller: textSearchAreaController,
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 8,
-                                            ),
-                                            hintText: 'Tìm kiếm khu vực...',
-                                            hintStyle:
-                                                const TextStyle(fontSize: 12),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      searchMatchFn: (item, searchValue) {
-                                        print("Search Value: $searchValue");
-                                       
-                                        return item.value!.name
-                                            .toLowerCase()
-                                            .toString()
-                                            .contains(
-                                                searchValue.toLowerCase());
-                                      },
-                                    ),
-                                    //This to clear the search value when you close the menu
-                                    onMenuStateChange: (isOpen) {
-                                      if (!isOpen) {
-                                        textSearchAreaController.clear();
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  isUpdate
-                      ? ListTile(
-                          leading: Theme(
-                            data:
-                                ThemeData(unselectedWidgetColor: primaryColor),
-                            child: Checkbox(
-                              value: isActive,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  isActive = value!;
-                                });
-                              },
-                              activeColor: primaryColor,
-                            ),
-                          ),
-                          title: const Text(
-                            "Đang hoạt động",
-                            style: textStylePriceBold16,
-                          ),
-                        )
-                      : const SizedBox(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: () => {Navigator.pop(context)},
-                          child: Container(
-                            height: 50,
-                            width: 136,
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              color: backgroundColorGray,
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'HỦY BỎ',
-                                style: textStyleCancel,
-                              ),
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => {
-                            print(isErrorTextName),
-                            print(isErrorTextAreaId),
-                            print(totalSlotController),
-                            if (!isErrorTextName &&
-                                !isErrorTextAreaId &&
-                                totalSlotController.text != "0")
-                              {
-                                if (widget.table_id != null &&
-                                    areaIdController.text != "")
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: TextField(
+                          controller: nameController,
+                          style: textStyleInput,
+                          decoration: InputDecoration(
+                              labelStyle: textStyleInput,
+                              labelText: "Tên bàn",
+                              hintText: 'Nhập tên bàn',
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              errorText: isErrorTextName ? errorTextName : null,
+                              errorStyle: textStyleErrorInput),
+                          maxLength: maxlengthAreaTableName,
+                          // autofocus: true,
+                          onChanged: (value) => {
+                                if (value.trim().length >
+                                        maxlengthAreaTableName ||
+                                    value.trim().length < minlengthAreaTableName)
                                   {
-                                    tableController.updateTable(
-                                        widget.table_id!,
-                                        nameController.text,
-                                        totalSlotController.text,
-                                        areaIdController.text,
-                                        isActive)
+                                    setState(() {
+                                      errorTextName =
+                                          "Từ $minlengthAreaTableName đến $maxlengthAreaTableName ký tự.";
+                                      isErrorTextName = true;
+                                    })
                                   }
                                 else
                                   {
-                                    if (areaIdController.text != "")
-                                      {
-                                        tableController.createTable(
-                                            nameController.text,
-                                            totalSlotController.text,
-                                            areaIdController.text),
-                                      }
-                                  },
-                                Navigator.pop(context),
-                              }
-                            else
-                              {
-                                print("Chưa nhập đủ trường"),
-                                Alert(
-                                  context: context,
-                                  title: "THÔNG BÁO",
-                                  desc: "Thông tin chưa chính xác!",
-                                  image: alertImageError,
-                                  buttons: [],
-                                ).show(),
-                                Future.delayed(const Duration(seconds: 2), () {
-                                  Navigator.pop(context);
-                                })
-                              }
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 136,
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              color: primaryColor,
-                            ),
-                            child: Center(
-                              child: isUpdate == true
-                                  ? const Text(
-                                      'CẬP NHẬT',
-                                      style: textStyleWhiteBold20,
-                                    )
-                                  : const Text(
-                                      'THÊM',
-                                      style: textStyleWhiteBold20,
+                                    setState(() {
+                                      errorTextName = "";
+                                      isErrorTextName = false;
+                                    })
+                                  }
+                              }),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: TextField(
+                          controller: totalSlotController,
+                          style: textStyleInput,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter
+                                .digitsOnly, // Only allows digits
+                          ],
+                          decoration: InputDecoration(
+                              labelStyle: textStyleInput,
+                                labelText: "Số khách",
+                                  hintText: 'Nhập số khách của bàn',
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              errorText: isErrorTextTotalSlot
+                                  ? errorTextTotalSlot
+                                  : null,
+                              errorStyle: textStyleErrorInput),
+                          maxLength: maxlength50,
+                          // autofocus: true,
+                          onChanged: (value) => {
+                                if (value.isEmpty || int.parse(value) <= 0)
+                                  {
+                                    setState(() {
+                                      errorTextTotalSlot =
+                                          "Số lượng khách phải lơn hơn 1";
+                                      isErrorTextTotalSlot = true;
+                                    })
+                                  }
+                                else
+                                  {
+                                    setState(() {
+                                      errorTextTotalSlot = "";
+                                      isErrorTextTotalSlot = false;
+                                    })
+                                  }
+                              }),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 10),
+                      height: 50,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const Text(
+                                  'Khu vực:',
+                                  style: textStyleInput,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<Area>(
+                                      isExpanded: true,
+                                      hint: Text(
+                                        'Tìm kiếm khu vực',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(context).hintColor,
+                                        ),
+                                      ),
+                                      items: areaList
+                                          .map((item) => DropdownMenuItem(
+                                                value: item,
+                                                child: Text(
+                                                  item.name,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ))
+                                          .toList(),
+                                      value: selectedValue,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedValue = value;
+                                          print("area selected: " +
+                                              selectedValue!.area_id);
+                                          if (selectedValue!.area_id != "") {
+                                            isErrorTextAreaId = false;
+                                            areaIdController.text =
+                                                selectedValue!.area_id;
+                                          } else {
+                                            isErrorTextAreaId = true;
+                                          }
+                                        });
+                                      },
+                                      buttonStyleData: const ButtonStyleData(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 16),
+                                        height: 40,
+                                        width: 200,
+                                      ),
+                                      dropdownStyleData: const DropdownStyleData(
+                                        maxHeight: 200,
+                                      ),
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        height: 40,
+                                      ),
+                                      dropdownSearchData: DropdownSearchData(
+                                        searchController:
+                                            textSearchAreaController,
+                                        searchInnerWidgetHeight: 50,
+                                        searchInnerWidget: Container(
+                                          height: 50,
+                                          padding: const EdgeInsets.only(
+                                            top: 8,
+                                            bottom: 4,
+                                            right: 8,
+                                            left: 8,
+                                          ),
+                                          child: TextFormField(
+                                            expands: true,
+                                            maxLines: null,
+                                            controller: textSearchAreaController,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 8,
+                                              ),
+                                              hintText: 'Tìm kiếm khu vực...',
+                                              hintStyle:
+                                                  const TextStyle(fontSize: 12),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        searchMatchFn: (item, searchValue) {
+                                          print("Search Value: $searchValue");
+                                         
+                                          return item.value!.name
+                                              .toLowerCase()
+                                              .toString()
+                                              .contains(
+                                                  searchValue.toLowerCase());
+                                        },
+                                      ),
+                                      //This to clear the search value when you close the menu
+                                      onMenuStateChange: (isOpen) {
+                                        if (!isOpen) {
+                                          textSearchAreaController.clear();
+                                        }
+                                      },
                                     ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    isUpdate
+                        ? ListTile(
+                            leading: Theme(
+                              data:
+                                  ThemeData(unselectedWidgetColor: primaryColor),
+                              child: Checkbox(
+                                value: isActive,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    isActive = value!;
+                                  });
+                                },
+                                activeColor: primaryColor,
+                              ),
+                            ),
+                            title: const Text(
+                              "Đang hoạt động",
+                              style: textStylePriceBold16,
+                            ),
+                          )
+                        : const SizedBox(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            onTap: () => {Navigator.pop(context)},
+                            child: Container(
+                              height: 50,
+                              width: 136,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                color: backgroundColorGray,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'HỦY BỎ',
+                                  style: textStyleCancel,
+                                ),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => {
+                              print(isErrorTextName),
+                              print(isErrorTextAreaId),
+                              print(totalSlotController),
+                              if (!isErrorTextName &&
+                                  !isErrorTextAreaId &&
+                                  totalSlotController.text != "0")
+                                {
+                                  if (widget.table_id != null &&
+                                      areaIdController.text != "")
+                                    {
+                                      tableController.updateTable(
+                                          widget.table_id!,
+                                          nameController.text,
+                                          totalSlotController.text,
+                                          areaIdController.text,
+                                          isActive)
+                                    }
+                                  else
+                                    {
+                                      if (areaIdController.text != "")
+                                        {
+                                          tableController.createTable(
+                                              nameController.text,
+                                              totalSlotController.text,
+                                              areaIdController.text),
+                                        }
+                                    },
+                                  Navigator.pop(context),
+                                }
+                              else
+                                {
+                                  print("Chưa nhập đủ trường"),
+                                  Alert(
+                                    context: context,
+                                    title: "THÔNG BÁO",
+                                    desc: "Thông tin chưa chính xác!",
+                                    image: alertImageError,
+                                    buttons: [],
+                                  ).show(),
+                                  Future.delayed(const Duration(seconds: 2), () {
+                                    Navigator.pop(context);
+                                  })
+                                }
+                            },
+                            child: Container(
+                              height: 50,
+                              width: 136,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                color: primaryColor,
+                              ),
+                              child: Center(
+                                child: isUpdate == true
+                                    ? const Text(
+                                        'CẬP NHẬT',
+                                        style: textStyleWhiteBold20,
+                                      )
+                                    : const Text(
+                                        'THÊM',
+                                        style: textStyleWhiteBold20,
+                                      ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
