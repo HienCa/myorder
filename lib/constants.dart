@@ -43,6 +43,9 @@ const activeColor = Color(0xFF40BAD5);
 const deActiveColor = Colors.grey;
 const colorPrice = Colors.orangeAccent;
 
+const colorPriceIncrease = Colors.green;
+const colorPriceDecrease = Colors.redAccent;
+
 var primaryColorOpacity = const Color(0xFF40BAD5).withOpacity(0.2);
 var chooseColorOpacity = const Color(0xFF40BAD5);
 

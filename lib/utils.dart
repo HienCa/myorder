@@ -5,6 +5,16 @@ import 'package:intl/intl.dart';
 
 //Các phương phức hay dùng
 class Utils {
+  //datetime
+  static bool isDateTimeInRange(
+      Timestamp startTimestamp, Timestamp endTimestamp) {
+      DateTime currentDateTime = DateTime.now();
+      DateTime startTime = startTimestamp.toDate();
+      DateTime endTime = endTimestamp.toDate();
+    return currentDateTime.isAfter(startTime) &&
+        currentDateTime.isBefore(endTime);
+  }
+
   static String convertTimestampToFormatDateVN(Timestamp timestamp) {
     DateTime dateTime = timestamp.toDate(); // Get the DateTime object
     String formattedDateTime = DateFormat('dd/MM/yyyy HH:mm')

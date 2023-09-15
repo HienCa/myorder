@@ -391,7 +391,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
         leading: InkWell(
             onTap: () => {Navigator.pop(context)},
             child: const Icon(Icons.arrow_back_ios)),
-        title: const Center(child: Text("CẬP NHẬT MÓN")),
+        title: const Center(child: Text("THÊM MÓN")),
         backgroundColor: primaryColor,
       ),
       body: Theme(
@@ -519,9 +519,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             onChanged: (value) => {
                                   if (value.isNotEmpty && value.startsWith('0'))
                                     {
-                                      temporaryWithPriceController.text = Utils
-                                          .convertTextFieldPrice(value.substring(
-                                              1)), // Loại bỏ ký tự đầu tiên (số 0)
+                                      priceController.text = value.substring(
+                                          1), // Loại bỏ ký tự đầu tiên (số 0)
                                     },
                                   if (int.tryParse(priceController.text)! >
                                           100 &&
@@ -531,6 +530,9 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                       setState(() {
                                         errorTextPrice = "";
                                         isErrorTextPrice = false;
+                                        priceController.text =
+                                            Utils.convertTextFieldPrice(
+                                                value); // Format price 100,000,000
                                       })
                                     }
                                   else
@@ -539,14 +541,16 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                         errorTextPrice =
                                             "Giá món ăn phải lớn hơn 100đ";
                                         isErrorTextPrice = true;
-                                      }),
-                                      if (int.tryParse(priceController.text)! >=
-                                          1000000000)
-                                        {
-                                          priceController.text = "1000000000",
-                                          errorTextPrice = "",
-                                          isErrorTextPrice = false
+
+                                        if (int.tryParse(
+                                                priceController.text)! >=
+                                            1000000000) {
+                                          priceController.text =
+                                              "1,000,000,000";
+                                          errorTextPrice = "";
+                                          isErrorTextPrice = false;
                                         }
+                                      }),
                                     }
                                 }),
                         Container(
@@ -822,7 +826,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                           ),
                         ),
                         const SizedBox(
-                          height: 30,
+                          height: 10,
                         ),
                         ListTile(
                           leading: Theme(
@@ -1112,9 +1116,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                 {
                                                   temporaryWithPriceController
                                                           .text =
-                                                      Utils.convertTextFieldPrice(
-                                                          value.substring(
-                                                              1)), // Loại bỏ ký tự đầu tiên (số 0)
+                                                      value.substring(
+                                                          1), // Loại bỏ ký tự đầu tiên (số 0)
                                                 },
                                               if (int.tryParse(
                                                           temporaryWithPriceController
@@ -1130,6 +1133,10 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         "";
                                                     isErrorTextTemporaryPrice =
                                                         false;
+                                                    temporaryWithPriceController
+                                                            .text =
+                                                        Utils.convertTextFieldPrice(
+                                                            value); // Format price 100,000,000
                                                   })
                                                 }
                                               else
@@ -1139,19 +1146,19 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         "Giá món ăn phải lớn hơn 100đ";
                                                     isErrorTextTemporaryPrice =
                                                         true;
-                                                  }),
-                                                  if (int.tryParse(
-                                                          temporaryWithPriceController
-                                                              .text)! >=
-                                                      1000000000)
-                                                    {
+                                                    if (int.tryParse(
+                                                            temporaryWithPriceController
+                                                                .text)! >=
+                                                        1000000000) {
                                                       temporaryWithPriceController
-                                                          .text = "1000000000",
+                                                              .text =
+                                                          "1,000,000,000";
                                                       errorTextTemporaryPrice =
-                                                          "",
+                                                          "";
                                                       isErrorTextTemporaryPrice =
-                                                          false
+                                                          false;
                                                     }
+                                                  }),
                                                 }
                                             }),
                                     TextField(
@@ -1244,8 +1251,14 @@ class _AddFoodPageState extends State<AddFoodPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
+                                    priceController.text =
+                                        Utils.formatCurrencytoDouble(
+                                            priceController.text),
+                                    temporaryWithPriceController.text =
+                                        Utils.formatCurrencytoDouble(
+                                            temporaryWithPriceController.text),
                                     if (nameController.text != "" &&
-                                        priceController.text != "")
+                                        priceController.text != "" && priceController.text != "0")
                                       {
                                         if (isCheckTemporaryPrice)
                                           {

@@ -66,13 +66,17 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                           final food = foodController.foods[index];
                           String string;
                           return Card(
+                            color: food.active == 1
+                                ? backgroundColor
+                                : const Color.fromARGB(255, 213, 211, 211),
                             child: ListTile(
                               leading: InkWell(
                                 onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            FoodDetailPage(food: foodController.foods[index]))),
+                                        builder: (context) => FoodDetailPage(
+                                            food:
+                                                foodController.foods[index]))),
                                 child: food.image != ""
                                     ? CircleAvatar(
                                         radius: 25,
@@ -125,13 +129,74 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                               food: food,
                                             ))),
                                 child: RichText(
-                                  text: TextSpan(
-                                    text: Utils.formatCurrency(food.price),
-                                    style: const TextStyle(
-                                        color:
-                                            colorPrice), // Đặt kiểu cho văn bản
-                                  ),
-                                  maxLines: 5, // Giới hạn số dòng hiển thị
+                                  text: food.price_with_temporary! > 0
+                                      ? (Utils.isDateTimeInRange(
+                                              food.temporary_price_from_date!,
+                                              food.temporary_price_to_date!)
+                                          ? (food.price_with_temporary! > 0
+                                              ? TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: Utils
+                                                          .formatCurrency(food
+                                                                  .price +
+                                                              (food.price_with_temporary ??
+                                                                  0)),
+                                                      style: const TextStyle(
+                                                        color: colorPrice,
+                                                      ),
+                                                    ),
+                                                    const WidgetSpan(
+                                                      child: Icon(
+                                                        Icons
+                                                            .arrow_drop_up, // Thay thế bằng biểu tượng bạn muốn sử dụng
+                                                        size:
+                                                            24.0, // Điều chỉnh kích thước biểu tượng
+                                                        color:
+                                                            colorPriceIncrease, // Điều chỉnh màu sắc của biểu tượng
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: Utils
+                                                          .formatCurrency(food
+                                                                  .price +
+                                                              (food.price_with_temporary ??
+                                                                  0)),
+                                                      style: const TextStyle(
+                                                        color: colorPrice,
+                                                      ),
+                                                    ),
+                                                    const WidgetSpan(
+                                                      child: Icon(
+                                                        Icons
+                                                            .arrow_drop_down, // Thay thế bằng biểu tượng bạn muốn sử dụng
+                                                        size:
+                                                            24.0, // Điều chỉnh kích thước biểu tượng
+                                                        color:
+                                                            colorPriceDecrease, // Điều chỉnh màu sắc của biểu tượng
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ))
+                                          : TextSpan(
+                                              text: Utils.formatCurrency(
+                                                  food.price),
+                                              style: const TextStyle(
+                                                color: colorPrice,
+                                              ),
+                                            ))
+                                      : TextSpan(
+                                          text:
+                                              Utils.formatCurrency(food.price),
+                                          style: const TextStyle(
+                                            color: colorPrice,
+                                          ),
+                                        ),
+                                  maxLines: 5,
                                   overflow: TextOverflow
                                       .ellipsis, // Hiển thị dấu ba chấm khi văn bản quá dài
                                 ),

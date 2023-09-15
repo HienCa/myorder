@@ -251,7 +251,7 @@ class FoodController extends GetxController {
         await firestore.collection('foods').doc(food_id).update({
           "food_id": food_id.trim(),
           "name": name.trim(),
-          "image": downloadUrl,
+          "image": image,
           "price": double.tryParse(price) ?? 0.0,
           "vat_id": vat_id.trim(),
           "price_with_temporary": double.tryParse(price_with_temporary!) ?? 0.0,
