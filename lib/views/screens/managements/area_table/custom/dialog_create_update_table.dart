@@ -76,24 +76,27 @@ class _CustomDialogCreateUpdateTableState
       areaIdController.text = widget.area_id ?? "";
       isActive = widget.active == ACTIVE ? true : false;
     }
-    getAreas().then((areas) {
+    getAreasActive().then((areas) {
       setState(() {
         areaOptions = areas;
-        selectedValue = areaList.firstWhere(
-          (area) => area.area_id == widget.area_id,
-          orElse: () => Area(area_id: "", name: "", active: 1),
-        );
-        // textSearchAreaController.text = selectedValue!.name;
+        if (widget.table_id != null) {
+          selectedValue = areaList.firstWhere(
+            (area) => area.area_id == widget.area_id,
+            orElse: () => Area(area_id: "", name: "", active: 1),
+          );
+        }
       });
     });
   }
 
   Area? selectedValue;
   List<Area> areaList = [];
-  Future<List<Area>> getAreas() async {
+  Future<List<Area>> getAreasActive() async {
     try {
-      final querySnapshot =
-          await FirebaseFirestore.instance.collection('areas').get();
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('areas')
+          .where('active', isEqualTo: 1)
+          .get();
       for (final doc in querySnapshot.docs) {
         final area = Area.fromSnap(doc);
         areaList.add(area);
@@ -116,7 +119,7 @@ class _CustomDialogCreateUpdateTableState
       elevation: 5, // Độ nâng của bóng đổ
       backgroundColor: backgroundColor,
       child: Theme(
-         data: ThemeData(unselectedWidgetColor: primaryColor),
+        data: ThemeData(unselectedWidgetColor: primaryColor),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -147,7 +150,9 @@ class _CustomDialogCreateUpdateTableState
                               hintText: 'Nhập tên bàn',
                               hintStyle: const TextStyle(color: Colors.grey),
                               border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey)),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30))),
                               errorText: isErrorTextName ? errorTextName : null,
                               errorStyle: textStyleErrorInput),
                           maxLength: maxlengthAreaTableName,
@@ -155,7 +160,8 @@ class _CustomDialogCreateUpdateTableState
                           onChanged: (value) => {
                                 if (value.trim().length >
                                         maxlengthAreaTableName ||
-                                    value.trim().length < minlengthAreaTableName)
+                                    value.trim().length <
+                                        minlengthAreaTableName)
                                   {
                                     setState(() {
                                       errorTextName =
@@ -187,11 +193,13 @@ class _CustomDialogCreateUpdateTableState
                           ],
                           decoration: InputDecoration(
                               labelStyle: textStyleInput,
-                                labelText: "Số khách",
-                                  hintText: 'Nhập số khách của bàn',
+                              labelText: "Số khách",
+                              hintText: 'Nhập số khách của bàn',
                               hintStyle: const TextStyle(color: Colors.grey),
                               border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey)),
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30))),
                               errorText: isErrorTextTotalSlot
                                   ? errorTextTotalSlot
                                   : null,
@@ -272,15 +280,17 @@ class _CustomDialogCreateUpdateTableState
                                         });
                                       },
                                       buttonStyleData: const ButtonStyleData(
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 16),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16),
                                         height: 40,
                                         width: 200,
                                       ),
-                                      dropdownStyleData: const DropdownStyleData(
+                                      dropdownStyleData:
+                                          const DropdownStyleData(
                                         maxHeight: 200,
                                       ),
-                                      menuItemStyleData: const MenuItemStyleData(
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
                                         height: 40,
                                       ),
                                       dropdownSearchData: DropdownSearchData(
@@ -298,7 +308,8 @@ class _CustomDialogCreateUpdateTableState
                                           child: TextFormField(
                                             expands: true,
                                             maxLines: null,
-                                            controller: textSearchAreaController,
+                                            controller:
+                                                textSearchAreaController,
                                             decoration: InputDecoration(
                                               isDense: true,
                                               contentPadding:
@@ -318,7 +329,7 @@ class _CustomDialogCreateUpdateTableState
                                         ),
                                         searchMatchFn: (item, searchValue) {
                                           print("Search Value: $searchValue");
-                                         
+
                                           return item.value!.name
                                               .toLowerCase()
                                               .toString()
@@ -347,8 +358,8 @@ class _CustomDialogCreateUpdateTableState
                     isUpdate
                         ? ListTile(
                             leading: Theme(
-                              data:
-                                  ThemeData(unselectedWidgetColor: primaryColor),
+                              data: ThemeData(
+                                  unselectedWidgetColor: primaryColor),
                               child: Checkbox(
                                 value: isActive,
                                 onChanged: (bool? value) {
@@ -432,7 +443,8 @@ class _CustomDialogCreateUpdateTableState
                                     image: alertImageError,
                                     buttons: [],
                                   ).show(),
-                                  Future.delayed(const Duration(seconds: 2), () {
+                                  Future.delayed(const Duration(seconds: 2),
+                                      () {
                                     Navigator.pop(context);
                                   })
                                 }

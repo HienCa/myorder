@@ -54,6 +54,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
   bool isMaleSelected = true;
   bool isFemaleSelected = false;
 
+  bool isCheckTemporaryWithPrice = true;
+  bool isCheckTemporaryWithPercent = false;
+
+  bool isOnlyReadTemporaryWithPrice = false;
+  bool isOnlyReadTemporaryWithPercent = true;
+
   FoodController foodController = Get.put(FoodController());
   late Food food;
 
@@ -61,8 +67,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController temporaryWithPriceController =
       TextEditingController();
+  final TextEditingController temporaryWithPercentController =
+      TextEditingController();
   final TextEditingController temporaryPriceFromDateController =
       TextEditingController();
+
   final TextEditingController temporaryPriceToDateController =
       TextEditingController();
   final TextEditingController temporaryPriceController =
@@ -471,7 +480,9 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 hintText: 'Nhập tên món ăn',
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30))),
                                 errorText:
                                     isErrorTextName ? errorTextName : null,
                                 errorStyle: textStyleErrorInput),
@@ -479,7 +490,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             // autofocus: true,
                             onChanged: (value) => {
                                   if (value.trim().length > maxlengthName ||
-                                      value.trim().length <= minlengthName)
+                                      value.trim().length < minlengthName)
                                     {
                                       setState(() {
                                         errorTextName =
@@ -512,7 +523,9 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 hintText: 'Nhập giá món ăn',
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30))),
                                 errorText:
                                     isErrorTextPrice ? errorTextPrice : null,
                                 errorStyle: textStyleErrorInput),
@@ -690,7 +703,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                           ),
                         ),
                         const SizedBox(
-                          height: 30,
+                          height: 10,
                         ),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
@@ -1058,8 +1071,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                       value ?? false;
                                                   isCheckDecrease =
                                                       !isCheckIncrease;
-                                                  increasePriceController.text =
-                                                      MALE;
                                                 });
                                               },
                                             ),
@@ -1076,8 +1087,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                       value ?? false;
                                                   isCheckIncrease =
                                                       !isCheckDecrease;
-                                                  decreasePriceController.text =
-                                                      FEMALE;
                                                 });
                                               },
                                             ),
@@ -1088,79 +1097,239 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    TextField(
-                                        controller:
-                                            temporaryWithPriceController,
-                                        style: textStyleInput,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter
-                                              .digitsOnly, // Only allows digits
-                                        ],
-                                        decoration: InputDecoration(
-                                            labelStyle: textStyleInput,
-                                            labelText: "Giá tiền thời vụ",
-                                            hintText: 'Nhập giá tiền thời vụ',
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            border: const OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.grey)),
-                                            errorText: isErrorTextTemporaryPrice
-                                                ? errorTextTemporaryPrice
-                                                : null,
-                                            errorStyle: textStyleErrorInput),
-                                        onChanged: (value) => {
-                                              if (value.isNotEmpty &&
-                                                  value.startsWith('0'))
-                                                {
-                                                  temporaryWithPriceController
-                                                          .text =
-                                                      value.substring(
-                                                          1), // Loại bỏ ký tự đầu tiên (số 0)
-                                                },
-                                              if (int.tryParse(
-                                                          temporaryWithPriceController
-                                                              .text)! >
-                                                      100 &&
-                                                  int.tryParse(
-                                                          temporaryWithPriceController
-                                                              .text)! <=
-                                                      1000000000)
-                                                {
-                                                  setState(() {
-                                                    errorTextTemporaryPrice =
-                                                        "";
-                                                    isErrorTextTemporaryPrice =
-                                                        false;
+                                    ListTile(
+                                      leading: Theme(
+                                        data: ThemeData(
+                                            unselectedWidgetColor:
+                                                primaryColor),
+                                        child: Checkbox(
+                                          value: isCheckTemporaryWithPrice,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isCheckTemporaryWithPrice =
+                                                  value!;
+                                              isCheckTemporaryWithPercent =
+                                                  !value;
+
+                                              isOnlyReadTemporaryWithPercent =
+                                                  true;
+                                              isOnlyReadTemporaryWithPrice =
+                                                  false;
+                                            });
+                                          },
+                                          activeColor: primaryColor,
+                                        ),
+                                      ),
+                                      title: TextField(
+                                          controller:
+                                              temporaryWithPriceController,
+                                          readOnly:
+                                              isOnlyReadTemporaryWithPrice,
+                                          style: textStyleInput,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly, // Only allows digits
+                                          ],
+                                          decoration: InputDecoration(
+                                              labelStyle: textStyleInput,
+                                              labelText: "Giá tiền thời vụ",
+                                              hintText: 'Nhập giá tiền áp dụng',
+                                              hintStyle: const TextStyle(
+                                                  color: Colors.grey),
+                                              border: const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(30))),
+                                              errorText:
+                                                  isErrorTextTemporaryPrice
+                                                      ? errorTextTemporaryPrice
+                                                      : null,
+                                              errorStyle: textStyleErrorInput),
+                                          onChanged: (value) => {
+                                                  
+                                                if (value.isNotEmpty &&
+                                                    value.startsWith('0'))
+                                                  {
                                                     temporaryWithPriceController
                                                             .text =
-                                                        Utils.convertTextFieldPrice(
-                                                            value); // Format price 100,000,000
-                                                  })
-                                                }
-                                              else
-                                                {
-                                                  setState(() {
-                                                    errorTextTemporaryPrice =
-                                                        "Giá món ăn phải lớn hơn 100đ";
-                                                    isErrorTextTemporaryPrice =
-                                                        true;
-                                                    if (int.tryParse(
-                                                            temporaryWithPriceController
-                                                                .text)! >=
-                                                        1000000000) {
-                                                      temporaryWithPriceController
-                                                              .text =
-                                                          "1,000,000,000";
+                                                        value.substring(
+                                                            1), // Loại bỏ ký tự đầu tiên (số 0)
+                                                  },
+                                                if (int.tryParse(
+                                                        temporaryWithPriceController
+                                                            .text)! <=
+                                                    int.tryParse(priceController
+                                                        .text
+                                                        .replaceAll(
+                                                            RegExp(r','), ''))!)
+                                                  {
+                                                    setState(() {
                                                       errorTextTemporaryPrice =
                                                           "";
                                                       isErrorTextTemporaryPrice =
                                                           false;
-                                                    }
-                                                  }),
-                                                }
-                                            }),
+                                                      temporaryWithPriceController
+                                                              .text =
+                                                          Utils.convertTextFieldPrice(
+                                                              value); // Format price 100,000,000
+
+                                                    })
+                                                  }
+                                                else
+                                                  {
+                                                    setState(() {
+                                                      errorTextTemporaryPrice =
+                                                          "Giá thời vụ không lớn hơn giá gốc.";
+                                                      isErrorTextTemporaryPrice =
+                                                          true;
+                                                      if (int.tryParse(
+                                                              temporaryWithPriceController
+                                                                  .text)! >
+                                                          int.tryParse(
+                                                              priceController
+                                                                  .text
+                                                                  .replaceAll(
+                                                                      RegExp(
+                                                                          r','),
+                                                                      ''))!) {
+                                                        temporaryWithPriceController
+                                                                .text =
+                                                            priceController
+                                                                .text;
+                                                        errorTextTemporaryPrice =
+                                                            "";
+                                                        isErrorTextTemporaryPrice =
+                                                            false;
+                                                      }
+                                                    }),
+                                                  }
+                                              }),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    ListTile(
+                                      leading: Theme(
+                                        data: ThemeData(
+                                            unselectedWidgetColor:
+                                                primaryColor),
+                                        child: Checkbox(
+                                          value: isCheckTemporaryWithPercent,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isCheckTemporaryWithPercent =
+                                                  value!;
+                                              isCheckTemporaryWithPrice =
+                                                  !value;
+
+                                              isOnlyReadTemporaryWithPrice =
+                                                  true;
+                                              isOnlyReadTemporaryWithPercent =
+                                                  false;
+                                            });
+                                          },
+                                          activeColor: primaryColor,
+                                        ),
+                                      ),
+                                      title: TextField(
+                                          controller:
+                                              temporaryWithPercentController,
+                                          readOnly:
+                                              isOnlyReadTemporaryWithPercent,
+                                          style: textStyleInput,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly, // Only allows digits
+                                          ],
+                                          decoration: InputDecoration(
+                                              labelStyle: textStyleInput,
+                                              labelText:
+                                                  "Phần trăm (%) thời vụ",
+                                              hintText: 'Nhập % áp dụng',
+                                              hintStyle: const TextStyle(
+                                                  color: Colors.grey),
+                                              border: const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(30))),
+                                              errorText:
+                                                  isErrorTextTemporaryPercent
+                                                      ? errorTextTemporaryPercent
+                                                      : null,
+                                              errorStyle: textStyleErrorInput),
+                                          onChanged: (value) => {
+                                                if (value.isEmpty)
+                                                  {
+                                                    temporaryWithPriceController
+                                                        .text = "0",
+                                                  },
+                                                if (value.isNotEmpty &&
+                                                    value.startsWith('0'))
+                                                  {
+                                                    temporaryWithPercentController
+                                                            .text =
+                                                        value.substring(
+                                                            1), // Loại bỏ ký tự đầu tiên (số 0)
+                                                  },
+                                                if (int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text)! >
+                                                        0 &&
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text)! <=
+                                                        100)
+                                                  {
+                                                    setState(() {
+                                                      errorTextTemporaryPercent =
+                                                          "";
+                                                      isErrorTextTemporaryPercent =
+                                                          false;
+                                                      temporaryWithPercentController
+                                                          .text = value;
+
+                                                      //phần trăm thời vụ thay đổi thì price with temporary thay đổi theo để gợi ý số tiền giảm
+                                                      temporaryWithPriceController
+                                                          .text = Utils.formatCurrency((double
+                                                              .tryParse(priceController
+                                                                  .text
+                                                                  .replaceAll(
+                                                                      RegExp(
+                                                                          r','),
+                                                                      ''))! *
+                                                          (int.tryParse(
+                                                                  value)! /
+                                                              100)));
+                                                    })
+                                                  }
+                                                else
+                                                  {
+                                                    setState(() {
+                                                      errorTextTemporaryPercent =
+                                                          "Phần trăm (%) phải lơn 1";
+                                                      isErrorTextTemporaryPercent =
+                                                          true;
+                                                      if (int.tryParse(
+                                                              temporaryWithPercentController
+                                                                  .text)! >=
+                                                          100) {
+                                                        temporaryWithPercentController
+                                                            .text = "100";
+                                                        errorTextTemporaryPercent =
+                                                            "";
+                                                        isErrorTextTemporaryPercent =
+                                                            false;
+                                                      }
+                                                    }),
+                                                  }
+                                              }),
+                                    ),
                                     TextField(
                                       controller:
                                           temporaryPriceFromDateController,
@@ -1217,12 +1386,23 @@ class _AddFoodPageState extends State<AddFoodPage> {
                               : const SizedBox(),
                         ),
                         isCheckTemporaryPrice && isCheckVAT
-                            ? const SizedBox(
-                                height: 40,
+                            ? SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.00005,
                               )
-                            : const SizedBox(
-                                height: 120,
-                              ),
+                            : const SizedBox(),
+                        !isCheckTemporaryPrice && !isCheckVAT
+                            ? SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
+                              )
+                            : const SizedBox(),
+                        isCheckVAT
+                            ? SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.12,
+                              )
+                            : const SizedBox(),
                         SizedBox(
                           height: 50,
                           child: Row(
@@ -1258,7 +1438,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                         Utils.formatCurrencytoDouble(
                                             temporaryWithPriceController.text),
                                     if (nameController.text != "" &&
-                                        priceController.text != "" && priceController.text != "0")
+                                        priceController.text != "" &&
+                                        priceController.text != "0" &&
+                                        int.tryParse(priceController.text)! >
+                                            100 &&
+                                        textCategoryIdController.text != "" &&
+                                        textUnitIdController.text != "")
                                       {
                                         if (isCheckTemporaryPrice)
                                           {
@@ -1274,6 +1459,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         .text !=
                                                     "")
                                               {
+                                                print(
+                                                    "create with temporary price"),
                                                 foodController.createFood(
                                                     nameController.text,
                                                     _pickedImage.value,
@@ -1286,7 +1473,68 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                     textCategoryIdController
                                                         .text,
                                                     textUnitIdController.text,
-                                                    textVatIdController.text),
+                                                    textVatIdController.text,
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text) ??
+                                                        0),
+                                              }
+                                            else if (isFromDateTimeSelected &&
+                                                isToDateTimeSelected &&
+                                                temporaryWithPercentController
+                                                        .text !=
+                                                    "")
+                                              {
+                                                //NẾU % giá thời vụ được áp dụng thì chuyển % thành tiền
+                                                if (isCheckTemporaryWithPercent)
+                                                  {
+                                                    if (isCheckDecrease)
+                                                      {
+                                                        temporaryWithPriceController
+                                                            .text = ((-1) *
+                                                                (int.tryParse(
+                                                                        priceController
+                                                                            .text)! *
+                                                                    (int.tryParse(
+                                                                            temporaryWithPercentController.text)! /
+                                                                        100)))
+                                                            .toString(),
+                                                        print(
+                                                            "thời vụ % áp dụng: ${(int.tryParse(priceController.text)! * (int.tryParse(temporaryWithPercentController.text)! / 100)).toString()}")
+                                                      }
+                                                    else
+                                                      {
+                                                        temporaryWithPriceController
+                                                            .text = (int.tryParse(
+                                                                    priceController
+                                                                        .text)! *
+                                                                (10 / 100))
+                                                            .toString(),
+                                                        print(
+                                                            "thời vụ % áp dụng: ${(int.tryParse(priceController.text)! * (int.tryParse(temporaryWithPercentController.text)! / 100)).toString()}")
+                                                      },
+                                                  },
+
+                                                print(
+                                                    "create with temporary percent"),
+
+                                                foodController.createFood(
+                                                    nameController.text,
+                                                    _pickedImage.value,
+                                                    priceController.text,
+                                                    temporaryWithPriceController
+                                                        .text,
+                                                    pickedFromDateTime, //thời gian bắt đầu giá thời vụ
+                                                    pickedToDateTime, //thời gian kết thúc giá thời vụ
+
+                                                    textCategoryIdController
+                                                        .text,
+                                                    textUnitIdController.text,
+                                                    textVatIdController.text,
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text) ??
+                                                        0),
                                               }
                                           }
                                         else
@@ -1304,10 +1552,15 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                     textCategoryIdController
                                                         .text,
                                                     textUnitIdController.text,
-                                                    textVatIdController.text),
+                                                    textVatIdController.text,
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text) ??
+                                                        0),
                                               }
                                             else
                                               {
+                                                print("create"),
                                                 foodController.createFood(
                                                     nameController.text,
                                                     _pickedImage.value,
@@ -1319,7 +1572,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                     textCategoryIdController
                                                         .text,
                                                     textUnitIdController.text,
-                                                    ""),
+                                                    "",
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text) ??
+                                                        0),
                                               }
                                           },
                                         Navigator.pop(context)
@@ -1330,7 +1587,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                         Alert(
                                           context: context,
                                           title: "THÔNG BÁO",
-                                          desc: "Thông tin chưa đầy đủ!",
+                                          desc: "Thông tin chưa chính xác!",
                                           image: alertImageError,
                                           buttons: [],
                                         ).show(),

@@ -37,10 +37,8 @@ class FoodController extends GetxController {
 
   // upload to firebase storage
   Future<String> _uploadToStorage(File image) async {
-    Reference ref = firebaseStorage
-        .ref()
-        .child('profilePics')
-        .child(firebaseAuth.currentUser!.uid);
+    Reference ref = firebaseStorage.ref().child('profilePics');
+    // .child(firebaseAuth.currentUser!.uid);
 
     UploadTask uploadTask = ref.putFile(image);
     TaskSnapshot snap = await uploadTask;
@@ -71,6 +69,7 @@ class FoodController extends GetxController {
           String category_id = foodData['category_id'] ?? "";
           String unit_id = foodData['unit_id'] ?? "";
           String vat_id = foodData['vat_id'] ?? "";
+          int temporary_percent = foodData['temporary_percent'];
           int active = foodData['active'];
 
           return model.Food(
@@ -86,6 +85,7 @@ class FoodController extends GetxController {
             category_id: category_id,
             unit_id: unit_id,
             vat_id: vat_id,
+            temporary_percent: temporary_percent,
             active: active,
           );
         }
@@ -119,10 +119,10 @@ class FoodController extends GetxController {
     String? price_with_temporary,
     DateTime? temporary_price_from_date,
     DateTime? temporary_price_to_date,
-
     String category_id,
     String unit_id,
     String? vat_id,
+    int temporary_percent
   ) async {
     try {
       if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
@@ -144,10 +144,10 @@ class FoodController extends GetxController {
                 Timestamp.fromDate(temporary_price_from_date!),
             temporary_price_to_date:
                 Timestamp.fromDate(temporary_price_to_date!),
-
             category_id: category_id,
             unit_id: unit_id,
             vat_id: vat_id,
+            temporary_percent: temporary_percent,
             active: 1,
           );
           CollectionReference foodsCollection =
@@ -161,14 +161,12 @@ class FoodController extends GetxController {
             image: downloadUrl,
             price: double.tryParse(price) ?? 0.0,
             price_with_temporary: double.tryParse(price_with_temporary!) ?? 0.0,
-            temporary_price_from_date:
-                Timestamp.fromDate(temporary_price_from_date!),
-            temporary_price_to_date:
-                Timestamp.fromDate(temporary_price_to_date!),
-
+            temporary_price_from_date: null,
+            temporary_price_to_date: null,
             category_id: category_id,
             unit_id: unit_id,
             vat_id: vat_id,
+            temporary_percent: temporary_percent ,
             active: 1,
           );
           CollectionReference foodsCollection =
@@ -197,6 +195,7 @@ class FoodController extends GetxController {
         e.message ?? 'Có lỗi xãy ra.',
       );
     } catch (e) {
+      print(e.toString());
       Get.snackbar(
         'Error!',
         e.toString(),
@@ -216,10 +215,18 @@ class FoodController extends GetxController {
     String category_id,
     String unit_id,
     String vat_id,
+    int temporary_percent
+
   ) async {
     // var doc = await firestore.collection('foods').doc(Food_id).get();
     String downloadUrl = "";
     try {
+      print("food_id $food_id");
+      print("category_id $category_id");
+      print("unit_id $unit_id");
+      print("image $image");
+      print("price $price");
+      print("price_with_temporary $price_with_temporary");
       if (newImage != null) {
         print("Image Selected");
 
@@ -242,10 +249,11 @@ class FoodController extends GetxController {
           // "active": active,
           "category_id": category_id.trim(),
           "unit_id": unit_id.trim(),
+          "temporary_percent": temporary_percent,
+
         });
       } else {
         print("NO Image Selected");
-        print("Food_id $food_id");
 
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
         await firestore.collection('foods').doc(food_id).update({
@@ -261,6 +269,8 @@ class FoodController extends GetxController {
           // "active": active,
           "category_id": category_id.trim(),
           "unit_id": unit_id.trim(),
+          "temporary_percent":temporary_percent,
+
         });
       }
       Get.snackbar(

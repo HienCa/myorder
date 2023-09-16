@@ -8,9 +8,9 @@ class Utils {
   //datetime
   static bool isDateTimeInRange(
       Timestamp startTimestamp, Timestamp endTimestamp) {
-      DateTime currentDateTime = DateTime.now();
-      DateTime startTime = startTimestamp.toDate();
-      DateTime endTime = endTimestamp.toDate();
+    DateTime currentDateTime = DateTime.now();
+    DateTime startTime = startTimestamp.toDate();
+    DateTime endTime = endTimestamp.toDate();
     return currentDateTime.isAfter(startTime) &&
         currentDateTime.isBefore(endTime);
   }
@@ -28,16 +28,11 @@ class Utils {
   }
 
   static String formatCurrency(double amount) {
-    final currencyFormatter = NumberFormat("#,##0", "vi_VN");
-    String formattedAmount = currencyFormatter.format(amount);
 
-    // Kiểm tra và loại bỏ phần .00 nếu có
-    if (formattedAmount.endsWith('.00')) {
-      formattedAmount =
-          formattedAmount.substring(0, formattedAmount.length - 3);
-    }
-
-    return formattedAmount;
+    final formattedNumber = NumberFormat("#,###", "en_US").format(amount);
+    // print(formattedNumber);
+    // print("formattedNumber");
+    return formattedNumber;
   }
 
   static String formatCurrencytoDouble(String amount) {

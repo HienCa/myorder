@@ -103,15 +103,15 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                               labelText: "Tên danh mục",
                               hintText: 'Nhập danh mục',
                               hintStyle: const TextStyle(color: Colors.grey),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey)),
+                              border:  const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
                               errorText: isErrorTextName ? errorTextName : null,
                               errorStyle: textStyleErrorInput),
                           maxLength: 50,
                           // autofocus: true,
                           onChanged: (value) => {
                                 if (value.trim().length > maxlengthCategoryName ||
-                                    value.trim().length <= minlengthCategoryName)
+                                    value.trim().length < minlengthCategoryName)
                                   {
                                     setState(() {
                                       errorTextName =
@@ -127,9 +127,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                                     })
                                   }
                               }),
-                      const SizedBox(
-                        height: 50,
-                      ),
+                       SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.65,
+                          ),
                       SizedBox(
                         height: 50,
                         child: Row(

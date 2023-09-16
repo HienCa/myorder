@@ -78,8 +78,8 @@ class _CustomDialogCreateUpdateAreaState
                         labelText: "Tên khu vực",
                         hintText: 'Nhập tên khu vực',
                         hintStyle: const TextStyle(color: Colors.grey),
-                        border: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
+                        border:  const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
                         errorText: isErrorTextName ? errorTextName : null,
                         errorStyle: textStyleErrorInput),
                     maxLength: maxlengthAreaName,

@@ -109,8 +109,8 @@ class _VatDetailPageState extends State<VatDetailPage> {
                               labelText: "Thuế giá trị gia tăng",
                               hintText: 'Nhập tên vat',
                               hintStyle: const TextStyle(color: Colors.grey),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey)),
+                              border:  const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
                               errorText: isErrorTextName ? errorTextName : null,
                               errorStyle: textStyleErrorInput),
                           maxLength: 50,
@@ -151,8 +151,8 @@ class _VatDetailPageState extends State<VatDetailPage> {
                                 labelText: "Phần trăm (%)",
                                 hintText: 'Nhập %',
                                 hintStyle: const TextStyle(color: Colors.grey),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
+                                border:  const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
                                 errorText: isErrorTextVatPercent
                                     ? errorTextVatPercent
                                     : null,

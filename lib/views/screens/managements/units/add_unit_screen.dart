@@ -72,8 +72,8 @@ class _AddUnitPageState extends State<AddUnitPage> {
                                 labelText: "Tên đơn vị tính",
                                 hintText: 'Nhập tên đơn vị tính',
                                 hintStyle: const TextStyle(color: Colors.grey),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
+                               border:  const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
                                 errorText:
                                     isErrorTextName ? errorTextName : null,
                                 errorStyle: textStyleErrorInput),
@@ -81,7 +81,7 @@ class _AddUnitPageState extends State<AddUnitPage> {
                             // autofocus: true,
                             onChanged: (value) => {
                                   if (value.trim().length > maxlengthUnitName ||
-                                      value.trim().length <= minlengthUnitName)
+                                      value.trim().length < minlengthUnitName)
                                     {
                                       setState(() {
                                         errorTextName =
@@ -113,7 +113,7 @@ class _AddUnitPageState extends State<AddUnitPage> {
                                     decoration: const BoxDecoration(
                                         color: dividerColor,
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(5))),
+                                            Radius.circular(30))),
                                     child: const Align(
                                       alignment: Alignment.center,
                                       child: Text("QUAY LẠI",

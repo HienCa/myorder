@@ -129,7 +129,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                               food: food,
                                             ))),
                                 child: RichText(
-                                  text: food.price_with_temporary! > 0
+                                  text: food.price_with_temporary! != 0
                                       ? (Utils.isDateTimeInRange(
                                               food.temporary_price_from_date!,
                                               food.temporary_price_to_date!)

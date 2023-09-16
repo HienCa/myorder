@@ -2,7 +2,6 @@
 
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'dart:io';
-import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -55,11 +54,19 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   bool isMaleSelected = true;
   bool isFemaleSelected = false;
 
+  bool isCheckTemporaryWithPrice = true;
+  bool isCheckTemporaryWithPercent = false;
+
+  bool isOnlyReadTemporaryWithPrice = false;
+  bool isOnlyReadTemporaryWithPercent = true;
+
   FoodController foodController = Get.put(FoodController());
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController temporaryWithPriceController =
+      TextEditingController();
+  final TextEditingController temporaryWithPercentController =
       TextEditingController();
   final TextEditingController temporaryPriceFromDateController =
       TextEditingController();
@@ -271,20 +278,27 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     textUnitIdController.text = widget.food.unit_id;
     textVatIdController.text = widget.food.vat_id!;
     priceController.text = Utils.formatCurrency(widget.food.price);
+    temporaryWithPercentController.text =
+        widget.food.temporary_percent.toString();
 
     temporaryWithPriceController.text =
         Utils.formatCurrency(widget.food.price_with_temporary!)
             .replaceAll(RegExp(r'-'), '');
 
+    print(priceController.text);
+    print(temporaryWithPriceController.text);
+
     //giá thời vụ
     print(widget.food.price_with_temporary);
+    print(widget.food.price);
+    print("widget.food.price");
     if (widget.food.price_with_temporary.toString().startsWith('-')) {
       isCheckDecrease = true;
       print('Giảm giá');
     } else {
       isCheckIncrease = true;
     }
-    if (widget.food.price_with_temporary != null) {
+    if (widget.food.price_with_temporary != 0) {
       isFromDateTimeSelected = true;
       isToDateTimeSelected = true;
       isCheckTemporaryPrice = true; // hiển thị khung giá thời vụ
@@ -294,9 +308,39 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       temporaryPriceToDateController.text =
           Utils.convertTimestampToFormatDateVN(
               widget.food.temporary_price_to_date!);
-    }
 
-    getCategories().then((categories) {
+      // gán ngày giờ thời vụ mặc định
+      pickedFromDateTime = widget.food.temporary_price_from_date!.toDate();
+      pickedToDateTime = widget.food.temporary_price_to_date!.toDate();
+      print('widget.food.temporary_percent');
+      print(widget.food.temporary_percent);
+      //vô hiệu hóa textfield
+
+      if (widget.food.temporary_percent != 0) {
+        //nếu không áp dụng % giá thời vụ thì price temporary sẽ khóa - percent đưuọc nhập
+        isOnlyReadTemporaryWithPrice = true;
+        isOnlyReadTemporaryWithPercent = false;
+
+        //nếu không áp dụng % giá thời vụ thì checkbox price temporary sẽ được tích chọn - percent không chọn
+        isCheckTemporaryWithPrice = false;
+        isCheckTemporaryWithPercent = true;
+
+        print("bỏ check price - check percent");
+      } else {
+        //nếu không áp dụng giá thời vụ thì price temporary sẽ được nhập - percent khóa
+        isOnlyReadTemporaryWithPrice = false;
+        isOnlyReadTemporaryWithPercent = true;
+
+        //nếu không áp dụng % giá thời vụ thì checkbox price temporary sẽ được tích chọn - percent không chọn
+        isCheckTemporaryWithPrice = true;
+        isCheckTemporaryWithPercent = false;
+        print("bỏ check percent - check price");
+      }
+    }
+    print("first");
+    print(widget.food.temporary_percent != 0);
+
+    getCategoriesActive().then((categories) {
       setState(() {
         categoryOptions = categories;
         selectedCategoryValue = categoryList.firstWhere(
@@ -305,7 +349,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         );
       });
     });
-    getUnits().then((units) {
+    getUnitsActive().then((units) {
       setState(() {
         unitOptions = units;
         selectedUnitValue = unitList.firstWhere(
@@ -314,7 +358,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         );
       });
     });
-    getVats().then((vats) {
+    getVatsActive().then((vats) {
       setState(() {
         vatOptions = vats;
         if (widget.food.vat_id != "") {
@@ -348,15 +392,15 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   Unit? selectedUnitValue;
   List<Unit> unitList = [];
 
-  Future<List<Unit>> getUnits() async {
+  Future<List<Unit>> getUnitsActive() async {
     try {
-      final querySnapshot =
-          await FirebaseFirestore.instance.collection('units').get();
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('units')
+          .where('active', isEqualTo: 1)
+          .get();
       for (final doc in querySnapshot.docs) {
         final unit = Unit.fromSnap(doc);
         unitList.add(unit);
-        print("lits unit");
-        print(unit.name);
       }
       // In danh sách bàn ra màn hình kiểm tra
       return unitList;
@@ -376,15 +420,17 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   Vat? selectedVatValue;
   List<Vat> vatList = [];
 
-  Future<List<Vat>> getVats() async {
+  Future<List<Vat>> getVatsActive() async {
     try {
-      final querySnapshot =
-          await FirebaseFirestore.instance.collection('vats').get();
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('vats')
+          .where('active', isEqualTo: 1)
+          .get();
       for (final doc in querySnapshot.docs) {
         final vat = Vat.fromSnap(doc);
         vatList.add(vat);
-        print("lits vat");
-        print(vat.name);
+        // print("lits vat");
+        // print(vat.name);
       }
       // In danh sách bàn ra màn hình kiểm tra
       return vatList;
@@ -402,15 +448,17 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   model.Category? selectedCategoryValue;
   List<model.Category> categoryList = [];
 
-  Future<List<model.Category>> getCategories() async {
+  Future<List<model.Category>> getCategoriesActive() async {
     try {
-      final querySnapshot =
-          await FirebaseFirestore.instance.collection('categories').get();
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('categories')
+          .where('active', isEqualTo: 1)
+          .get();
       for (final doc in querySnapshot.docs) {
         final category = model.Category.fromSnap(doc);
         categoryList.add(category);
-        print("lits category");
-        print(category.name);
+        // print("lits category");
+        // print(category.name);
       }
       // In danh sách bàn ra màn hình kiểm tra
       return categoryList;
@@ -521,7 +569,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                 hintText: 'Nhập tên món ăn',
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30))),
                                 errorText:
                                     isErrorTextName ? errorTextName : null,
                                 errorStyle: textStyleErrorInput),
@@ -562,7 +612,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                 hintText: 'Nhập giá món ăn',
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30))),
                                 errorText:
                                     isErrorTextPrice ? errorTextPrice : null,
                                 errorStyle: textStyleErrorInput),
@@ -887,6 +939,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               onChanged: (bool? value) {
                                 setState(() {
                                   isCheckVAT = value!;
+                                  if (!isCheckVAT) {
+                                    //nếu bỏ check thì set rỗng
+                                    textVatIdController.text = "";
+                                  }
                                 });
                               },
                               activeColor: primaryColor,
@@ -1108,8 +1164,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                       value ?? false;
                                                   isCheckDecrease =
                                                       !isCheckIncrease;
-                                                  increasePriceController.text =
-                                                      MALE;
                                                 });
                                               },
                                             ),
@@ -1126,8 +1180,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                       value ?? false;
                                                   isCheckIncrease =
                                                       !isCheckDecrease;
-                                                  decreasePriceController.text =
-                                                      FEMALE;
                                                 });
                                               },
                                             ),
@@ -1138,80 +1190,244 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    TextField(
-                                        controller:
-                                            temporaryWithPriceController,
-                                        style: textStyleInput,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter
-                                              .digitsOnly, // Only allows digits
-                                        ],
-                                        decoration: InputDecoration(
-                                            labelStyle: textStyleInput,
-                                            labelText: "Giá tiền thời vụ",
-                                            hintText: 'Nhập giá tiền thời vụ',
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            border: const OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.grey)),
-                                            errorText: isErrorTextTemporaryPrice
-                                                ? errorTextTemporaryPrice
-                                                : null,
-                                            errorStyle: textStyleErrorInput),
-                                        onChanged: (value) => {
-                                              if (value.isNotEmpty &&
-                                                  value.startsWith('0'))
-                                                {
-                                                  temporaryWithPriceController
-                                                          .text =
-                                                      value.substring(
-                                                          1), // Loại bỏ ký tự đầu tiên (số 0)
-                                                },
-                                              if (int.tryParse(
-                                                          temporaryWithPriceController
-                                                              .text)! >
-                                                      100 &&
-                                                  int.tryParse(
-                                                          temporaryWithPriceController
-                                                              .text)! <=
-                                                      1000000000)
-                                                {
-                                                  setState(() {
-                                                    errorTextTemporaryPrice =
-                                                        "";
-                                                    isErrorTextTemporaryPrice =
-                                                        false;
+                                    ListTile(
+                                      leading: Theme(
+                                        data: ThemeData(
+                                            unselectedWidgetColor:
+                                                primaryColor),
+                                        child: Checkbox(
+                                          value: isCheckTemporaryWithPrice,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isCheckTemporaryWithPrice =
+                                                  value!;
+                                              isCheckTemporaryWithPercent =
+                                                  !value;
+
+                                              isOnlyReadTemporaryWithPercent =
+                                                  true;
+                                              isOnlyReadTemporaryWithPrice =
+                                                  false;
+                                            });
+                                          },
+                                          activeColor: primaryColor,
+                                        ),
+                                      ),
+                                      title: TextField(
+                                          controller:
+                                              temporaryWithPriceController,
+                                          style: textStyleInput,
+                                          readOnly:
+                                              isOnlyReadTemporaryWithPrice,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly, // Only allows digits
+                                          ],
+                                          decoration: InputDecoration(
+                                              labelStyle: textStyleInput,
+                                              labelText: "Giá tiền thời vụ",
+                                              hintText: 'Nhập giá tiền áp dụng',
+                                              hintStyle: const TextStyle(
+                                                  color: Colors.grey),
+                                              border: const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(30))),
+                                              errorText:
+                                                  isErrorTextTemporaryPrice
+                                                      ? errorTextTemporaryPrice
+                                                      : null,
+                                              errorStyle: textStyleErrorInput),
+                                          onChanged: (value) => {
+                                                if (value.isNotEmpty &&
+                                                    value.startsWith('0'))
+                                                  {
                                                     temporaryWithPriceController
                                                             .text =
-                                                        Utils.convertTextFieldPrice(
-                                                            value); // Format price 100,000,000
-                                                  })
-                                                }
-                                              else
-                                                {
-                                                  setState(() {
-                                                    errorTextTemporaryPrice =
-                                                        "Giá món ăn phải lớn hơn 100đ";
-                                                    isErrorTextTemporaryPrice =
-                                                        true;
-
-                                                    if (int.tryParse(
-                                                            temporaryWithPriceController
-                                                                .text)! >=
-                                                        1000000000) {
-                                                      temporaryWithPriceController
-                                                              .text =
-                                                          "1,000,000,000";
+                                                        value.substring(
+                                                            1), // Loại bỏ ký tự đầu tiên (số 0)
+                                                  },
+                                                if (int.tryParse(
+                                                        temporaryWithPriceController
+                                                            .text)! <=
+                                                    int.tryParse(priceController
+                                                        .text
+                                                        .replaceAll(
+                                                            RegExp(r','), ''))!)
+                                                  {
+                                                    setState(() {
                                                       errorTextTemporaryPrice =
                                                           "";
                                                       isErrorTextTemporaryPrice =
                                                           false;
-                                                    }
-                                                  }),
-                                                }
-                                            }),
+                                                      temporaryWithPriceController
+                                                              .text =
+                                                          Utils.convertTextFieldPrice(
+                                                              value); // Format price 100,000,000
+
+                                                      //khi áp giá thời vụ thì % bằng 0
+                                                      temporaryWithPercentController
+                                                          .text = "0";
+                                                      print(
+                                                          temporaryWithPercentController
+                                                              .text);
+                                                    })
+                                                  }
+                                                else
+                                                  {
+                                                    setState(() {
+                                                      errorTextTemporaryPrice =
+                                                          "Giá thời vụ không lớn hơn giá gốc.";
+                                                      isErrorTextTemporaryPrice =
+                                                          true;
+                                                      if (int.tryParse(
+                                                              temporaryWithPriceController
+                                                                  .text)! >
+                                                          int.tryParse(
+                                                              priceController
+                                                                  .text
+                                                                  .replaceAll(
+                                                                      RegExp(
+                                                                          r','),
+                                                                      ''))!) {
+                                                        temporaryWithPriceController
+                                                                .text =
+                                                            priceController
+                                                                .text;
+                                                        errorTextTemporaryPrice =
+                                                            "";
+                                                        isErrorTextTemporaryPrice =
+                                                            false;
+                                                      }
+                                                    }),
+                                                  }
+                                              }),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    ListTile(
+                                      leading: Theme(
+                                        data: ThemeData(
+                                            unselectedWidgetColor:
+                                                primaryColor),
+                                        child: Checkbox(
+                                          value: isCheckTemporaryWithPercent,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isCheckTemporaryWithPercent =
+                                                  value!;
+                                              isCheckTemporaryWithPrice =
+                                                  !value;
+
+                                              isOnlyReadTemporaryWithPrice =
+                                                  true;
+                                              isOnlyReadTemporaryWithPercent =
+                                                  false;
+                                            });
+                                          },
+                                          activeColor: primaryColor,
+                                        ),
+                                      ),
+                                      title: TextField(
+                                          controller:
+                                              temporaryWithPercentController,
+                                          style: textStyleInput,
+                                          readOnly:
+                                              isOnlyReadTemporaryWithPercent,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly, // Only allows digits
+                                          ],
+                                          decoration: InputDecoration(
+                                              labelStyle: textStyleInput,
+                                              labelText:
+                                                  "Phần trăm (%) thời vụ",
+                                              hintText: 'Nhập % áp dụng',
+                                              hintStyle: const TextStyle(
+                                                  color: Colors.grey),
+                                              border: const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(30))),
+                                              errorText:
+                                                  isErrorTextTemporaryPercent
+                                                      ? errorTextTemporaryPercent
+                                                      : null,
+                                              errorStyle: textStyleErrorInput),
+                                          onChanged: (value) => {
+                                                if (value.isEmpty)
+                                                  {
+                                                    temporaryWithPriceController
+                                                        .text = "0",
+                                                  },
+                                                if (value.isNotEmpty &&
+                                                    value.startsWith('0'))
+                                                  {
+                                                    temporaryWithPercentController
+                                                            .text =
+                                                        value.substring(
+                                                            1), // Loại bỏ ký tự đầu tiên (số 0)
+                                                  },
+                                                if (int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text)! >
+                                                        0 &&
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text)! <=
+                                                        100)
+                                                  {
+                                                    setState(() {
+                                                      errorTextTemporaryPercent =
+                                                          "";
+                                                      isErrorTextTemporaryPercent =
+                                                          false;
+                                                      temporaryWithPercentController
+                                                          .text = value;
+
+                                                      //phần trăm thời vụ thay đổi thì price with temporary thay đổi theo để gợi ý số tiền giảm
+                                                      temporaryWithPriceController
+                                                          .text = Utils.formatCurrency((double
+                                                              .tryParse(priceController
+                                                                  .text
+                                                                  .replaceAll(
+                                                                      RegExp(
+                                                                          r','),
+                                                                      ''))! *
+                                                          (int.tryParse(
+                                                                  value)! /
+                                                              100)));
+                                                    })
+                                                  }
+                                                else
+                                                  {
+                                                    setState(() {
+                                                      errorTextTemporaryPercent =
+                                                          "Phần trăm (%) phải lơn 1";
+                                                      isErrorTextTemporaryPercent =
+                                                          true;
+                                                      if (int.tryParse(
+                                                              temporaryWithPercentController
+                                                                  .text)! >=
+                                                          100) {
+                                                        temporaryWithPercentController
+                                                            .text = "100";
+                                                        errorTextTemporaryPercent =
+                                                            "";
+                                                        isErrorTextTemporaryPercent =
+                                                            false;
+                                                      }
+                                                    }),
+                                                  }
+                                              }),
+                                    ),
                                     TextField(
                                       controller:
                                           temporaryPriceFromDateController,
@@ -1268,12 +1484,23 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               : const SizedBox(),
                         ),
                         isCheckTemporaryPrice && isCheckVAT
-                            ? const SizedBox(
-                                height: 40,
+                            ? SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.00005,
                               )
-                            : const SizedBox(
-                                height: 120,
-                              ),
+                            : const SizedBox(),
+                        !isCheckTemporaryPrice && !isCheckVAT
+                            ? SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
+                              )
+                            : const SizedBox(),
+                        isCheckVAT
+                            ? SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.12,
+                              )
+                            : const SizedBox(),
                         SizedBox(
                           height: 50,
                           child: Row(
@@ -1302,21 +1529,32 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
+                                    print("Thông tin trước cập nhật"),
+                                    print(nameController.text),
+                                    print(priceController.text),
                                     priceController.text =
                                         Utils.formatCurrencytoDouble(
-                                            priceController.text),
-                                    temporaryWithPriceController.text =
-                                        Utils.formatCurrencytoDouble(
-                                            temporaryWithPriceController.text),
+                                                priceController.text)
+                                            .replaceAll(RegExp(r','), ''),
+                                    temporaryWithPriceController
+                                        .text = Utils.formatCurrencytoDouble(
+                                            temporaryWithPriceController.text)
+                                        .replaceAll(RegExp(r','), ''),
                                     print("Thông tin cập nhật"),
                                     print(nameController.text),
                                     print(priceController.text),
+                                    print(textCategoryIdController.text),
+                                    print(textUnitIdController.text),
+                                    print(textVatIdController.text),
                                     if (nameController.text != "" &&
                                         priceController.text != "" &&
+                                        int.tryParse(priceController.text)! >
+                                            100 &&
                                         priceController.text != "0")
                                       {
                                         if (isCheckTemporaryPrice)
                                           {
+                                            
                                             if (isCheckDecrease)
                                               {
                                                 temporaryWithPriceController
@@ -1325,7 +1563,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                 print(
                                                     temporaryWithPriceController
                                                         .text)
-                                                        //lỗi update, check bên firebase
+                                                //lỗi update, check bên firebase
                                               },
                                             if (isFromDateTimeSelected &&
                                                 isToDateTimeSelected &&
@@ -1333,26 +1571,104 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                         .text !=
                                                     "")
                                               {
-                                                foodController.updateFood(
-                                                    widget.food.food_id,
-                                                    nameController.text,
-                                                    widget.food.image,
-                                                    _pickedImage.value,
-                                                    priceController.text,
-                                                    temporaryWithPriceController
-                                                        .text,
-                                                    pickedFromDateTime, //thời gian bắt đầu giá thời vụ
-                                                    pickedToDateTime, //thời gian kết thúc giá thời vụ
+                                                print("ngày giờ thười vụ hợp lệ"),
+                                                if (isCheckVAT &&
+                                                    textVatIdController.text ==
+                                                        "")
+                                                  {
+                                                    Alert(
+                                                      context: context,
+                                                      title: "THÔNG BÁO",
+                                                      desc:
+                                                          "Vui lòng chọn giá trị Vat!",
+                                                      image: alertImageError,
+                                                      buttons: [],
+                                                    ).show(),
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            seconds: 2), () {
+                                                      Navigator.pop(context);
+                                                    })
+                                                  }
+                                                else
+                                                  {
+                                                    if(isCheckTemporaryWithPrice){
+                                                      temporaryWithPercentController
+                                                            .text = "0"
+                                                    },
+                                                    if (isCheckTemporaryWithPercent)
+                                                      {
+                                                        temporaryWithPriceController
+                                                            .text = "",
+                                                        if (isCheckDecrease)
+                                                          {
+                                                            temporaryWithPriceController
+                                                                .text = ((-1) *
+                                                                    (int.tryParse(priceController
+                                                                            .text)! *
+                                                                        (int.tryParse(temporaryWithPercentController.text)! /
+                                                                            100)))
+                                                                .toString(),
+                                                            print(
+                                                                "thời vụ % áp dụng: ${(int.tryParse(priceController.text)! * (int.tryParse(temporaryWithPercentController.text)! / 100)).toString()}")
+                                                          }
+                                                        else
+                                                          {
+                                                            temporaryWithPriceController
+                                                                .text = (int.tryParse(
+                                                                        priceController
+                                                                            .text)! *
+                                                                    (10 / 100))
+                                                                .toString(),
+                                                            print(
+                                                                "thời vụ % áp dụng: ${(int.tryParse(priceController.text)! * (int.tryParse(temporaryWithPercentController.text)! / 100)).toString()}")
+                                                          },
+                                                      },
+                                                    foodController.updateFood(
+                                                        widget.food.food_id,
+                                                        nameController.text,
+                                                        widget.food.image,
+                                                        _pickedImage.value,
+                                                        priceController.text,
+                                                        temporaryWithPriceController
+                                                            .text,
+                                                        pickedFromDateTime, //thời gian bắt đầu giá thời vụ
+                                                        pickedToDateTime, //thời gian kết thúc giá thời vụ
 
-                                                    textCategoryIdController
-                                                        .text,
-                                                    textUnitIdController.text,
-                                                    textVatIdController.text),
+                                                        textCategoryIdController
+                                                            .text,
+                                                        textUnitIdController
+                                                            .text,
+                                                        textVatIdController
+                                                            .text,
+                                                        int.tryParse(
+                                                                temporaryWithPercentController
+                                                                    .text) ??
+                                                            0),
+                                                    Navigator.pop(context)
+                                                  }
+                                              }
+                                              else 
+                                              {
+                                                Alert(
+                                                  context: context,
+                                                  title: "THÔNG BÁO",
+                                                  desc:
+                                                      "Vui lòng chọn thời gian áp dụng giá thời vụ!",
+                                                  image: alertImageError,
+                                                  buttons: [],
+                                                ).show(),
+                                                Future.delayed(
+                                                    const Duration(seconds: 2),
+                                                    () {
+                                                  Navigator.pop(context);
+                                                })
                                               }
                                           }
                                         else
                                           {
-                                            if (isCheckVAT)
+                                            if (isCheckVAT &&
+                                                textVatIdController.text != "")
                                               {
                                                 foodController.updateFood(
                                                     widget.food.food_id,
@@ -1367,7 +1683,28 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                     textCategoryIdController
                                                         .text,
                                                     textUnitIdController.text,
-                                                    textVatIdController.text),
+                                                    textVatIdController.text,
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text) ??
+                                                        0),
+                                              }
+                                            else if (isCheckVAT &&
+                                                textVatIdController.text == "")
+                                              {
+                                                Alert(
+                                                  context: context,
+                                                  title: "THÔNG BÁO",
+                                                  desc:
+                                                      "Vui lòng chọn giá trị Vat!",
+                                                  image: alertImageError,
+                                                  buttons: [],
+                                                ).show(),
+                                                Future.delayed(
+                                                    const Duration(seconds: 2),
+                                                    () {
+                                                  Navigator.pop(context);
+                                                })
                                               }
                                             else
                                               {
@@ -1383,10 +1720,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                     textCategoryIdController
                                                         .text,
                                                     textUnitIdController.text,
-                                                    ""),
+                                                    "",
+                                                    int.tryParse(
+                                                            temporaryWithPercentController
+                                                                .text) ??
+                                                        0),
+                                                Navigator.pop(context)
                                               }
                                           },
-                                        Navigator.pop(context)
                                       }
                                     else
                                       {

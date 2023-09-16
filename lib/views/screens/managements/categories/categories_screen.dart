@@ -34,7 +34,7 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
           leading: InkWell(
               onTap: () => {Navigator.pop(context)},
               child: const Icon(Icons.arrow_back_ios)),
-          title: const Center(child: Text("QUẢN LÝ ĐƠN VỊ")),
+          title: const Center(child: Text("QUẢN LÝ DANH MỤC")),
           actions: [
             Container(
                 margin: const EdgeInsets.only(right: 10),
