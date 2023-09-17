@@ -22,7 +22,8 @@ class CategoryController extends GetxController {
           String name = userData['name'] ?? '';
 
           int active = userData['active'] ?? 1;
-          return model.Category(category_id: category_id, name: name, active: active);
+          return model.Category(
+              category_id: category_id, name: name, active: active);
         }
       }
     } catch (e) {
@@ -33,19 +34,38 @@ class CategoryController extends GetxController {
 
   final Rx<List<Category>> _categories = Rx<List<Category>>([]);
   List<Category> get categories => _categories.value;
-  getCategories() async {
-    _categories.bindStream(
-      firestore.collection('categories').snapshots().map(
-        (QuerySnapshot query) {
-          List<Category> retValue = [];
-          for (var element in query.docs) {
-            retValue.add(Category.fromSnap(element));
-            print(element);
+
+  getCategories(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _categories.bindStream(
+        firestore.collection('categories').snapshots().map(
+          (QuerySnapshot query) {
+            List<Category> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(Category.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _categories.bindStream(firestore
+          .collection('categories')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<Category> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(Category.fromSnap(elem));
           }
-          return retValue;
-        },
-      ),
-    );
+        }
+        return retVal;
+      }));
+    }
   }
 
   void createCategory(

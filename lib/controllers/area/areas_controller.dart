@@ -33,8 +33,43 @@ class AreaController extends GetxController {
 
   final Rx<List<Area>> _areas = Rx<List<Area>>([]);
   List<Area> get areas => _areas.value;
-  getAreas() async {
-    _areas.bindStream(
+  
+  getAreas(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _areas.bindStream(
+        firestore.collection('areas').snapshots().map(
+          (QuerySnapshot query) {
+            List<Area> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(Area.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _areas.bindStream(firestore
+          .collection('areas')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<Area> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(Area.fromSnap(elem));
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
+  final Rx<List<Area>> _areasActive = Rx<List<Area>>([]);
+  List<Area> get areasActive => _areasActive.value;
+  getAreasActive() async {
+    _areasActive.bindStream(
       firestore.collection('areas').snapshots().map(
         (QuerySnapshot query) {
           List<Area> retValue = [];

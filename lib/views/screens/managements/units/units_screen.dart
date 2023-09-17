@@ -16,11 +16,14 @@ class ManagementUnitsPage extends StatefulWidget {
 
 class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
   UnitController unitController = Get.put(UnitController());
+  @override
+  void initState() {
+    super.initState();
+    unitController.getUnits("");
+  }
 
   @override
   Widget build(BuildContext context) {
-    unitController.getUnits();
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -55,6 +58,37 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Container(
+                  height: 50,
+                  width: 400,
+                  margin: const EdgeInsets.all(kDefaultPadding),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultPadding,
+                    vertical: kDefaultPadding / 4, // 5 top and bottom
+                  ),
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.4),
+                      borderRadius: borderRadiusTextField30,
+                      border: Border.all(width: 1, color: borderColorPrimary)),
+                  child: TextField(
+                    onChanged: (value) {
+                      unitController.getUnits(value);
+                    },
+                    style: const TextStyle(color: borderColorPrimary),
+                    decoration: const InputDecoration(
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      fillColor: borderColorPrimary,
+                      icon: Icon(
+                        Icons.search,
+                        color: iconColorPrimary,
+                      ),
+                      hintText: 'Tìm kiếm đơn vị tính ...',
+                      hintStyle: TextStyle(color: borderColorPrimary),
+                    ),
+                    cursorColor: borderColorPrimary,
+                  ),
+                ),
                 marginTop10,
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.87,
@@ -73,7 +107,8 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                                     onTap: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => UnitDetailPage(
+                                            builder: (context) =>
+                                                UnitDetailPage(
                                                   unitId: unit.unit_id,
                                                 ))),
                                     child: Marquee(
@@ -119,8 +154,9 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                               ),
                               trailing: InkWell(
                                 onTap: () => {
-                                  string =
-                                      unit.active == ACTIVE ? "ngừng hoạt động" : "hoạt động trở lại",
+                                  string = unit.active == ACTIVE
+                                      ? "ngừng hoạt động"
+                                      : "hoạt động trở lại",
                                   showCustomAlertDialogConfirm(
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",

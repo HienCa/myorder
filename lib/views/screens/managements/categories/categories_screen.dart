@@ -11,16 +11,20 @@ import 'package:myorder/views/widgets/dialogs.dart';
 class ManagementCategoriesPage extends StatefulWidget {
   const ManagementCategoriesPage({Key? key}) : super(key: key);
   @override
-  _ManagementCategoriesPageState createState() => _ManagementCategoriesPageState();
+  _ManagementCategoriesPageState createState() =>
+      _ManagementCategoriesPageState();
 }
 
 class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
   CategoryController categoryController = Get.put(CategoryController());
+  @override
+  void initState() {
+    super.initState();
+    categoryController.getCategories("");
+  }
 
   @override
   Widget build(BuildContext context) {
-    categoryController.getCategories();
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -55,6 +59,37 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Container(
+                  height: 50,
+                  width: 400,
+                  margin: const EdgeInsets.all(kDefaultPadding),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultPadding,
+                    vertical: kDefaultPadding / 4, // 5 top and bottom
+                  ),
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.4),
+                      borderRadius: borderRadiusTextField30,
+                      border: Border.all(width: 1, color: borderColorPrimary)),
+                  child: TextField(
+                    onChanged: (value) {
+                      categoryController.getCategories(value);
+                    },
+                    style: const TextStyle(color: borderColorPrimary),
+                    decoration: const InputDecoration(
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      fillColor: borderColorPrimary,
+                      icon: Icon(
+                        Icons.search,
+                        color: iconColorPrimary,
+                      ),
+                      hintText: 'Tìm kiếm danh mục ...',
+                      hintStyle: TextStyle(color: borderColorPrimary),
+                    ),
+                    cursorColor: borderColorPrimary,
+                  ),
+                ),
                 marginTop10,
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.87,
@@ -73,8 +108,10 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
                                     onTap: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => CategoryDetailPage(
-                                                  categoryId: category.category_id,
+                                            builder: (context) =>
+                                                CategoryDetailPage(
+                                                  categoryId:
+                                                      category.category_id,
                                                 ))),
                                     child: Marquee(
                                       direction: Axis.horizontal,
@@ -99,8 +136,10 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
                                 onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => CategoryDetailPage(
-                                            categoryId: category.category_id))),
+                                        builder: (context) =>
+                                            CategoryDetailPage(
+                                                categoryId:
+                                                    category.category_id))),
                                 child: RichText(
                                   text: TextSpan(
                                     text: category.active == ACTIVE
@@ -119,15 +158,18 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
                               ),
                               trailing: InkWell(
                                 onTap: () => {
-                                  string =
-                                      category.active == ACTIVE ? "ngừng hoạt động" : "hoạt động trở lại",
+                                  string = category.active == ACTIVE
+                                      ? "ngừng hoạt động"
+                                      : "hoạt động trở lại",
                                   showCustomAlertDialogConfirm(
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string danh mục này?",
                                     () async {
-                                      await categoryController.updateToggleActive(
-                                          category.category_id, category.active);
+                                      await categoryController
+                                          .updateToggleActive(
+                                              category.category_id,
+                                              category.active);
                                     },
                                   )
                                 },

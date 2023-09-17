@@ -17,11 +17,14 @@ class ManagementEmployeesPage extends StatefulWidget {
 
 class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
   EmployeeController employeeController = Get.put(EmployeeController());
+  @override
+  void initState() {
+    super.initState();
+    employeeController.getEmployees("");
+  }
 
   @override
   Widget build(BuildContext context) {
-    employeeController.getEmployees();
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -56,6 +59,37 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Container(
+                  height: 50,
+                  width: 400,
+                  margin: const EdgeInsets.all(kDefaultPadding),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultPadding,
+                    vertical: kDefaultPadding / 4, // 5 top and bottom
+                  ),
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.4),
+                      borderRadius: borderRadiusTextField30,
+                      border: Border.all(width: 1, color: borderColorPrimary)),
+                  child: TextField(
+                    onChanged: (value) {
+                      employeeController.getEmployees(value);
+                    },
+                    style: const TextStyle(color: borderColorPrimary),
+                    decoration: const InputDecoration(
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      fillColor: borderColorPrimary,
+                      icon: Icon(
+                        Icons.search,
+                        color: iconColorPrimary,
+                      ),
+                      hintText: 'Tìm kiếm nhân viên ...',
+                      hintStyle: TextStyle(color: borderColorPrimary),
+                    ),
+                    cursorColor: borderColorPrimary,
+                  ),
+                ),
                 marginTop10,
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.87,

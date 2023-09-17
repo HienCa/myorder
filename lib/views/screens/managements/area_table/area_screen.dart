@@ -15,14 +15,48 @@ class ManagementAreaPage extends StatefulWidget {
 
 class _ManagementAreaPageState extends State<ManagementAreaPage> {
   AreaController areaController = Get.put(AreaController());
+  @override
+  void initState() {
+    super.initState();
+    areaController.getAreas("");
+  }
 
   @override
   Widget build(BuildContext context) {
-    areaController.getAreas();
-    print("reloaded......");
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        Container(
+          height: 50,
+          width: 400,
+          margin: const EdgeInsets.all(kDefaultPadding),
+          padding: const EdgeInsets.symmetric(
+            horizontal: kDefaultPadding,
+            vertical: kDefaultPadding / 4, // 5 top and bottom
+          ),
+          decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.4),
+              borderRadius: borderRadiusTextField30,
+              border: Border.all(width: 1, color: borderColorPrimary)),
+          child: TextField(
+            onChanged: (value) {
+              areaController.getAreas(value);
+            },
+            style: const TextStyle(color: borderColorPrimary),
+            decoration: const InputDecoration(
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              fillColor: borderColorPrimary,
+              icon: Icon(
+                Icons.search,
+                color: iconColorPrimary,
+              ),
+              hintText: 'Tìm kiếm khu vực ...',
+              hintStyle: TextStyle(color: borderColorPrimary),
+            ),
+            cursorColor: borderColorPrimary,
+          ),
+        ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.7,
           child: ResponsiveGridList(

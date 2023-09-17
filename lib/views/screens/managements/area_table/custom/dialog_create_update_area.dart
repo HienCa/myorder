@@ -34,6 +34,8 @@ class _CustomDialogCreateUpdateAreaState
   @override
   void initState() {
     super.initState();
+    areaController.getAreas("");
+
     isUpdate =
         widget.isUpdate; // Initialize isUpdate with the value from the widget
     if (widget.area_id != null) {
@@ -44,7 +46,6 @@ class _CustomDialogCreateUpdateAreaState
 
   @override
   Widget build(BuildContext context) {
-    areaController.getAreas();
     return Theme(
        data: ThemeData(unselectedWidgetColor: primaryColor),
       child: Dialog(

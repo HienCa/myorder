@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/table.dart' as model;
 
 class AddFoodToOrderPage extends StatefulWidget {
-  const AddFoodToOrderPage({super.key});
+  final model.Table table;
+  const AddFoodToOrderPage({super.key, required this.table});
 
   @override
   State<AddFoodToOrderPage> createState() => _AddFoodToOrderPageState();
@@ -23,7 +25,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
             color: iconWhiteColor,
           ),
         ),
-        title: const Center(child: Text("GỌI MÓN - A4")),
+        title: Center(child: Text("GỌI MÓN - ${widget.table.name}")),
         backgroundColor: primaryColor,
       ),
       body: Column(

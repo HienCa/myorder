@@ -98,19 +98,51 @@ class FoodController extends GetxController {
 
   final Rx<List<model.Food>> _foods = Rx<List<model.Food>>([]);
   List<model.Food> get foods => _foods.value;
-  getfoods() async {
-    _foods.bindStream(
-      firestore.collection('foods').snapshots().map(
-        (QuerySnapshot query) {
-          List<model.Food> retValue = [];
-          for (var element in query.docs) {
-            retValue.add(model.Food.fromSnap(element));
+  getfoods(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _foods.bindStream(
+        firestore.collection('foods').snapshots().map(
+          (QuerySnapshot query) {
+            List<model.Food> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(model.Food.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _foods.bindStream(firestore
+          .collection('foods')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<model.Food> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(model.Food.fromSnap(elem));
           }
-          return retValue;
-        },
-      ),
-    );
+        }
+        return retVal;
+      }));
+    }
   }
+  // getfoods() async {
+  //   _foods.bindStream(
+  //     firestore.collection('foods').snapshots().map(
+  //       (QuerySnapshot query) {
+  //         List<model.Food> retValue = [];
+  //         for (var element in query.docs) {
+  //           retValue.add(model.Food.fromSnap(element));
+  //         }
+  //         return retValue;
+  //       },
+  //     ),
+  //   );
+  // }
 
   void createFood(
     String name,

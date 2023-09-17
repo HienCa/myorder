@@ -103,18 +103,38 @@ class EmployeeController extends GetxController {
 
   final Rx<List<Employee>> _employees = Rx<List<Employee>>([]);
   List<Employee> get employees => _employees.value;
-  getEmployees() async {
-    _employees.bindStream(
-      firestore.collection('employees').snapshots().map(
-        (QuerySnapshot query) {
-          List<Employee> retValue = [];
-          for (var element in query.docs) {
-            retValue.add(Employee.fromSnap(element));
+
+  getEmployees(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _employees.bindStream(
+        firestore.collection('employees').snapshots().map(
+          (QuerySnapshot query) {
+            List<Employee> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(Employee.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _employees.bindStream(firestore
+          .collection('employees')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<Employee> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(Employee.fromSnap(elem));
           }
-          return retValue;
-        },
-      ),
-    );
+        }
+        return retVal;
+      }));
+    }
   }
 
   void createEmployee(
@@ -295,7 +315,7 @@ class EmployeeController extends GetxController {
         'THÀNH CÔNG!',
         'Cập nhật thông tin thành công!',
         backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white, 
+        colorText: Colors.white,
       );
       update();
     } catch (e) {

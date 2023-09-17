@@ -5,6 +5,7 @@ import 'package:myorder/constants.dart';
 
 
 class SearchBox extends StatelessWidget {
+  
   const SearchBox({super.key, 
     required this.onChanged,
   });
@@ -23,8 +24,9 @@ class SearchBox extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius:borderRadiusTextField30,
         border: Border.all(width: 1, color: borderColorPrimary)
+        
       ),
       child: TextField(
         onChanged: onChanged,

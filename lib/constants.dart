@@ -18,7 +18,6 @@ List pages = [
   const UtilsPage()
 ];
 
-
 //============================================================================
 // height chart = 400
 // list of colors that we use in our app
@@ -29,7 +28,7 @@ const kTextColor = Color(0xFF000839);
 const kTextLightColor = Color(0xFF747474);
 const kBlueColor = Color(0xFF40BAD5);
 
-const kDefaultPadding = 20.0;
+const kDefaultPadding = 10.0;
 
 // our default Shadow
 const kDefaultShadow = BoxShadow(
@@ -58,13 +57,20 @@ const cancelFoodColor = Color.fromARGB(255, 224, 24, 24);
 //border color
 const borderColorPrimary = Color(0xFF40BAD5);
 const borderColorTextField = Color.fromARGB(255, 232, 236, 237);
+
+//border radius - textfield
+var borderRadiusTextField10 = BorderRadius.circular(10);
+var borderRadiusTextField30 = BorderRadius.circular(30);
+
+//border radius - container
+
+//border
+
 // background
 const backgroundColor = Colors.white;
 const backgroundColorGray = Color.fromARGB(255, 245, 241, 241);
 const backgroundSuccessColor = Colors.green;
 const backgroundFailureColor = Colors.redAccent;
-
-
 
 //text
 const textColor = Colors.black;
@@ -192,33 +198,34 @@ const marginRight20 = SizedBox(width: 20);
 const sizeIconLarge = 30;
 const sizeIconSmall = 20;
 
-
-
 //alert
 var alertStyle = AlertStyle(
-      animationType: AnimationType.fromTop,
-      isCloseButton: false,
-      isOverlayTapDismiss: false,
-      descStyle: const TextStyle(fontWeight: FontWeight.bold),
-      descTextAlign: TextAlign.start,
-      animationDuration: const Duration(milliseconds: 400),
-      alertBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0.0),
-        side: const BorderSide(
-          color: Colors.grey,
-        ),
-      ),
-      titleStyle: const TextStyle(
-        color: Colors.red,
-      ),
-      alertAlignment: Alignment.topCenter,
-    );
+  animationType: AnimationType.fromTop,
+  isCloseButton: false,
+  isOverlayTapDismiss: false,
+  descStyle: const TextStyle(fontWeight: FontWeight.bold),
+  descTextAlign: TextAlign.start,
+  animationDuration: const Duration(milliseconds: 400),
+  alertBorder: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(0.0),
+    side: const BorderSide(
+      color: Colors.grey,
+    ),
+  ),
+  titleStyle: const TextStyle(
+    color: Colors.red,
+  ),
+  alertAlignment: Alignment.topCenter,
+);
 
-var alertImageSuccess = Image.asset("assets/images/alert/3.0x/icon_success.png");
-var alertImageWarning = Image.asset("assets/images/alert/3.0x/icon_warning.png");
+var alertImageSuccess =
+    Image.asset("assets/images/alert/3.0x/icon_success.png");
+var alertImageWarning =
+    Image.asset("assets/images/alert/3.0x/icon_warning.png");
 var alertImageError = Image.asset("assets/images/alert/3.0x/icon_error.png");
 var alertImageInfo = Image.asset("assets/images/alert/3.0x/icon_info.png");
 
+const defaultArea = "allArea-hienca";
 
 // FIREBASE
 var firebaseAuth = FirebaseAuth.instance;

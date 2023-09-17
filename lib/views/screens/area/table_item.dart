@@ -1,20 +1,55 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:myorder/models/table.dart' as model;
 
-class TableItem extends StatelessWidget {
-  const TableItem({super.key});
+class TableItem extends StatefulWidget {
+  final String? areaIdSelected;
+  const TableItem({super.key, this.areaIdSelected});
 
   @override
+  State<TableItem> createState() => _TableItemState();
+}
+
+class _TableItemState extends State<TableItem> {
+  int selectedIndex = 0;
+  TableController tableController = Get.put(TableController());
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+  //allArea-hienca mặc định lấy tất cả các table
+  @override
   Widget build(BuildContext context) {
-    return ResponsiveGridList(
-        desiredItemWidth: 100,
-        minSpacing: 10,
-        children: List.generate(50, (index) => index + 1).map((i) {
-          return InkWell(
-            onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => const AddFoodToOrderPage()))},
-            child: Container(
+    return StreamBuilder<QuerySnapshot>(
+      stream: widget.areaIdSelected == defaultArea ? FirebaseFirestore.instance.collection('tables').where('active', isEqualTo: 1).snapshots() : FirebaseFirestore.instance.collection('tables').where('active', isEqualTo: 1).where('area_id', isEqualTo: widget.areaIdSelected).snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Hiển thị loading khi dữ liệu đang được tải
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        // Lấy danh sách bàn từ dữ liệu snapshot
+        final tables = snapshot.data?.docs.map((doc) => model.Table.fromSnap(doc)).toList() ?? [];
+        return ResponsiveGridList(
+          desiredItemWidth: 100,
+          minSpacing: 10,
+          children: List.generate(tables.length, (index) => index).map((i) {
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddFoodToOrderPage(table: tables[i],)),
+                );
+              },
+              child: Container(
                 height: 100,
                 alignment: const Alignment(0, 0),
                 decoration: BoxDecoration(
@@ -32,13 +67,21 @@ class TableItem extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    const Text(
-                      "A2",
-                      style: TextStyle(fontSize: 30, color: textWhiteColor, fontWeight:FontWeight.bold),
+                    Text(
+                      tables[i].name,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        color: textWhiteColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
-                )),
-          );
-        }).toList());
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
   }
 }

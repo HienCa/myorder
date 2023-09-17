@@ -33,20 +33,40 @@ class UnitController extends GetxController {
 
   final Rx<List<Unit>> _units = Rx<List<Unit>>([]);
   List<Unit> get units => _units.value;
-  getUnits() async {
-    _units.bindStream(
-      firestore.collection('units').snapshots().map(
-        (QuerySnapshot query) {
-          List<Unit> retValue = [];
-          for (var element in query.docs) {
-            retValue.add(Unit.fromSnap(element));
-            print(element);
+  getUnits(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _units.bindStream(
+        firestore.collection('units').snapshots().map(
+          (QuerySnapshot query) {
+            List<Unit> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(Unit.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _units.bindStream(firestore
+          .collection('units')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<Unit> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(Unit.fromSnap(elem));
           }
-          return retValue;
-        },
-      ),
-    );
+        }
+        return retVal;
+      }));
+    }
   }
+
+
 
   void createUnit(
     String name,

@@ -38,19 +38,37 @@ class VatController extends GetxController {
 
   final Rx<List<Vat>> _vats = Rx<List<Vat>>([]);
   List<Vat> get vats => _vats.value;
-  getVats() async {
-    _vats.bindStream(
-      firestore.collection('vats').snapshots().map(
-        (QuerySnapshot query) {
-          List<Vat> retValue = [];
-          for (var element in query.docs) {
-            retValue.add(Vat.fromSnap(element));
-            print(element);
+  getVats(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _vats.bindStream(
+        firestore.collection('vats').snapshots().map(
+          (QuerySnapshot query) {
+            List<Vat> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(Vat.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _vats.bindStream(firestore
+          .collection('vats')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<Vat> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(Vat.fromSnap(elem));
           }
-          return retValue;
-        },
-      ),
-    );
+        }
+        return retVal;
+      }));
+    }
   }
 
   void createVat(
