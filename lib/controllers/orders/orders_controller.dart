@@ -11,13 +11,98 @@ import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/order_detail.dart';
 
 class OrderController extends GetxController {
- 
+  //don hang
+  final Rx<List<model.Order>> _orders = Rx<List<model.Order>>([]);
+  List<model.Order> get orders => _orders.value;
+  getOrders(String employeeIdSelected, String keySearch) async {
+    if (keySearch.isEmpty && employeeIdSelected == defaultEmployee) {
+      //lấy tất cả don hang
+      print("lấy tất cả");
+
+      _orders.bindStream(
+        firestore
+            .collection('orders')
+            .where("active", isEqualTo: ACTIVE)
+            .snapshots()
+            .map(
+          (QuerySnapshot query) {
+            List<model.Order> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(model.Order.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (employeeIdSelected.isNotEmpty && keySearch.isEmpty) {
+      // chỉ theo nhan vien - không search
+      print("chỉ theo nhan vien - không search");
+
+      _orders.bindStream(
+        firestore
+            .collection('orders')
+            .where('employee_id', isEqualTo: employeeIdSelected)
+            .snapshots()
+            .map(
+          (QuerySnapshot query) {
+            List<model.Order> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(model.Order.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (employeeIdSelected.isNotEmpty &&
+        employeeIdSelected != defaultEmployee &&
+        keySearch.isNotEmpty) {
+      // theo nhan vien và có search
+      print("theo nhan vien và có search");
+
+      _orders.bindStream(firestore
+          .collection('orders')
+          .where('employee_id', isEqualTo: employeeIdSelected)
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<model.Order> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['table_id'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(model.Order.fromSnap(elem));
+          }
+        }
+        return retVal;
+      }));
+    } else if (employeeIdSelected == defaultEmployee && keySearch.isNotEmpty) {
+      //tìm kiếm theo nhan vien
+      print("tìm kiếm theo nhan vien");
+      _orders.bindStream(firestore
+          .collection('orders')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<model.Order> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['table_id'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(model.Order.fromSnap(elem));
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
+
   // tao order
   //them tung orderdetail
   void createOrder(String table_id, List<OrderDetail> orderDetailList,
       BuildContext context) async {
     try {
-      //kiểm tra xem bàn đã được order chưa
+      //kiểm tra xem don hang đã được order chưa
       var tableOrdered = await firestore
           .collection("orders")
           .where("table_id", isEqualTo: table_id)
@@ -25,7 +110,7 @@ class OrderController extends GetxController {
           .get();
 
       if (tableOrdered.docs.isEmpty) {
-        //nếu bàn đang trống thì tạo order mới
+        //nếu don hang đang trống thì tạo order mới
         var allDocs = await firestore.collection('orders').get();
         int len = allDocs.docs.length;
         // bo sung them note neu can
@@ -35,7 +120,7 @@ class OrderController extends GetxController {
           employee_id: authController.user.uid,
           order_status: FOOD_STATUS_IN_CHEFT,
           note: "",
-          create_at: DateTime.now(),
+          create_at: Timestamp.fromDate(DateTime.now()),
           payment_at: null,
           active: 1,
         );
@@ -66,7 +151,7 @@ class OrderController extends GetxController {
           orderDetaillen++;
         }
 
-        // cập nhật trạng thái bàn empty -> serving
+        // cập nhật trạng thái don hang empty -> serving
         await firestore.collection('tables').doc(table_id).update({
           "status": TABLE_STATUS_SERVING, // đang phục vụ
         });
@@ -80,7 +165,7 @@ class OrderController extends GetxController {
         }
         var allDocsOrderDetail = await firestore
             .collection('orders')
-            .doc(order_id) //order_id của bàn hiện đang được phục vụ
+            .doc(order_id) //order_id của don hang hiện đang được phục vụ
             .collection("orderDetails")
             .get();
 
@@ -93,7 +178,7 @@ class OrderController extends GetxController {
 
           await firestore
               .collection('orders')
-              .doc(order_id) //order_id của bàn hiện đang được phục vụ
+              .doc(order_id) //order_id của don hang hiện đang được phục vụ
               .collection("orderDetails")
               .doc("OrderDetail-$orderDetaillen")
               .set(orderDetail.toJson());
@@ -121,6 +206,4 @@ class OrderController extends GetxController {
       );
     }
   }
-
-  
 }

@@ -6,12 +6,12 @@ class Order {
   String order_id;
   int order_status;
   String? note;
-  DateTime create_at;
-  DateTime? payment_at;
+  Timestamp create_at;
+  Timestamp? payment_at;
   int active;
   String employee_id;
   String table_id;
-
+  double? total_amount;
   Order({
     required this.order_id,
     required this.order_status,
@@ -21,6 +21,7 @@ class Order {
     required this.active,
     required this.employee_id,
     required this.table_id,
+    this.total_amount,
   });
 
   Map<String, dynamic> toJson() => {

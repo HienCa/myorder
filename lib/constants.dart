@@ -242,6 +242,7 @@ var alertImageInfo = Image.asset("assets/images/alert/3.0x/icon_info.png");
 
 const defaultArea = "allArea-hienca";
 const defaultCategory = "allCategory-hienca";
+const defaultEmployee = "allEmployee-hienca";
 
 // FIREBASE
 var firebaseAuth = FirebaseAuth.instance;
