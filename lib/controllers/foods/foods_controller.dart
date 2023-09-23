@@ -136,12 +136,15 @@ class FoodController extends GetxController {
   //goi mon
   final Rx<List<FoodOrder>> _foodsToOrder = Rx<List<FoodOrder>>([]);
   List<FoodOrder> get foodsToOrder => _foodsToOrder.value;
-  getfoodsToOrder(String keySearch) async {
-    if (keySearch.isEmpty) {
+  getfoodsToOrder(String keySearch, String categoryIdSelected) async {
+    if (keySearch.isEmpty && categoryIdSelected == defaultCategory) {
+      //lấy tất cả mon an
+      print("lấy tất cả");
+
       _foodsToOrder.bindStream(
         firestore
             .collection('foods')
-            .where("active", isEqualTo: 1)
+            .where("active", isEqualTo: ACTIVE)
             .snapshots()
             .map(
           (QuerySnapshot query) {
@@ -157,27 +160,125 @@ class FoodController extends GetxController {
           },
         ),
       );
-    } else {
+    } else if (categoryIdSelected.isNotEmpty && keySearch.isEmpty) {
+      // chỉ theo danh muc - không search
+      print("chỉ theo danh muc - không search");
+
+      _foodsToOrder.bindStream(
+        firestore
+            .collection('foods')
+            .where('category_id', isEqualTo: categoryIdSelected)
+            .snapshots()
+            .map(
+      
+          (QuerySnapshot query) {
+            List<FoodOrder> retValue = [];
+            for (var element in query.docs) {
+              FoodOrder food = FoodOrder.fromSnap(element);
+              food.isSelected = false;
+              food.quantity = 1;
+              retValue.add(food);
+            }
+            Utils.showDataJson(query);
+            return retValue;
+          },
+        ),
+      );
+    } else if (categoryIdSelected.isNotEmpty &&
+        categoryIdSelected != defaultCategory &&
+        keySearch.isNotEmpty) {
+      // theo danh muc và có search
+      print("theo danh muc và có search");
+
       _foodsToOrder.bindStream(firestore
           .collection('foods')
+          .where('category_id', isEqualTo: categoryIdSelected)
           .orderBy('name')
           .snapshots()
+          
           .map((QuerySnapshot query) {
-        List<FoodOrder> retVal = [];
-        for (var elem in query.docs) {
-          String name = elem['name'].toLowerCase();
+        List<FoodOrder> retValue = [];
+        for (var element in query.docs) {
+          FoodOrder food = FoodOrder.fromSnap(element);
+          food.isSelected = false;
+          food.quantity = 1;
+          String name = element['name'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
-            FoodOrder food = FoodOrder.fromSnap(elem);
-            food.isSelected = false;
-            food.quantity = 1;
-            retVal.add(food);
+            retValue.add(food);
+          }
+          
+        }
+        Utils.showDataJson(query);
+
+        return retValue;
+      }));
+    } else if (categoryIdSelected == defaultCategory && keySearch.isNotEmpty) {
+      //tìm kiếm theo danh muc
+      print("tìm kiếm theo danh muc");
+      _foodsToOrder.bindStream(firestore
+          .collection('foods')
+          .where("active", isEqualTo: ACTIVE)
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<FoodOrder> retValue = [];
+        for (var element in query.docs) {
+          FoodOrder food = FoodOrder.fromSnap(element);
+          food.isSelected = false;
+          food.quantity = 1;
+          String name = element['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retValue.add(food);
           }
         }
-        return retVal;
+        Utils.showDataJson(query);
+        return retValue;
       }));
     }
   }
+  // getfoodsToOrder(String keySearch) async {
+  //   if (keySearch.isEmpty) {
+  //     _foodsToOrder.bindStream(
+  //       firestore
+  //           .collection('foods')
+  //           .where("active", isEqualTo: 1)
+  //           .snapshots()
+  //           .map(
+  //         (QuerySnapshot query) {
+  //           List<FoodOrder> retValue = [];
+  //           for (var element in query.docs) {
+  //             FoodOrder food = FoodOrder.fromSnap(element);
+  //             food.isSelected = false;
+  //             food.quantity = 1;
+  //             retValue.add(food);
+  //           }
+  //           Utils.showDataJson(query);
+  //           return retValue;
+  //         },
+  //       ),
+  //     );
+  //   } else {
+  //     _foodsToOrder.bindStream(firestore
+  //         .collection('foods')
+  //         .orderBy('name')
+  //         .snapshots()
+  //         .map((QuerySnapshot query) {
+  //       List<FoodOrder> retVal = [];
+  //       for (var elem in query.docs) {
+  //         String name = elem['name'].toLowerCase();
+  //         String search = keySearch.toLowerCase().trim();
+  //         if (name.contains(search)) {
+  //           FoodOrder food = FoodOrder.fromSnap(elem);
+  //           food.isSelected = false;
+  //           food.quantity = 1;
+  //           retVal.add(food);
+  //         }
+  //       }
+  //       return retVal;
+  //     }));
+  //   }
+  // }
 
   void createFood(
       String name,

@@ -25,7 +25,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
   int categoryselectedIndex = 0;
   bool isAddFood = false;
   int quantity = 1; // Số lượng đã chọn
-
+  var categoryIdSelected = defaultCategory;
   FoodController foodController = Get.put(FoodController());
   CategoryController categoryController = Get.put(CategoryController());
   OrderController orderController = Get.put(OrderController());
@@ -35,7 +35,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
   void initState() {
     super.initState();
     categoryController.getCategoriesActive();
-    foodController.getfoodsToOrder(keySearch);
+    foodController.getfoodsToOrder(keySearch, defaultCategory);
     print("ssssss");
     // foods = foodController.getfoods(keySearch);
     // Khởi tạo lắng nghe dữ liệu realtime từ Firebase Firestore
@@ -68,6 +68,9 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                   onTap: () {
                     setState(() {
                       categoryselectedIndex = index;
+                      categoryIdSelected = categoryController
+                          .categoriesActive[index].category_id;
+                      foodController.getfoodsToOrder(keySearch, categoryIdSelected);
                     });
                   },
                   child: Container(
@@ -118,7 +121,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                 border: Border.all(width: 1, color: borderColorPrimary)),
             child: TextField(
               onChanged: (value) {
-                foodController.getfoodsToOrder(value);
+                foodController.getfoodsToOrder(value, categoryIdSelected);
               },
               style: const TextStyle(color: borderColorPrimary),
               decoration: const InputDecoration(
@@ -203,7 +206,9 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                         children: [
                                           Checkbox(
                                             value: foodController
-                                                .foodsToOrder[index].isSelected,
+                                                    .foodsToOrder[index]
+                                                    .isSelected ??
+                                                false,
                                             onChanged: (bool? value) {
                                               setState(() {
                                                 foodController
@@ -482,14 +487,16 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
 
                             for (var foodOrder in foodController.foodsToOrder) {
                               if (foodOrder.isSelected == true) {
-                                
                                 //chi tiet don hang
                                 //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
                                 OrderDetail orderDetail = OrderDetail(
                                   order_detail_id: "",
                                   price: Utils.isDateTimeInRange(
-                                    foodOrder.temporary_price_from_date!,
-                                    foodOrder.temporary_price_to_date!) ? (foodOrder.price + foodOrder.price_with_temporary!) : foodOrder.price, 
+                                          foodOrder.temporary_price_from_date!,
+                                          foodOrder.temporary_price_to_date!)
+                                      ? (foodOrder.price +
+                                          foodOrder.price_with_temporary!)
+                                      : foodOrder.price,
                                   quantity: foodOrder.quantity!,
                                   food_status: FOOD_STATUS_IN_CHEFT,
                                   food_id: foodOrder.food_id,
@@ -530,7 +537,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                         const SizedBox(height: 10),
                       ],
                     )
-                  : const SizedBox(), // Nếu isChecked == false, không có nút "XÁC NHẬN"
+                  : const SizedBox(),
             ],
           )
         ],

@@ -29,6 +29,7 @@ int TABLE_STATUS_SERVING = 2; // ĐANG PHỤC VỤ
 int TABLE_STATUS_MERGED = 3; // GỘP BÀN
 int TABLE_STATUS_SPLIT = 4; // TÁCH BÀN
 int TABLE_STATUS_CANCEL = 5; // HỦY BÀN
+int TABLE_STATUS_BOOKING = 6; // HỦY BÀN
 
 
 // text length

@@ -92,6 +92,14 @@ class _TableItemState extends State<TableItem> {
                         fit: BoxFit.cover,
                       ),
                     ) : const SizedBox(),
+                    tables[i].status == TABLE_STATUS_BOOKING ? ClipOval(
+                      child: Image.asset(
+                        "assets/images/icon-table-simple-booking.jpg",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ) : const SizedBox(),
                     Text(
                       tables[i].name,
                       style: const TextStyle(
