@@ -24,12 +24,31 @@ class OrderController extends GetxController {
             .collection('orders')
             .where("active", isEqualTo: ACTIVE)
             .snapshots()
-            .map(
-          (QuerySnapshot query) {
+            .asyncMap(
+          (QuerySnapshot query) async {
             List<model.Order> retValue = [];
             for (var element in query.docs) {
-              retValue.add(model.Order.fromSnap(element));
-              print(element);
+              String order_id = element["order_id"].toString();
+
+              model.Order order = model.Order.fromSnap(element);
+
+              // Truy vấn collection orderDetailArrayList
+              var orderDetailCollection = firestore
+                  .collection('orders')
+                  .doc(order_id)
+                  .collection('orderDetails');
+
+              // Tính tổng số tiền cho đơn hàng
+              double totalAmount = 0;
+              var orderDetailQuery = await orderDetailCollection.get();
+              for (var doc in orderDetailQuery.docs) {
+                var orderDetail = OrderDetail.fromSnap(doc);
+                totalAmount += orderDetail.price * orderDetail.quantity;
+              }
+              print(totalAmount);
+              order.total_amount = totalAmount;
+
+              retValue.add(order);
             }
             return retValue;
           },
@@ -44,12 +63,31 @@ class OrderController extends GetxController {
             .collection('orders')
             .where('employee_id', isEqualTo: employeeIdSelected)
             .snapshots()
-            .map(
-          (QuerySnapshot query) {
+            .asyncMap(
+          (QuerySnapshot query) async {
             List<model.Order> retValue = [];
             for (var element in query.docs) {
-              retValue.add(model.Order.fromSnap(element));
-              print(element);
+              String order_id = element["order_id"].toString();
+
+              model.Order order = model.Order.fromSnap(element);
+
+              // Truy vấn collection orderDetailArrayList
+              var orderDetailCollection = firestore
+                  .collection('orders')
+                  .doc(order_id)
+                  .collection('orderDetails');
+
+              // Tính tổng số tiền cho đơn hàng
+              double totalAmount = 0;
+              var orderDetailQuery = await orderDetailCollection.get();
+              for (var doc in orderDetailQuery.docs) {
+                var orderDetail = OrderDetail.fromSnap(doc);
+                totalAmount += orderDetail.price * orderDetail.quantity;
+              }
+              print(totalAmount);
+              order.total_amount = totalAmount;
+
+              retValue.add(order);
             }
             return retValue;
           },
@@ -65,13 +103,34 @@ class OrderController extends GetxController {
           .collection('orders')
           .where('employee_id', isEqualTo: employeeIdSelected)
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<model.Order> retVal = [];
         for (var elem in query.docs) {
           String name = elem['table_id'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
+
           if (name.contains(search)) {
-            retVal.add(model.Order.fromSnap(elem));
+            String order_id = elem["order_id"].toString();
+
+            model.Order order = model.Order.fromSnap(elem);
+
+            // Truy vấn collection orderDetailArrayList
+            var orderDetailCollection = firestore
+                .collection('orders')
+                .doc(order_id)
+                .collection('orderDetails');
+
+            // Tính tổng số tiền cho đơn hàng
+            double totalAmount = 0;
+            var orderDetailQuery = await orderDetailCollection.get();
+            for (var doc in orderDetailQuery.docs) {
+              var orderDetail = OrderDetail.fromSnap(doc);
+              totalAmount += orderDetail.price * orderDetail.quantity;
+            }
+            print(totalAmount);
+            order.total_amount = totalAmount;
+
+            retVal.add(order);
           }
         }
         return retVal;
@@ -83,13 +142,33 @@ class OrderController extends GetxController {
           .collection('orders')
           .orderBy('name')
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<model.Order> retVal = [];
         for (var elem in query.docs) {
           String name = elem['table_id'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
-            retVal.add(model.Order.fromSnap(elem));
+            String order_id = elem["order_id"].toString();
+
+            model.Order order = model.Order.fromSnap(elem);
+
+            // Truy vấn collection orderDetailArrayList
+            var orderDetailCollection = firestore
+                .collection('orders')
+                .doc(order_id)
+                .collection('orderDetails');
+
+            // Tính tổng số tiền cho đơn hàng
+            double totalAmount = 0;
+            var orderDetailQuery = await orderDetailCollection.get();
+            for (var doc in orderDetailQuery.docs) {
+              var orderDetail = OrderDetail.fromSnap(doc);
+              totalAmount += orderDetail.price * orderDetail.quantity;
+            }
+            print(totalAmount);
+            order.total_amount = totalAmount;
+
+            retVal.add(order);
           }
         }
         return retVal;

@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
-import 'package:myorder/views/screens/order/options_list.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
-import 'package:myorder/views/screens/order/search_box.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 
 class OrderPage extends StatefulWidget {
@@ -49,7 +48,10 @@ class _OrderPageState extends State<OrderPage> {
                 border: Border.all(width: 1, color: borderColorPrimary)),
             child: TextField(
               onChanged: (value) => {
-                orderController.getOrders(employeeIdSelected, value),
+                setState(() {
+                  keySearch = value;
+                  orderController.getOrders(employeeIdSelected, value);
+                }),
                 print(value)
               },
               style: const TextStyle(color: borderColorPrimary),
@@ -78,9 +80,10 @@ class _OrderPageState extends State<OrderPage> {
                   setState(() {
                     selectedIndex = index;
                     if (index == 0) {
-                      employeeIdSelected = defaultEmployee;// tat ca nhan vien
+                      employeeIdSelected = defaultEmployee; // tat ca nhan vien
                     } else {
-                      employeeIdSelected = authController.user.uid;// user dang login
+                      employeeIdSelected =
+                          authController.user.uid; // user dang login
                     }
                     orderController.getOrders(employeeIdSelected, keySearch);
                     print(employeeIdSelected);
@@ -212,7 +215,7 @@ class _OrderPageState extends State<OrderPage> {
                                   children: <Widget>[
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
+                                        horizontal: kDefaultPadding,
                                       ),
                                       decoration: const BoxDecoration(
                                         color: kBlueColor,
@@ -242,7 +245,7 @@ class _OrderPageState extends State<OrderPage> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal:
-                                            kDefaultPadding * 2, // 30 padding
+                                            kDefaultPadding, // 30 padding
                                         vertical: kDefaultPadding /
                                             4, // 5 top and bottom
                                       ),
@@ -252,8 +255,10 @@ class _OrderPageState extends State<OrderPage> {
                                           bottomLeft: Radius.circular(22),
                                         ),
                                       ),
-                                      child: const Text(
-                                        "500,000",
+                                      child: Text(
+                                        Utils.formatCurrency(orderController
+                                                .orders[index].total_amount ??
+                                            0),
                                         style: textStyleWhiteBold20,
                                       ),
                                     ),

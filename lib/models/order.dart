@@ -11,7 +11,7 @@ class Order {
   int active;
   String employee_id;
   String table_id;
-  double? total_amount;
+  double? total_amount = 0;
   Order({
     required this.order_id,
     required this.order_status,
