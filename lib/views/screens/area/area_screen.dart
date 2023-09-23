@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/area/describe_table.dart';
 import 'package:myorder/views/screens/area/option_area.dart';

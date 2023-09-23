@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 
 class OrderdetailPage extends StatefulWidget {

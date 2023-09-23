@@ -4,22 +4,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Order {
   String order_id;
-  String order_status;
+  int order_status;
   String? note;
   DateTime create_at;
   DateTime? payment_at;
   int active;
   String employee_id;
- 
+  String table_id;
 
   Order({
     required this.order_id,
     required this.order_status,
-             this.note,
+    this.note,
     required this.create_at,
-             this.payment_at,
+    this.payment_at,
     required this.active,
     required this.employee_id,
+    required this.table_id,
   });
 
   Map<String, dynamic> toJson() => {
@@ -30,6 +31,7 @@ class Order {
         "payment_at": payment_at,
         "active": active,
         "employee_id": employee_id,
+        "table_id": table_id,
       };
 
   static Order fromSnap(DocumentSnapshot snap) {
@@ -43,6 +45,7 @@ class Order {
       payment_at: snapshot['payment_at'],
       active: snapshot['active'],
       employee_id: snapshot['employee_id'],
+      table_id: snapshot['table_id'],
     );
   }
 }

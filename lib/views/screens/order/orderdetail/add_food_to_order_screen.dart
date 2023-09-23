@@ -3,9 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
+import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
 
@@ -25,6 +28,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
 
   FoodController foodController = Get.put(FoodController());
   CategoryController categoryController = Get.put(CategoryController());
+  OrderController orderController = Get.put(OrderController());
+
   String keySearch = "";
   @override
   void initState() {
@@ -257,7 +262,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                       directionMarguee:
                                           DirectionMarguee.TwoDirection,
                                       child: RichText(
-                                        text: TextSpan(
+                                          text: TextSpan(
                                         children: [
                                           TextSpan(
                                               text: foodController
@@ -269,30 +274,33 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                   ? textStyleWhiteRegular16
                                                   : textStyleFoodNameBold16),
                                           (Utils.isDateTimeInRange(
-                                              foodController.foodsToOrder[index]
-                                                  .temporary_price_from_date!,
-                                              foodController.foodsToOrder[index]
-                                                  .temporary_price_to_date!)
-                                          ? (foodController
-                                                  .foodsToOrder[index].price_with_temporary! > 0 ? const WidgetSpan(
-                                            child: Icon(
-                                              Icons
-                                                  .arrow_drop_up, 
-                                              size:
-                                                  24.0, 
-                                              color:
-                                                  colorPriceIncrease, 
-                                            ),
-                                          ) : const WidgetSpan(
-                                            child: Icon(
-                                              Icons
-                                                  .arrow_drop_down, 
-                                              size:
-                                                  24.0, 
-                                              color:
-                                                  colorPriceDecrease, 
-                                            ),
-                                          )) :const TextSpan()),
+                                                  foodController
+                                                      .foodsToOrder[index]
+                                                      .temporary_price_from_date!,
+                                                  foodController
+                                                      .foodsToOrder[index]
+                                                      .temporary_price_to_date!)
+                                              ? (foodController
+                                                          .foodsToOrder[index]
+                                                          .price_with_temporary! >
+                                                      0
+                                                  ? const WidgetSpan(
+                                                      child: Icon(
+                                                        Icons.arrow_drop_up,
+                                                        size: 24.0,
+                                                        color:
+                                                            colorPriceIncrease,
+                                                      ),
+                                                    )
+                                                  : const WidgetSpan(
+                                                      child: Icon(
+                                                        Icons.arrow_drop_down,
+                                                        size: 24.0,
+                                                        color:
+                                                            colorPriceDecrease,
+                                                      ),
+                                                    ))
+                                              : const TextSpan()),
                                         ],
                                       ))),
                                   subtitle: foodController.foodsToOrder[index]
@@ -469,8 +477,27 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                         const SizedBox(height: 10),
                         InkWell(
                           onTap: () {
+                            List<OrderDetail> orderDetailList =
+                                []; // danh sach cac mon khi order
+
                             for (var foodOrder in foodController.foodsToOrder) {
                               if (foodOrder.isSelected == true) {
+                                
+                                //chi tiet don hang
+                                //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                OrderDetail orderDetail = OrderDetail(
+                                  order_detail_id: "",
+                                  price: Utils.isDateTimeInRange(
+                                    foodOrder.temporary_price_from_date!,
+                                    foodOrder.temporary_price_to_date!) ? (foodOrder.price + foodOrder.price_with_temporary!) : foodOrder.price, 
+                                  quantity: foodOrder.quantity!,
+                                  food_status: FOOD_STATUS_IN_CHEFT,
+                                  food_id: foodOrder.food_id,
+                                );
+
+                                orderDetailList.add(orderDetail);
+
+                                //show thong tin console
                                 print("--------------------------------");
                                 print("ID: ${foodOrder.food_id}");
                                 print("Name: ${foodOrder.name}");
@@ -480,6 +507,9 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 print("--------------------------------");
                               }
                             }
+                            // order theo table_id
+                            orderController.createOrder(widget.table.table_id,
+                                orderDetailList, context);
                           },
                           child: Container(
                             height: 50,

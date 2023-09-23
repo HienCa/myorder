@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
@@ -59,14 +60,38 @@ class _TableItemState extends State<TableItem> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    ClipOval(
+                    tables[i].status == TABLE_STATUS_EMPTY ? ClipOval(
                       child: Image.asset(
                         "assets/images/icon-table-simple-empty.jpg",
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
                       ),
-                    ),
+                    ) : const SizedBox(),
+                    tables[i].status == TABLE_STATUS_SERVING ? ClipOval(
+                      child: Image.asset(
+                        "assets/images/icon-table-simple-serving.jpg",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ) : const SizedBox(),
+                    tables[i].status == TABLE_STATUS_MERGED ? ClipOval(
+                      child: Image.asset(
+                        "assets/images/icon-table-simple-cancel.jpg",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ) : const SizedBox(),
+                    tables[i].status == TABLE_STATUS_EMPTY ? ClipOval(
+                      child: Image.asset(
+                        "assets/images/icon-table-simple-empty.jpg",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ) : const SizedBox(),
                     Text(
                       tables[i].name,
                       style: const TextStyle(
