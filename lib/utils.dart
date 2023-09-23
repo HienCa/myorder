@@ -1,10 +1,27 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, avoid_print
+
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:myorder/models/food_order.dart';
 
 //Các phương phức hay dùng
 class Utils {
+  static List<Map<String, dynamic>> convertQuerySnapshotToJson(
+      QuerySnapshot querySnapshot) {
+    final List<Map<String, dynamic>> jsonData = [];
+    for (final doc in querySnapshot.docs) {
+      jsonData.add(doc.data() as Map<String, dynamic>);
+    }
+    return jsonData;
+  }
+
+  static String showDataJson(QuerySnapshot querySnapshot) {
+    print(convertQuerySnapshotToJson(querySnapshot));
+    return "";
+  }
+
   //datetime
   static bool isDateTimeInRange(
       Timestamp startTimestamp, Timestamp endTimestamp) {
@@ -28,11 +45,21 @@ class Utils {
   }
 
   static String formatCurrency(double amount) {
-
     final formattedNumber = NumberFormat("#,###", "en_US").format(amount);
     // print(formattedNumber);
     // print("formattedNumber");
     return formattedNumber;
+  }
+
+  static bool isAnyFoodSelected(List<FoodOrder> foods) {
+    for (var food in foods) {
+      if (food.isSelected == true) {
+        // Có ít nhất một đối tượng đã được chọn
+        return true;
+      }
+    }
+    // Không có đối tượng nào được chọn
+    return false;
   }
 
   static String formatCurrencytoDouble(String amount) {

@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/food.dart' as model;
+import 'package:myorder/models/food_order.dart';
+import 'package:myorder/utils.dart';
 
 class FoodController extends GetxController {
   late Rx<File?> _pickedImage;
@@ -130,32 +132,64 @@ class FoodController extends GetxController {
       }));
     }
   }
-  // getfoods() async {
-  //   _foods.bindStream(
-  //     firestore.collection('foods').snapshots().map(
-  //       (QuerySnapshot query) {
-  //         List<model.Food> retValue = [];
-  //         for (var element in query.docs) {
-  //           retValue.add(model.Food.fromSnap(element));
-  //         }
-  //         return retValue;
-  //       },
-  //     ),
-  //   );
-  // }
+
+  //goi mon
+  final Rx<List<FoodOrder>> _foodsToOrder = Rx<List<FoodOrder>>([]);
+  List<FoodOrder> get foodsToOrder => _foodsToOrder.value;
+  getfoodsToOrder(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _foodsToOrder.bindStream(
+        firestore
+            .collection('foods')
+            .where("active", isEqualTo: 1)
+            .snapshots()
+            .map(
+          (QuerySnapshot query) {
+            List<FoodOrder> retValue = [];
+            for (var element in query.docs) {
+              FoodOrder food = FoodOrder.fromSnap(element);
+              food.isSelected = false;
+              food.quantity = 1;
+              retValue.add(food);
+            }
+            Utils.showDataJson(query);
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _foodsToOrder.bindStream(firestore
+          .collection('foods')
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<FoodOrder> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            FoodOrder food = FoodOrder.fromSnap(elem);
+            food.isSelected = false;
+            food.quantity = 1;
+            retVal.add(food);
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
 
   void createFood(
-    String name,
-    File? image,
-    String price,
-    String? price_with_temporary,
-    DateTime? temporary_price_from_date,
-    DateTime? temporary_price_to_date,
-    String category_id,
-    String unit_id,
-    String? vat_id,
-    int temporary_percent
-  ) async {
+      String name,
+      File? image,
+      String price,
+      String? price_with_temporary,
+      DateTime? temporary_price_from_date,
+      DateTime? temporary_price_to_date,
+      String category_id,
+      String unit_id,
+      String? vat_id,
+      int temporary_percent) async {
     try {
       if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
         String downloadUrl = "";
@@ -198,7 +232,7 @@ class FoodController extends GetxController {
             category_id: category_id,
             unit_id: unit_id,
             vat_id: vat_id,
-            temporary_percent: temporary_percent ,
+            temporary_percent: temporary_percent,
             active: 1,
           );
           CollectionReference foodsCollection =
@@ -236,20 +270,18 @@ class FoodController extends GetxController {
   }
 
   updateFood(
-    String food_id,
-    String name,
-    String? image,
-    File? newImage,
-    String price,
-    String? price_with_temporary,
-    DateTime? temporary_price_from_date,
-    DateTime? temporary_price_to_date,
-    String category_id,
-    String unit_id,
-    String vat_id,
-    int temporary_percent
-
-  ) async {
+      String food_id,
+      String name,
+      String? image,
+      File? newImage,
+      String price,
+      String? price_with_temporary,
+      DateTime? temporary_price_from_date,
+      DateTime? temporary_price_to_date,
+      String category_id,
+      String unit_id,
+      String vat_id,
+      int temporary_percent) async {
     // var doc = await firestore.collection('foods').doc(Food_id).get();
     String downloadUrl = "";
     try {
@@ -282,7 +314,6 @@ class FoodController extends GetxController {
           "category_id": category_id.trim(),
           "unit_id": unit_id.trim(),
           "temporary_percent": temporary_percent,
-
         });
       } else {
         print("NO Image Selected");
@@ -301,8 +332,7 @@ class FoodController extends GetxController {
           // "active": active,
           "category_id": category_id.trim(),
           "unit_id": unit_id.trim(),
-          "temporary_percent":temporary_percent,
-
+          "temporary_percent": temporary_percent,
         });
       }
       Get.snackbar(

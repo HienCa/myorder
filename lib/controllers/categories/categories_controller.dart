@@ -68,6 +68,31 @@ class CategoryController extends GetxController {
     }
   }
 
+  final Rx<List<Category>> _categoriesActive = Rx<List<Category>>([]);
+  List<Category> get categoriesActive => _categoriesActive.value;
+  getCategoriesActive() async {
+    _categoriesActive.bindStream(
+      firestore
+          .collection('categories')
+          .where("active", isEqualTo: 1)
+          .snapshots()
+          .map(
+        (QuerySnapshot query) {
+          List<Category> retValue = [];
+          retValue.add(Category(
+              category_id: defaultCategory,
+              name: 'Tất cả món',
+              active: 1)); // thêm một phần tử tất cả để gọi all
+          for (var element in query.docs) {
+            retValue.add(Category.fromSnap(element));
+            print(element);
+          }
+          return retValue;
+        },
+      ),
+    );
+  }
+
   void createCategory(
     String name,
   ) async {

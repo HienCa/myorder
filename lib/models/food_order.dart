@@ -2,7 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Food {
+
+class FoodOrder {
   String food_id;
   String name;
   String? image;
@@ -15,8 +16,10 @@ class Food {
   String category_id;
   String unit_id;
   int temporary_percent;
-
-  Food({
+  bool? isSelected = false;
+  int? quantity = 1;
+  
+  FoodOrder({
     required this.food_id,
     required this.name,
     this.image,
@@ -29,6 +32,8 @@ class Food {
     required this.category_id,
     required this.unit_id,
     required this.temporary_percent,
+    this.isSelected,
+    this.quantity,
   });
 
   Map<String, dynamic> toJson() => {
@@ -46,9 +51,9 @@ class Food {
         "temporary_percent": temporary_percent,
       };
 
-  static Food fromSnap(DocumentSnapshot snap) {
+  static FoodOrder fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
-    return Food(
+    return FoodOrder(
       food_id: snapshot['food_id'],
       name: snapshot['name'],
       image: snapshot['image'],
@@ -64,4 +69,3 @@ class Food {
     );
   }
 }
-

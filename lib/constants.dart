@@ -106,6 +106,20 @@ const textStyleWhiteRegular16 =
 const textStyleWhiteBold16 =
     TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold);
 
+const textStyleTemporaryPriceWhiteBold16 =
+    TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold);
+
+const textStyleTemporaryPriceDeActive16 = TextStyle(
+    color: Colors.black54, fontSize: 16, fontWeight: FontWeight.normal);
+
+const textStyleTemporaryPriceActive14 = TextStyle(
+  color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.normal,
+  decoration: TextDecoration.lineThrough, // Thêm gạch ngang
+  decorationColor: Colors.red, // Màu của gạch ngang
+  decorationThickness: 2,
+);
+
+
 const textStyleWhiteBold20 =
     TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
 
@@ -123,6 +137,7 @@ const textStylePriceBlackRegular16 = TextStyle(
 
 const textStyleFoodNameBold16 = TextStyle(
     color: Colors.black54, fontSize: 16, fontWeight: FontWeight.normal);
+
 const textStyleFoodNameBold20 =
     TextStyle(color: Colors.black54, fontSize: 20, fontWeight: FontWeight.bold);
 const textStyleBlackRegular = TextStyle(
@@ -226,6 +241,7 @@ var alertImageError = Image.asset("assets/images/alert/3.0x/icon_error.png");
 var alertImageInfo = Image.asset("assets/images/alert/3.0x/icon_info.png");
 
 const defaultArea = "allArea-hienca";
+const defaultCategory = "allCategory-hienca";
 
 // FIREBASE
 var firebaseAuth = FirebaseAuth.instance;
