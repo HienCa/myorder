@@ -22,9 +22,9 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
     super.initState();
     foodController.getfoods("");
   }
+
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -126,34 +126,28 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                         ),
                                       ),
                               ),
-                              title: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                FoodDetailPage(
-                                                  food: food,
-                                                ))),
-                                    child: Marquee(
-                                      direction: Axis.horizontal,
-                                      textDirection: TextDirection.ltr,
-                                      animationDuration:
-                                          const Duration(seconds: 1),
-                                      backDuration:
-                                          const Duration(milliseconds: 4000),
-                                      pauseDuration:
-                                          const Duration(milliseconds: 1000),
-                                      directionMarguee:
-                                          DirectionMarguee.TwoDirection,
-                                      child: Text(
-                                        food.name,
-                                        style: textStyleNameBlackRegular,
-                                      ),
-                                    ),
+                              title: InkWell(
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FoodDetailPage(
+                                              food: food,
+                                            ))),
+                                child: Marquee(
+                                  direction: Axis.horizontal,
+                                  textDirection: TextDirection.ltr,
+                                  animationDuration: const Duration(seconds: 1),
+                                  backDuration:
+                                      const Duration(milliseconds: 4000),
+                                  pauseDuration:
+                                      const Duration(milliseconds: 1000),
+                                  directionMarguee:
+                                      DirectionMarguee.TwoDirection,
+                                  child: Text(
+                                    food.name,
+                                    style: textStyleNameBlackRegular,
                                   ),
-                                ],
+                                ),
                               ),
                               subtitle: InkWell(
                                 onTap: () => Navigator.push(

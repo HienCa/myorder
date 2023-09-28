@@ -22,7 +22,9 @@ int ORDER_STATUS_CANCEL = 3; // ĐÃ HỦY BÀN
 int FOOD_STATUS_IN_CHEFT = 1; // CHỜ CHẾ BIẾN
 int FOOD_STATUS_FINISH = 2; // ĐÃ HOÀN THÀNH
 int FOOD_STATUS_CANCEL = 3; // ĐÃ HỦY
-
+String FOOD_STATUS_IN_CHEFT_STRING = "CHỜ CHẾ BIẾN";
+String FOOD_STATUS_FINISH_STRING = "HOÀN THÀNH";
+String FOOD_STATUS_CANCEL_STRING = "ĐÃ HỦY";
 //TABLE:
 int TABLE_STATUS_EMPTY = 1; // BÀN TRỐNG
 int TABLE_STATUS_SERVING = 2; // ĐANG PHỤC VỤ
@@ -30,7 +32,6 @@ int TABLE_STATUS_MERGED = 3; // GỘP BÀN
 int TABLE_STATUS_SPLIT = 4; // TÁCH BÀN
 int TABLE_STATUS_CANCEL = 5; // HỦY BÀN
 int TABLE_STATUS_BOOKING = 6; // HỦY BÀN
-
 
 // text length
 const maxlengthName = 50;

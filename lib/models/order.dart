@@ -1,6 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/models/table.dart';
 
 class Order {
   String order_id;
@@ -11,6 +13,9 @@ class Order {
   int active;
   String employee_id;
   String table_id;
+  Table? table;
+  List<OrderDetail> order_details = [];
+  List<String>? table_merged_names;
   double? total_amount = 0;
   Order({
     required this.order_id,
@@ -22,6 +27,8 @@ class Order {
     required this.employee_id,
     required this.table_id,
     this.total_amount,
+    this.table,
+    this.table_merged_names,
   });
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +40,7 @@ class Order {
         "active": active,
         "employee_id": employee_id,
         "table_id": table_id,
+        "order_details": order_details,
       };
 
   static Order fromSnap(DocumentSnapshot snap) {

@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myorder/models/food_order_detail.dart';
 
 class OrderDetail {
   String order_detail_id;
@@ -9,13 +9,14 @@ class OrderDetail {
   int quantity;
   int food_status;
   String food_id;
-
+  FoodOrderDetail? food;
   OrderDetail({
     required this.order_detail_id,
     required this.price,
     required this.quantity,
     required this.food_status,
     required this.food_id,
+    this.food
   });
 
   Map<String, dynamic> toJson() => {

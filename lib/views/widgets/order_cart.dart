@@ -59,10 +59,10 @@ class OrderCard extends StatelessWidget {
                 tag: 1,
                 child: InkWell(
                   onTap: () => {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const OrderdetailPage()))
+                    // Navigator.push(
+                    // context,
+                    // MaterialPageRoute(
+                    //     builder: (context) => const OrderdetailPage()))
                   },
                   child: Container(
                       decoration: const BoxDecoration(

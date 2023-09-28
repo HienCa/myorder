@@ -6,6 +6,9 @@ import 'package:myorder/models/food_order.dart';
 
 //Các phương phức hay dùng
 class Utils {
+
+
+  //
   static List<Map<String, dynamic>> convertQuerySnapshotToJson(
       QuerySnapshot querySnapshot) {
     final List<Map<String, dynamic>> jsonData = [];
@@ -42,7 +45,7 @@ class Utils {
     return formatter.format(int.parse(input));
   }
 
-  static String formatCurrency(double amount) {
+  static String formatCurrency(double? amount) {
     final formattedNumber = NumberFormat("#,###", "en_US").format(amount);
     // print(formattedNumber);
     // print("formattedNumber");

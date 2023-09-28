@@ -30,7 +30,6 @@ class Food {
     required this.unit_id,
     required this.temporary_percent,
   });
-
   Map<String, dynamic> toJson() => {
         "food_id": food_id,
         "name": name,
@@ -64,4 +63,5 @@ class Food {
     );
   }
 }
+
 
