@@ -31,7 +31,23 @@ class OrderController extends GetxController {
             List<model.Order> retValue = [];
             for (var element in query.docs) {
               String order_id = element["order_id"].toString();
+
               model.Order order = model.Order.fromSnap(element);
+
+              //Thông tin nhân viên phụ trách đơn hàng
+              DocumentSnapshot employeeCollection = await firestore
+                  .collection('employees')
+                  .doc(order.employee_id)
+                  .get();
+              if (employeeCollection.exists) {
+                final employeeData = employeeCollection.data();
+                if (employeeData != null &&
+                    employeeData is Map<String, dynamic>) {
+                  String name = employeeData['name'] ?? '';
+                  order.employee_name = name;
+                }
+              }
+              print("Nhân viên order: ${order.employee_name}");
 
               // Truy vấn collection orderDetailArrayList
               var orderDetailCollection = firestore
@@ -114,6 +130,21 @@ class OrderController extends GetxController {
               String order_id = element["order_id"].toString();
 
               model.Order order = model.Order.fromSnap(element);
+
+              //Thông tin nhân viên phụ trách đơn hàng
+              DocumentSnapshot employeeCollection = await firestore
+                  .collection('employees')
+                  .doc(order.employee_id)
+                  .get();
+              if (employeeCollection.exists) {
+                final employeeData = employeeCollection.data();
+                if (employeeData != null &&
+                    employeeData is Map<String, dynamic>) {
+                  String name = employeeData['name'] ?? '';
+                  order.employee_name = name;
+                }
+              }
+              print("Nhân viên order: ${order.employee_name}");
 
               // Truy vấn collection orderDetailArrayList
               var orderDetailCollection = firestore
@@ -202,6 +233,21 @@ class OrderController extends GetxController {
 
             model.Order order = model.Order.fromSnap(elem);
 
+            //Thông tin nhân viên phụ trách đơn hàng
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(order.employee_id)
+                .get();
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                order.employee_name = name;
+              }
+            }
+            print("Nhân viên order: ${order.employee_name}");
+
             // Truy vấn collection orderDetailArrayList
             var orderDetailCollection = firestore
                 .collection('orders')
@@ -283,6 +329,21 @@ class OrderController extends GetxController {
             String order_id = elem["order_id"].toString();
 
             model.Order order = model.Order.fromSnap(elem);
+
+            //Thông tin nhân viên phụ trách đơn hàng
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(order.employee_id)
+                .get();
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                order.employee_name = name;
+              }
+            }
+            print("Nhân viên order: ${order.employee_name}");
 
             // Truy vấn collection orderDetailArrayList
             var orderDetailCollection = firestore
@@ -435,6 +496,7 @@ class OrderController extends GetxController {
                   area_id: area_id);
             }
           }
+
           print("ORDER DETAIL: ${retValue.total_amount}");
           return retValue;
         },

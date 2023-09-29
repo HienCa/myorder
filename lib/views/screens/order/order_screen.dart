@@ -362,7 +362,7 @@ class _OrderPageState extends State<OrderPage> {
                                                               MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                          const PaymentPage()))
+                                                                           PaymentPage(order: orderController.orders[index],)))
                                                         },
                                                     child: const Icon(Icons
                                                         .receipt_long_outlined)),

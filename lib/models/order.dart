@@ -12,6 +12,7 @@ class Order {
   Timestamp? payment_at;
   int active;
   String employee_id;
+  String? employee_name;
   String table_id;
   Table? table;
   List<OrderDetail> order_details = [];
@@ -25,6 +26,7 @@ class Order {
     this.payment_at,
     required this.active,
     required this.employee_id,
+    this.employee_name,
     required this.table_id,
     this.total_amount,
     this.table,

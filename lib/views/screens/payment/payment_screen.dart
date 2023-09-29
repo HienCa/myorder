@@ -1,19 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
+import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/models/order.dart';
+import 'package:myorder/utils.dart';
+
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+  final Order order;
+  const PaymentPage({super.key, required this.order});
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
 }
 
 class _PaymentPageState extends State<PaymentPage> {
+  OrderController orderController = Get.put(OrderController());
+
+  @override
+  void initState() {
+    super.initState();
+    orderController.getOrderDetailById(widget.order);
+  }
+
   int selectedIndex = 0;
   bool isCheckedGTGT = false;
   bool isCheckedDecrease = false;
+
+  final TextEditingController decreasePrice = TextEditingController();
+
+  final TextEditingController textEditingController =
+      TextEditingController(text: "");
+  final List<String> items = [
+    'Khách quen',
+    'Ngày khuyến mãi',
+    'Hóa đơn trên 5 triệu',
+    'Khác'
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +51,9 @@ class _PaymentPageState extends State<PaymentPage> {
             color: iconWhiteColor,
           ),
         ),
-        title: const Center(child: Text("#05062001 - A4")),
+        title: Center(
+            child: Text(
+                "#${widget.order.order_id} - ${widget.order.table!.name}")),
         backgroundColor: primaryColor,
       ),
       body: Column(
@@ -44,17 +72,23 @@ class _PaymentPageState extends State<PaymentPage> {
                 ),
               ],
             ),
-            child: const SizedBox(
+            child: SizedBox(
               height: 50,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(
+                  const Center(
                       child: Text(
                     "TỔNG THANH TOÁN",
                     style: textStyleGrayBold,
                   )),
-                  Center(child: Text("500,000", style: textStylePriceBold20))
+                  Center(child: Obx(() {
+                    return Text(
+                        Utils.formatCurrency(
+                            orderController.orderDetail.total_amount ??
+                                widget.order.total_amount),
+                        style: textStylePriceBold20);
+                  }))
                 ],
               ),
             ),
@@ -63,25 +97,25 @@ class _PaymentPageState extends State<PaymentPage> {
             margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
             child: Column(
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.info_outline_rounded,
                       color: labelBlackColor,
                     ),
-                    SizedBox(width: 10),
-                    Text(
+                    const SizedBox(width: 10),
+                    const Text(
                       "Số hóa đơn",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 5),
-                    Text(
+                    const SizedBox(width: 5),
+                    const Text(
                       ":",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Text(
-                      "#05062001",
+                      "#${widget.order.order_id}",
                       style: textStyleBlackRegular,
                     )
                   ],
@@ -109,25 +143,26 @@ class _PaymentPageState extends State<PaymentPage> {
                     )
                   ],
                 ),
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.date_range,
                       color: labelBlackColor,
                     ),
-                    SizedBox(width: 10),
-                    Text(
+                    const SizedBox(width: 10),
+                    const Text(
                       "Ngày lập",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 23),
-                    Text(
+                    const SizedBox(width: 23),
+                    const Text(
                       ":",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Text(
-                      "27/08/2023 8:30",
+                      Utils.convertTimestampToFormatDateVN(
+                          widget.order.create_at),
                       style: textStyleBlackRegular,
                     ),
                   ],
@@ -158,8 +193,8 @@ class _PaymentPageState extends State<PaymentPage> {
                           backDuration: const Duration(milliseconds: 2000),
                           pauseDuration: const Duration(milliseconds: 1000),
                           directionMarguee: DirectionMarguee.TwoDirection,
-                          child: const Text(
-                            'Nguyễn Văn Hiền đang cảm thấy cu đơn',
+                          child: Text(
+                            widget.order.employee_name ?? "",
                             style: textStyleBlackRegular,
                           )),
                     ),
@@ -184,64 +219,100 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 ],
               ),
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin:
-                        const EdgeInsets.all(4), // Khoảng cách dưới dạng đệm
+              child: Obx(() {
+                return ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: orderController.orderDetail.order_details.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin:
+                          const EdgeInsets.all(4), // Khoảng cách dưới dạng đệm
 
-                    decoration: const BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(width: 0.1, color: borderColor)),
-                    ),
-                    child: GestureDetector(
-                        onTap: () {},
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          child: InkWell(
-                            onTap: () => {},
-                            child: ListTile(
-                              selectedColor: primaryColor,
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child: Image.asset(
-                                  "assets/images/lykem.jpg",
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
+                      decoration: const BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(width: 0.1, color: borderColor)),
+                      ),
+                      child: GestureDetector(
+                          onTap: () {},
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            child: InkWell(
+                              onTap: () => {},
+                              child: ListTile(
+                                selectedColor: primaryColor,
+                                leading: orderController.orderDetail
+                                            .order_details[index].food !=
+                                        null
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.network(
+                                          orderController.orderDetail
+                                              .order_details[index].food!.image,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : ClipRRect(
+                                        child:
+                                            defaultFoodImage, // ảnh trong constants
+                                      ),
+                                title: Text(
+                                    orderController.orderDetail
+                                        .order_details[index].food!.name,
+                                    style: textStyleFoodNameBold16),
+                                subtitle: orderController.orderDetail
+                                            .order_details[index].food_status ==
+                                        FOOD_STATUS_IN_CHEFT
+                                    ? Text(
+                                        FOOD_STATUS_IN_CHEFT_STRING,
+                                        style: textStyleMaking,
+                                      )
+                                    : orderController
+                                                .orderDetail
+                                                .order_details[index]
+                                                .food_status ==
+                                            FOOD_STATUS_FINISH
+                                        ? Text(
+                                            FOOD_STATUS_FINISH_STRING,
+                                            style: textStyleSeccess,
+                                          )
+                                        : Text(
+                                            FOOD_STATUS_CANCEL_STRING,
+                                            style: textStyleCancel,
+                                          ),
+                                trailing: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        Utils.formatCurrency(orderController
+                                            .orderDetail
+                                            .order_details[index]
+                                            .price),
+                                        style: textStylePriceBlackRegular16),
+                                    SizedBox(
+                                      width: 100,
+                                      child: Row(
+                                        children: [
+                                          const Text("Số lượng: ",
+                                              style:
+                                                  textStylePriceBlackRegular16),
+                                          Text(
+                                              "${orderController.orderDetail.order_details[index].quantity}",
+                                              style: textStyleSeccess),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              title: const Text("Vũ nữ chân dài ",
-                                  style: textStyleFoodNameBold16),
-                              subtitle: const Text("HOÀN THÀNH",
-                                  style: textStyleSeccess),
-                              trailing: const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("40,000",
-                                      style: textStylePriceBlackRegular16),
-                                  SizedBox(
-                                    width: 100,
-                                    child: Row(
-                                      children: [
-                                        Text("Số lượng: ",
-                                            style:
-                                                textStylePriceBlackRegular16),
-                                        Text("999", style: textStyleSeccess),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
-                          ),
-                        )),
-                  );
-                },
-              ),
+                          )),
+                    );
+                  },
+                );
+              }),
             ),
           ),
           SingleChildScrollView(
@@ -308,17 +379,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                   child: InkWell(
                       onTap: () => {
-                            setState(() {
-                              isCheckedDecrease = !isCheckedDecrease;
-                              if (isCheckedDecrease) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const CustomDialogDecreasePrice(); // Hiển thị hộp thoại tùy chỉnh
-                                  },
-                                );
-                              }
-                            })
+                            
                           },
                       child: ListTile(
                         leading: Theme(
@@ -332,7 +393,202 @@ class _PaymentPageState extends State<PaymentPage> {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return const CustomDialogDecreasePrice(); // Hiển thị hộp thoại tùy chỉnh
+                                      return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            10.0), // Góc bo tròn
+                                      ),
+                                      elevation: 5, // Độ nâng của bóng đổ
+                                      backgroundColor: backgroundColor,
+                                      child: Container(
+                                        padding: const EdgeInsets.only(top: 20),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Center(
+                                              child: Text(
+                                                'GIẢM GIÁ HÓA ĐƠN',
+                                                style: textStylePrimaryBold,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Container(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(5))),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12),
+                                              child: TextField(
+                                                controller: decreasePrice,
+                                                style: const TextStyle(
+                                                    color: textColor),
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                      borderSide:
+                                                          BorderSide(width: 1),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  5))),
+                                                  label: Text(
+                                                      "Vui lòng nhập % muốn giảm",
+                                                      style:
+                                                          textStylePlaceholder),
+                                                  hintStyle: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: Colors.grey),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(5))),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12),
+                                              child: TypeAheadField<String>(
+                                                textFieldConfiguration:
+                                                    TextFieldConfiguration(
+                                                  controller:
+                                                      textEditingController,
+                                                  decoration: InputDecoration(
+                                                    labelText: textEditingController
+                                                            .text.isEmpty
+                                                        ? 'Vui lòng chọn khuyến mãi'
+                                                        : "",
+                                                    border:
+                                                        const OutlineInputBorder(),
+                                                    labelStyle: const TextStyle(
+                                                        color: tableemptyColor),
+                                                  ),
+                                                  style: const TextStyle(
+                                                      color: textColor),
+                                                ),
+                                                suggestionsCallback:
+                                                    (pattern) async {
+                                                  return items.where((item) =>
+                                                      item
+                                                          .toLowerCase()
+                                                          .contains(pattern
+                                                              .toLowerCase()));
+                                                },
+                                                itemBuilder:
+                                                    (context, suggestion) {
+                                                  return ListTile(
+                                                    title: Text(
+                                                      suggestion,
+                                                    ),
+                                                  );
+                                                },
+                                                onSuggestionSelected:
+                                                    (suggestion) {
+                                                  setState(() {
+                                                    textEditingController.text =
+                                                        suggestion; // Set the input value
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () => {
+                                                      setState(() {
+                                                        isCheckedDecrease =
+                                                            !isCheckedDecrease;
+                                                      }),
+                                                      Navigator.pop(context)
+                                                    },
+                                                    child: Container(
+                                                      height: 50,
+                                                      width: 136,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    5)),
+                                                        color:
+                                                            backgroundColorGray,
+                                                      ),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'HỦY BỎ',
+                                                          style:
+                                                              textStyleCancel,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () => {},
+                                                    child: Container(
+                                                      height: 50,
+                                                      width: 136,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    5)),
+                                                        color: primaryColor,
+                                                      ),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'XÁC NHẬN',
+                                                          style:
+                                                              textStyleWhiteBold20,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ); // Hiển thị hộp thoại tùy chỉnh
                                     },
                                   );
                                 }

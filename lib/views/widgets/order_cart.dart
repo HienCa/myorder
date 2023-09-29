@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
-import 'package:myorder/views/screens/payment/payment_screen.dart';
+
 
 class OrderCard extends StatelessWidget {
-  //  const OrderCard({
-  //   Key key,
-  //   this.itemIndex,
-  //   this.order,
-  //   this.press,
-  // }) : super(key: key);
-
-  // final int itemIndex;
-  // final Order order;
-  // final Function press;
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +203,9 @@ class OrderCard extends StatelessWidget {
                                 color: kBlueColor,
                               ),
                               child: InkWell(
-                                  onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentPage()))},
+                                  onTap: () => {
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentPage()))
+                                    },
                                   child:
                                       const Icon(Icons.receipt_long_outlined)),
                             ),

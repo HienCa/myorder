@@ -70,7 +70,10 @@ var borderRadiusTextField30 = BorderRadius.circular(30);
 const backgroundColor = Colors.white;
 const backgroundColorGray = Color.fromARGB(255, 245, 241, 241);
 const backgroundSuccessColor = Colors.green;
-const backgroundFailureColor = Colors.redAccent;
+const backgroundFailureColor = Color.fromARGB(255, 230, 161, 161);
+
+//order
+const backgroundCancelFoodColor = Color.fromARGB(255, 241, 189, 189);
 
 //text
 const textColor = Colors.black;
@@ -118,7 +121,6 @@ const textStyleTemporaryPriceActive14 = TextStyle(
   decorationColor: Colors.red, // Màu của gạch ngang
   decorationThickness: 2,
 );
-
 
 const textStyleWhiteBold20 =
     TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
@@ -239,6 +241,13 @@ var alertImageWarning =
     Image.asset("assets/images/alert/3.0x/icon_warning.png");
 var alertImageError = Image.asset("assets/images/alert/3.0x/icon_error.png");
 var alertImageInfo = Image.asset("assets/images/alert/3.0x/icon_info.png");
+
+var defaultFoodImage = Image.asset(
+  "assets/images/lykem.jpg",
+  width: 50,
+  height: 50,
+  fit: BoxFit.cover,
+);
 
 const defaultArea = "allArea-hienca";
 const defaultCategory = "allCategory-hienca";
