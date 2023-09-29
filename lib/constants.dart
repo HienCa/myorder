@@ -174,7 +174,7 @@ const textStyleMaking = TextStyle(
     color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStyleCancel = TextStyle(
-    color: Colors.redAccent, fontSize: 20, fontWeight: FontWeight.bold);
+    color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStylePlaceholder = TextStyle(
     color: tableemptyColor, fontSize: 14, fontWeight: FontWeight.bold);

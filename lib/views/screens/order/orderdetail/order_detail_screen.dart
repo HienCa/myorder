@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -71,10 +73,13 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                     "TỔNG TẠM TÍNH",
                     style: textStyleGrayBold,
                   )),
-                  Center(
-                      child: Text(
-                          Utils.formatCurrency(widget.order.total_amount),
-                          style: textStylePriceBold20))
+                  Center(child: Obx(() {
+                    return Text(
+                        Utils.formatCurrency(
+                            orderController.orderDetail.total_amount ??
+                                widget.order.total_amount),
+                        style: textStylePriceBold20);
+                  }))
                 ],
               ),
             ),
@@ -115,9 +120,18 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                             curve: Curves.easeInOut,
                             child: InkWell(
                               onTap: () => {},
-                              child: Slidable(
+                              child: (orderController
+                                                .orderDetail
+                                                .order_details[index]
+                                                .food_status!=
+                                            FOOD_STATUS_CANCEL && orderController
+                                                .orderDetail
+                                                .order_details[index]
+                                                .food_status!=
+                                            FOOD_STATUS_FINISH)
+                                        ? Slidable(
                                 key: const ValueKey(0),
-                                endActionPane: ActionPane(
+                                endActionPane:  ActionPane(
                                   motion: const ScrollMotion(),
                                   children: [
                                     SlidableAction(
@@ -127,52 +141,64 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                       icon: Icons.splitscreen,
                                       label: 'Tách món',
                                     ),
-                                    SlidableAction(
-                                      onPressed: (context) => doNothing(),
+                                    
+                                   SlidableAction(
+                                      onPressed: (context) => {
+                                        orderController.cancelFoodByOrder(widget.order.order_id, orderController.orderDetail.order_details[index].order_detail_id)
+                                        ,print("YÊU CẦU HỦY MÓN"),
+                                        print("Order: ${orderController.orderDetail.order_id}"),
+                                        print("Food: ${orderController.orderDetail.order_details[index].order_detail_id}"),
+                                      },
                                       backgroundColor: cancelFoodColor,
                                       foregroundColor: textWhiteColor,
                                       icon: Icons.cancel,
                                       label: 'Hủy món',
-                                    ),
+                                    )
                                   ],
                                 ),
                                 child: ListTile(
                                   selectedColor: primaryColor,
-                                  leading:
-                                      orderController.orderDetail.order_details[index].food !=
-                                              null
-                                          ? ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              child: Image.network(
-                                               orderController.orderDetail.order_details[index]
-                                                    .food!
-                                                    .image,
-                                                width: 50,
-                                                height: 50,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )
-                                          : ClipRRect(
-                                              child: Image.asset(
-                                                "assets/images/lykem.jpg",
-                                                width: 50,
-                                                height: 50,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
+                                  leading: orderController.orderDetail
+                                              .order_details[index].food !=
+                                          null
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          child: Image.network(
+                                            orderController
+                                                .orderDetail
+                                                .order_details[index]
+                                                .food!
+                                                .image,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : ClipRRect(
+                                          child: Image.asset(
+                                            "assets/images/lykem.jpg",
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                   title: Text(
-                                      orderController.orderDetail.order_details[index].food!
-                                          .name,
+                                      orderController.orderDetail
+                                          .order_details[index].food!.name,
                                       style: textStyleFoodNameBold16),
-                                  subtitle: orderController.orderDetail.order_details[index]
+                                  subtitle: orderController
+                                              .orderDetail
+                                              .order_details[index]
                                               .food_status ==
                                           FOOD_STATUS_IN_CHEFT
                                       ? Text(
                                           FOOD_STATUS_IN_CHEFT_STRING,
                                           style: textStyleMaking,
                                         )
-                                      : orderController.orderDetail.order_details[index]
+                                      : orderController
+                                                  .orderDetail
+                                                  .order_details[index]
                                                   .food_status ==
                                               FOOD_STATUS_FINISH
                                           ? Text(
@@ -187,7 +213,189 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                          Utils.formatCurrency(orderController.orderDetail.order_details[index].price),
+                                          Utils.formatCurrency(orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .price),
+                                          style: textStylePriceBlackRegular16),
+                                      SizedBox(
+                                        width: 100,
+                                        child: Row(
+                                          children: [
+                                            const Text("Số lượng: ",
+                                                style:
+                                                    textStylePriceBlackRegular16),
+                                            Text(
+                                                "${orderController.orderDetail.order_details[index].quantity}",
+                                                style: textStyleSeccess),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ): orderController
+                                                .orderDetail
+                                                .order_details[index]
+                                                .food_status ==
+                                            FOOD_STATUS_FINISH ? Slidable(
+                                key: const ValueKey(0),
+                                endActionPane:  ActionPane(
+                                  motion: const ScrollMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (context) => doNothing(),
+                                      backgroundColor: primaryColor,
+                                      foregroundColor: textWhiteColor,
+                                      icon: Icons.splitscreen,
+                                      label: 'Tách món',
+                                    ),
+                                    
+                                   
+                                  ],
+                                ),
+                                child: ListTile(
+                                  selectedColor: primaryColor,
+                                  leading: orderController.orderDetail
+                                              .order_details[index].food !=
+                                          null
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          child: Image.network(
+                                            orderController
+                                                .orderDetail
+                                                .order_details[index]
+                                                .food!
+                                                .image,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : ClipRRect(
+                                          child: Image.asset(
+                                            "assets/images/lykem.jpg",
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                  title: Text(
+                                      orderController.orderDetail
+                                          .order_details[index].food!.name,
+                                      style: textStyleFoodNameBold16),
+                                  subtitle: orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .food_status ==
+                                          FOOD_STATUS_IN_CHEFT
+                                      ? Text(
+                                          FOOD_STATUS_IN_CHEFT_STRING,
+                                          style: textStyleMaking,
+                                        )
+                                      : orderController
+                                                  .orderDetail
+                                                  .order_details[index]
+                                                  .food_status ==
+                                              FOOD_STATUS_FINISH
+                                          ? Text(
+                                              FOOD_STATUS_FINISH_STRING,
+                                              style: textStyleSeccess,
+                                            )
+                                          : Text(
+                                              FOOD_STATUS_CANCEL_STRING,
+                                              style: textStyleCancel,
+                                            ),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                          Utils.formatCurrency(orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .price),
+                                          style: textStylePriceBlackRegular16),
+                                      SizedBox(
+                                        width: 100,
+                                        child: Row(
+                                          children: [
+                                            const Text("Số lượng: ",
+                                                style:
+                                                    textStylePriceBlackRegular16),
+                                            Text(
+                                                "${orderController.orderDetail.order_details[index].quantity}",
+                                                style: textStyleSeccess),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ) : Slidable(
+                                key: const ValueKey(0),
+                                
+                                child: ListTile(
+                                  selectedColor: primaryColor,
+                                  leading: orderController.orderDetail
+                                              .order_details[index].food !=
+                                          null
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          child: Image.network(
+                                            orderController
+                                                .orderDetail
+                                                .order_details[index]
+                                                .food!
+                                                .image,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : ClipRRect(
+                                          child: Image.asset(
+                                            "assets/images/lykem.jpg",
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                  title: Text(
+                                      orderController.orderDetail
+                                          .order_details[index].food!.name,
+                                      style: textStyleFoodNameBold16),
+                                  subtitle: orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .food_status ==
+                                          FOOD_STATUS_IN_CHEFT
+                                      ? Text(
+                                          FOOD_STATUS_IN_CHEFT_STRING,
+                                          style: textStyleMaking,
+                                        )
+                                      : orderController
+                                                  .orderDetail
+                                                  .order_details[index]
+                                                  .food_status ==
+                                              FOOD_STATUS_FINISH
+                                          ? Text(
+                                              FOOD_STATUS_FINISH_STRING,
+                                              style: textStyleSeccess,
+                                            )
+                                          : Text(
+                                              FOOD_STATUS_CANCEL_STRING,
+                                              style: textStyleCancel,
+                                            ),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                          Utils.formatCurrency(orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .price),
                                           style: textStylePriceBlackRegular16),
                                       SizedBox(
                                         width: 100,

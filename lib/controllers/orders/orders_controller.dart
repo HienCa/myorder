@@ -378,6 +378,7 @@ class OrderController extends GetxController {
               active: 1,
               employee_id: '',
               table_id: '');
+          retValue.order_id = order.order_id;
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
           for (var element in query.docs) {
             OrderDetail orderDetail =
@@ -547,6 +548,41 @@ class OrderController extends GetxController {
       Get.snackbar(
         'Error!',
         e.toString(),
+      );
+    }
+  }
+
+  //HỦY MÓN
+  cancelFoodByOrder(
+    // cung cấp order detail id (đại diện cho món ăn) thuộc order nào
+    String order_id,
+    String order_detail_id,
+  ) async {
+    try {
+      if (order_id != "" && order_detail_id != "") {
+        // cho order detail (món ăn) về trạng thái hủy
+        await firestore
+            .collection('orders')
+            .doc(order_id)
+            .collection('orderDetails')
+            .doc(order_detail_id)
+            .update({
+          "food_status": FOOD_STATUS_CANCEL,
+        });
+        Get.snackbar(
+          'THÀNH CÔNG!',
+          'Hủy món thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+        update();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Hủy món thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
       );
     }
   }
