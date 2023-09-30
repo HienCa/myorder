@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Discount {
   String discount_id;
   String name;
-  int discount_price;
+  double discount_price;
   int active;
 
   Discount({

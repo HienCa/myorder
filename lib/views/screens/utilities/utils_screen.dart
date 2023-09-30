@@ -72,7 +72,7 @@ class UtilsPage extends StatelessWidget {
                       ListTile(
                         leading: Text("Địa chỉ:", style: textStyleBlackRegular),
                         title: Text(
-                            "số 05 / ấp 06 //Bình Mỹ / Củ Chi / Thành phố Hồ Chí Minh",
+                            "số 05 / ấp 06 / Bình Mỹ / Củ Chi / TP.HCM",
                             style: textStyleBlackRegular),
                       ),
                     ],

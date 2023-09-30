@@ -151,7 +151,7 @@ class _AddVatPageState extends State<AddVatPage> {
                                   }),
                         ),
                         SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
+                            height: MediaQuery.of(context).size.height * 0.55,
                           ),
                         SizedBox(
                           height: 50,

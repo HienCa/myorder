@@ -70,3 +70,7 @@ final List<String> ROLE_OPTION = <String>[
   'Thu ngân',
   'Chủ nhà hàng'
 ];
+
+//discount
+const discountMin = 1000; //1,000
+const discountMax = 10000000; //10,000,000

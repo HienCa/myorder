@@ -20,7 +20,7 @@ class DiscountController extends GetxController {
         if (userData != null && userData is Map<String, dynamic>) {
           String discount_id = userData['discount_id'] ?? '';
           String name = userData['name'] ?? '';
-          int discount_price = userData['discount_price'] ?? 0;
+          double discount_price = userData['discount_price'] ?? 0;
           int active = userData['active'] ?? 1;
           return Discount(
               discount_id: discount_id,
@@ -83,7 +83,7 @@ class DiscountController extends GetxController {
           discount_id: 'Discount-$len',
           name: name.trim().toUpperCase(),
           active: 1,
-          discount_price: int.tryParse(discount_price) ?? 0,
+          discount_price: double.tryParse(discount_price) ?? 0,
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('discounts');
@@ -124,7 +124,7 @@ class DiscountController extends GetxController {
     try {
       await firestore.collection('discounts').doc(discount_id).update({
         "name": name.trim().toUpperCase(),
-        "discount_price": int.tryParse(discount_price) ?? 0,
+        "discount_price": double.tryParse(discount_price) ?? 0,
       });
       Get.snackbar(
         'THÀNH CÔNG!',

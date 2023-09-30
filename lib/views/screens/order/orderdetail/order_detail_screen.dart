@@ -5,7 +5,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/discount/discounts_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/controllers/vats/vats_controller.dart';
 import 'package:myorder/models/order.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
@@ -22,11 +24,16 @@ class OrderdetailPage extends StatefulWidget {
 
 class _OrderdetailPageState extends State<OrderdetailPage> {
   OrderController orderController = Get.put(OrderController());
-
+  //Load trước danh sách vat và discount trước khi vào thanh toán (nếu không sẽ nhận về mảng rỗng vì get discounts và vats mà chưa từng gọi trong controller)
+  DiscountController discountController = Get.put(DiscountController());
+  VatController vatController = Get.put(VatController());
   @override
   void initState() {
     super.initState();
     orderController.getOrderDetailById(widget.order);
+
+    discountController.getDiscounts("");
+    vatController.getVats("");
   }
 
   int selectedIndex = 0;
@@ -195,11 +202,10 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                 .food!
                                                 .name,
                                             style: textStyleFoodNameBold16),
-                                        subtitle:  Text(
-                                                FOOD_STATUS_IN_CHEFT_STRING,
-                                                style: textStyleMaking,
-                                              )
-                                           ,
+                                        subtitle: Text(
+                                          FOOD_STATUS_IN_CHEFT_STRING,
+                                          style: textStyleMaking,
+                                        ),
                                         trailing: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -286,11 +292,10 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                     .food!
                                                     .name,
                                                 style: textStyleFoodNameBold16),
-                                            subtitle:  Text(
-                                                        FOOD_STATUS_FINISH_STRING,
-                                                        style: textStyleSeccess,
-                                                      )
-                                                    ,
+                                            subtitle: Text(
+                                              FOOD_STATUS_FINISH_STRING,
+                                              style: textStyleSeccess,
+                                            ),
                                             trailing: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -371,10 +376,9 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                   style:
                                                       textStyleFoodNameBold16),
                                               subtitle: Text(
-                                                          FOOD_STATUS_CANCEL_STRING,
-                                                          style:
-                                                              textStyleCancel,
-                                                        ),
+                                                FOOD_STATUS_CANCEL_STRING,
+                                                style: textStyleCancel,
+                                              ),
                                               trailing: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
@@ -497,8 +501,9 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      PaymentPage(order: widget.order)))
+                                builder: (context) =>
+                                    PaymentPage(order: widget.order),
+                              ))
                         },
                         child: Container(
                           padding: const EdgeInsets.all(5),

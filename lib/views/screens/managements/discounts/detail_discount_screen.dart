@@ -8,7 +8,8 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/discount/discounts_controller.dart';
-import 'package:myorder/models/Discount.dart';
+import 'package:myorder/models/discount.dart';
+import 'package:myorder/utils.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DiscountDetailPage extends StatefulWidget {
@@ -37,26 +38,31 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
   @override
   void initState() {
     super.initState();
-    discount = Discount(discount_id: '', name: '', active: 1, discount_price: 0);
+      loadDiscount();
+
+    discount =
+        Discount(discount_id: '', name: '', active: 1, discount_price: 0);
   }
 
   Future<void> loadDiscount() async {
-    final Discount result = await discountController.getDiscountById(widget.discountId);
+    final Discount result =
+        await discountController.getDiscountById(widget.discountId);
     if (result.discount_id != "") {
       setState(() {
         discount = result;
         nameController.text = discount.name;
-        discountPercentController.text = "${discount.discount_price}";
+        discountPriceController.text =
+            Utils.formatCurrency(discount.discount_price);
       });
     }
   }
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController discountPercentController = TextEditingController();
+  final TextEditingController discountPriceController = TextEditingController();
   @override
   void dispose() {
     nameController.dispose();
-    discountPercentController.dispose();
+    discountPriceController.dispose();
 
     super.dispose();
   }
@@ -64,7 +70,6 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
   @override
   Widget build(BuildContext context) {
     if (discount.discount_id == "") {
-      loadDiscount();
 
       return Scaffold(
         backgroundColor: backgroundColor,
@@ -72,7 +77,7 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
           leading: InkWell(
               onTap: () => {Navigator.pop(context)},
               child: const Icon(Icons.arrow_back_ios)),
-          title: const Center(child: Text("THÊM MỚI GIẢM GIÁ")),
+          title: const Center(child: Text("CẬP NHẬT GIẢM GIÁ")),
           backgroundColor: primaryColor,
         ),
         body: const Center(
@@ -86,7 +91,7 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
         leading: InkWell(
             onTap: () => {Navigator.pop(context)},
             child: const Icon(Icons.arrow_back_ios)),
-        title: const Center(child: Text("THÊM MỚI GIẢM GIÁ")),
+        title: const Center(child: Text("CẬP NHẬT GIẢM GIÁ")),
         backgroundColor: primaryColor,
       ),
       body: SingleChildScrollView(
@@ -109,8 +114,10 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                               labelText: "Tên giảm giá",
                               hintText: 'Nhập tên giảm giá',
                               hintStyle: const TextStyle(color: Colors.grey),
-                              border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30))),
                               errorText: isErrorTextName ? errorTextName : null,
                               errorStyle: textStyleErrorInput),
                           maxLength: 50,
@@ -139,7 +146,7 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                       Padding(
                         padding: const EdgeInsets.only(left: 0, right: 0),
                         child: TextField(
-                            controller: discountPercentController,
+                            controller: discountPriceController,
                             style: textStyleInput,
                             keyboardType: TextInputType.number,
                             inputFormatters: <TextInputFormatter>[
@@ -151,24 +158,24 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                                 labelText: "Giá giảm",
                                 hintText: 'Nhập giá muốn giảm',
                                 hintStyle: const TextStyle(color: Colors.grey),
-                                border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30))),
                                 errorText: isErrorTextDiscountPercent
                                     ? errorTextDiscountPercent
                                     : null,
                                 errorStyle: textStyleErrorInput),
-                            maxLength: 3,
+
                             // autofocus: true,
                             onChanged: (value) => {
                                   if (value.isEmpty ||
-                                      int.parse(value) < 1000)
-                                    
+                                      int.parse(value) < discountMin)
                                     {
                                       setState(() {
                                         errorTextDiscountPercent =
                                             "Giá phải lớn hơn 1,000";
                                         isErrorTextDiscountPercent = true;
-                                        
                                       })
                                     }
                                   else
@@ -176,13 +183,24 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                                       setState(() {
                                         errorTextDiscountPercent = "";
                                         isErrorTextDiscountPercent = false;
+
+                                        discountPriceController.text =
+                                            Utils.convertTextFieldPrice(value);
+
+                                        if (int.parse(value) >= discountMax) {
+                                          print(int.parse(value));
+                                          discountPriceController.text =
+                                              Utils.convertTextFieldPrice(
+                                                  discountMax.toString());
+                                          print(discountPriceController.text);
+                                        }
                                       })
                                     }
                                 }),
                       ),
                       SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
-                          ),
+                        height: MediaQuery.of(context).size.height * 0.55,
+                      ),
                       SizedBox(
                         height: 50,
                         child: Row(
@@ -211,13 +229,19 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                             Expanded(
                               child: InkWell(
                                 onTap: () => {
+                                  discountPriceController.text =
+                                      Utils.formatCurrencytoDouble(
+                                          discountPriceController.text),
                                   if (!isErrorTextName &&
-                                      discountPercentController.text != "0")
+                                      (int.tryParse(discountPriceController
+                                                  .text) ??
+                                              0) >
+                                          1000)
                                     {
                                       discountController.updateDiscount(
                                         discount.discount_id,
                                         nameController.text,
-                                        discountPercentController.text,
+                                        discountPriceController.text,
                                       ),
                                       Navigator.pop(context)
                                     }

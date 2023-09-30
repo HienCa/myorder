@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/discount/discounts_controller.dart';
+import 'package:myorder/utils.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -35,12 +36,12 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
   }
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController vatPercentController = TextEditingController();
+  final TextEditingController discountPriceController = TextEditingController();
 
   @override
   void dispose() {
     nameController.dispose();
-    vatPercentController.dispose();
+    discountPriceController.dispose();
     super.dispose();
   }
 
@@ -56,7 +57,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
         backgroundColor: primaryColor,
       ),
       body: Theme(
-         data: ThemeData(unselectedWidgetColor: primaryColor),
+        data: ThemeData(unselectedWidgetColor: primaryColor),
         child: SingleChildScrollView(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -77,9 +78,12 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                                 labelText: "Tên giảm giá",
                                 hintText: 'Nhập tên giảm giá',
                                 hintStyle: const TextStyle(color: Colors.grey),
-                                border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
-                                errorText: isErrorTextName ? errorTextName : null,
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30))),
+                                errorText:
+                                    isErrorTextName ? errorTextName : null,
                                 errorStyle: textStyleErrorInput),
                             maxLength: 50,
                             onChanged: (value) => {
@@ -106,7 +110,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                         Padding(
                           padding: const EdgeInsets.only(left: 0, right: 0),
                           child: TextField(
-                              controller: vatPercentController,
+                              controller: discountPriceController,
                               style: textStyleInput,
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
@@ -117,24 +121,26 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                                   labelStyle: textStyleInput,
                                   labelText: "Giá muốn giảm",
                                   hintText: 'Nhập giá muốn giảm',
-                                  hintStyle: const TextStyle(color: Colors.grey),
-                                  border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
+                                  border: const OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30))),
                                   errorText: isErrorTextVatPercent
                                       ? errorTextVatPercent
                                       : null,
                                   errorStyle: textStyleErrorInput),
-                              maxLength: 50,
                               // autofocus: true,
                               onChanged: (value) => {
                                     if (value.isEmpty ||
-                                        int.parse(value) < 1000)
+                                        int.parse(value) < discountMin)
                                       {
                                         setState(() {
                                           errorTextVatPercent =
-                                             "Giá phải lớn hơn 1,000";
+                                              "Giá phải lớn hơn 1,000";
                                           isErrorTextVatPercent = true;
-                                          
                                         })
                                       }
                                     else
@@ -142,13 +148,25 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                                         setState(() {
                                           errorTextVatPercent = "";
                                           isErrorTextVatPercent = false;
+
+                                          discountPriceController.text =
+                                              Utils.convertTextFieldPrice(
+                                                  value);
+
+                                          if (int.parse(value) >= discountMax) {
+                                            print(int.parse(value));
+                                            discountPriceController.text =
+                                                Utils.convertTextFieldPrice(
+                                                    discountMax.toString());
+                                            print(discountPriceController.text);
+                                          }
                                         })
                                       }
                                   }),
                         ),
                         SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
-                          ),
+                          height: MediaQuery.of(context).size.height * 0.55,
+                        ),
                         SizedBox(
                           height: 50,
                           child: Row(
@@ -161,8 +179,8 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                                     height: 50,
                                     decoration: const BoxDecoration(
                                         color: dividerColor,
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(5))),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5))),
                                     child: const Align(
                                       alignment: Alignment.center,
                                       child: Text("QUAY LẠI",
@@ -177,13 +195,19 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
+                                    discountPriceController.text =
+                                            Utils.formatCurrencytoDouble(
+                                                discountPriceController.text),
                                     if (!isErrorTextName &&
                                         nameController.text != "" &&
-                                        vatPercentController.text != "0")
+                                        (int.tryParse(discountPriceController
+                                                    .text) ?? 0) >
+                                            1000)
                                       {
+                                        
                                         discountController.createDiscount(
                                           nameController.text,
-                                          vatPercentController.text,
+                                          discountPriceController.text,
                                         ),
                                         Navigator.pop(context)
                                       }
@@ -197,8 +221,8 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                                           image: alertImageError,
                                           buttons: [],
                                         ).show(),
-                                        Future.delayed(const Duration(seconds: 2),
-                                            () {
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
                                           Navigator.pop(context);
                                         })
                                       }

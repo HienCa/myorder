@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_pridiscounte_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +8,6 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/discount/discounts_controller.dart';
 import 'package:myorder/views/screens/managements/discounts/add_discount_screen.dart';
 import 'package:myorder/views/screens/managements/discounts/detail_discount_screen.dart';
-import 'package:myorder/views/screens/managements/vats/detail_vat_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 
 class ManagementDiscountsPage extends StatefulWidget {
@@ -99,7 +98,7 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                     return ListView.builder(
                         itemCount: discountController.discounts.length,
                         itemBuilder: (context, index) {
-                          final vat = discountController.discounts[index];
+                          final discount = discountController.discounts[index];
                           String string;
                           return Card(
                             child: ListTile(
@@ -111,7 +110,7 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => DiscountDetailPage(
-                                                  discountId: vat.discount_id,
+                                                  discountId: discount.discount_id,
                                                 ))),
                                     child: Marquee(
                                       direction: Axis.horizontal,
@@ -125,7 +124,7 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                       directionMarguee:
                                           DirectionMarguee.TwoDirection,
                                       child: Text(
-                                        vat.name,
+                                        discount.name,
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),
@@ -137,13 +136,13 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            VatDetailPage(vatId: vat.discount_id))),
+                                            DiscountDetailPage(discountId: discount.discount_id))),
                                 child: RichText(
                                   text: TextSpan(
-                                    text: vat.active == ACTIVE
+                                    text: discount.active == ACTIVE
                                         ? "Đang hoạt động"
                                         : "Ngừng hoạt động",
-                                    style: vat.active == ACTIVE
+                                    style: discount.active == ACTIVE
                                         ? const TextStyle(color: Colors.green)
                                         : const TextStyle(
                                             color: Colors
@@ -156,7 +155,7 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                               ),
                               trailing: InkWell(
                                 onTap: () => {
-                                  string = vat.active == ACTIVE
+                                  string = discount.active == ACTIVE
                                       ? "ngừng hoạt động"
                                       : "hoạt động trở lại",
                                   showCustomAlertDialogConfirm(
@@ -165,11 +164,11 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                     "Bạn có chắc chắn muốn $string đơn vị tính này?",
                                     () async {
                                       await discountController.updateToggleActive(
-                                          vat.discount_id, vat.active);
+                                          discount.discount_id, discount.active);
                                     },
                                   )
                                 },
-                                child: vat.active == ACTIVE
+                                child: discount.active == ACTIVE
                                     ? const Icon(
                                         Icons.key,
                                         size: 25,

@@ -1,13 +1,18 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/discount/discounts_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/controllers/vats/vats_controller.dart';
+import 'package:myorder/models/discount.dart';
 import 'package:myorder/models/order.dart';
+import 'package:myorder/models/vat.dart';
 import 'package:myorder/utils.dart';
-
 
 class PaymentPage extends StatefulWidget {
   final Order order;
@@ -19,11 +24,19 @@ class PaymentPage extends StatefulWidget {
 
 class _PaymentPageState extends State<PaymentPage> {
   OrderController orderController = Get.put(OrderController());
+  DiscountController discountController = Get.put(DiscountController());
+  VatController vatController = Get.put(VatController());
 
   @override
   void initState() {
     super.initState();
     orderController.getOrderDetailById(widget.order);
+    discountController.getDiscounts("");
+    vatController.getVats("");
+    discounts = discountController.discounts;
+    vats = vatController.vats;
+    discounts = discountController.discounts;
+
   }
 
   int selectedIndex = 0;
@@ -31,17 +44,22 @@ class _PaymentPageState extends State<PaymentPage> {
   bool isCheckedDecrease = false;
 
   final TextEditingController decreasePrice = TextEditingController();
-
-  final TextEditingController textEditingController =
+//thuế giá trị gia tăng toàn đơn hàng
+  final TextEditingController textVatController =
       TextEditingController(text: "");
-  final List<String> items = [
-    'Khách quen',
-    'Ngày khuyến mãi',
-    'Hóa đơn trên 5 triệu',
-    'Khác'
-  ];
+  final TextEditingController textVatIdController =
+      TextEditingController(text: "");
+//discount
+  final TextEditingController textDiscountController =
+      TextEditingController(text: "");
+  final TextEditingController textDiscountIdController =
+      TextEditingController(text: "");
+
+  late List<Vat> vats = [];
+  late List<Discount> discounts = [];
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -340,6 +358,203 @@ class _PaymentPageState extends State<PaymentPage> {
                             onChanged: (bool? value) {
                               setState(() {
                                 isCheckedGTGT = value!;
+                                if (isCheckedGTGT) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              10.0), // Góc bo tròn
+                                        ),
+                                        elevation: 5, // Độ nâng của bóng đổ
+                                        backgroundColor: backgroundColor,
+                                        child: Container(
+                                          padding:
+                                              const EdgeInsets.only(top: 20),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Center(
+                                                child: Text(
+                                                  'ÁP DỤNG THUẾ VAT',
+                                                  style: textStylePrimaryBold,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 0.5,
+                                                        color: Colors.grey),
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12),
+                                                child: TypeAheadField<Vat>(
+                                                  textFieldConfiguration:
+                                                      TextFieldConfiguration(
+                                                    keyboardType:
+                                                        TextInputType.none,
+                                                    controller:
+                                                        textVatController,
+                                                    decoration: InputDecoration(
+                                                      labelText: textVatController
+                                                              .text.isEmpty
+                                                          ? 'Áp dụng thuế VAT'
+                                                          : "",
+                                                      suffixIcon: InkWell(
+                                                          onTap: () => {
+                                                                textVatController
+                                                                    .text = "",
+                                                                textVatIdController
+                                                                    .text = "",
+                                                                print(
+                                                                    textVatIdController
+                                                                        .text)
+                                                              },
+                                                          child: const Icon(
+                                                              Icons.close,
+                                                              color:
+                                                                  Colors.grey)),
+                                                      border:
+                                                          const OutlineInputBorder(),
+                                                      labelStyle: const TextStyle(
+                                                          color:
+                                                              tableemptyColor),
+                                                    ),
+                                                    style: const TextStyle(
+                                                        color: textColor),
+                                                  ),
+                                                  suggestionsCallback:
+                                                      (pattern) async {
+                                                    return vats.where((item) =>
+                                                        item
+                                                            .name
+                                                            .toLowerCase()
+                                                            .contains(pattern
+                                                                .toLowerCase()));
+                                                  },
+                                                  itemBuilder:
+                                                      (context, suggestion) {
+                                                    return ListTile(
+                                                      title: Text(
+                                                        suggestion.name,
+                                                      ),
+                                                    );
+                                                  },
+                                                  onSuggestionSelected:
+                                                      (suggestion) {
+                                                    setState(() {
+                                                      textVatController.text =
+                                                          suggestion
+                                                              .name; // Set the input value
+                                                      print(suggestion.vat_id);
+                                                      textVatIdController.text =
+                                                          suggestion.vat_id;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () => {
+                                                        setState(() {
+                                                          isCheckedGTGT =
+                                                              !isCheckedGTGT;
+                                                          //set vat về mặc định
+                                                          textVatController
+                                                              .text = "";
+                                                          textVatIdController
+                                                              .text = "";
+                                                          //set discount về mặc định
+                                                          textDiscountController
+                                                              .text = "";
+                                                          textDiscountIdController
+                                                              .text = "";
+                                                        }),
+                                                        Navigator.pop(context)
+                                                      },
+                                                      child: Container(
+                                                        height: 50,
+                                                        width: 136,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5)),
+                                                          color:
+                                                              backgroundColorGray,
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            'HỦY BỎ',
+                                                            style:
+                                                                textStyleCancel,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () => {},
+                                                      child: Container(
+                                                        height: 50,
+                                                        width: 136,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5)),
+                                                          color: primaryColor,
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            'XÁC NHẬN',
+                                                            style:
+                                                                textStyleWhiteBold20,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ); // Hiển thị hộp thoại tùy chỉnh
+                                    },
+                                  );
+                                }
                               });
                             },
                             activeColor: primaryColor,
@@ -378,9 +593,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     color: Colors.transparent,
                   ),
                   child: InkWell(
-                      onTap: () => {
-                            
-                          },
+                      onTap: () => {},
                       child: ListTile(
                         leading: Theme(
                           data: ThemeData(unselectedWidgetColor: primaryColor),
@@ -394,201 +607,200 @@ class _PaymentPageState extends State<PaymentPage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            10.0), // Góc bo tròn
-                                      ),
-                                      elevation: 5, // Độ nâng của bóng đổ
-                                      backgroundColor: backgroundColor,
-                                      child: Container(
-                                        padding: const EdgeInsets.only(top: 20),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Center(
-                                              child: Text(
-                                                'GIẢM GIÁ HÓA ĐƠN',
-                                                style: textStylePrimaryBold,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            Container(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      width: 0.5,
-                                                      color: Colors.grey),
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(5))),
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12),
-                                              child: TextField(
-                                                controller: decreasePrice,
-                                                style: const TextStyle(
-                                                    color: textColor),
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                      borderSide:
-                                                          BorderSide(width: 1),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5))),
-                                                  label: Text(
-                                                      "Vui lòng nhập % muốn giảm",
-                                                      style:
-                                                          textStylePlaceholder),
-                                                  hintStyle: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w300,
-                                                      color: Colors.grey),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Container(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      width: 0.5,
-                                                      color: Colors.grey),
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(5))),
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12),
-                                              child: TypeAheadField<String>(
-                                                textFieldConfiguration:
-                                                    TextFieldConfiguration(
-                                                  controller:
-                                                      textEditingController,
-                                                  decoration: InputDecoration(
-                                                    labelText: textEditingController
-                                                            .text.isEmpty
-                                                        ? 'Vui lòng chọn khuyến mãi'
-                                                        : "",
-                                                    border:
-                                                        const OutlineInputBorder(),
-                                                    labelStyle: const TextStyle(
-                                                        color: tableemptyColor),
-                                                  ),
-                                                  style: const TextStyle(
-                                                      color: textColor),
-                                                ),
-                                                suggestionsCallback:
-                                                    (pattern) async {
-                                                  return items.where((item) =>
-                                                      item
-                                                          .toLowerCase()
-                                                          .contains(pattern
-                                                              .toLowerCase()));
-                                                },
-                                                itemBuilder:
-                                                    (context, suggestion) {
-                                                  return ListTile(
-                                                    title: Text(
-                                                      suggestion,
-                                                    ),
-                                                  );
-                                                },
-                                                onSuggestionSelected:
-                                                    (suggestion) {
-                                                  setState(() {
-                                                    textEditingController.text =
-                                                        suggestion; // Set the input value
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            SizedBox(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () => {
-                                                      setState(() {
-                                                        isCheckedDecrease =
-                                                            !isCheckedDecrease;
-                                                      }),
-                                                      Navigator.pop(context)
-                                                    },
-                                                    child: Container(
-                                                      height: 50,
-                                                      width: 136,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    5)),
-                                                        color:
-                                                            backgroundColorGray,
-                                                      ),
-                                                      child: const Center(
-                                                        child: Text(
-                                                          'HỦY BỎ',
-                                                          style:
-                                                              textStyleCancel,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () => {},
-                                                    child: Container(
-                                                      height: 50,
-                                                      width: 136,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    5)),
-                                                        color: primaryColor,
-                                                      ),
-                                                      child: const Center(
-                                                        child: Text(
-                                                          'XÁC NHẬN',
-                                                          style:
-                                                              textStyleWhiteBold20,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                          ],
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              10.0), // Góc bo tròn
                                         ),
-                                      ),
-                                    ); // Hiển thị hộp thoại tùy chỉnh
+                                        elevation: 5, // Độ nâng của bóng đổ
+                                        backgroundColor: backgroundColor,
+                                        child: Container(
+                                          padding:
+                                              const EdgeInsets.only(top: 20),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Center(
+                                                child: Text(
+                                                  'GIẢM GIÁ HÓA ĐƠN',
+                                                  style: textStylePrimaryBold,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 0.5,
+                                                        color: Colors.grey),
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12),
+                                                child: TypeAheadField<Discount>(
+                                                  textFieldConfiguration:
+                                                      TextFieldConfiguration(
+                                                    keyboardType:
+                                                        TextInputType.none,
+                                                    controller:
+                                                        textDiscountController,
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          textDiscountController
+                                                                  .text.isEmpty
+                                                              ? 'Vui lòng chọn khuyến mãi'
+                                                              : "",
+                                                      suffixIcon: InkWell(
+                                                          onTap: () => {
+                                                                textDiscountController
+                                                                    .text = "",
+                                                                textDiscountIdController
+                                                                    .text = "",
+                                                                print(
+                                                                    textDiscountIdController
+                                                                        .text)
+                                                              },
+                                                          child: const Icon(
+                                                              Icons.close,
+                                                              color:
+                                                                  Colors.grey)),
+                                                      border:
+                                                          const OutlineInputBorder(),
+                                                      labelStyle: const TextStyle(
+                                                          color:
+                                                              tableemptyColor),
+                                                    ),
+                                                    style: const TextStyle(
+                                                        color: textColor),
+                                                  ),
+                                                  suggestionsCallback:
+                                                      (pattern) async {
+                                                    return discounts.where(
+                                                        (item) => item.name
+                                                            .toLowerCase()
+                                                            .contains(pattern
+                                                                .toLowerCase()));
+                                                  },
+                                                  itemBuilder:
+                                                      (context, suggestion) {
+                                                    return ListTile(
+                                                      title: Text(
+                                                        suggestion.name,
+                                                      ),
+                                                    );
+                                                  },
+                                                  onSuggestionSelected:
+                                                      (suggestion) {
+                                                    setState(() {
+                                                      textDiscountController
+                                                              .text =
+                                                          suggestion
+                                                              .name; // Set the input value
+                                                      print(suggestion
+                                                          .discount_id);
+                                                      textDiscountIdController
+                                                              .text =
+                                                          suggestion
+                                                              .discount_id;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () => {
+                                                        setState(() {
+                                                          isCheckedDecrease =
+                                                              !isCheckedDecrease;
+
+                                                          //set vat về mặc định
+                                                          textVatController
+                                                              .text = "";
+                                                          textVatIdController
+                                                              .text = "";
+                                                          //set discount về mặc định
+                                                          textDiscountController
+                                                              .text = "";
+                                                          textDiscountIdController
+                                                              .text = "";
+                                                        }),
+                                                        Navigator.pop(context)
+                                                      },
+                                                      child: Container(
+                                                        height: 50,
+                                                        width: 136,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5)),
+                                                          color:
+                                                              backgroundColorGray,
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            'HỦY BỎ',
+                                                            style:
+                                                                textStyleCancel,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () => {},
+                                                      child: Container(
+                                                        height: 50,
+                                                        width: 136,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5)),
+                                                          color: primaryColor,
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            'XÁC NHẬN',
+                                                            style:
+                                                                textStyleWhiteBold20,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ); // Hiển thị hộp thoại tùy chỉnh
                                     },
                                   );
                                 }

@@ -185,7 +185,7 @@ class _VatDetailPageState extends State<VatDetailPage> {
                                 }),
                       ),
                       SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
+                            height: MediaQuery.of(context).size.height * 0.55,
                           ),
                       SizedBox(
                         height: 50,
