@@ -42,6 +42,9 @@ const activeColor = Color(0xFF40BAD5);
 const deActiveColor = Colors.grey;
 const colorPrice = Colors.orangeAccent;
 
+const colorWarning = Color(0xFFFFC107);
+const colorInformation = Color(0xFF40BAD5);
+
 const colorPriceIncrease = Colors.green;
 const colorPriceDecrease = Colors.redAccent;
 

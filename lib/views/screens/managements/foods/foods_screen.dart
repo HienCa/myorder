@@ -238,6 +238,8 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string món này?",
+                                                                  colorWarning,
+
                                     () async {
                                       await foodController.updateToggleActive(
                                           food.food_id, food.active);

@@ -160,6 +160,7 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string đơn vị tính này?",
+                                    colorWarning,
                                     () async {
                                       await vatController.updateToggleActive(
                                           vat.vat_id, vat.active);

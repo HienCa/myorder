@@ -165,6 +165,8 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string danh mục này?",
+                                                                  colorWarning,
+
                                     () async {
                                       await categoryController
                                           .updateToggleActive(

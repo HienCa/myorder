@@ -50,9 +50,8 @@ class Order {
         "active": active,
         "employee_id": employee_id,
         "table_id": table_id,
-        "order_details": order_details,
-        "vat_percent": vat_id,
-        "discount_price": discount_id,
+        "vat_id": vat_id,
+        "discount_id": discount_id,
       };
 
   static Order fromSnap(DocumentSnapshot snap) {

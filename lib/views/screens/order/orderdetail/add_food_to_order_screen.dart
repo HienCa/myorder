@@ -11,6 +11,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/dialogs.dart';
 
 class AddFoodToOrderPage extends StatefulWidget {
   final model.Table table;
@@ -70,7 +71,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                       categoryselectedIndex = index;
                       categoryIdSelected = categoryController
                           .categoriesActive[index].category_id;
-                      foodController.getfoodsToOrder(keySearch, categoryIdSelected);
+                      foodController.getfoodsToOrder(
+                          keySearch, categoryIdSelected);
                     });
                   },
                   child: Container(
@@ -514,9 +516,20 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 print("--------------------------------");
                               }
                             }
-                            // order theo table_id
-                            orderController.createOrder(widget.table.table_id,
-                                orderDetailList, context);
+
+                            showCustomAlertDialogConfirm(
+                              context,
+                              "YÊU CẦU ĐẶT BÀN",
+                              "Bạn đang muốn đặt bàn ${widget.table.name} ?",
+                              colorInformation,
+                              () async {
+                                // order theo table_id
+                                orderController.createOrder(
+                                    widget.table.table_id,
+                                    orderDetailList,
+                                    context);
+                              },
+                            );
                           },
                           child: Container(
                             height: 50,

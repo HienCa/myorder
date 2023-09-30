@@ -13,6 +13,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
+import 'package:myorder/views/widgets/dialogs.dart';
 
 class OrderdetailPage extends StatefulWidget {
   final Order order;
@@ -151,12 +152,25 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                           ),
                                           SlidableAction(
                                             onPressed: (context) => {
-                                              orderController.cancelFoodByOrder(
-                                                  widget.order.order_id,
+                                              showCustomAlertDialogConfirm(
+                                                context,
+                                                "YÊU CẦU HỦY MÓN",
+                                                "Có chắc chắn muốn hủy món \"${orderController
+                                                              .orderDetail
+                                                              .order_details[
+                                                                  index].food!.name}\" ?",
+                                                                  colorWarning,
+                                                () async {
                                                   orderController
-                                                      .orderDetail
-                                                      .order_details[index]
-                                                      .order_detail_id),
+                                                      .cancelFoodByOrder(
+                                                          widget.order.order_id,
+                                                          orderController
+                                                              .orderDetail
+                                                              .order_details[
+                                                                  index]
+                                                              .order_detail_id);
+                                                },
+                                              ),
                                               print("YÊU CẦU HỦY MÓN"),
                                               print(
                                                   "Order: ${orderController.orderDetail.order_id}"),
@@ -501,8 +515,9 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    PaymentPage(order: widget.order,),
+                                builder: (context) => PaymentPage(
+                                  order: widget.order,
+                                ),
                               ))
                         },
                         child: Container(

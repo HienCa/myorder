@@ -161,6 +161,7 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string đơn vị tính này?",
+                                    colorWarning,
                                     () async {
                                       await unitController.updateToggleActive(
                                           unit.unit_id, unit.active);

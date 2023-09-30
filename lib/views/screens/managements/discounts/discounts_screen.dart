@@ -162,6 +162,8 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string đơn vị tính này?",
+                                                                  colorWarning,
+
                                     () async {
                                       await discountController.updateToggleActive(
                                           discount.discount_id, discount.active);

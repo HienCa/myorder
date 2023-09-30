@@ -182,6 +182,8 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string người dùng này?",
+                                                                  colorWarning,
+
                                     () async {
                                       await employeeController
                                           .updateToggleActive(
