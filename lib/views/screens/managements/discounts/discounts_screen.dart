@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/discount/discounts_controller.dart';
+import 'package:myorder/controllers/discounts/discounts_controller.dart';
 import 'package:myorder/views/screens/managements/discounts/add_discount_screen.dart';
 import 'package:myorder/views/screens/managements/discounts/detail_discount_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';

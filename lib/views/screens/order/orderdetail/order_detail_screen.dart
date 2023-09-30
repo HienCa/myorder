@@ -5,7 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/discount/discounts_controller.dart';
+import 'package:myorder/controllers/discounts/discounts_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
 import 'package:myorder/models/order.dart';

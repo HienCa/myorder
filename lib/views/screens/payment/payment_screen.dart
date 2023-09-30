@@ -6,13 +6,15 @@ import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/discount/discounts_controller.dart';
+import 'package:myorder/controllers/bills/bills_controller.dart';
+import 'package:myorder/controllers/discounts/discounts_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
 import 'package:myorder/models/discount.dart';
 import 'package:myorder/models/order.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/dialogs.dart';
 
 class PaymentPage extends StatefulWidget {
   final Order order;
@@ -26,6 +28,7 @@ class _PaymentPageState extends State<PaymentPage> {
   OrderController orderController = Get.put(OrderController());
   DiscountController discountController = Get.put(DiscountController());
   VatController vatController = Get.put(VatController());
+  BillController billController = Get.put(BillController());
 
   int selectedIndex = 0;
   bool isCheckedGTGT = false;
@@ -963,7 +966,21 @@ class _PaymentPageState extends State<PaymentPage> {
                     color: backgroundColor,
                   ),
                   child: InkWell(
-                    onTap: () => {},
+                    onTap: () => {
+                      showCustomAlertDialogConfirm(
+                        context,
+                        "YÊU CẦU THANH TOÁN",
+                        "Bạn có chắc chắn muốn hoàn tất hóa đơn này?",
+                        colorInformation,
+                        () async {
+                          billController.createBill(
+                              orderController.orderDetail,
+                              orderController.orderDetail.total_vat_amount,
+                              orderController.orderDetail.total_discount_amount,
+                              context);
+                        },
+                      )
+                    },
                     child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
