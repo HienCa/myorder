@@ -27,18 +27,6 @@ class _PaymentPageState extends State<PaymentPage> {
   DiscountController discountController = Get.put(DiscountController());
   VatController vatController = Get.put(VatController());
 
-  @override
-  void initState() {
-    super.initState();
-    orderController.getOrderDetailById(widget.order);
-    discountController.getDiscounts("");
-    vatController.getVats("");
-    discounts = discountController.discounts;
-    vats = vatController.vats;
-    discounts = discountController.discounts;
-
-  }
-
   int selectedIndex = 0;
   bool isCheckedGTGT = false;
   bool isCheckedDecrease = false;
@@ -57,9 +45,41 @@ class _PaymentPageState extends State<PaymentPage> {
 
   late List<Vat> vats = [];
   late List<Discount> discounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    orderController.getOrderDetailById(widget.order);
+    discountController.getActiveDiscounts();
+    vatController.getActiveVats();
+    discounts = discountController.activeDiscounts;
+    vats = vatController.activeVats;
+
+    // giá trị mặc định của giảm giá và thuế của đơn hàng hiện tại
+    textVatController.text =
+        widget.order.vat_name ?? orderController.orderDetail.vat_name ?? "";
+    textVatIdController.text = widget.order.vat_id;
+
+    textDiscountController.text = widget.order.discount_name ??
+        orderController.orderDetail.discount_name ??
+        "";
+    textDiscountIdController.text = widget.order.discount_id;
+
+    if (widget.order.vat_id != "") {
+      isCheckedGTGT = true;
+    }
+    if (widget.order.discount_id != "") {
+      isCheckedDecrease = true;
+    }
+    print(widget.order.vat_name);
+    print(widget.order.discount_name);
+    print("VAT-DISCOUNT");
+    print(orderController.orderDetail.vat_id);
+    print(orderController.orderDetail.discount_id);
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -257,72 +277,122 @@ class _PaymentPageState extends State<PaymentPage> {
                             curve: Curves.easeInOut,
                             child: InkWell(
                               onTap: () => {},
-                              child: ListTile(
-                                selectedColor: primaryColor,
-                                leading: orderController.orderDetail
-                                            .order_details[index].food !=
-                                        null
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: Image.network(
-                                          orderController.orderDetail
-                                              .order_details[index].food!.image,
-                                          width: 50,
-                                          height: 50,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : ClipRRect(
-                                        child:
-                                            defaultFoodImage, // ảnh trong constants
-                                      ),
-                                title: Text(
-                                    orderController.orderDetail
-                                        .order_details[index].food!.name,
-                                    style: textStyleFoodNameBold16),
-                                subtitle: orderController.orderDetail
-                                            .order_details[index].food_status ==
-                                        FOOD_STATUS_IN_CHEFT
-                                    ? Text(
-                                        FOOD_STATUS_IN_CHEFT_STRING,
-                                        style: textStyleMaking,
-                                      )
-                                    : orderController
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .food_status ==
+                                          FOOD_STATUS_CANCEL
+                                      ? backgroundCancelFoodColor
+                                      : backgroundColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ListTile(
+                                  selectedColor: primaryColor,
+                                  leading: orderController.orderDetail
+                                              .order_details[index].food !=
+                                          null
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          child: Image.network(
+                                            orderController
                                                 .orderDetail
                                                 .order_details[index]
-                                                .food_status ==
-                                            FOOD_STATUS_FINISH
-                                        ? Text(
-                                            FOOD_STATUS_FINISH_STRING,
-                                            style: textStyleSeccess,
-                                          )
-                                        : Text(
-                                            FOOD_STATUS_CANCEL_STRING,
-                                            style: textStyleCancel,
+                                                .food!
+                                                .image,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
                                           ),
-                                trailing: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                        Utils.formatCurrency(orderController
-                                            .orderDetail
-                                            .order_details[index]
-                                            .price),
-                                        style: textStylePriceBlackRegular16),
-                                    SizedBox(
-                                      width: 100,
-                                      child: Row(
-                                        children: [
-                                          const Text("Số lượng: ",
-                                              style:
-                                                  textStylePriceBlackRegular16),
-                                          Text(
-                                              "${orderController.orderDetail.order_details[index].quantity}",
-                                              style: textStyleSeccess),
-                                        ],
+                                        )
+                                      : ClipRRect(
+                                          child:
+                                              defaultFoodImage, // ảnh trong constants
+                                        ),
+                                  title: Text(
+                                      orderController.orderDetail
+                                          .order_details[index].food!.name,
+                                      style: textStyleFoodNameBold16),
+                                  subtitle: orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .food_status ==
+                                          FOOD_STATUS_IN_CHEFT
+                                      ? Text(
+                                          FOOD_STATUS_IN_CHEFT_STRING,
+                                          style: textStyleMaking,
+                                        )
+                                      : orderController
+                                                  .orderDetail
+                                                  .order_details[index]
+                                                  .food_status ==
+                                              FOOD_STATUS_FINISH
+                                          ? Text(
+                                              FOOD_STATUS_FINISH_STRING,
+                                              style: textStyleSeccess,
+                                            )
+                                          : Text(
+                                              FOOD_STATUS_CANCEL_STRING,
+                                              style: textStyleCancel,
+                                            ),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                          Utils.formatCurrency(orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .price),
+                                          style: textStylePriceBlackRegular16),
+                                      SizedBox(
+                                        width: 100,
+                                        child: orderController
+                                                    .orderDetail
+                                                    .order_details[index]
+                                                    .food_status ==
+                                                FOOD_STATUS_FINISH
+                                            ? Row(
+                                                children: [
+                                                  const Text("Số lượng: ",
+                                                      style:
+                                                          textStylePriceBlackRegular16),
+                                                  Text(
+                                                      "${orderController.orderDetail.order_details[index].quantity}",
+                                                      style: textStyleSeccess),
+                                                ],
+                                              )
+                                            : orderController
+                                                        .orderDetail
+                                                        .order_details[index]
+                                                        .food_status ==
+                                                    FOOD_STATUS_FINISH
+                                                ? Row(
+                                                    children: [
+                                                      const Text("Số lượng: ",
+                                                          style:
+                                                              textStylePriceBlackRegular16),
+                                                      Text(
+                                                          "${orderController.orderDetail.order_details[index].quantity}",
+                                                          style:
+                                                              textStyleMaking),
+                                                    ],
+                                                  )
+                                                : Row(
+                                                    children: [
+                                                      const Text("Số lượng: ",
+                                                          style:
+                                                              textStylePriceBlackRegular16),
+                                                      Text(
+                                                          "${orderController.orderDetail.order_details[index].quantity}",
+                                                          style:
+                                                              textStyleCancel),
+                                                    ],
+                                                  ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -346,9 +416,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                   child: InkWell(
                       onTap: () => {
-                            setState(() {
-                              isCheckedGTGT = !isCheckedGTGT;
-                            })
+                            // setState(() {
+                            //   isCheckedGTGT = !isCheckedGTGT;
+                            // })
                           },
                       child: ListTile(
                         leading: Theme(
@@ -358,6 +428,14 @@ class _PaymentPageState extends State<PaymentPage> {
                             onChanged: (bool? value) {
                               setState(() {
                                 isCheckedGTGT = value!;
+                                print(isCheckedGTGT);
+                                //Hủy VAT khi nhấn uncheck checkbox
+                                if (isCheckedGTGT == false) {
+                                  orderController
+                                      .cancelVat(widget.order.order_id);
+                                }
+
+                                // bật popup
                                 if (isCheckedGTGT) {
                                   showDialog(
                                     context: context,
@@ -417,8 +495,6 @@ class _PaymentPageState extends State<PaymentPage> {
                                                       suffixIcon: InkWell(
                                                           onTap: () => {
                                                                 textVatController
-                                                                    .text = "",
-                                                                textVatIdController
                                                                     .text = "",
                                                                 print(
                                                                     textVatIdController
@@ -484,16 +560,22 @@ class _PaymentPageState extends State<PaymentPage> {
                                                         setState(() {
                                                           isCheckedGTGT =
                                                               !isCheckedGTGT;
-                                                          //set vat về mặc định
-                                                          textVatController
-                                                              .text = "";
-                                                          textVatIdController
-                                                              .text = "";
-                                                          //set discount về mặc định
-                                                          textDiscountController
-                                                              .text = "";
-                                                          textDiscountIdController
-                                                              .text = "";
+
+                                                          //hủy áp dụng vat
+                                                          if (orderController
+                                                                      .orderDetail
+                                                                      .vat_id !=
+                                                                  "" ||
+                                                              widget.order
+                                                                      .vat_id !=
+                                                                  "") {
+                                                            orderController
+                                                                .cancelVat(widget
+                                                                    .order
+                                                                    .order_id);
+                                                            widget.order
+                                                                .vat_id = "";
+                                                          }
                                                         }),
                                                         Navigator.pop(context)
                                                       },
@@ -520,7 +602,16 @@ class _PaymentPageState extends State<PaymentPage> {
                                                       ),
                                                     ),
                                                     InkWell(
-                                                      onTap: () => {},
+                                                      onTap: () => {
+                                                        orderController.applyVat(
+                                                            widget
+                                                                .order.order_id,
+                                                            textVatIdController
+                                                                .text),
+                                                        widget.order.vat_id =
+                                                            textVatIdController
+                                                                .text
+                                                      },
                                                       child: Container(
                                                         height: 50,
                                                         width: 136,
@@ -535,7 +626,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                                         ),
                                                         child: const Center(
                                                           child: Text(
-                                                            'XÁC NHẬN',
+                                                            'ÁP DỤNG',
                                                             style:
                                                                 textStyleWhiteBold20,
                                                           ),
@@ -602,6 +693,12 @@ class _PaymentPageState extends State<PaymentPage> {
                             onChanged: (bool? value) {
                               setState(() {
                                 isCheckedDecrease = value!;
+                                //Hủy DISCOUNT khi nhấn uncheck checkbox
+                                if (isCheckedDecrease == false) {
+                                  orderController
+                                      .cancelDiscount(widget.order.order_id);
+                                }
+                                // bật popup
                                 if (isCheckedDecrease) {
                                   showDialog(
                                     context: context,
@@ -662,8 +759,6 @@ class _PaymentPageState extends State<PaymentPage> {
                                                       suffixIcon: InkWell(
                                                           onTap: () => {
                                                                 textDiscountController
-                                                                    .text = "",
-                                                                textDiscountIdController
                                                                     .text = "",
                                                                 print(
                                                                     textDiscountIdController
@@ -733,16 +828,21 @@ class _PaymentPageState extends State<PaymentPage> {
                                                           isCheckedDecrease =
                                                               !isCheckedDecrease;
 
-                                                          //set vat về mặc định
-                                                          textVatController
-                                                              .text = "";
-                                                          textVatIdController
-                                                              .text = "";
-                                                          //set discount về mặc định
-                                                          textDiscountController
-                                                              .text = "";
-                                                          textDiscountIdController
-                                                              .text = "";
+                                                          //hủy áp dụng giảm giá
+                                                          if (orderController
+                                                                      .orderDetail
+                                                                      .discount_id !=
+                                                                  "" ||
+                                                              widget.order
+                                                                      .discount_id !=
+                                                                  "") {
+                                                            orderController
+                                                                .cancelDiscount(
+                                                                    widget.order
+                                                                        .order_id);
+                                                            widget.order
+                                                                .discount_id = "";
+                                                          }
                                                         }),
                                                         Navigator.pop(context)
                                                       },
@@ -769,7 +869,18 @@ class _PaymentPageState extends State<PaymentPage> {
                                                       ),
                                                     ),
                                                     InkWell(
-                                                      onTap: () => {},
+                                                      onTap: () => {
+                                                        orderController
+                                                            .applyDiscount(
+                                                                widget.order
+                                                                    .order_id,
+                                                                textDiscountIdController
+                                                                    .text),
+                                                        widget.order
+                                                                .discount_id =
+                                                            textDiscountIdController
+                                                                .text
+                                                      },
                                                       child: Container(
                                                         height: 50,
                                                         width: 136,
@@ -784,7 +895,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                                         ),
                                                         child: const Center(
                                                           child: Text(
-                                                            'XÁC NHẬN',
+                                                            'ÁP DỤNG',
                                                             style:
                                                                 textStyleWhiteBold20,
                                                           ),

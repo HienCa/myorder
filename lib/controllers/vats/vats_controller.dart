@@ -71,6 +71,27 @@ class VatController extends GetxController {
     }
   }
 
+  final Rx<List<Vat>> _activeVats = Rx<List<Vat>>([]);
+  List<Vat> get activeVats => _activeVats.value;
+  getActiveVats() async {
+    _activeVats.bindStream(
+      firestore
+          .collection('vats')
+          .where('active', isEqualTo: ACTIVE)
+          .snapshots()
+          .map(
+        (QuerySnapshot query) {
+          List<Vat> retValue = [];
+          for (var element in query.docs) {
+            retValue.add(Vat.fromSnap(element));
+            print(element);
+          }
+          return retValue;
+        },
+      ),
+    );
+  }
+
   void createVat(
     String name,
     String vat_percent,

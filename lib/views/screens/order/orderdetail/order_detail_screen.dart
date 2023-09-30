@@ -32,8 +32,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
     super.initState();
     orderController.getOrderDetailById(widget.order);
 
-    discountController.getDiscounts("");
-    vatController.getVats("");
+    discountController.getActiveDiscounts();
+    vatController.getActiveVats();
   }
 
   int selectedIndex = 0;
@@ -502,7 +502,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    PaymentPage(order: widget.order),
+                                    PaymentPage(order: widget.order,),
                               ))
                         },
                         child: Container(

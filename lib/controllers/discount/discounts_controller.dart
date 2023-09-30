@@ -70,6 +70,25 @@ class DiscountController extends GetxController {
     }
   }
 
+  final Rx<List<Discount>> _activeDiscounts = Rx<List<Discount>>([]);
+  List<Discount> get activeDiscounts => _activeDiscounts.value;
+  getActiveDiscounts() async {
+
+      _activeDiscounts.bindStream(
+        firestore.collection('discounts').where('active', isEqualTo: ACTIVE).snapshots().map(
+          (QuerySnapshot query) {
+            List<Discount> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(Discount.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    
+  }
+
   void createDiscount(
     String name,
     String discount_price,

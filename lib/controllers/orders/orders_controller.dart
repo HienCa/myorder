@@ -80,7 +80,11 @@ class OrderController extends GetxController {
                   }
                 }
                 orderDetails.add(orderDetail);
-                totalAmount += orderDetail.price * orderDetail.quantity;
+                //không tính món đã hủy
+
+                if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
+                  totalAmount += orderDetail.price * orderDetail.quantity;
+                }
               }
               print(orderDetails);
               print(totalAmount);
@@ -177,7 +181,11 @@ class OrderController extends GetxController {
                   }
                 }
                 orderDetails.add(orderDetail);
-                totalAmount += orderDetail.price * orderDetail.quantity;
+                //không tính món đã hủy
+
+                if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
+                  totalAmount += orderDetail.price * orderDetail.quantity;
+                }
               }
               print(orderDetails);
               print(totalAmount);
@@ -279,7 +287,11 @@ class OrderController extends GetxController {
                 }
               }
               orderDetails.add(orderDetail);
-              totalAmount += orderDetail.price * orderDetail.quantity;
+              //không tính món đã hủy
+
+              if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
+                totalAmount += orderDetail.price * orderDetail.quantity;
+              }
             }
             print(orderDetails);
             print(totalAmount);
@@ -378,7 +390,11 @@ class OrderController extends GetxController {
               }
 
               orderDetails.add(orderDetail);
-              totalAmount += orderDetail.price * orderDetail.quantity;
+              //không tính món đã hủy
+
+              if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
+                totalAmount += orderDetail.price * orderDetail.quantity;
+              }
             }
             print(orderDetails);
             print(totalAmount);
@@ -420,8 +436,11 @@ class OrderController extends GetxController {
       create_at: Timestamp.now(),
       active: 1,
       employee_id: '',
-      table_id: ''));
+      table_id: '',
+      vat_id: '',
+      discount_id: ''));
 
+  //lấy 1 order
   model.Order get orderDetail => _orderDetail.value;
   getOrderDetailById(model.Order order) async {
     _orderDetail.bindStream(
@@ -438,7 +457,9 @@ class OrderController extends GetxController {
               create_at: Timestamp.now(),
               active: 1,
               employee_id: '',
-              table_id: '');
+              table_id: '',
+              vat_id: '',
+              discount_id: '');
           retValue.order_id = order.order_id;
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
           for (var element in query.docs) {
@@ -469,8 +490,11 @@ class OrderController extends GetxController {
                 print(food_name);
               }
             }
-            totalAmount += retValue.order_details[i].price *
-                retValue.order_details[i].quantity;
+            //không tính món đã hủy
+            if (retValue.order_details[i].food_status != FOOD_STATUS_CANCEL) {
+              totalAmount += retValue.order_details[i].price *
+                  retValue.order_details[i].quantity;
+            }
           }
           print(orderDetails);
           print(totalAmount);
@@ -498,6 +522,57 @@ class OrderController extends GetxController {
           }
 
           print("ORDER DETAIL: ${retValue.total_amount}");
+
+          //Thông tin nhân viên phụ trách đơn hàng
+          if (order.employee_id != "") {
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(order.employee_id)
+                .get();
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                order.employee_name = name;
+              }
+            }
+          }
+          print("Nhân viên order: ${order.employee_name}");
+
+          // lấy thông tin thuế
+          if (order.vat_id != "") {
+            DocumentSnapshot vatCollection =
+                await firestore.collection('vats').doc(order.vat_id).get();
+            if (vatCollection.exists) {
+              final vatData = vatCollection.data();
+              if (vatData != null && vatData is Map<String, dynamic>) {
+                String name = vatData['name'] ?? '';
+                retValue.vat_name = name;
+              }
+            }
+          }
+          print(order.vat_id);
+          print("VAT đã áp dụng: ${retValue.vat_name}");
+
+          // lấy thông tin giảm giá
+          if (order.discount_id != "") {
+            DocumentSnapshot discountCollection = await firestore
+                .collection('discounts')
+                .doc(order.discount_id)
+                .get();
+
+            if (discountCollection.exists) {
+              final discountData = discountCollection.data();
+              if (discountData != null &&
+                  discountData is Map<String, dynamic>) {
+                String name = discountData['name'] ?? '';
+                retValue.discount_name = name;
+              }
+            }
+          }
+          print(order.discount_id);
+          print("DISCOUNT đã áp dụng: ${retValue.discount_name}");
           return retValue;
         },
       ),
@@ -529,6 +604,8 @@ class OrderController extends GetxController {
           note: "",
           create_at: Timestamp.fromDate(DateTime.now()),
           payment_at: null,
+          vat_id: '',
+          discount_id: '',
           active: 1,
         );
         CollectionReference usersCollection =
@@ -642,6 +719,120 @@ class OrderController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Hủy món thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //ÁP DỤNG THUẾ
+  applyVat(
+    String order_id,
+    String vat_id,
+  ) async {
+    try {
+      if (order_id != "") {
+        // áp dụng thuế cho đơn hàng
+        await firestore.collection('orders').doc(order_id).update({
+          "vat_id": vat_id,
+        });
+        Get.snackbar(
+          'THÀNH CÔNG!',
+          'Áp dụng thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+        update();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Áp dụng thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //KHÔNG ÁP DỤNG THUẾ
+  cancelVat(
+    String order_id,
+  ) async {
+    try {
+      if (order_id != "") {
+        // áp dụng thuế cho đơn hàng
+        await firestore.collection('orders').doc(order_id).update({
+          "vat_id": '',
+        });
+        Get.snackbar(
+          'THÀNH CÔNG!',
+          'Hủy thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+        update();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Hủy thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //ÁP DỤNG GIẢM GIÁ
+  applyDiscount(
+    String order_id,
+    String discount_id,
+  ) async {
+    try {
+      if (order_id != "") {
+        // áp dụng giảm giá và thuế cho đơn hàng
+        await firestore.collection('orders').doc(order_id).update({
+          "discount_id": discount_id,
+        });
+        Get.snackbar(
+          'THÀNH CÔNG!',
+          'Áp dụng thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+        update();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Áp dụng thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //KHÔNG ÁP DỤNG GIẢM GIÁ
+  cancelDiscount(
+    String order_id,
+  ) async {
+    try {
+      if (order_id != "") {
+        // áp dụng giảm giá và thuế cho đơn hàng
+        await firestore.collection('orders').doc(order_id).update({
+          "discount_id": '',
+        });
+        Get.snackbar(
+          'THÀNH CÔNG!',
+          'Áp dụng thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+        update();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Áp dụng thất bại!',
         e.toString(),
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,

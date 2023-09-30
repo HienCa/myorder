@@ -6,6 +6,10 @@ import 'package:myorder/models/table.dart';
 
 class Order {
   String order_id;
+  String vat_id;
+  String discount_id;
+  String? vat_name;
+  String? discount_name;
   int order_status;
   String? note;
   Timestamp create_at;
@@ -31,6 +35,8 @@ class Order {
     this.total_amount,
     this.table,
     this.table_merged_names,
+    required this.vat_id,
+    required this.discount_id,
   });
 
   Map<String, dynamic> toJson() => {
@@ -43,6 +49,8 @@ class Order {
         "employee_id": employee_id,
         "table_id": table_id,
         "order_details": order_details,
+        "vat_percent": vat_id,
+        "discount_price": discount_id,
       };
 
   static Order fromSnap(DocumentSnapshot snap) {
@@ -57,6 +65,8 @@ class Order {
       active: snapshot['active'],
       employee_id: snapshot['employee_id'],
       table_id: snapshot['table_id'],
+      vat_id: snapshot['vat_id'],
+      discount_id: snapshot['discount_id'],
     );
   }
 }
