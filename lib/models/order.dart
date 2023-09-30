@@ -10,6 +10,8 @@ class Order {
   String discount_id;
   String? vat_name;
   String? discount_name;
+  double? total_vat_amount;
+  double? total_discount_amount;
   int order_status;
   String? note;
   Timestamp create_at;

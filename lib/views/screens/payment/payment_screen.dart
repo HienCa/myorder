@@ -341,11 +341,12 @@ class _PaymentPageState extends State<PaymentPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                          Utils.formatCurrency(orderController
-                                              .orderDetail
-                                              .order_details[index]
-                                              .price),
-                                          style: textStylePriceBlackRegular16),
+                                        Utils.formatCurrency(orderController
+                                            .orderDetail
+                                            .order_details[index]
+                                            .price),
+                                        style: textStylePriceBlackRegular16,
+                                      ),
                                       SizedBox(
                                         width: 100,
                                         child: orderController
@@ -610,7 +611,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                                                 .text),
                                                         widget.order.vat_id =
                                                             textVatIdController
-                                                                .text
+                                                                .text,
+                                                        Navigator.pop(context)
                                                       },
                                                       child: Container(
                                                         height: 50,
@@ -646,6 +648,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                     },
                                   );
                                 }
+                                //cập nhật lại thông tin
+                                //  orderController.getOrderDetailById(widget.order);
                               });
                             },
                             activeColor: primaryColor,
@@ -669,8 +673,9 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ),
                               ]),
                         ),
-                        trailing: const Text(
-                          "0",
+                        trailing: Text(
+                          Utils.formatCurrency(
+                              orderController.orderDetail.total_vat_amount),
                           style: textStylePriceBold16,
                         ),
                       )),
@@ -879,7 +884,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                                         widget.order
                                                                 .discount_id =
                                                             textDiscountIdController
-                                                                .text
+                                                                .text,
+                                                        Navigator.pop(context)
                                                       },
                                                       child: Container(
                                                         height: 50,
@@ -915,6 +921,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                     },
                                   );
                                 }
+                                //cập nhật thông tin
+                                // orderController.getOrderDetailById(widget.order);
                               });
                             },
                             activeColor: primaryColor,
@@ -938,8 +946,9 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ),
                               ]),
                         ),
-                        trailing: const Text(
-                          "0",
+                        trailing: Text(
+                          Utils.formatCurrency(orderController
+                              .orderDetail.total_discount_amount),
                           style: textStylePriceBold16,
                         ),
                       )),

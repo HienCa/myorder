@@ -462,6 +462,7 @@ class OrderController extends GetxController {
               discount_id: '');
           retValue.order_id = order.order_id;
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
+
           for (var element in query.docs) {
             OrderDetail orderDetail =
                 OrderDetail.fromSnap(element); // map đơn hàng chi tiết
@@ -496,10 +497,10 @@ class OrderController extends GetxController {
                   retValue.order_details[i].quantity;
             }
           }
+
           print(orderDetails);
           print(totalAmount);
           retValue.total_amount = totalAmount; // tính tổng tiền
-          print("retValue.total_amount: ${retValue.total_amount}");
           // lấy tên bàn, tên bàn đã gộp
           DocumentSnapshot tableCollection =
               await firestore.collection('tables').doc(order.table_id).get();
@@ -540,6 +541,7 @@ class OrderController extends GetxController {
           }
           print("Nhân viên order: ${order.employee_name}");
 
+          int vat_percent = 0; // vat được áp dụng
           // lấy thông tin thuế
           if (order.vat_id != "") {
             DocumentSnapshot vatCollection =
@@ -548,14 +550,16 @@ class OrderController extends GetxController {
               final vatData = vatCollection.data();
               if (vatData != null && vatData is Map<String, dynamic>) {
                 String name = vatData['name'] ?? '';
+                vat_percent = vatData['vat_percent'] ?? 0; // lấy % vat
                 retValue.vat_name = name;
               }
             }
           }
           print(order.vat_id);
-          print("VAT đã áp dụng: ${retValue.vat_name}");
+          print("VAT đã áp dụng: ${retValue.vat_name} - $vat_percent");
 
           // lấy thông tin giảm giá
+          double discount_price = 0; // giảm giá được áp dụng
           if (order.discount_id != "") {
             DocumentSnapshot discountCollection = await firestore
                 .collection('discounts')
@@ -567,12 +571,32 @@ class OrderController extends GetxController {
               if (discountData != null &&
                   discountData is Map<String, dynamic>) {
                 String name = discountData['name'] ?? '';
+                discount_price = discountData['discount_price'] ?? 0;
                 retValue.discount_name = name;
               }
             }
           }
           print(order.discount_id);
-          print("DISCOUNT đã áp dụng: ${retValue.discount_name}");
+          print(
+              "DISCOUNT đã áp dụng: ${retValue.discount_name} - $discount_price");
+
+          print("Tổng tiền ban đầu: ${retValue.total_amount}");
+
+          //TỔNG HÓA ĐƠN CẦN THANH TOÁN:
+          //totalAmount: tổng tiền hóa đơn
+          //vat_percent: phần trăm thuế được áp dụng
+          //vat_price: tiền thuế được áp dụng
+          //discount_price: giảm giá được áp dụng
+
+          double vat_price = (totalAmount * vat_percent) / 100;
+          totalAmount = totalAmount - discount_price + vat_price;
+
+          retValue.total_vat_amount = vat_price;
+          retValue.total_discount_amount = discount_price;
+
+          retValue.total_amount = totalAmount;
+          print("Tổng tiền sau discount - vat: ${retValue.total_amount}");
+
           return retValue;
         },
       ),
@@ -796,7 +820,7 @@ class OrderController extends GetxController {
         });
         Get.snackbar(
           'THÀNH CÔNG!',
-          'Áp dụng thành công!',
+          'Hủy thành công!',
           backgroundColor: backgroundSuccessColor,
           colorText: Colors.white,
         );
@@ -804,7 +828,7 @@ class OrderController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Áp dụng thất bại!',
+        'Hủy thất bại!',
         e.toString(),
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,
@@ -824,7 +848,7 @@ class OrderController extends GetxController {
         });
         Get.snackbar(
           'THÀNH CÔNG!',
-          'Áp dụng thành công!',
+          'Hủy thành công!',
           backgroundColor: backgroundSuccessColor,
           colorText: Colors.white,
         );
@@ -832,7 +856,7 @@ class OrderController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Áp dụng thất bại!',
+        'Hủy thất bại!',
         e.toString(),
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,
