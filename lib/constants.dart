@@ -73,6 +73,7 @@ var borderRadiusTextField30 = BorderRadius.circular(30);
 const backgroundColor = Colors.white;
 const backgroundColorGray = Color.fromARGB(255, 245, 241, 241);
 const backgroundSuccessColor = Colors.green;
+
 const backgroundFailureColor = Color.fromARGB(255, 230, 161, 161);
 
 //order
@@ -91,6 +92,13 @@ const textStyleErrorInput = TextStyle(
     fontSize: 14, fontWeight: FontWeight.normal, color: Colors.redAccent);
 
 //text style
+
+//BILL
+const backgroundBillColor = Color.fromARGB(255, 157, 224, 159);
+const textStyleBillSuccessBold20 =
+    TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold);
+    
+//
 const textStyleTitleGrayBold20 =
     TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
 const textStyleTitlePrimaryBold20 =

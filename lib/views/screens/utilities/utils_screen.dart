@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/views/screens/bill/bills_screen.dart';
 import 'package:myorder/views/screens/managements/area_table/area_table_screen.dart';
 import 'package:myorder/views/screens/managements/categories/categories_screen.dart';
 import 'package:myorder/views/screens/managements/discounts/discounts_screen.dart';
@@ -217,12 +218,21 @@ class UtilsPage extends StatelessWidget {
                         ),
                       ),
                       const Divider(),
-                      const ListTile(
-                        leading: Icon(Icons.receipt_long, color: iconColor),
-                        title: Text("Quản lý hóa đơn",
-                            style: textStyleBlackRegular),
-                        trailing: Icon(Icons.arrow_forward_ios_outlined,
-                            color: iconColor),
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BillPage()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.receipt_long, color: iconColor),
+                          title: Text("Quản lý hóa đơn",
+                              style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
                       ),
                     ],
                   ),

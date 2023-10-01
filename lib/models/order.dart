@@ -40,7 +40,16 @@ class Order {
     required this.vat_id,
     required this.discount_id,
   });
-
+  Order.empty()
+      : order_id = '',
+        vat_id = '',
+        discount_id = '',
+        order_status = 0,
+        create_at = Timestamp.now(),
+        active = 0,
+        employee_id = '',
+        table_id = '';
+        
   Map<String, dynamic> toJson() => {
         "order_id": order_id,
         "order_status": order_status,

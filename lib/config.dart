@@ -70,6 +70,68 @@ final List<String> ROLE_OPTION = <String>[
   'Thu ngân',
   'Chủ nhà hàng'
 ];
+final List<String> TIME_OPTION = <String>[
+  'Hôm nay',
+  'Hôm qua',
+  'Tuần này',
+  'Tháng này',
+  'Tháng trước',
+  '3 tháng gần nhất',
+  'Năm nay',
+  'Năm trước',
+  '3 năm gần nhất',
+  'Tất cả các năm',
+];
+
+void filterTime(int timeOption, DateTime startDate, DateTime endDate) {
+  DateTime now = DateTime.now();
+  switch (timeOption) {
+    case 0: //hôm nay
+      startDate = DateTime(now.year, now.month, now.day);
+      endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+      break;
+    case 1: //hôm qua
+      startDate = DateTime(now.year, now.month, now.day - 1);
+      endDate = DateTime(now.year, now.month, now.day - 1, 23, 59, 59, 999);
+      break;
+    case 2: //tuần này
+      startDate = now.subtract(Duration(days: now.weekday - 1));
+      endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+      break;
+    case 3: //tháng này
+      startDate = DateTime(now.year, now.month, 1);
+      endDate = DateTime(now.year, now.month + 1, 0, 23, 59, 59, 999);
+      break;
+    case 4: //tháng trước
+      startDate = DateTime(now.year, now.month - 1, 1);
+      endDate = DateTime(now.year, now.month, 0, 23, 59, 59, 999);
+      break;
+    case 5: //3 tháng gần nhất
+      startDate = DateTime(now.year, now.month - 2, now.day);
+      endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+      break;
+    case 6: //năm nay
+      startDate = DateTime(now.year, 1, 1);
+      endDate = DateTime(now.year, 12, 31, 23, 59, 59, 999);
+      break;
+    case 7: //năm trước
+      startDate = DateTime(now.year - 1, 1, 1);
+      endDate = DateTime(now.year - 1, 12, 31, 23, 59, 59, 999);
+      break;
+    case 8: //3 năm gần nhất
+      startDate = DateTime(now.year - 2, now.month, now.day);
+      endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+      break;
+    case 9: //tất cả các năm
+      startDate = DateTime(1970, 1, 1);
+      // endDate = DateTime(2100, 12, 31, 23, 59, 59, 999);
+      endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+      break;
+    default:
+      startDate = DateTime(now.year, now.month, now.day);
+      endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+  }
+}
 
 //discount
 const discountMin = 1000; //1,000
