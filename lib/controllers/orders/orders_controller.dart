@@ -735,17 +735,61 @@ class OrderController extends GetxController {
             .update({
           "food_status": FOOD_STATUS_CANCEL,
         });
+        update();
+
         Get.snackbar(
           'THÀNH CÔNG!',
           'Hủy món thành công!',
           backgroundColor: backgroundSuccessColor,
           colorText: Colors.white,
         );
-        update();
       }
     } catch (e) {
       Get.snackbar(
         'Hủy món thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //HỦY BÀN
+  cancelTable(
+    // Xóa doc order
+    //cập nhật trạng thái bàn -> bàn trống
+    BuildContext context,
+    model.Order order,
+  ) async {
+    try {
+      if (order.order_id != "") {
+        // cập nhật trạng thái bàn -> bàn trống
+        await firestore.collection('tables').doc(order.table_id).update({
+          "status": TABLE_STATUS_EMPTY, // trống
+        });
+        update();
+        // Xóa doc order
+        DocumentReference docRef =
+            FirebaseFirestore.instance.collection('orders').doc(order.order_id);
+
+        try {
+          // Gọi phương thức delete để xóa document
+          await docRef.delete();
+          print('Document deleted successfully');
+        } catch (e) {
+          print('Error deleting document: $e');
+        }
+        Navigator.pop(context);
+        Get.snackbar(
+          'THÀNH CÔNG!',
+          'Hủy đơn hàng thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Hủy đơn hàng thất bại!',
         e.toString(),
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,

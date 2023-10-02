@@ -44,9 +44,9 @@ class _BillPageState extends State<BillPage> {
           appBar: AppBar(
             leading: InkWell(
                 onTap: () => {Navigator.pop(context)},
-                child: const Icon(Icons.arrow_back_ios)),
-            title: const Center(child: Text("QUẢN LÝ HÓA ĐƠN")),
-            backgroundColor: primaryColor,
+                child: const Icon(Icons.arrow_back_ios, color: colorSuccess,)),
+            title: const Center(child: Text("QUẢN LÝ HÓA ĐƠN", style: TextStyle(color: colorSuccess),)),
+            backgroundColor: secondColor,
           ),
           body: SafeArea(
             bottom: false,
@@ -63,7 +63,7 @@ class _BillPageState extends State<BillPage> {
                   decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.4),
                       borderRadius: borderRadiusTextField30,
-                      border: Border.all(width: 1, color: borderColorPrimary)),
+                      border: Border.all(width: 1, color: colorSuccess)),
                   child: TextField(
                     onChanged: (value) => {
                       setState(() {
@@ -72,17 +72,17 @@ class _BillPageState extends State<BillPage> {
                       }),
                       print(value)
                     },
-                    style: const TextStyle(color: borderColorPrimary),
+                    style: const TextStyle(color: colorSuccess),
                     decoration: const InputDecoration(
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       fillColor: borderColorPrimary,
                       icon: Icon(
                         Icons.search,
-                        color: iconColorPrimary,
+                        color: colorSuccess,
                       ),
                       hintText: 'Tìm kiếm đơn hàng ...',
-                      hintStyle: TextStyle(color: borderColorPrimary),
+                      hintStyle: TextStyle(color: colorSuccess),
                     ),
                     cursorColor: borderColorPrimary,
                   ),
@@ -117,14 +117,14 @@ class _BillPageState extends State<BillPage> {
                             horizontal: kDefaultPadding),
                         decoration: BoxDecoration(
                             color: index == selectedIndex
-                                ? primaryColor
+                                ? colorSuccess
                                 : textWhiteColor,
                             borderRadius: BorderRadius.circular(20),
                             border: index == selectedIndex
                                 ? Border.all(
-                                    width: 5, color: borderColorPrimary)
+                                    width: 5, color: colorSuccess)
                                 : Border.all(
-                                    width: 1, color: borderColorPrimary)),
+                                    width: 1, color: colorSuccess)),
                         child: Text(
                           options[index],
                           style: index == selectedIndex
@@ -132,13 +132,14 @@ class _BillPageState extends State<BillPage> {
                                   color: textWhiteColor,
                                   fontWeight: FontWeight.bold)
                               : const TextStyle(
-                                  color: primaryColor,
+                                  color: colorSuccess,
                                   fontWeight: FontWeight.normal),
                         ),
                       ),
                     ),
                   ),
                 ),
+                marginTop10,
                 Expanded(
                   child: Obx(() {
                     return ListView.builder(
@@ -360,7 +361,7 @@ class _BillPageState extends State<BillPage> {
                                                         direction:
                                                             Axis.horizontal,
                                                         textDirection:
-                                                            TextDirection.rtl,
+                                                            TextDirection.ltr,
                                                         animationDuration:
                                                             const Duration(
                                                                 seconds: 1),

@@ -3,11 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
+import 'package:myorder/views/widgets/dialogs.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -184,8 +186,8 @@ class _OrderPageState extends State<OrderPage> {
                               ),
                               // our order image
                               Positioned(
-                                bottom: 0,
-                                left: -20,
+                                bottom: 10,
+                                left: 0,
                                 child: Hero(
                                   tag: 1,
                                   child: InkWell(
@@ -194,7 +196,10 @@ class _OrderPageState extends State<OrderPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                   OrderdetailPage(order: orderController.orders[index],)))
+                                                  OrderdetailPage(
+                                                    order: orderController
+                                                        .orders[index],
+                                                  )))
                                     },
                                     child: Container(
                                         decoration: const BoxDecoration(
@@ -205,16 +210,52 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: kDefaultPadding),
-                                        height: 160,
-                                        // image is square but we add extra 20 + 20 padding thats why width is 200
-                                        width: 200,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                              22), // Thay đổi giá trị của borderRadius tùy theo nhu cầu
-                                          child: Image.asset(
-                                            "assets/images/table5.jpg",
-                                            fit: BoxFit.cover,
-                                          ),
+                                        height: 120,
+                                        width: 180,
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                height: 120,
+                                                width: 180,
+                                                decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10),
+                                                  ),
+                                                  color: backgroundOrderColor,
+                                                ),
+                                                child: const Center(
+                                                    child: Text("ĐANG PHỤC VỤ",
+                                                        style:
+                                                            textStyleOrderSuccessBold24)),
+                                              ),
+                                            ),
+                                            marginTop10,
+                                            Expanded(
+                                              flex: 2,
+                                              child: Container(
+                                                height: 120,
+                                                width: 180,
+                                                decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10),
+                                                  ),
+                                                  color: backgroundOrderColor,
+                                                ),
+                                                child: Center(
+                                                    child: Text(
+                                                        orderController
+                                                            .orders[index]
+                                                            .table!
+                                                            .name,
+                                                        style:
+                                                            textStyleOrderSuccessBold24)),
+                                              ),
+                                            ),
+                                          ],
                                         )),
                                   ),
                                 ),
@@ -240,8 +281,8 @@ class _OrderPageState extends State<OrderPage> {
                                             bottomLeft: Radius.circular(22),
                                           ),
                                         ),
-                                        child:  Text(
-                                          formattedTime,// thời gian khách đã ăn
+                                        child: Text(
+                                          formattedTime, // thời gian khách đã ăn
                                           style: textStyleWhiteBold20,
                                         ),
                                       ),
@@ -280,12 +321,11 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                       ),
                                       const Spacer(),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
                                             horizontal: kDefaultPadding),
                                         child: Text(
-                                          orderController
-                                                  .orders[index].table!.name ,
+                                          "",
                                           style: textStylePrimaryBold,
                                         ),
                                       ),
@@ -293,7 +333,7 @@ class _OrderPageState extends State<OrderPage> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: kDefaultPadding),
                                         child: Text(
-                                          "A5, A6",
+                                          "",
                                           style: textStyleSecondBold,
                                         ),
                                       ),
@@ -303,10 +343,6 @@ class _OrderPageState extends State<OrderPage> {
                                         width: size.width - 200,
                                         padding: const EdgeInsets.only(
                                             right: 10, bottom: 10),
-                                        // padding: const EdgeInsets.symmetric(
-                                        //   horizontal: kDefaultPadding * 2, // 30 padding
-                                        //   vertical: kDefaultPadding / 4, // 5 top and bottom
-                                        // ),
                                         decoration: const BoxDecoration(
                                           color: backgroundColor,
                                           borderRadius: BorderRadius.only(
@@ -326,7 +362,144 @@ class _OrderPageState extends State<OrderPage> {
                                                   color: kBlueColor,
                                                 ),
                                                 child: InkWell(
-                                                    onTap: () => {},
+                                                    onTap: () => {
+                                                          showModalBottomSheet(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return Container(
+                                                                color: Colors
+                                                                    .transparent,
+                                                                height: 350,
+                                                                width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Container(
+                                                                      height:
+                                                                          230,
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width /
+                                                                          1.5,
+                                                                      decoration:
+                                                                          const BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(10)),
+                                                                        color:
+                                                                            secondColor,
+                                                                      ),
+                                                                      child:
+                                                                          Wrap(
+                                                                        children: [
+                                                                          InkWell(
+                                                                            onTap: () =>
+                                                                                {
+                                                                              Navigator.pop(context)
+                                                                            },
+                                                                            child:
+                                                                                const ListTile(
+                                                                              leading: Icon(
+                                                                                Icons.move_up_outlined,
+                                                                                color: iconColor,
+                                                                              ),
+                                                                              title: Text(
+                                                                                'Chuyển bàn',
+                                                                                style: textStyleTitleGrayBold20,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap: () =>
+                                                                                {
+                                                                              Navigator.pop(context)
+                                                                            },
+                                                                            child:
+                                                                                const ListTile(
+                                                                              leading: Icon(Icons.merge_rounded, color: iconColor),
+                                                                              title: Text('Gộp bàn', style: textStyleTitleGrayBold20),
+                                                                            ),
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap: () =>
+                                                                                {
+                                                                              Navigator.pop(context)
+                                                                            },
+                                                                            child:
+                                                                                const ListTile(
+                                                                              leading: Icon(Icons.share_outlined, color: iconColor),
+                                                                              title: Text('Tách món', style: textStyleTitleGrayBold20),
+                                                                            ),
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap: () =>
+                                                                                {
+                                                                              showCustomAlertDialogConfirm(
+                                                                                context,
+                                                                                "XÁC NHẬN HỦY BÀN",
+                                                                                "Bạn có muốn hủy bàn ${orderController.orders[index].table!.name} ?",
+                                                                                colorWarning,
+                                                                                () async {
+                                                                                  //kiểm tra có món nào chưa hủy không
+                                                                                  var isCheckStatusFood = orderController.orders[index].order_details.firstWhere((element) => element.food_status != FOOD_STATUS_CANCEL);
+
+                                                                                  if (isCheckStatusFood.food_id != "") {
+                                                                                    //tất cả món ăn chưa được hủy
+                                                                                    orderController.cancelTable(context, orderController.orders[index]);
+                                                                                  } else {
+                                                                                    showAlertDialog(context, 'Thông báo', 'Bàn này đang có món ăn không thể đóng bàn, vui lòng hủy tất cả món trước khi thao tác');
+                                                                                  }
+                                                                                },
+                                                                              )
+                                                                            },
+                                                                            child:
+                                                                                const ListTile(
+                                                                              leading: Icon(Icons.close, color: iconColor),
+                                                                              title: Text('Hủy bàn', style: textStyleTitleGrayBold20),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    marginTop10,
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () =>
+                                                                              {
+                                                                        Navigator.pop(
+                                                                            context)
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        height:
+                                                                            50,
+                                                                        width: MediaQuery.of(context).size.width /
+                                                                            1.5,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              primaryColor,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                        ),
+                                                                        child:
+                                                                            const Center(
+                                                                          child: Text(
+                                                                              'Hủy',
+                                                                              style: textStyleOrderSuccessBold24),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            },
+                                                          )
+                                                        },
                                                     child: const Icon(
                                                         Icons.more_horiz)),
                                               ),
@@ -362,7 +535,10 @@ class _OrderPageState extends State<OrderPage> {
                                                               MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                           PaymentPage(order: orderController.orders[index],)))
+                                                                          PaymentPage(
+                                                                            order:
+                                                                                orderController.orders[index],
+                                                                          )))
                                                         },
                                                     child: const Icon(Icons
                                                         .receipt_long_outlined)),

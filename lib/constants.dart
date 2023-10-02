@@ -38,9 +38,13 @@ const kDefaultShadow = BoxShadow(
 );
 //corlor
 const primaryColor = Color(0xFF40BAD5);
+const secondColor = Colors.white;
+
 const activeColor = Color(0xFF40BAD5);
 const deActiveColor = Colors.grey;
 const colorPrice = Colors.orangeAccent;
+const colorSuccess = Colors.green;
+const colorCancel = Colors.redAccent;
 
 const colorWarning = Color(0xFFFFC107);
 const colorInformation = Color(0xFF40BAD5);
@@ -71,6 +75,7 @@ var borderRadiusTextField30 = BorderRadius.circular(30);
 
 // background
 const backgroundColor = Colors.white;
+const backgroundColorCancel = Color.fromARGB(255, 208, 208, 208);
 const backgroundColorGray = Color.fromARGB(255, 245, 241, 241);
 const backgroundSuccessColor = Colors.green;
 
@@ -94,10 +99,15 @@ const textStyleErrorInput = TextStyle(
 //text style
 
 //BILL
-const backgroundBillColor = Color.fromARGB(255, 157, 224, 159);
+const backgroundBillColor = colorSuccess;
 const textStyleBillSuccessBold20 =
-    TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold);
-    
+    TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold);
+
+//ORDER
+const backgroundOrderColor = primaryColor;
+const textStyleOrderSuccessBold24 =
+    TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold);
+
 //
 const textStyleTitleGrayBold20 =
     TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
@@ -202,7 +212,9 @@ const buttonStyleBlackBold =
 const buttonStyleWhiteBold =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white);
 const buttonStyleCancel = TextStyle(
-    fontSize: 20, fontWeight: FontWeight.bold, color: Colors.redAccent);
+    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent);
+    const buttonStyleConfirm = TextStyle(
+    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white);
 double buttonHeight = 50;
 double buttonWidth = 300;
 
