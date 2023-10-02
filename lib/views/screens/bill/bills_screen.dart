@@ -7,7 +7,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
+import 'package:myorder/views/screens/bill/detail_bill_screen.dart';
 
 class BillPage extends StatefulWidget {
   const BillPage({super.key});
@@ -188,9 +188,9 @@ class _BillPageState extends State<BillPage> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    OrderdetailPage(
-                                                      order: billController
-                                                          .bills[index].order!,
+                                                    BillDetailPage(
+                                                      bill: billController
+                                                          .bills[index],
                                                     )))
                                       },
                                       child: Container(

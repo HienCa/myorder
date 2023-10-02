@@ -12,6 +12,7 @@ import 'package:myorder/models/food_order_detail.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/views/screens/order/order_screen.dart';
 
 class BillController extends GetxController {
   //hóa đơn
@@ -378,14 +379,14 @@ class BillController extends GetxController {
                   bill.order!.vat_id = vat_id;
                   bill.order!.discount_id = discount_id;
 
-                  print(bill.order!.employee_id);
-                  print(bill.order!.table_id);
-                  print(bill.order!.order_status);
-                  print(bill.order!.note);
-                  print(bill.order!.create_at);
-                  print(bill.order!.payment_at);
-                  print(bill.order!.vat_id);
-                  print(bill.order!.discount_id);
+                  // print(bill.order!.employee_id);
+                  // print(bill.order!.table_id);
+                  // print(bill.order!.order_status);
+                  // print(bill.order!.note);
+                  // print(bill.order!.create_at);
+                  // print(bill.order!.payment_at);
+                  // print(bill.order!.vat_id);
+                  // print(bill.order!.discount_id);
                 }
               }
 
@@ -427,7 +428,7 @@ class BillController extends GetxController {
               //lọc theo tên nhân viên, tên bàn
               if (bill.order!.employee_name!
                       .toLowerCase()
-                      .contains(keySearch.toLowerCase()) || 
+                      .contains(keySearch.toLowerCase()) ||
                   bill.order!.table!.name
                       .toLowerCase()
                       .contains(keySearch.toLowerCase())) {
@@ -508,6 +509,7 @@ class BillController extends GetxController {
                 print(bill.order!.discount_id);
                 print(
                     "Discount đã áp dụng: ${bill.order!.discount_name} - $discount_price");
+                print("Tổng hóa đơn: ${bill.total_amount}");
 
                 retValue.add(bill);
               }
@@ -531,14 +533,17 @@ class BillController extends GetxController {
       //vat_amount: tổng tiền vat đã áp dụng cho đơn hàng
       //discount_amount: tổng tiền giảm giá đã áp dụng cho đơn hàng
       Timestamp now = Timestamp.now();
+
       Bill bill = Bill(
           bill_id: 'Bill-$len',
           order_id: order.order_id,
-          total_amount: order.total_amount ?? 0,
+          total_amount: order.total_amount ?? 0.0,
+          total_estimate_amount: 0.0,
           vat_amount: vat_amount ?? 0,
           discount_amount: discount_amount ?? 0,
           payment_at: now);
-
+      bill.total_estimate_amount =
+          bill.total_amount - bill.vat_amount + bill.discount_amount;
       CollectionReference billsCollection =
           FirebaseFirestore.instance.collection('bills');
 
@@ -550,7 +555,7 @@ class BillController extends GetxController {
         "payment_at": now, // đã thanh toán
         "active": DEACTIVE // đã thanh toán
       });
-
+      print("Table: ${order.table_id}");
       //Cập nhật trạng thái bàn -> trống
       await firestore.collection('tables').doc(order.table_id).update({
         "status": TABLE_STATUS_EMPTY, // đã thanh toán
@@ -562,7 +567,8 @@ class BillController extends GetxController {
         backgroundColor: backgroundSuccessColor,
         colorText: Colors.white,
       );
-      Navigator.pop(context);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const OrderPage()));
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',

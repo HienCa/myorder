@@ -126,6 +126,7 @@ class OrderController extends GetxController {
         firestore
             .collection('orders')
             .where('employee_id', isEqualTo: employeeIdSelected)
+            .where("active", isEqualTo: ACTIVE)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -228,6 +229,7 @@ class OrderController extends GetxController {
       _orders.bindStream(firestore
           .collection('orders')
           .where('employee_id', isEqualTo: employeeIdSelected)
+          .where("active", isEqualTo: ACTIVE)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<model.Order> retVal = [];
@@ -330,6 +332,7 @@ class OrderController extends GetxController {
       print("tìm kiếm theo nhan vien");
       _orders.bindStream(firestore
           .collection('orders')
+          .where("active", isEqualTo: ACTIVE)
           .orderBy('name')
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
@@ -466,7 +469,6 @@ class OrderController extends GetxController {
           for (var element in query.docs) {
             OrderDetail orderDetail =
                 OrderDetail.fromSnap(element); // map đơn hàng chi tiết
-
             orderDetails.add(orderDetail);
           }
           retValue.order_details = orderDetails;
@@ -521,7 +523,8 @@ class OrderController extends GetxController {
                   area_id: area_id);
             }
           }
-
+          retValue.table_id = order.table_id;
+          print(retValue.table!.table_id);
           print("ORDER DETAIL: ${retValue.total_amount}");
 
           //Thông tin nhân viên phụ trách đơn hàng
