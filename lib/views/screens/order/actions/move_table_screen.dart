@@ -7,7 +7,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
-import 'package:myorder/views/screens/managements/area_table/custom/dialog_create_update_table.dart';
+import 'package:myorder/views/screens/order/actions/move/dialog_move_table.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:myorder/models/order.dart' as model;
 
@@ -26,15 +26,15 @@ class _MoveTablePageState extends State<MoveTablePage> {
   @override
   void initState() {
     super.initState();
-    tableController.getTablesOfArea(defaultArea, "");
+    tableController.getActiveTablesOfArea(defaultArea, "");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          
-          title: Text("Chuyển bàn từ ${widget.order.table!.name} đến", style:textStyleAppBar20),
+          title: Text("Chuyển bàn từ ${widget.order.table!.name} đến",
+              style: textStyleAppBar20),
           backgroundColor: secondColor,
         ),
         body: Obx(() {
@@ -51,7 +51,7 @@ class _MoveTablePageState extends State<MoveTablePage> {
                             'Đã nhận được giá trị từ OptionArea: $selectedValue');
                         setState(() {
                           areaIdSelected = selectedValue;
-                          tableController.getTablesOfArea(selectedValue,
+                          tableController.getActiveTablesOfArea(selectedValue,
                               keySearch); // tìm tất cả bàn theo khu vực
                         });
                       },
@@ -72,7 +72,7 @@ class _MoveTablePageState extends State<MoveTablePage> {
                       child: TextField(
                         onChanged: (value) {
                           //tìm tất cả bàn theo khu vực và keysearch
-                          tableController.getTablesOfArea(
+                          tableController.getActiveTablesOfArea(
                               areaIdSelected, value);
                           setState(() {
                             keySearch = value;
@@ -109,43 +109,21 @@ class _MoveTablePageState extends State<MoveTablePage> {
                                 ),
                                 child: InkWell(
                                   onTap: () => {
-                                    // showDialog(
-                                    //   context: context,
-                                    //   builder: (BuildContext context) {
-                                    //     return CustomDialogCreateUpdateTable(
-                                    //       isUpdate: true,
-                                    //       name: tableController.tables[i].name,
-                                    //       total_slot: tableController
-                                    //           .tables[i].total_slot,
-                                    //       table_id: tableController
-                                    //           .tables[i].table_id,
-                                    //       active:
-                                    //           tableController.tables[i].active,
-                                    //       area_id:
-                                    //           tableController.tables[i].area_id,
-                                    //     );
-                                    //   },
-                                    // )
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialogMoveTable(
+                                          order: widget.order,
+                                          table: tableController.tables[i],
+                                        );
+                                      },
+                                    )
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      tableController.tables[i].active == ACTIVE
-                                          ? ClipOval(
-                                              child: Image.asset(
-                                                "assets/images/icon-table-simple-serving.jpg",
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )
-                                          : ClipOval(
-                                              child: Image.asset(
-                                                "assets/images/icon-table-simple-empty.jpg",
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              ),
+                                      ClipOval(
+                                              child: tableImageEmpty,
                                             ),
                                       Text(
                                         tableController.tables[i].name,
@@ -163,9 +141,7 @@ class _MoveTablePageState extends State<MoveTablePage> {
                       height: 10,
                     ),
                     InkWell(
-                      onTap: () => {
-                         Navigator.pop(context)
-                      },
+                      onTap: () => {Navigator.pop(context)},
                       child: Container(
                         height: 50,
                         margin:

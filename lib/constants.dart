@@ -262,6 +262,8 @@ var alertStyle = AlertStyle(
   alertAlignment: Alignment.topCenter,
 );
 
+
+//ALERT
 var alertImageSuccess =
     Image.asset("assets/images/alert/3.0x/icon_success.png");
 var alertImageWarning =
@@ -276,6 +278,12 @@ var defaultFoodImage = Image.asset(
   fit: BoxFit.cover,
 );
 
+//TABLE
+var tableImageServing = Image.asset("assets/images/icon-table-simple-serving.jpg");
+var tableImageEmpty = Image.asset("assets/images/icon-table-simple-empty.jpg");
+
+
+//FILTER
 const defaultArea = "allArea-hienca";
 const defaultCategory = "allCategory-hienca";
 const defaultEmployee = "allEmployee-hienca";
