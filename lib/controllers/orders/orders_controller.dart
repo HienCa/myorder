@@ -25,6 +25,8 @@ class OrderController extends GetxController {
         firestore
             .collection('orders')
             .where("active", isEqualTo: ACTIVE)
+            .where('order_status',
+                isNotEqualTo: ORDER_STATUS_CANCEL)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -127,6 +129,8 @@ class OrderController extends GetxController {
             .collection('orders')
             .where('employee_id', isEqualTo: employeeIdSelected)
             .where("active", isEqualTo: ACTIVE)
+            .where('order_status',
+                isNotEqualTo: ORDER_STATUS_CANCEL)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -230,6 +234,8 @@ class OrderController extends GetxController {
           .collection('orders')
           .where('employee_id', isEqualTo: employeeIdSelected)
           .where("active", isEqualTo: ACTIVE)
+          .where('order_status',
+                isNotEqualTo: ORDER_STATUS_CANCEL)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<model.Order> retVal = [];
@@ -333,6 +339,8 @@ class OrderController extends GetxController {
       _orders.bindStream(firestore
           .collection('orders')
           .where("active", isEqualTo: ACTIVE)
+          .where('order_status',
+                isNotEqualTo: ORDER_STATUS_CANCEL)
           .orderBy('name')
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
@@ -704,7 +712,9 @@ class OrderController extends GetxController {
         backgroundColor: backgroundSuccessColor,
         colorText: Colors.white,
       );
-      Navigator.pop(context);
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',
@@ -721,6 +731,7 @@ class OrderController extends GetxController {
   //HỦY MÓN
   cancelFoodByOrder(
     // cung cấp order detail id (đại diện cho món ăn) thuộc order nào
+
     String order_id,
     String order_detail_id,
   ) async {
@@ -736,7 +747,6 @@ class OrderController extends GetxController {
           "food_status": FOOD_STATUS_CANCEL,
         });
         update();
-
         Get.snackbar(
           'THÀNH CÔNG!',
           'Hủy món thành công!',
@@ -754,8 +764,22 @@ class OrderController extends GetxController {
     }
   }
 
-  //HỦY BÀN
-  cancelTable(
+//================================DELETE==================================
+// DocumentReference docRef =
+//             FirebaseFirestore.instance.collection('orders').doc(order.order_id);
+
+//         try {
+//           // Gọi phương thức delete để xóa document
+//           await docRef.delete();
+//           print('Document deleted successfully');
+//         } catch (e) {
+//           print('Error deleting document: $e');
+//         }
+//=================================
+
+
+  //HỦY ĐƠN HÀNG
+  cancelOrder(
     // Xóa doc order
     //cập nhật trạng thái bàn -> bàn trống
     BuildContext context,
@@ -767,18 +791,12 @@ class OrderController extends GetxController {
         await firestore.collection('tables').doc(order.table_id).update({
           "status": TABLE_STATUS_EMPTY, // trống
         });
+        await firestore.collection('orders').doc(order.order_id).update({
+          "order_status": ORDER_STATUS_CANCEL, // đơn hàng đã hủy
+          "payment_at": Timestamp.now(), // đơn hàng đã hủy
+        });
         update();
-        // Xóa doc order
-        DocumentReference docRef =
-            FirebaseFirestore.instance.collection('orders').doc(order.order_id);
-
-        try {
-          // Gọi phương thức delete để xóa document
-          await docRef.delete();
-          print('Document deleted successfully');
-        } catch (e) {
-          print('Error deleting document: $e');
-        }
+       
         Navigator.pop(context);
         Get.snackbar(
           'THÀNH CÔNG!',

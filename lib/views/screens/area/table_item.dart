@@ -47,7 +47,7 @@ class _TableItemState extends State<TableItem> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddFoodToOrderPage(table: tables[i],)),
+                  MaterialPageRoute(builder: (context) => AddFoodToOrderPage(table: tables[i], booking: true,)),
                 );
               },
               child: Container(

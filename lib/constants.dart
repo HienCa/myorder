@@ -98,6 +98,10 @@ const textStyleErrorInput = TextStyle(
 
 //text style
 
+//APPBAR
+const textStyleAppBar20 =
+    TextStyle(fontSize: 20, color: primaryColor, fontWeight: FontWeight.bold);
+
 //BILL
 const backgroundBillColor = colorSuccess;
 const textStyleBillSuccessBold20 =

@@ -15,7 +15,9 @@ import 'package:myorder/views/widgets/dialogs.dart';
 
 class AddFoodToOrderPage extends StatefulWidget {
   final model.Table table;
-  const AddFoodToOrderPage({super.key, required this.table});
+  final bool booking; // vào thêm món nếu true - false đặt bàn
+  const AddFoodToOrderPage(
+      {super.key, required this.table, required this.booking});
 
   @override
   State<AddFoodToOrderPage> createState() => _AddFoodToOrderPageState();
@@ -516,20 +518,27 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 print("--------------------------------");
                               }
                             }
-
-                            showCustomAlertDialogConfirm(
-                              context,
-                              "YÊU CẦU ĐẶT BÀN",
-                              "Bạn đang muốn đặt bàn ${widget.table.name} ?",
-                              colorInformation,
-                              () async {
-                                // order theo table_id
-                                orderController.createOrder(
-                                    widget.table.table_id,
-                                    orderDetailList,
-                                    context);
-                              },
-                            );
+                            if (widget.booking) {
+                              showCustomAlertDialogConfirm(
+                                context,
+                                "YÊU CẦU ĐẶT BÀN",
+                                "Bạn đang muốn đặt bàn ${widget.table.name} ?",
+                                colorInformation,
+                                () async {
+                                  // order theo table_id
+                                  orderController.createOrder(
+                                      widget.table.table_id,
+                                      orderDetailList,
+                                      context);
+                                  // Navigator.pop(context);
+                                },
+                              );
+                            }else{
+                              orderController.createOrder(
+                                      widget.table.table_id,
+                                      orderDetailList,
+                                      context);
+                            }
                           },
                           child: Container(
                             height: 50,

@@ -109,6 +109,7 @@ class BillController extends GetxController {
                 isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
             .where('payment_at',
                 isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+            // .where('order_status', isNotEqualTo: ORDER_STATUS_CANCEL)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -345,6 +346,7 @@ class BillController extends GetxController {
                 isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
             .where('payment_at',
                 isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+            .where('order_status', isNotEqualTo: ORDER_STATUS_CANCEL)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -567,8 +569,11 @@ class BillController extends GetxController {
         backgroundColor: backgroundSuccessColor,
         colorText: Colors.white,
       );
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const OrderPage()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const OrderPage())); // do nó nằm trong bottomBar nên không push được NO Material
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',

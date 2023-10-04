@@ -155,11 +155,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                               showCustomAlertDialogConfirm(
                                                 context,
                                                 "YÊU CẦU HỦY MÓN",
-                                                "Có chắc chắn muốn hủy món \"${orderController
-                                                              .orderDetail
-                                                              .order_details[
-                                                                  index].food!.name}\" ?",
-                                                                  colorWarning,
+                                                "Có chắc chắn muốn hủy món \"${orderController.orderDetail.order_details[index].food!.name}\" ?",
+                                                colorWarning,
                                                 () async {
                                                   orderController
                                                       .cancelFoodByOrder(
@@ -452,7 +449,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AddFoodToOrderPage(
-                                        table: widget.order.table!,
+                                        table: widget.order.table!, booking: false,
                                       )))
                         },
                         child: Container(

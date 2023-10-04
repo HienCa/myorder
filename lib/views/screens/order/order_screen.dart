@@ -7,6 +7,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/order/actions/move_table_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
@@ -364,11 +365,13 @@ class _OrderPageState extends State<OrderPage> {
                                                 child: InkWell(
                                                     onTap: () => {
                                                           showModalBottomSheet(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
                                                             context: context,
                                                             builder: (context) {
                                                               return Container(
-                                                                color: Colors
-                                                                    .transparent,
+                                                                //đây
                                                                 height: 350,
                                                                 width: MediaQuery.of(
                                                                         context)
@@ -399,7 +402,12 @@ class _OrderPageState extends State<OrderPage> {
                                                                           InkWell(
                                                                             onTap: () =>
                                                                                 {
-                                                                              Navigator.pop(context)
+                                                                              Navigator.push(
+                                                                                  context,
+                                                                                  MaterialPageRoute(
+                                                                                      builder: (context) => MoveTablePage(
+                                                                                            order: orderController.orders[index],
+                                                                                          )))
                                                                             },
                                                                             child:
                                                                                 const ListTile(
@@ -413,6 +421,9 @@ class _OrderPageState extends State<OrderPage> {
                                                                               ),
                                                                             ),
                                                                           ),
+                                                                          const Divider(
+                                                                              color: dividerColor,
+                                                                              height: 0.05),
                                                                           InkWell(
                                                                             onTap: () =>
                                                                                 {
@@ -424,6 +435,9 @@ class _OrderPageState extends State<OrderPage> {
                                                                               title: Text('Gộp bàn', style: textStyleTitleGrayBold20),
                                                                             ),
                                                                           ),
+                                                                          const Divider(
+                                                                              color: dividerColor,
+                                                                              height: 0.05),
                                                                           InkWell(
                                                                             onTap: () =>
                                                                                 {
@@ -435,6 +449,9 @@ class _OrderPageState extends State<OrderPage> {
                                                                               title: Text('Tách món', style: textStyleTitleGrayBold20),
                                                                             ),
                                                                           ),
+                                                                          const Divider(
+                                                                              color: dividerColor,
+                                                                              height: 0.05),
                                                                           InkWell(
                                                                             onTap: () =>
                                                                                 {
@@ -445,13 +462,20 @@ class _OrderPageState extends State<OrderPage> {
                                                                                 colorWarning,
                                                                                 () async {
                                                                                   //kiểm tra có món nào chưa hủy không
-                                                                                  var isCheckStatusFood = orderController.orders[index].order_details.firstWhere((element) => element.food_status != FOOD_STATUS_CANCEL);
+                                                                                  var isCheckStatusFood = orderController.orders[index].order_details.any((element) => element.food_status != FOOD_STATUS_CANCEL);
 
-                                                                                  if (isCheckStatusFood.food_id != "") {
+                                                                                  if (isCheckStatusFood) {
                                                                                     //tất cả món ăn chưa được hủy
-                                                                                    orderController.cancelTable(context, orderController.orders[index]);
-                                                                                  } else {
                                                                                     showAlertDialog(context, 'Thông báo', 'Bàn này đang có món ăn không thể đóng bàn, vui lòng hủy tất cả món trước khi thao tác');
+
+                                                                                    Future.delayed(const Duration(seconds: 1), () {
+                                                                                      Navigator.pop(context);
+                                                                                      Navigator.pop(context);
+                                                                                      Navigator.pop(context);
+                                                                                    });
+                                                                                  } else {
+                                                                                    orderController.cancelOrder(context, orderController.orders[index]);
+                                                                                    Navigator.pop(context);
                                                                                   }
                                                                                 },
                                                                               )
