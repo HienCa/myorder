@@ -1,39 +1,38 @@
 // ignore_for_file: avoid_print
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
-import 'package:myorder/views/screens/order/actions/move/dialog_move_table.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:myorder/models/order.dart' as model;
 
-class MoveTablePage extends StatefulWidget {
+class MergeTablePage extends StatefulWidget {
   final model.Order order;
-  const MoveTablePage({Key? key, required this.order}) : super(key: key);
+  const MergeTablePage({Key? key, required this.order}) : super(key: key);
 
   @override
-  State<MoveTablePage> createState() => _MoveTablePageState();
+  State<MergeTablePage> createState() => _MergeTablePageState();
 }
 
-class _MoveTablePageState extends State<MoveTablePage> {
+class _MergeTablePageState extends State<MergeTablePage> {
   TableController tableController = Get.put(TableController());
   var areaIdSelected = defaultArea; // mặc định lấy tất cả danh sách
   var keySearch = "";
+  List<String> tableIds = []; // id những bàn cần gộp
   @override
   void initState() {
     super.initState();
-    tableController.getActiveTablesOfArea(defaultArea, "");
+    tableController.getActiveTablesOfAreaHasSearch(widget.order ,defaultArea, "");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Chuyển bàn từ ${widget.order.table!.name} đến",
+          title: Text("Gộp bàn vào ${widget.order.table!.name}",
               style: textStyleAppBar20),
           backgroundColor: secondColor,
         ),
@@ -51,7 +50,8 @@ class _MoveTablePageState extends State<MoveTablePage> {
                             'Đã nhận được giá trị từ OptionArea: $selectedValue');
                         setState(() {
                           areaIdSelected = selectedValue;
-                          tableController.getActiveTablesOfArea(selectedValue,
+                          tableController.getActiveTablesOfAreaHasSearch(
+                              widget.order, selectedValue,
                               keySearch); // tìm tất cả bàn theo khu vực
                         });
                       },
@@ -72,8 +72,8 @@ class _MoveTablePageState extends State<MoveTablePage> {
                       child: TextField(
                         onChanged: (value) {
                           //tìm tất cả bàn theo khu vực và keysearch
-                          tableController.getActiveTablesOfArea(
-                              areaIdSelected, value);
+                          tableController.getActiveTablesOfAreaHasSearch(
+                              widget.order, areaIdSelected, value);
                           setState(() {
                             keySearch = value;
                           });
@@ -109,20 +109,32 @@ class _MoveTablePageState extends State<MoveTablePage> {
                                 ),
                                 child: InkWell(
                                   onTap: () => {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomDialogMoveTable(
-                                          order: widget.order,
-                                          table: tableController.tables[i],
-                                        );
+                                    //nếu đã có trong danh sách thì bỏ ra
+                                    if (tableIds.any((element) =>
+                                        element ==
+                                        tableController.tables[i].table_id))
+                                      {
+                                        //trả về list đã được xóa phần tử được chọn 2 lần
+                                        tableIds.remove(
+                                            tableController.tables[i].table_id),
+                                      }
+                                    else
+                                      {
+                                        tableIds.add(
+                                            tableController.tables[i].table_id),
                                       },
-                                    )
+                                    print(
+                                        "Bàn ${widget.order.table!.name} cần gộp với các bàn: $tableIds")
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      ClipOval(
+                                      tableController.tables[i].status ==
+                                              TABLE_STATUS_SERVING
+                                          ? ClipOval(
+                                              child: tableImageServing,
+                                            )
+                                          : ClipOval(
                                               child: tableImageEmpty,
                                             ),
                                       Text(
@@ -140,23 +152,61 @@ class _MoveTablePageState extends State<MoveTablePage> {
                     const SizedBox(
                       height: 10,
                     ),
-                    InkWell(
-                      onTap: () => {Navigator.pop(context)},
-                      child: Container(
-                        height: 50,
-                        margin:
-                            const EdgeInsets.only(left: 10, right: 10, top: 10),
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "HỦY BỎ",
-                            style: textStyleWhiteBold20,
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () => {Navigator.pop(context)},
+                          child: Expanded(
+                            child: Container(
+                              height: 50,
+                              margin: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 10),
+                              decoration: BoxDecoration(
+                                color: primaryColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "HỦY BỎ",
+                                  style: textStyleWhiteBold20,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        InkWell(
+                          onTap: () => {
+                            //Truyền vào order và tableIds
+
+                            // showDialog(
+                            //           context: context,
+                            //           builder: (BuildContext context) {
+                            //             return CustomDialogMoveTable(
+                            //               order: widget.order,
+                            //               table: tableController.tables[i],
+                            //             );
+                            //           },
+                            //         )
+                          },
+                          child: Expanded(
+                            child: Container(
+                              height: 50,
+                              margin: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 10),
+                              decoration: BoxDecoration(
+                                color: primaryColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "XÁC NHẬN",
+                                  style: textStyleWhiteBold20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 )),

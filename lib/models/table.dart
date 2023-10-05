@@ -6,7 +6,6 @@ class Table {
   String table_id;
   String name;
   int total_slot;
-  List? table_merge_ids;
   int status;
   int active;
   String area_id;
@@ -16,7 +15,6 @@ class Table {
     required this.table_id,
     required this.name,
     required this.total_slot,
-             this.table_merge_ids,
     required this.status,
     required this.active,
     required this.area_id,
@@ -26,7 +24,6 @@ class Table {
         "table_id": table_id,
         "name": name,
         "total_slot": total_slot,
-        "table_merge_ids": table_merge_ids,
         "status": status,
         "active": active,
         "area_id": area_id,
@@ -39,7 +36,6 @@ class Table {
       table_id: snapshot['table_id'],
       name: snapshot['name'],
       total_slot: snapshot['total_slot'],
-      table_merge_ids: snapshot['table_merge_ids'],
       status: snapshot['status'],
       active: snapshot['active'],
       area_id: snapshot['area_id'],

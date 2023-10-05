@@ -864,6 +864,63 @@ class OrderController extends GetxController {
     }
   }
 
+
+  //GỘP BÀN
+  mergeTable(
+      //cập nhật collection order file table_id thành id bàn muốn chuyển
+      // đổi trạng thái 2 bàn
+      //bàn cũ -> trống
+      //bàn mới -> đang phục vụ
+      BuildContext context,
+      model.Order order,
+      table.Table newTable) async {
+    try {
+      if (order.order_id != "" && newTable.table_id != "") {
+        // Kiểm tra bàn muốn chuyển có đang trống
+        var tableOrdered = await firestore
+            .collection("tables")
+            .where("table_id", isEqualTo: newTable.table_id)
+            .where("status", isEqualTo: TABLE_STATUS_EMPTY)
+            .get();
+        if (tableOrdered.docs.isNotEmpty) {
+          // nếu là bàn trống
+          await firestore.collection('orders').doc(order.order_id).update({
+            "table_id": newTable.table_id, // cập nhật table_id mới
+          });
+          await firestore.collection('tables').doc(order.table_id).update({
+            "status": TABLE_STATUS_EMPTY, // cập nhật lại trạng thái bàn cũ
+          });
+          await firestore.collection('tables').doc(newTable.table_id).update({
+            "status": TABLE_STATUS_SERVING, // cập nhật lại trạng thái bàn mới
+          });
+          update();
+          Get.snackbar(
+            'THÀNH CÔNG!',
+            'Chuyển bàn thành công!',
+            backgroundColor: backgroundSuccessColor,
+            colorText: Colors.white,
+          );
+        } else {
+          Get.snackbar(
+            'Chuyển bàn thất bại!',
+            'Bàn này đang được phục vụ, vui lòng chọn bàn khác!',
+            backgroundColor: backgroundFailureColor,
+            colorText: Colors.white,
+          );
+        }
+
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Chuyển bàn thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   //ÁP DỤNG THUẾ
   applyVat(
     String order_id,

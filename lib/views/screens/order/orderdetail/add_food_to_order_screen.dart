@@ -519,6 +519,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                               }
                             }
                             if (widget.booking) {
+                              widget.table.status == TABLE_STATUS_EMPTY ?
                               showCustomAlertDialogConfirm(
                                 context,
                                 "YÊU CẦU ĐẶT BÀN",
@@ -530,7 +531,18 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                       widget.table.table_id,
                                       orderDetailList,
                                       context);
-                                  // Navigator.pop(context);
+                                },
+                              ):showCustomAlertDialogConfirm(
+                                context,
+                                "GỌI THÊM MÓN",
+                                "Bạn bạn muốn gọi thêm món cho bàn ${widget.table.name} ?",
+                                colorInformation,
+                                () async {
+                                  // order theo table_id
+                                  orderController.createOrder(
+                                      widget.table.table_id,
+                                      orderDetailList,
+                                      context);
                                 },
                               );
                             }else{

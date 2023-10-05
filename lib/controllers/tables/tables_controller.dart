@@ -9,6 +9,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/area.dart';
 import 'package:myorder/models/table.dart' as model;
+import 'package:myorder/models/order.dart' as order;
 
 class TableController extends GetxController {
   getTableById(String table_id) async {
@@ -137,7 +138,7 @@ class TableController extends GetxController {
     }
   }
 
-  //active và là bàn trống
+  //active = 1 và status = 1 là bàn trống
   getActiveTablesOfArea(String areaIdSelected, String keySearch) async {
     if (keySearch.isEmpty && areaIdSelected == defaultArea) {
       //lấy tất cả bàn
@@ -220,6 +221,94 @@ class TableController extends GetxController {
       }));
     }
   }
+
+  //active = 1 và status = 1 là bàn trống và không lấy table có trong order hiện tại
+  getActiveTablesOfAreaHasSearch(order.Order currentOrder, String areaIdSelected, String keySearch) async {
+    if (keySearch.isEmpty && areaIdSelected == defaultArea) {
+      //lấy tất cả bàn
+      print("lấy tất cả");
+
+      _tables.bindStream(
+        firestore.collection('tables').where('active', isEqualTo: ACTIVE).where('table_id', isNotEqualTo: currentOrder.table_id).snapshots().map(
+          (QuerySnapshot query) {
+            List<model.Table> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(model.Table.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (areaIdSelected.isNotEmpty && keySearch.isEmpty) {
+      // chỉ theo khu vực - không search
+      print("chỉ theo khu vực - không search");
+
+      _tables.bindStream(
+        firestore
+            .collection('tables')
+            .where('active', isEqualTo: ACTIVE)
+            .where('table_id', isNotEqualTo: currentOrder.table_id)
+            .where('area_id', isEqualTo: areaIdSelected)
+            .snapshots()
+            .map(
+          (QuerySnapshot query) {
+            List<model.Table> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(model.Table.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (areaIdSelected.isNotEmpty &&
+        areaIdSelected != defaultArea &&
+        keySearch.isNotEmpty) {
+      // theo khu vực và có search
+      print("theo khu vực và có search");
+
+      _tables.bindStream(firestore
+          .collection('tables')
+          .where('active', isEqualTo: ACTIVE)
+          .where('table_id', isNotEqualTo: currentOrder.table_id)
+          .where('area_id', isEqualTo: areaIdSelected)
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<model.Table> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(model.Table.fromSnap(elem));
+          }
+        }
+        return retVal;
+      }));
+    } else if (areaIdSelected == defaultArea && keySearch.isNotEmpty) {
+      //tìm kiếm theo khu vực
+      print("tìm kiếm theo khu vực");
+      _tables.bindStream(firestore
+          .collection('tables')
+          .where('table_id', isNotEqualTo: currentOrder.table_id)
+          .where('active', isEqualTo: ACTIVE)
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<model.Table> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(model.Table.fromSnap(elem));
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
+
 
   final Rx<List<model.Table>> _tablesActive = Rx<List<model.Table>>([]);
   List<model.Table> get tablesActive => _tablesActive.value;

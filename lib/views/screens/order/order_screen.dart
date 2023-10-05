@@ -7,7 +7,8 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/order/actions/move_table_screen.dart';
+import 'package:myorder/views/screens/order/actions/merge/merge_table_screen.dart';
+import 'package:myorder/views/screens/order/actions/move/move_table_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
@@ -427,7 +428,12 @@ class _OrderPageState extends State<OrderPage> {
                                                                           InkWell(
                                                                             onTap: () =>
                                                                                 {
-                                                                              Navigator.pop(context)
+                                                                             Navigator.push(
+                                                                                  context,
+                                                                                  MaterialPageRoute(
+                                                                                      builder: (context) => MergeTablePage(
+                                                                                            order: orderController.orders[index],
+                                                                                          )))
                                                                             },
                                                                             child:
                                                                                 const ListTile(
