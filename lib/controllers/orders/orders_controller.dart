@@ -445,7 +445,8 @@ class OrderController extends GetxController {
       employee_id: '',
       table_id: '',
       vat_id: '',
-      discount_id: ''));
+      discount_id: '',
+      table_merge_ids: []));
 
   //lấy 1 order
   model.Order get orderDetail => _orderDetail.value;
@@ -466,7 +467,8 @@ class OrderController extends GetxController {
               employee_id: '',
               table_id: '',
               vat_id: '',
-              discount_id: '');
+              discount_id: '',
+              table_merge_ids: []);
           retValue.order_id = order.order_id;
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
 
@@ -638,6 +640,7 @@ class OrderController extends GetxController {
           vat_id: '',
           discount_id: '',
           active: 1,
+          table_merge_ids: [],
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('orders');
@@ -864,46 +867,46 @@ class OrderController extends GetxController {
     }
   }
 
-
   //GỘP BÀN
   mergeTable(
-      //cập nhật collection order file table_id thành id bàn muốn chuyển
       // đổi trạng thái 2 bàn
       //bàn cũ -> trống
       //bàn mới -> đang phục vụ
       BuildContext context,
       model.Order order,
-      table.Table newTable) async {
+      List<dynamic> tableIds) async {
     try {
-      if (order.order_id != "" && newTable.table_id != "") {
-        // Kiểm tra bàn muốn chuyển có đang trống
-        var tableOrdered = await firestore
-            .collection("tables")
-            .where("table_id", isEqualTo: newTable.table_id)
-            .where("status", isEqualTo: TABLE_STATUS_EMPTY)
-            .get();
-        if (tableOrdered.docs.isNotEmpty) {
-          // nếu là bàn trống
+      if (order.order_id != "" && tableIds != []) {
+        // Kiểm tra bàn muốn gộp có đang trống
+        var isValid = true;
+        for (int i = 0; i < tableIds.length; i++) {
+          var tableOrdered = await firestore
+              .collection("tables")
+              .where("table_id", isEqualTo: tableIds[i])
+              .where("status", isEqualTo: TABLE_STATUS_EMPTY)
+              .get();// bàn đã gộp trước đó thì không phải là TABLE_STATUS_EMPTY
+          if (tableOrdered.docs.isNotEmpty) {
+            await firestore.collection('tables').doc(tableIds[i]).update({
+              "status": TABLE_STATUS_MERGED, // cập nhật trạng thái bàn gộp
+            });
+          } else {
+            isValid = false;
+          }
+        }
+        if (isValid) {
           await firestore.collection('orders').doc(order.order_id).update({
-            "table_id": newTable.table_id, // cập nhật table_id mới
+            "table_merge_ids": FieldValue.arrayUnion(tableIds), // lưu lại các table_id được gộp
           });
-          await firestore.collection('tables').doc(order.table_id).update({
-            "status": TABLE_STATUS_EMPTY, // cập nhật lại trạng thái bàn cũ
-          });
-          await firestore.collection('tables').doc(newTable.table_id).update({
-            "status": TABLE_STATUS_SERVING, // cập nhật lại trạng thái bàn mới
-          });
-          update();
           Get.snackbar(
             'THÀNH CÔNG!',
-            'Chuyển bàn thành công!',
+            'Gộp bàn thành công',
             backgroundColor: backgroundSuccessColor,
             colorText: Colors.white,
           );
         } else {
           Get.snackbar(
-            'Chuyển bàn thất bại!',
-            'Bàn này đang được phục vụ, vui lòng chọn bàn khác!',
+            'Gộp bàn thất bại!',
+            'Vui lòng kiểm tra lại các bàn cần gộp!',
             backgroundColor: backgroundFailureColor,
             colorText: Colors.white,
           );
@@ -913,7 +916,60 @@ class OrderController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Chuyển bàn thất bại!',
+        'Gộp bàn thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //HỦY GỘP BÀN
+  cancelMergeTableById(
+      BuildContext context,
+      String tableId) async {
+    try {
+      if (tableId != "") {
+        // lấy ra đơn hàng đang nắm giữ table_id muốn bỏ gộp bàn
+        var order = await firestore
+            .collection("orders")
+            .where("table_merge_ids", arrayContains: tableId)
+            .where("active", isEqualTo: ACTIVE)
+            .where("order_status", isEqualTo: ACTIVE)
+            .get();
+            model.Order orderData = model.Order.fromSnap(order.docs.first);
+        if (orderData.order_id != "") {
+          // Xóa table_id trong table_merge_ids của order
+          // FieldValue.arrayUnion([tableId]) - thêm vào mảng
+          await firestore.collection('orders').doc(orderData.order_id).update({
+            "table_merge_ids": FieldValue.arrayRemove(
+                [tableId]), // xóa phần tử trong table_merge_ids của order
+          });
+          await firestore.collection('tables').doc(tableId).update({
+            "status":
+                TABLE_STATUS_EMPTY, // cập nhật trạng thái bàn trống sau khi không còn gộp
+          });
+
+          Get.snackbar(
+            'THÀNH CÔNG!',
+            'Hủy gộp bàn thành công.',
+            backgroundColor: backgroundSuccessColor,
+            colorText: Colors.white,
+          );
+        } else {
+           Get.snackbar(
+            'THẤT BẠI!',
+            'Hủy gộp bàn thất bại.',
+            backgroundColor: backgroundSuccessColor,
+            colorText: Colors.white,
+          );
+        }
+
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Hủy gộp bàn thất bại!',
         e.toString(),
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,

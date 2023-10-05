@@ -223,13 +223,13 @@ class TableController extends GetxController {
   }
 
   //active = 1 và status = 1 là bàn trống và không lấy table có trong order hiện tại
-  getActiveTablesOfAreaHasSearch(order.Order currentOrder, String areaIdSelected, String keySearch) async {
+  getActiveTablesOfAreaHasSearchExceptId(order.Order currentOrder, String areaIdSelected, String keySearch) async {
     if (keySearch.isEmpty && areaIdSelected == defaultArea) {
       //lấy tất cả bàn
       print("lấy tất cả");
 
       _tables.bindStream(
-        firestore.collection('tables').where('active', isEqualTo: ACTIVE).where('table_id', isNotEqualTo: currentOrder.table_id).snapshots().map(
+        firestore.collection('tables').where('status', isEqualTo: TABLE_STATUS_EMPTY).where('active', isEqualTo: ACTIVE).where('table_id', isNotEqualTo: currentOrder.table_id).snapshots().map(
           (QuerySnapshot query) {
             List<model.Table> retValue = [];
             for (var element in query.docs) {
@@ -248,6 +248,7 @@ class TableController extends GetxController {
         firestore
             .collection('tables')
             .where('active', isEqualTo: ACTIVE)
+            .where('status', isEqualTo: TABLE_STATUS_EMPTY)
             .where('table_id', isNotEqualTo: currentOrder.table_id)
             .where('area_id', isEqualTo: areaIdSelected)
             .snapshots()
@@ -271,6 +272,7 @@ class TableController extends GetxController {
       _tables.bindStream(firestore
           .collection('tables')
           .where('active', isEqualTo: ACTIVE)
+          .where('status', isEqualTo: TABLE_STATUS_EMPTY)
           .where('table_id', isNotEqualTo: currentOrder.table_id)
           .where('area_id', isEqualTo: areaIdSelected)
           .orderBy('name')
@@ -291,6 +293,7 @@ class TableController extends GetxController {
       print("tìm kiếm theo khu vực");
       _tables.bindStream(firestore
           .collection('tables')
+          .where('status', isEqualTo: TABLE_STATUS_EMPTY)
           .where('table_id', isNotEqualTo: currentOrder.table_id)
           .where('active', isEqualTo: ACTIVE)
           .orderBy('name')

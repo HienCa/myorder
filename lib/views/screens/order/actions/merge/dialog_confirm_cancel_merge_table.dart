@@ -5,22 +5,22 @@ import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 
-import 'package:myorder/models/order.dart' as model;
+import 'package:myorder/models/table.dart' as table;
 
-class CustomDialogMergeTable extends StatefulWidget {
-  final model.Order order;
-  final List<dynamic> tableIds;
-  const CustomDialogMergeTable({
+class CustomDialogCancelMergeTable extends StatefulWidget {
+
+  final table.Table targetTable;
+  const CustomDialogCancelMergeTable({
     Key? key,
-    required this.order,
-    required this.tableIds,
+
+    required this.targetTable,
   }) : super(key: key);
 
   @override
-  State<CustomDialogMergeTable> createState() => _CustomDialogMergeTableState();
+  State<CustomDialogCancelMergeTable> createState() => _CustomDialogCancelMergeTableState();
 }
 
-class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
+class _CustomDialogCancelMergeTableState extends State<CustomDialogCancelMergeTable> {
   @override
   void dispose() {
     super.dispose();
@@ -55,14 +55,14 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                   children: [
                     const Center(
                       child: Text(
-                        'XÁC NHẬN GỘP BÀN',
+                        'XÁC NHẬN HỦY GỘP BÀN',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
                     ListTile(
                       title: Text(
-                        "Tất cả những bàn được chọn sẽ được gộp vào bàn ${widget.order.table!.name} ?",
+                        "Bàn ${widget.targetTable.name} sẽ về trạng thái chờ nhận khách?",
                         style: textStyleBlackRegular,
                       ),
                     ),
@@ -93,9 +93,9 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                           InkWell(
                             onTap: () => {
                               // merge
-                              orderController.mergeTable(
-                                  context, widget.order, widget.tableIds),
-                              Navigator.pop(context)
+                              orderController.cancelMergeTableById(
+                                  context, widget.targetTable.table_id),
+                                  Navigator.pop(context)
                             },
                             child: Container(
                               height: 50,

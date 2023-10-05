@@ -323,11 +323,12 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                       ),
                                       const Spacer(),
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(
+                                       Padding(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: kDefaultPadding),
                                         child: Text(
-                                          "",
+                                          orderController
+                                                  .orders[index].table_merge_ids.toString(),
                                           style: textStylePrimaryBold,
                                         ),
                                       ),

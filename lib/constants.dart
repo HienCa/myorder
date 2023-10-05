@@ -211,6 +211,7 @@ const textStyleInput = TextStyle(
 
 //button
 var buttonColor = const Color(0xFF40BAD5);
+var buttonCancelColor = Colors.redAccent;
 const buttonStyleBlackBold =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 const buttonStyleWhiteBold =
@@ -281,6 +282,12 @@ var defaultFoodImage = Image.asset(
 //TABLE
 var tableImageServing = Image.asset("assets/images/icon-table-simple-serving.jpg");
 var tableImageEmpty = Image.asset("assets/images/icon-table-simple-empty.jpg");
+var tableImageMerge = Image.asset("assets/images/icon-table-simple-cancel.jpg");
+var tableImageBooking = Image.asset( "assets/images/icon-table-simple-booking.jpg");
+
+//ICON CHECK
+var checkImageGreen = Image.asset("assets/images/icon-check-green.png");
+var checkImageOrange = Image.asset("assets/images/icon-check-orange.png");
 
 
 //FILTER

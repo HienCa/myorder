@@ -6,6 +6,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
+import 'package:myorder/views/screens/order/actions/merge/dialog_confirm_merge_table.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:myorder/models/order.dart' as model;
 
@@ -21,11 +22,13 @@ class _MergeTablePageState extends State<MergeTablePage> {
   TableController tableController = Get.put(TableController());
   var areaIdSelected = defaultArea; // mặc định lấy tất cả danh sách
   var keySearch = "";
-  List<String> tableIds = []; // id những bàn cần gộp
+  List<dynamic> tableIds = []; // id những bàn cần gộp
   @override
   void initState() {
     super.initState();
-    tableController.getActiveTablesOfAreaHasSearch(widget.order ,defaultArea, "");
+    tableController.getActiveTablesOfAreaHasSearchExceptId(
+        widget.order, defaultArea, "");
+    tableIds = widget.order.table_merge_ids;
   }
 
   @override
@@ -50,9 +53,11 @@ class _MergeTablePageState extends State<MergeTablePage> {
                             'Đã nhận được giá trị từ OptionArea: $selectedValue');
                         setState(() {
                           areaIdSelected = selectedValue;
-                          tableController.getActiveTablesOfAreaHasSearch(
-                              widget.order, selectedValue,
-                              keySearch); // tìm tất cả bàn theo khu vực
+                          tableController
+                              .getActiveTablesOfAreaHasSearchExceptId(
+                                  widget.order,
+                                  selectedValue,
+                                  keySearch); // tìm tất cả bàn theo khu vực
                         });
                       },
                     ),
@@ -72,8 +77,9 @@ class _MergeTablePageState extends State<MergeTablePage> {
                       child: TextField(
                         onChanged: (value) {
                           //tìm tất cả bàn theo khu vực và keysearch
-                          tableController.getActiveTablesOfAreaHasSearch(
-                              widget.order, areaIdSelected, value);
+                          tableController
+                              .getActiveTablesOfAreaHasSearchExceptId(
+                                  widget.order, areaIdSelected, value);
                           setState(() {
                             keySearch = value;
                           });
@@ -110,21 +116,21 @@ class _MergeTablePageState extends State<MergeTablePage> {
                                 child: InkWell(
                                   onTap: () => {
                                     //nếu đã có trong danh sách thì bỏ ra
-                                    if (tableIds.any((element) =>
-                                        element ==
-                                        tableController.tables[i].table_id))
-                                      {
+                                    setState(() {
+                                      if (tableIds.any((element) =>
+                                          element ==
+                                          tableController.tables[i].table_id)) {
                                         //trả về list đã được xóa phần tử được chọn 2 lần
                                         tableIds.remove(
-                                            tableController.tables[i].table_id),
-                                      }
-                                    else
-                                      {
+                                            tableController.tables[i].table_id);
+                                      } else {
                                         tableIds.add(
-                                            tableController.tables[i].table_id),
-                                      },
-                                    print(
-                                        "Bàn ${widget.order.table!.name} cần gộp với các bàn: $tableIds")
+                                            tableController.tables[i].table_id);
+                                      }
+
+                                      print(
+                                          "Bàn ${widget.order.table!.name} cần gộp với các bàn: $tableIds");
+                                    })
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -144,6 +150,22 @@ class _MergeTablePageState extends State<MergeTablePage> {
                                             color: textWhiteColor,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                      tableIds.any((element) =>
+                                              element ==
+                                              tableController
+                                                  .tables[i].table_id)
+                                          ? Positioned(
+                                              top: 0,
+                                              right: 10,
+                                              child: Container(
+                                                color: Colors.transparent,
+                                                height: 30,
+                                                width: 30,
+                                                child: ClipRRect(
+                                                  child: checkImageGreen,
+                                                ),
+                                              ))
+                                          : const SizedBox()
                                     ],
                                   ),
                                 ));
@@ -152,61 +174,65 @@ class _MergeTablePageState extends State<MergeTablePage> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      children: [
-                        InkWell(
-                          onTap: () => {Navigator.pop(context)},
-                          child: Expanded(
-                            child: Container(
-                              height: 50,
-                              margin: const EdgeInsets.only(
-                                  left: 10, right: 10, top: 10),
-                              decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "HỦY BỎ",
-                                  style: textStyleWhiteBold20,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () => {Navigator.pop(context)},
+                            child: Expanded(
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                decoration: BoxDecoration(
+                                  color: buttonCancelColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "HỦY BỎ",
+                                    style: textStyleWhiteBold20,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        InkWell(
-                          onTap: () => {
-                            //Truyền vào order và tableIds
+                          marginRight20,
+                          InkWell(
+                            onTap: () => {
+                              //Truyền vào order và tableIds
 
-                            // showDialog(
-                            //           context: context,
-                            //           builder: (BuildContext context) {
-                            //             return CustomDialogMoveTable(
-                            //               order: widget.order,
-                            //               table: tableController.tables[i],
-                            //             );
-                            //           },
-                            //         )
-                          },
-                          child: Expanded(
-                            child: Container(
-                              height: 50,
-                              margin: const EdgeInsets.only(
-                                  left: 10, right: 10, top: 10),
-                              decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "XÁC NHẬN",
-                                  style: textStyleWhiteBold20,
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialogMergeTable(
+                                    order: widget.order,
+                                    tableIds: tableIds,
+                                  );
+                                },
+                              )
+                            },
+                            child: Expanded(
+                              child: Container(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "XÁC NHẬN",
+                                    style: textStyleWhiteBold20,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 )),

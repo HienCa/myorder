@@ -24,7 +24,7 @@ class Order {
   List<OrderDetail> order_details = [];
   List<String>? table_merged_names;
   double? total_amount = 0;
-  List? table_merge_ids = [];
+  List table_merge_ids = [];
 
   Order({
     required this.order_id,
@@ -41,7 +41,7 @@ class Order {
     this.table_merged_names,
     required this.vat_id,
     required this.discount_id,
-    this.table_merge_ids,
+    required this.table_merge_ids,
   });
   Order.empty()
       : order_id = '',
@@ -51,7 +51,7 @@ class Order {
         create_at = Timestamp.now(),
         active = 0,
         employee_id = '',
-        table_id = '';
+        table_id = '', table_merge_ids = [];
 
   Map<String, dynamic> toJson() => {
         "order_id": order_id,
