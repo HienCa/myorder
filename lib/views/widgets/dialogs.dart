@@ -43,7 +43,6 @@ Future<void> showAlertDialog(
     context: context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
-      
       return AlertDialog(
         content: SingleChildScrollView(
           child: ListBody(
@@ -53,7 +52,6 @@ Future<void> showAlertDialog(
           ),
         ),
       );
-      
     },
   );
 }
@@ -82,7 +80,9 @@ void showCustomAlertDialogConfirm(BuildContext context, String title,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                onTap: () => {Navigator.pop(context)},
+                onTap: () => {
+                  Navigator.pop(context),
+                },
                 child: Expanded(
                   child: Container(
                     height: 50,
@@ -98,7 +98,7 @@ void showCustomAlertDialogConfirm(BuildContext context, String title,
                 ),
               ),
               InkWell(
-                onTap: () async => {await func(),},
+                onTap: () async => {await func(), Navigator.pop(context)},
                 child: Expanded(
                   child: Container(
                     height: 50,
@@ -115,28 +115,10 @@ void showCustomAlertDialogConfirm(BuildContext context, String title,
               )
             ],
           ),
-          // TextButton(
-          //   child: const Text(
-          //     'HỦY',
-          //     style: TextStyle(color: Colors.redAccent),
-          //   ),
-          //   onPressed: () {
-          //     Navigator.of(context).pop();
-          //   },
-          // ),
-          // TextButton(
-          //   child:
-          //       const Text('XÁC NHẬN', style: TextStyle(color: primaryColor)),
-          //   onPressed: () async {
-          //     await func();
-          //     Navigator.of(context).pop(); // Đóng hộp thoại cảnh báo
-          //   },
-          // ),
         ],
       );
     },
   );
-  
 }
 
 void showCustomAlertDialogConfirmCancelOrder(BuildContext context, String title,
@@ -163,7 +145,7 @@ void showCustomAlertDialogConfirmCancelOrder(BuildContext context, String title,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                onTap: () => {Navigator.pop(context),Navigator.pop(context)},
+                onTap: () => {Navigator.pop(context), Navigator.pop(context)},
                 child: Expanded(
                   child: Container(
                     height: 50,
@@ -179,7 +161,9 @@ void showCustomAlertDialogConfirmCancelOrder(BuildContext context, String title,
                 ),
               ),
               InkWell(
-                onTap: () async => {await func(),},
+                onTap: () async => {
+                  await func(),
+                },
                 child: Expanded(
                   child: Container(
                     height: 50,
@@ -217,7 +201,6 @@ void showCustomAlertDialogConfirmCancelOrder(BuildContext context, String title,
       );
     },
   );
-  
 }
 
 // custom bàn phím chọn số lượng người order -> thêm slot vào order

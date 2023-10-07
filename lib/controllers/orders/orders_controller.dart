@@ -90,6 +90,10 @@ class OrderController extends GetxController {
               print(orderDetails);
               print(totalAmount);
               order.total_amount = totalAmount;
+
+              if (order.total_amount! < 0) {
+                order.total_amount = 0;
+              }
               order.order_details = orderDetails; // danh sách chi tiết đơn hàng
               // lấy tên bàn, tên bàn đã gộp
               String table_id = element['table_id'];
@@ -194,6 +198,9 @@ class OrderController extends GetxController {
               print(totalAmount);
               order.total_amount = totalAmount;
               order.order_details = orderDetails; // danh sách chi tiết đơn hàng
+              if (order.total_amount! < 0) {
+                order.total_amount = 0;
+              }
               // lấy tên bàn, tên bàn đã gộp
               String table_id = element['table_id'];
               DocumentSnapshot tableCollection =
@@ -302,6 +309,9 @@ class OrderController extends GetxController {
             print(totalAmount);
             order.total_amount = totalAmount;
             order.order_details = orderDetails; // danh sách chi tiết đơn hàng
+            if (order.total_amount! < 0) {
+              order.total_amount = 0;
+            }
             // lấy tên bàn, tên bàn đã gộp
             String table_id = elem['table_id'];
             DocumentSnapshot tableCollection =
@@ -407,6 +417,9 @@ class OrderController extends GetxController {
             print(totalAmount);
             order.total_amount = totalAmount;
             order.order_details = orderDetails; // danh sách chi tiết đơn hàng
+            if (order.total_amount! < 0) {
+              order.total_amount = 0;
+            }
             // lấy tên bàn, tên bàn đã gộp
             String table_id = elem['table_id'];
             DocumentSnapshot tableCollection =
@@ -446,7 +459,8 @@ class OrderController extends GetxController {
       table_id: '',
       vat_id: '',
       discount_id: '',
-      table_merge_ids: []));
+      table_merge_ids: [],
+      table_merge_names: []));
 
   //lấy 1 order
   model.Order get orderDetail => _orderDetail.value;
@@ -468,8 +482,10 @@ class OrderController extends GetxController {
               table_id: '',
               vat_id: '',
               discount_id: '',
-              table_merge_ids: []);
+              table_merge_ids: [],
+              table_merge_names: []);
           retValue.order_id = order.order_id;
+
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
 
           for (var element in query.docs) {
@@ -604,6 +620,10 @@ class OrderController extends GetxController {
           retValue.total_discount_amount = discount_price;
 
           retValue.total_amount = totalAmount;
+
+          if (retValue.total_amount! < 0) {
+            retValue.total_amount = 0;
+          }
           print("Tổng tiền sau discount - vat: ${retValue.total_amount}");
 
           return retValue;
@@ -641,6 +661,7 @@ class OrderController extends GetxController {
           discount_id: '',
           active: 1,
           table_merge_ids: [],
+          table_merge_names: [],
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('orders');
@@ -869,44 +890,100 @@ class OrderController extends GetxController {
 
   //GỘP BÀN
   mergeTable(
-      // đổi trạng thái 2 bàn
-      //bàn cũ -> trống
-      //bàn mới -> đang phục vụ
-      BuildContext context,
-      model.Order order,
-      List<dynamic> tableIds) async {
+      BuildContext context, model.Order order, List<dynamic> tableIds) async {
     try {
-      if (order.order_id != "" && tableIds != []) {
-        // Kiểm tra bàn muốn gộp có đang trống
-        var isValid = true;
-        for (int i = 0; i < tableIds.length; i++) {
-          var tableOrdered = await firestore
-              .collection("tables")
-              .where("table_id", isEqualTo: tableIds[i])
-              .where("status", isEqualTo: TABLE_STATUS_EMPTY)
-              .get();// bàn đã gộp trước đó thì không phải là TABLE_STATUS_EMPTY
-          if (tableOrdered.docs.isNotEmpty) {
-            await firestore.collection('tables').doc(tableIds[i]).update({
-              "status": TABLE_STATUS_MERGED, // cập nhật trạng thái bàn gộp
-            });
-          } else {
-            isValid = false;
-          }
-        }
-        if (isValid) {
-          await firestore.collection('orders').doc(order.order_id).update({
-            "table_merge_ids": FieldValue.arrayUnion(tableIds), // lưu lại các table_id được gộp
-          });
+      if (order.order_id.isNotEmpty && tableIds.isNotEmpty) {
+        print("tableIds: $tableIds");
+
+        // Lấy thông tin đơn hàng cần gộp bàn
+        var orderSnapshot =
+            await firestore.collection("orders").doc(order.order_id).get();
+
+        if (!orderSnapshot.exists) {
           Get.snackbar(
-            'THÀNH CÔNG!',
-            'Gộp bàn thành công',
-            backgroundColor: backgroundSuccessColor,
+            'Không tìm thấy!',
+            'Không tìm thấy thông tin đơn hàng.',
+            backgroundColor: backgroundFailureColor,
             colorText: Colors.white,
           );
+          return;
+        }
+
+        model.Order orderData = model.Order.fromSnap(orderSnapshot);
+
+        print(
+            "=====================Data Json: Đơn hàng cần gộp bàn=====================");
+        print(orderSnapshot.data());
+
+        if (tableIds != []) {
+          // Kiểm tra bàn muốn gộp có đang trống
+          List tableNames = [];
+          for (int i = 0; i < tableIds.length; i++) {
+            print("tableIds[i]: ${tableIds[i]}");
+
+            // Kiểm tra bàn có trống không
+            var tableOrdered =
+                await firestore.collection("tables").doc(tableIds[i]).get();
+            print(tableOrdered.exists);
+            var tableData = tableOrdered.data();
+            print(
+                "tableData is Map<String, dynamic>: ${tableData is Map<String, dynamic>}");
+
+            if (tableOrdered.exists && tableData is Map<String, dynamic>) {
+              String name = tableOrdered['name'] ?? '';
+              int status = tableOrdered['status'] ?? '';
+              tableNames.add(tableOrdered.data()?['name']); //lấy tên bàn
+
+              if (status == TABLE_STATUS_EMPTY) {
+                print("Index valid: $i");
+                print("Index valid: ${tableIds[i]} - $name");
+
+                // Cập nhật trạng thái bàn gộp
+                await firestore.collection('tables').doc(tableIds[i]).update({
+                  "status": TABLE_STATUS_MERGED,
+                }).then((_) {
+                  // Cập nhật table_merge_ids
+                  return firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "table_merge_ids": FieldValue.arrayUnion(tableIds),
+                  });
+                }).then((_) {
+                  // Cập nhật table_merge_names
+                  return firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "table_merge_names": FieldValue.arrayUnion(tableNames),
+                  });
+                }).then((_) {
+                  Get.snackbar(
+                    'Thành công!',
+                    'Gộp bàn thành công',
+                    backgroundColor: backgroundSuccessColor,
+                    colorText: Colors.white,
+                  );
+                }).catchError((error) {
+                  Get.snackbar(
+                    'Gộp bàn thất bại!',
+                    'Vui lòng kiểm tra lại các bàn cần gộp!',
+                    backgroundColor: backgroundFailureColor,
+                    colorText: Colors.white,
+                  );
+                });
+              }
+            } else {
+              print("Index invalid: $i");
+              print("Index invalid: ${tableIds[i]}");
+              break;
+            }
+          }
         } else {
+          print("Tất cả các bàn cần gộp không còn trống");
           Get.snackbar(
             'Gộp bàn thất bại!',
-            'Vui lòng kiểm tra lại các bàn cần gộp!',
+            'Tất cả các bàn cần gộp không còn trống!',
             backgroundColor: backgroundFailureColor,
             colorText: Colors.white,
           );
@@ -915,19 +992,18 @@ class OrderController extends GetxController {
         Navigator.pop(context);
       }
     } catch (e) {
-      Get.snackbar(
-        'Gộp bàn thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   'Gộp bàn thất bại!',
+      //   e.toString(),
+      //   backgroundColor: backgroundFailureColor,
+      //   colorText: Colors.white,
+      // );
     }
   }
 
   //HỦY GỘP BÀN
   cancelMergeTableById(
-      BuildContext context,
-      String tableId) async {
+      BuildContext context, String tableId, String tableName) async {
     try {
       if (tableId != "") {
         // lấy ra đơn hàng đang nắm giữ table_id muốn bỏ gộp bàn
@@ -937,13 +1013,17 @@ class OrderController extends GetxController {
             .where("active", isEqualTo: ACTIVE)
             .where("order_status", isEqualTo: ACTIVE)
             .get();
-            model.Order orderData = model.Order.fromSnap(order.docs.first);
+        model.Order orderData = model.Order.fromSnap(order.docs.first);
         if (orderData.order_id != "") {
           // Xóa table_id trong table_merge_ids của order
           // FieldValue.arrayUnion([tableId]) - thêm vào mảng
           await firestore.collection('orders').doc(orderData.order_id).update({
             "table_merge_ids": FieldValue.arrayRemove(
                 [tableId]), // xóa phần tử trong table_merge_ids của order
+          });
+          await firestore.collection('orders').doc(orderData.order_id).update({
+            "table_merge_names": FieldValue.arrayRemove(
+                [tableName]), // xóa phần tử trong table_merge_names của order
           });
           await firestore.collection('tables').doc(tableId).update({
             "status":
@@ -957,7 +1037,7 @@ class OrderController extends GetxController {
             colorText: Colors.white,
           );
         } else {
-           Get.snackbar(
+          Get.snackbar(
             'THẤT BẠI!',
             'Hủy gộp bàn thất bại.',
             backgroundColor: backgroundSuccessColor,
@@ -968,8 +1048,189 @@ class OrderController extends GetxController {
         Navigator.pop(context);
       }
     } catch (e) {
+      // Get.snackbar(
+      //   'Hủy gộp bàn thất bại!',
+      //   e.toString(),
+      //   backgroundColor: backgroundFailureColor,
+      //   colorText: Colors.white,
+      // );
+    }
+  }
+
+  //TÁCH MÓN
+  splitFood(
+    BuildContext context,
+    model.Order order,
+    List<OrderDetail> orderDetailNeedSplitArray,
+    table.Table targetTable,
+  ) async {
+    try {
+      print("===========================TÁCH MÓN=========================");
+      if (orderDetailNeedSplitArray.isNotEmpty && targetTable.table_id != "") {
+        for (int i = 0; i < orderDetailNeedSplitArray.length; i++) {
+          // Lấy thông tin order detail của phần tử thứ i
+          var orderCollection = await firestore
+              .collection("orders")
+              .doc(order.order_id)
+              .collection("orderDetails")
+              .doc(orderDetailNeedSplitArray[i].order_detail_id)
+              .get();
+          print(
+              "Order Detail: ${orderDetailNeedSplitArray[i].order_detail_id}");
+          print(orderCollection.exists);
+          var orderDetailData = orderCollection.data();
+          print(
+              "orderDetailData is Map<String, dynamic>: ${orderDetailData is Map<String, dynamic>}");
+
+          if (orderCollection.exists &&
+              orderDetailData is Map<String, dynamic>) {
+            String order_detail_id = orderCollection['order_detail_id'] ?? '';
+            String food_id = orderCollection['food_id'] ?? '';
+            double price = orderCollection['price'] ?? 0;
+            int quantity = orderCollection['quantity'] ?? 1; // số lượng ban đầu
+            int food_status =
+                orderCollection['food_status'] ?? FOOD_STATUS_IN_CHEFT;
+
+            // Cập nhật đơn hàng cần tách: số lượng
+            int newQuantity = quantity - orderDetailNeedSplitArray[i].quantity;
+            print("Số lượng trước: $quantity");
+            print("Số lượng tách: ${orderDetailNeedSplitArray[i].quantity}");
+            print("Số lượng sau: $newQuantity");
+            // nếu chuyển hết thì xóa món ăn ở đơn hàng cần tách
+            if (newQuantity == 0) {
+              await firestore
+                  .collection("orders")
+                  .doc(order.order_id)
+                  .collection("orderDetails")
+                  .doc(orderDetailNeedSplitArray[i].order_detail_id)
+                  .delete();
+            } else {
+              // newQuantity > 0
+              await firestore
+                  .collection("orders")
+                  .doc(order.order_id)
+                  .collection("orderDetails")
+                  .doc(orderDetailNeedSplitArray[i].order_detail_id)
+                  .update({
+                "quantity": newQuantity,
+              }).then((_) {
+                Get.snackbar(
+                  'Thành công!',
+                  'Tách món thành công',
+                  backgroundColor: backgroundSuccessColor,
+                  colorText: Colors.white,
+                );
+              }).catchError((error) {
+                Get.snackbar(
+                  'THẤT BẠI!',
+                  'Vui lòng kiểm tra lại!',
+                  backgroundColor: backgroundFailureColor,
+                  colorText: Colors.white,
+                );
+              });
+            }
+          }
+        }
+
+        //kiểm tra xem don hang đã được order chưa
+        var tableOrdered = await firestore
+            .collection("orders")
+            .where("table_id", isEqualTo: targetTable.table_id)
+            .where("active", isEqualTo: ACTIVE)
+            .get();
+
+        if (tableOrdered.docs.isEmpty) {
+          //nếu don hang đang trống thì tạo order mới
+          var allDocs = await firestore.collection('orders').get();
+          int len = allDocs.docs.length;
+          // bo sung them note neu can
+          model.Order Order = model.Order(
+            order_id: 'Order-$len',
+            table_id: targetTable.table_id,
+            employee_id: authController.user.uid,
+            order_status: FOOD_STATUS_IN_CHEFT,
+            note: "",
+            create_at: Timestamp.fromDate(DateTime.now()),
+            payment_at: null,
+            vat_id: '',
+            discount_id: '',
+            active: 1,
+            table_merge_ids: [],
+            table_merge_names: [],
+          );
+          CollectionReference usersCollection =
+              FirebaseFirestore.instance.collection('orders');
+
+          await usersCollection.doc('Order-$len').set(Order.toJson());
+
+          // add order detail
+          var allDocsOrderDetail = await firestore
+              .collection('orders')
+              .doc('Order-$len')
+              .collection("orderDetails")
+              .get();
+          int orderDetaillen =
+              allDocsOrderDetail.docs.length; // lay count cua order detail
+
+          for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
+            orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
+
+            await firestore
+                .collection('orders')
+                .doc('Order-$len')
+                .collection("orderDetails")
+                .doc("OrderDetail-$orderDetaillen")
+                .set(orderDetail.toJson());
+
+            orderDetaillen++;
+          }
+
+          // cập nhật trạng thái don hang empty -> serving
+          await firestore
+              .collection('tables')
+              .doc(targetTable.table_id)
+              .update({
+            "status": TABLE_STATUS_SERVING, // đang phục vụ
+          });
+          print("Order-$len");
+        } else {
+          // thêm foods vào order hiện tại đang phục vụ
+          // add order detail
+          var order_id = "";
+          for (var doc in tableOrdered.docs) {
+            // Lấy order_id từ mỗi tài liệu và thêm vào danh sách
+            order_id = doc.id;
+          }
+          var allDocsOrderDetail = await firestore
+              .collection('orders')
+              .doc(order_id) //order_id của don hang hiện đang được phục vụ
+              .collection("orderDetails")
+              .get();
+
+          print(order_id);
+          int orderDetaillen =
+              allDocsOrderDetail.docs.length; // lay count cua order detail
+
+          for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
+            orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
+
+            await firestore
+                .collection('orders')
+                .doc(order_id) //order_id của don hang hiện đang được phục vụ
+                .collection("orderDetails")
+                .doc("OrderDetail-$orderDetaillen")
+                .set(orderDetail.toJson());
+
+            orderDetaillen++;
+          }
+        }
+        update();
+
+        Navigator.pop(context);
+      }
+    } catch (e) {
       Get.snackbar(
-        'Hủy gộp bàn thất bại!',
+        'Tách món thất bại!',
         e.toString(),
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,
@@ -1080,6 +1341,64 @@ class OrderController extends GetxController {
           colorText: Colors.white,
         );
         update();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Hủy thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //===================CLEAR DATA ORDER========================================
+  deleteOrdersAndDetails() async {
+    try {
+      // Lấy tất cả tài liệu trong bộ sưu tập "orders"
+      var ordersSnapshot = await firestore.collection('orders').get();
+
+// Lặp qua từng tài liệu và xóa
+      for (var orderDoc in ordersSnapshot.docs) {
+        // Xóa tài liệu trong bộ sưu tập "orderdetails"
+        var orderDetailsSnapshot = await firestore
+            .collection('orders')
+            .doc(orderDoc.id)
+            .collection('orderdetails')
+            .get();
+
+        for (var orderDetailDoc in orderDetailsSnapshot.docs) {
+          await firestore
+              .collection('orders')
+              .doc(orderDoc.id)
+              .collection('orderdetails')
+              .doc(orderDetailDoc.id)
+              .delete();
+        }
+
+        // Xóa tài liệu trong bộ sưu tập "orders"
+        await firestore.collection('orders').doc(orderDoc.id).delete();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Hủy thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  //===================CLEAR DATA BILL========================================
+  deleteBills() async {
+    try {
+      // Lấy tất cả tài liệu trong bộ sưu tập "bills"
+      var billsSnapshot = await firestore.collection('bills').get();
+
+      // Lặp qua từng tài liệu và xóa
+      for (var billDoc in billsSnapshot.docs) {
+        // Xóa tài liệu trong bộ sưu tập "bills"
+        await firestore.collection('bills').doc(billDoc.id).delete();
       }
     } catch (e) {
       Get.snackbar(

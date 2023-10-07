@@ -22,10 +22,9 @@ class Order {
   String table_id;
   Table? table;
   List<OrderDetail> order_details = [];
-  List<String>? table_merged_names;
   double? total_amount = 0;
   List table_merge_ids = [];
-
+  List table_merge_names = [];
   Order({
     required this.order_id,
     required this.order_status,
@@ -38,10 +37,10 @@ class Order {
     required this.table_id,
     this.total_amount,
     this.table,
-    this.table_merged_names,
     required this.vat_id,
     required this.discount_id,
     required this.table_merge_ids,
+    required this.table_merge_names,
   });
   Order.empty()
       : order_id = '',
@@ -51,7 +50,7 @@ class Order {
         create_at = Timestamp.now(),
         active = 0,
         employee_id = '',
-        table_id = '', table_merge_ids = [];
+        table_id = '', table_merge_ids = [], table_merge_names = [];
 
   Map<String, dynamic> toJson() => {
         "order_id": order_id,
@@ -65,6 +64,7 @@ class Order {
         "vat_id": vat_id,
         "discount_id": discount_id,
         "table_merge_ids": table_merge_ids,
+        "table_merge_names": table_merge_names,
       };
 
   static Order fromSnap(DocumentSnapshot snap) {
@@ -82,6 +82,7 @@ class Order {
       vat_id: snapshot['vat_id'],
       discount_id: snapshot['discount_id'],
       table_merge_ids: snapshot['table_merge_ids'],
+      table_merge_names: snapshot['table_merge_names'],
     );
   }
 }

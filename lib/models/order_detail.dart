@@ -10,6 +10,7 @@ class OrderDetail {
   int food_status;
   String food_id;
   FoodOrderDetail? food;
+  bool isSelected = false;
   OrderDetail({
     required this.order_detail_id,
     required this.price,

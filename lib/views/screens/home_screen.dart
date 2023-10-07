@@ -3,8 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/views/widgets/custom_icon.dart';
 
-
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -36,6 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (idx) {
           setState(() {
             pageIdx = idx;
+            // if (idx != pageIdx) {
+            //   setState(() {
+            //     pageIdx = idx;
+            //   });
+            // } else {
+            //   // If the same tab is tapped, pop to the root of that tab's navigator
+            //   Navigator.popUntil(
+            //     context,
+            //     ModalRoute.withName(
+            //         '/'), // Replace with the actual route name of FirstPage
+            //   );
+            // }
           });
         },
         type: BottomNavigationBarType.fixed,
@@ -43,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: iconColorPrimary,
         unselectedItemColor: unselectedItemColor,
         currentIndex: pageIdx,
-        items:  [
+        items: [
           const BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 30),
             label: 'Tổng quan',
@@ -55,8 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             // icon: CustomIcon(),
             icon: IconButton(
-              onPressed: () => pickVideo(
-                  ImageSource.gallery, context), 
+              onPressed: () => {
+                // pickVideo(ImageSource.gallery, context)
+              },
               icon: const CustomIcon(),
             ),
             label: '',
@@ -71,7 +82,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: pages[pageIdx],
+      body: Navigator(
+        key: GlobalKey<NavigatorState>(),
+        initialRoute: '/',
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (context) => pages[pageIdx],
+          );
+        },
+      ),
     );
   }
 }

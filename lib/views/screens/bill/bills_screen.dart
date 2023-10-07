@@ -6,6 +6,7 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/bills/bills_controller.dart';
+import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/bill/detail_bill_screen.dart';
 
@@ -18,6 +19,7 @@ class BillPage extends StatefulWidget {
 
 class _BillPageState extends State<BillPage> {
   BillController billController = Get.put(BillController());
+  OrderController orderController = Get.put(OrderController());
   String keySearch = "";
   String timeSelected = defaultEmployee;
   int selectedIndex = 0;
@@ -44,8 +46,20 @@ class _BillPageState extends State<BillPage> {
           appBar: AppBar(
             leading: InkWell(
                 onTap: () => {Navigator.pop(context)},
-                child: const Icon(Icons.arrow_back_ios, color: colorSuccess,)),
-            title: const Center(child: Text("QUẢN LÝ HÓA ĐƠN", style: TextStyle(color: colorSuccess),)),
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: colorSuccess,
+                )),
+            title: Center(
+                child: InkWell(
+              onTap: () => {
+                // orderController.deleteOrdersAndDetails(), orderController.deleteBills()
+              },
+              child: const Text(
+                "QUẢN LÝ HÓA ĐƠN",
+                style: TextStyle(color: colorSuccess),
+              ),
+            )),
             backgroundColor: secondColor,
           ),
           body: SafeArea(
@@ -98,7 +112,6 @@ class _BillPageState extends State<BillPage> {
                       onTap: () {
                         setState(() {
                           selectedIndex = index;
-                          
 
                           billController.getBills(index, keySearch);
 
@@ -121,10 +134,8 @@ class _BillPageState extends State<BillPage> {
                                 : textWhiteColor,
                             borderRadius: BorderRadius.circular(20),
                             border: index == selectedIndex
-                                ? Border.all(
-                                    width: 5, color: colorSuccess)
-                                : Border.all(
-                                    width: 1, color: colorSuccess)),
+                                ? Border.all(width: 5, color: colorSuccess)
+                                : Border.all(width: 1, color: colorSuccess)),
                         child: Text(
                           options[index],
                           style: index == selectedIndex
@@ -240,11 +251,32 @@ class _BillPageState extends State<BillPage> {
                                                     ),
                                                     color: backgroundBillColor,
                                                   ),
-                                                  child:  Center(
-                                                      child: Text(billController
-                                                        .bills[index].order!.table!.name,
-                                                          style:
-                                                              textStyleBillSuccessBold20)),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Center(
+                                                            child: Text(
+                                                                billController
+                                                                    .bills[
+                                                                        index]
+                                                                    .order!
+                                                                    .table!
+                                                                    .name,
+                                                                style:
+                                                                    textStyleBillSuccessBold20)),
+                                                      ),
+                                                      Expanded(
+                                                        child: Center(
+                                                            child: Text(
+                                                                billController.bills[index].order!.table_merge_names.isNotEmpty ? "(${billController.bills[index].order!.table_merge_names.join(', ')})" : "",
+                                                                style:
+                                                                    textStyleBillTableMergeName16)),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -323,7 +355,8 @@ class _BillPageState extends State<BillPage> {
                                                   width: 200,
                                                   height: 26,
                                                   child: Row(children: [
-                                                    const Icon(Icons.abc_outlined,
+                                                    const Icon(
+                                                        Icons.abc_outlined,
                                                         color: iconColor),
                                                     marginRight10,
                                                     Text(billController
@@ -378,9 +411,12 @@ class _BillPageState extends State<BillPage> {
                                                                 .TwoDirection,
                                                         child: Text(
                                                           billController
-                                                              .bills[index]
-                                                              .order!
-                                                              .employee_name ?? "Chủ nhà hàng", textAlign: TextAlign.left,
+                                                                  .bills[index]
+                                                                  .order!
+                                                                  .employee_name ??
+                                                              "Chủ nhà hàng",
+                                                          textAlign:
+                                                              TextAlign.left,
                                                         ),
                                                       ),
                                                     ),

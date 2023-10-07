@@ -9,6 +9,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/actions/merge/merge_table_screen.dart';
 import 'package:myorder/views/screens/order/actions/move/move_table_screen.dart';
+import 'package:myorder/views/screens/order/actions/split/food/split_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
@@ -323,12 +324,14 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                       ),
                                       const Spacer(),
-                                       Padding(
+                                      Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: kDefaultPadding),
                                         child: Text(
-                                          orderController
-                                                  .orders[index].table_merge_ids.toString(),
+                                          orderController.orders[index]
+                                                  .table_merge_names.isNotEmpty
+                                              ? "(${orderController.orders[index].table_merge_names.join(', ')})"
+                                              : "",
                                           style: textStylePrimaryBold,
                                         ),
                                       ),
@@ -372,7 +375,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                     .transparent,
                                                             context: context,
                                                             builder: (context) {
-                                                              return Container(
+                                                              return SizedBox(
                                                                 //đây
                                                                 height: 350,
                                                                 width: MediaQuery.of(
@@ -429,7 +432,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                           InkWell(
                                                                             onTap: () =>
                                                                                 {
-                                                                             Navigator.push(
+                                                                              Navigator.push(
                                                                                   context,
                                                                                   MaterialPageRoute(
                                                                                       builder: (context) => MergeTablePage(
@@ -448,7 +451,14 @@ class _OrderPageState extends State<OrderPage> {
                                                                           InkWell(
                                                                             onTap: () =>
                                                                                 {
-                                                                              Navigator.pop(context)
+                                                                              showDialog(
+                                                                                context: context,
+                                                                                builder: (BuildContext context) {
+                                                                                  return SplitFoodPage(
+                                                                                    order: orderController.orders[index],
+                                                                                  );
+                                                                                },
+                                                                              )
                                                                             },
                                                                             child:
                                                                                 const ListTile(

@@ -6,21 +6,23 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 
 import 'package:myorder/models/order.dart' as model;
+// ignore: library_prefixes
+import 'package:myorder/models/table.dart' as tableModel;
 
-class CustomDialogMergeTable extends StatefulWidget {
+class CustomDialogSplitFood extends StatefulWidget {
   final model.Order order;
-  final List<dynamic> tableIds;
-  const CustomDialogMergeTable({
+  final tableModel.Table table;
+  const CustomDialogSplitFood({
     Key? key,
     required this.order,
-    required this.tableIds,
+    required this.table,
   }) : super(key: key);
 
   @override
-  State<CustomDialogMergeTable> createState() => _CustomDialogMergeTableState();
+  State<CustomDialogSplitFood> createState() => _CustomDialogSplitFoodState();
 }
 
-class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
+class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
   @override
   void dispose() {
     super.dispose();
@@ -55,18 +57,29 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                   children: [
                     const Center(
                       child: Text(
-                        'XÁC NHẬN GỘP BÀN',
+                        'XÁC NHẬN TÁCH MÓN',
                         style: textStylePrimaryBold,
                       ),
                     ),
-                    marginTop20,
-                    ListTile(
-                      title: Text(
-                        "Tất cả những bàn được chọn sẽ được gộp vào bàn ${widget.order.table!.name} ?",
-                        style: textStyleBlackRegular,
-                      ),
+                    marginTop30,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                              height: 100,
+                              alignment: const Alignment(0, 0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.transparent,
+                              ),
+                              child: Text("Bạn chắc ")),
+                        ),
+                        
+                      ],
                     ),
-                    marginTop20,
+
+                    marginTop30,
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Row(
@@ -92,17 +105,7 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                           ),
                           InkWell(
                             onTap: () => {
-                              // merge
-                              orderController.mergeTable(
-                                  context, widget.order, widget.tableIds),
-                              // Navigator.pop(context)
-                              Future.delayed(const Duration(seconds: 1), () {
-                                Navigator.popUntil(
-                                  context,
-                                  ModalRoute.withName(
-                                      '/'), 
-                                );
-                              })
+                              // orderController.moveTable(context, widget.order, widget.table)
                             },
                             child: Container(
                               height: 50,

@@ -134,7 +134,8 @@ class BillController extends GetxController {
                   Timestamp payment_at = orderData['payment_at'] ?? '';
                   String vat_id = orderData['vat_id'] ?? '';
                   String discount_id = orderData['discount_id'] ?? '';
-
+                  List table_merge_names = orderData['table_merge_names'] ?? [];
+                  List table_merge_ids = orderData['table_merge_ids'] ?? [];
                   bill.order!.employee_id = employee_id;
                   bill.order!.table_id = table_id;
                   bill.order!.order_status = order_status;
@@ -143,6 +144,8 @@ class BillController extends GetxController {
                   bill.order!.payment_at = payment_at;
                   bill.order!.vat_id = vat_id;
                   bill.order!.discount_id = discount_id;
+                  bill.order!.table_merge_ids = table_merge_ids;
+                  bill.order!.table_merge_names = table_merge_names;
 
                   print(bill.order!.employee_id);
                   print(bill.order!.table_id);
@@ -152,6 +155,8 @@ class BillController extends GetxController {
                   print(bill.order!.payment_at);
                   print(bill.order!.vat_id);
                   print(bill.order!.discount_id);
+                  print(bill.order!.table_merge_ids);
+                  print(bill.order!.table_merge_names);
                 }
               }
 
@@ -546,6 +551,13 @@ class BillController extends GetxController {
           payment_at: now);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
+      //tối thiểu là 0đ
+      if (bill.total_estimate_amount < 0) {
+        bill.total_estimate_amount = 0;
+      }
+      if (bill.total_amount < 0) {
+        bill.total_amount = 0;
+      }
       CollectionReference billsCollection =
           FirebaseFirestore.instance.collection('bills');
 
@@ -562,7 +574,15 @@ class BillController extends GetxController {
       await firestore.collection('tables').doc(order.table_id).update({
         "status": TABLE_STATUS_EMPTY, // đã thanh toán
       });
-
+      //Cập nhật trạng thái các bàn đã gộp -> trống
+      for (var i = 0; i < order.table_merge_ids.length; i++) {
+        await firestore
+            .collection('tables')
+            .doc(order.table_merge_ids[i])
+            .update({
+          "status": TABLE_STATUS_EMPTY, // đã thanh toán
+        });
+      }
       Get.snackbar(
         'THÀNH CÔNG!',
         'Thanh toán thành công!',

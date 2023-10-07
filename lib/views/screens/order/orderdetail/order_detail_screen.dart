@@ -10,6 +10,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
 import 'package:myorder/models/order.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/order/actions/split/food/split_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
@@ -144,7 +145,19 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                         motion: const ScrollMotion(),
                                         children: [
                                           SlidableAction(
-                                            onPressed: (context) => doNothing(),
+                                            onPressed: (context) => {
+                                              
+                                              // Navigator.push(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //         builder: (context) =>
+                                              //             SplitFoodPage(
+                                              //               order:
+                                              //                   orderController
+                                              //                           .orders[
+                                              //                       index],
+                                              //             )))
+                                            },
                                             backgroundColor: primaryColor,
                                             foregroundColor: textWhiteColor,
                                             icon: Icons.splitscreen,
@@ -449,7 +462,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AddFoodToOrderPage(
-                                        table: widget.order.table!, booking: false,
+                                        table: widget.order.table!,
+                                        booking: false,
                                       )))
                         },
                         child: Container(

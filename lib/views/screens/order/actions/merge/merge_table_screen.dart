@@ -28,7 +28,7 @@ class _MergeTablePageState extends State<MergeTablePage> {
     super.initState();
     tableController.getActiveTablesOfAreaHasSearchExceptId(
         widget.order, defaultArea, "");
-    tableIds = widget.order.table_merge_ids;
+    // tableIds = widget.order.table_merge_ids;
   }
 
   @override
@@ -100,7 +100,8 @@ class _MergeTablePageState extends State<MergeTablePage> {
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.65,
+                      //*0.65 nếu không có bottom
+                      height: MediaQuery.of(context).size.height * 0.55,
                       child: ResponsiveGridList(
                           desiredItemWidth: 100,
                           minSpacing: 10,

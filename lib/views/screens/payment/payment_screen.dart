@@ -978,9 +978,15 @@ class _PaymentPageState extends State<PaymentPage> {
                               orderController.orderDetail.total_vat_amount,
                               orderController.orderDetail.total_discount_amount,
                               context);
-                              
                         },
-                      )
+                      ),
+                      // Future.delayed(const Duration(seconds: 1), () {
+                      //   Navigator.popUntil(
+                      //     context,
+                      //     ModalRoute.withName(
+                      //         '/'), 
+                      //   );
+                      // })
                     },
                     child: Container(
                         padding: const EdgeInsets.all(10),

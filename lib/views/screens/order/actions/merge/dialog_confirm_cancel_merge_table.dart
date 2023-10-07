@@ -94,7 +94,7 @@ class _CustomDialogCancelMergeTableState extends State<CustomDialogCancelMergeTa
                             onTap: () => {
                               // merge
                               orderController.cancelMergeTableById(
-                                  context, widget.targetTable.table_id),
+                                  context, widget.targetTable.table_id, widget.targetTable.name),
                                   Navigator.pop(context)
                             },
                             child: Container(

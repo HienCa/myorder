@@ -106,7 +106,8 @@ const textStyleAppBar20 =
 const backgroundBillColor = colorSuccess;
 const textStyleBillSuccessBold20 =
     TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold);
-
+const textStyleBillTableMergeName16 =
+    TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);
 //ORDER
 const backgroundOrderColor = primaryColor;
 const textStyleOrderSuccessBold24 =

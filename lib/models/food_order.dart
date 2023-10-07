@@ -2,7 +2,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class FoodOrder {
   String food_id;
   String name;
@@ -18,7 +17,7 @@ class FoodOrder {
   int temporary_percent;
   bool? isSelected = false;
   int? quantity = 1;
-  
+
   FoodOrder({
     required this.food_id,
     required this.name,
@@ -35,6 +34,21 @@ class FoodOrder {
     this.isSelected,
     this.quantity,
   });
+  FoodOrder.empty()
+      : food_id = '',
+        name = '',
+        image = null,
+        price = 0.0,
+        vat_id = null,
+        price_with_temporary = null,
+        temporary_price_from_date = null,
+        temporary_price_to_date = null,
+        active = 1,
+        category_id = '',
+        unit_id = '',
+        temporary_percent = 0,
+        isSelected = false,
+        quantity = 0;
 
   Map<String, dynamic> toJson() => {
         "food_id": food_id,
