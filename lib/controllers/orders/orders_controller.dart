@@ -1068,66 +1068,71 @@ class OrderController extends GetxController {
       print("===========================TÁCH MÓN=========================");
       if (orderDetailNeedSplitArray.isNotEmpty && targetTable.table_id != "") {
         for (int i = 0; i < orderDetailNeedSplitArray.length; i++) {
-          // Lấy thông tin order detail của phần tử thứ i
-          var orderCollection = await firestore
-              .collection("orders")
-              .doc(order.order_id)
-              .collection("orderDetails")
-              .doc(orderDetailNeedSplitArray[i].order_detail_id)
-              .get();
-          print(
-              "Order Detail: ${orderDetailNeedSplitArray[i].order_detail_id}");
-          print(orderCollection.exists);
-          var orderDetailData = orderCollection.data();
-          print(
-              "orderDetailData is Map<String, dynamic>: ${orderDetailData is Map<String, dynamic>}");
+          if (orderDetailNeedSplitArray[i].isSelected) {
+            print(orderDetailNeedSplitArray[i]);
+            // Lấy thông tin order detail của phần tử thứ i
+            var orderCollection = await firestore
+                .collection("orders")
+                .doc(order.order_id)
+                .collection("orderDetails")
+                .doc(orderDetailNeedSplitArray[i].order_detail_id)
+                .get();
+            print(
+                "Order Detail: ${orderDetailNeedSplitArray[i].order_detail_id}");
+            print(orderCollection.exists);
+            var orderDetailData = orderCollection.data();
+            print(
+                "orderDetailData is Map<String, dynamic>: ${orderDetailData is Map<String, dynamic>}");
 
-          if (orderCollection.exists &&
-              orderDetailData is Map<String, dynamic>) {
-            String order_detail_id = orderCollection['order_detail_id'] ?? '';
-            String food_id = orderCollection['food_id'] ?? '';
-            double price = orderCollection['price'] ?? 0;
-            int quantity = orderCollection['quantity'] ?? 1; // số lượng ban đầu
-            int food_status =
-                orderCollection['food_status'] ?? FOOD_STATUS_IN_CHEFT;
+            if (orderCollection.exists &&
+                orderDetailData is Map<String, dynamic>) {
+              String order_detail_id = orderCollection['order_detail_id'] ?? '';
+              String food_id = orderCollection['food_id'] ?? '';
+              double price = orderCollection['price'] ?? 0;
+              int quantity =
+                  orderCollection['quantity'] ?? 1; // số lượng ban đầu
+              int food_status =
+                  orderCollection['food_status'] ?? FOOD_STATUS_IN_CHEFT;
 
-            // Cập nhật đơn hàng cần tách: số lượng
-            int newQuantity = quantity - orderDetailNeedSplitArray[i].quantity;
-            print("Số lượng trước: $quantity");
-            print("Số lượng tách: ${orderDetailNeedSplitArray[i].quantity}");
-            print("Số lượng sau: $newQuantity");
-            // nếu chuyển hết thì xóa món ăn ở đơn hàng cần tách
-            if (newQuantity == 0) {
-              await firestore
-                  .collection("orders")
-                  .doc(order.order_id)
-                  .collection("orderDetails")
-                  .doc(orderDetailNeedSplitArray[i].order_detail_id)
-                  .delete();
-            } else {
-              // newQuantity > 0
-              await firestore
-                  .collection("orders")
-                  .doc(order.order_id)
-                  .collection("orderDetails")
-                  .doc(orderDetailNeedSplitArray[i].order_detail_id)
-                  .update({
-                "quantity": newQuantity,
-              }).then((_) {
-                Get.snackbar(
-                  'Thành công!',
-                  'Tách món thành công',
-                  backgroundColor: backgroundSuccessColor,
-                  colorText: Colors.white,
-                );
-              }).catchError((error) {
-                Get.snackbar(
-                  'THẤT BẠI!',
-                  'Vui lòng kiểm tra lại!',
-                  backgroundColor: backgroundFailureColor,
-                  colorText: Colors.white,
-                );
-              });
+              // Cập nhật đơn hàng cần tách: số lượng
+              int newQuantity =
+                  quantity - orderDetailNeedSplitArray[i].quantity;
+              print("Số lượng trước: $quantity");
+              print("Số lượng tách: ${orderDetailNeedSplitArray[i].quantity}");
+              print("Số lượng sau: $newQuantity");
+              // nếu chuyển hết thì xóa món ăn ở đơn hàng cần tách
+              if (newQuantity == 0) {
+                await firestore
+                    .collection("orders")
+                    .doc(order.order_id)
+                    .collection("orderDetails")
+                    .doc(orderDetailNeedSplitArray[i].order_detail_id)
+                    .delete();
+              } else {
+                // newQuantity > 0
+                await firestore
+                    .collection("orders")
+                    .doc(order.order_id)
+                    .collection("orderDetails")
+                    .doc(orderDetailNeedSplitArray[i].order_detail_id)
+                    .update({
+                  "quantity": newQuantity,
+                }).then((_) {
+                  Get.snackbar(
+                    'Thành công!',
+                    'Tách món thành công',
+                    backgroundColor: backgroundSuccessColor,
+                    colorText: Colors.white,
+                  );
+                }).catchError((error) {
+                  Get.snackbar(
+                    'THẤT BẠI!',
+                    'Vui lòng kiểm tra lại!',
+                    backgroundColor: backgroundFailureColor,
+                    colorText: Colors.white,
+                  );
+                });
+              }
             }
           }
         }
@@ -1174,15 +1179,16 @@ class OrderController extends GetxController {
 
           for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
             orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
+            if (orderDetail.isSelected) {
+              await firestore
+                  .collection('orders')
+                  .doc('Order-$len')
+                  .collection("orderDetails")
+                  .doc("OrderDetail-$orderDetaillen")
+                  .set(orderDetail.toJson());
 
-            await firestore
-                .collection('orders')
-                .doc('Order-$len')
-                .collection("orderDetails")
-                .doc("OrderDetail-$orderDetaillen")
-                .set(orderDetail.toJson());
-
-            orderDetaillen++;
+              orderDetaillen++;
+            }
           }
 
           // cập nhật trạng thái don hang empty -> serving
@@ -1213,15 +1219,15 @@ class OrderController extends GetxController {
 
           for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
             orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
-
-            await firestore
-                .collection('orders')
-                .doc(order_id) //order_id của don hang hiện đang được phục vụ
-                .collection("orderDetails")
-                .doc("OrderDetail-$orderDetaillen")
-                .set(orderDetail.toJson());
-
-            orderDetaillen++;
+            if (orderDetail.isSelected) {
+              await firestore
+                  .collection('orders')
+                  .doc(order_id) //order_id của don hang hiện đang được phục vụ
+                  .collection("orderDetails")
+                  .doc("OrderDetail-$orderDetaillen")
+                  .set(orderDetail.toJson());
+              orderDetaillen++;
+            }
           }
         }
         update();

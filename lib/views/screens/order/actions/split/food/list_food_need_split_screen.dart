@@ -9,6 +9,7 @@ import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/models/order.dart' as model1;
 import 'package:myorder/models/table.dart' as model2;
+import 'package:myorder/views/screens/order/actions/split/food/dialog_confirm_split_food.dart';
 
 class ListFoodNeedSplitPage extends StatefulWidget {
   final model1.Order order;
@@ -267,7 +268,8 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                                                           .order
                                                           .order_details[index]
                                                           .quantity) {
-                                                    print("số lượng cần tách vượt quá số lượng hiện có");
+                                                    print(
+                                                        "số lượng cần tách vượt quá số lượng hiện có");
                                                     orderDetailNeedSplitArray[
                                                                 index]
                                                             .quantity =
@@ -313,8 +315,18 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                         const SizedBox(height: 10),
                         InkWell(
                           onTap: () {
-                            orderController.splitFood(context, widget.order,
-                                orderDetailNeedSplitArray, widget.table);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialogSplitFood(
+                                    order: widget.order,
+                                    table: widget.table,
+                                    orderDetailNeedSplitArray:
+                                        orderDetailNeedSplitArray);
+                              },
+                            );
+                            // orderController.splitFood(context, widget.order,
+                            //     orderDetailNeedSplitArray, widget.table);
                           },
                           child: Container(
                             height: 50,

@@ -4,27 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
+import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
-import 'package:myorder/views/screens/order/actions/split/food/list_food_need_split_screen.dart';
+import 'package:myorder/views/screens/order/actions/split/food/dialog_confirm_split_food.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:myorder/models/order.dart' as model;
 
-class SplitFoodPage extends StatefulWidget {
+class ChooseTargetTableSplitSingleFoodPage extends StatefulWidget {
   final model.Order order;
-  const SplitFoodPage({Key? key, required this.order}) : super(key: key);
+  //tách món đơn thì sẽ đưa món đơn đó vào orderDetailNeedSplitArray
+  final List<OrderDetail> orderDetailNeedSplitArray;
+  const ChooseTargetTableSplitSingleFoodPage(
+      {Key? key, required this.order, required this.orderDetailNeedSplitArray})
+      : super(key: key);
 
   @override
-  State<SplitFoodPage> createState() => _SplitFoodPageState();
+  State<ChooseTargetTableSplitSingleFoodPage> createState() =>
+      _ChooseTargetTableSplitSingleFoodPageState();
 }
 
-class _SplitFoodPageState extends State<SplitFoodPage> {
+class _ChooseTargetTableSplitSingleFoodPageState
+    extends State<ChooseTargetTableSplitSingleFoodPage> {
   TableController tableController = Get.put(TableController());
   var areaIdSelected = defaultArea; // mặc định lấy tất cả danh sách
   var keySearch = "";
   @override
   void initState() {
     super.initState();
-    tableController.getActiveTablesOfArea(defaultArea, "");
+    tableController.getActiveTablesOfAreaHasSearchExceptId(widget.order,defaultArea, "");
   }
 
   @override
@@ -49,7 +56,7 @@ class _SplitFoodPageState extends State<SplitFoodPage> {
                     print('Đã nhận được giá trị từ OptionArea: $selectedValue');
                     setState(() {
                       areaIdSelected = selectedValue;
-                      tableController.getActiveTablesOfArea(selectedValue,
+                      tableController.getActiveTablesOfAreaHasSearchExceptId(widget.order, selectedValue,
                           keySearch); // tìm tất cả bàn theo khu vực
                     });
                   },
@@ -69,7 +76,7 @@ class _SplitFoodPageState extends State<SplitFoodPage> {
                   child: TextField(
                     onChanged: (value) {
                       //tìm tất cả bàn theo khu vực và keysearch
-                      tableController.getActiveTablesOfArea(
+                      tableController.getActiveTablesOfAreaHasSearchExceptId(widget.order,
                           areaIdSelected, value);
                       setState(() {
                         keySearch = value;
@@ -109,15 +116,17 @@ class _SplitFoodPageState extends State<SplitFoodPage> {
                                 ),
                                 child: InkWell(
                                   onTap: () => {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ListFoodNeedSplitPage(
-                                                  order: widget.order,
-                                                  table:
-                                                      tableController.tables[i],
-                                                )))
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialogSplitFood(
+                                          order: widget.order,
+                                          table: tableController.tables[i],
+                                          orderDetailNeedSplitArray: widget
+                                                  .orderDetailNeedSplitArray 
+                                        );
+                                      },
+                                    )
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,

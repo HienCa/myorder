@@ -9,7 +9,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/actions/merge/merge_table_screen.dart';
 import 'package:myorder/views/screens/order/actions/move/move_table_screen.dart';
-import 'package:myorder/views/screens/order/actions/split/food/split_food_screen.dart';
+import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';

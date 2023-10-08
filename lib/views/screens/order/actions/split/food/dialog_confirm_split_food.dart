@@ -6,16 +6,19 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 
 import 'package:myorder/models/order.dart' as model;
+import 'package:myorder/models/order_detail.dart';
 // ignore: library_prefixes
 import 'package:myorder/models/table.dart' as tableModel;
 
 class CustomDialogSplitFood extends StatefulWidget {
   final model.Order order;
   final tableModel.Table table;
+  final List<OrderDetail> orderDetailNeedSplitArray;
   const CustomDialogSplitFood({
     Key? key,
     required this.order,
     required this.table,
+    required this.orderDetailNeedSplitArray,
   }) : super(key: key);
 
   @override
@@ -73,12 +76,14 @@ class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
                                 borderRadius: BorderRadius.circular(10),
                                 color: Colors.transparent,
                               ),
-                              child: Text("Bạn chắc ")),
+                              child: Center(
+                                  child: Text(
+                                "Bạn chắc chắn muốn tách món từ bàn ${widget.order.table!.name} sang ${widget.table.name} ?",
+                                style: textStyleContentDialog16,
+                              ))),
                         ),
-                        
                       ],
                     ),
-
                     marginTop30,
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
@@ -86,7 +91,9 @@ class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
-                            onTap: () => {Navigator.pop(context)},
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
                             child: Container(
                               height: 50,
                               width: 136,
@@ -104,8 +111,12 @@ class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
                             ),
                           ),
                           InkWell(
-                            onTap: () => {
-                              // orderController.moveTable(context, widget.order, widget.table)
+                            onTap: () {
+                              orderController.splitFood(
+                                  context,
+                                  widget.order,
+                                  widget.orderDetailNeedSplitArray,
+                                  widget.table);
                             },
                             child: Container(
                               height: 50,

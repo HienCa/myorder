@@ -311,6 +311,96 @@ class TableController extends GetxController {
       }));
     }
   }
+  //không cho điều điện isNotEqualTo sử dụng 2 lần truy vấn firebase
+  //active = 1 và không lấy bàn đã gộp và không lấy table có trong order hiện tại
+  getTablesExceptMergedTable(order.Order currentOrder, String areaIdSelected, String keySearch) async {
+    if (keySearch.isEmpty && areaIdSelected == defaultArea) {
+      //lấy tất cả bàn
+      print("lấy tất cả");
+
+      _tables.bindStream(
+        firestore.collection('tables').where('status', isNotEqualTo: TABLE_STATUS_MERGED).where('active', isEqualTo: ACTIVE).where('table_id', isNotEqualTo: currentOrder.table_id).snapshots().map(
+          (QuerySnapshot query) {
+            List<model.Table> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(model.Table.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (areaIdSelected.isNotEmpty && keySearch.isEmpty) {
+      // chỉ theo khu vực - không search
+      print("chỉ theo khu vực - không search");
+
+      _tables.bindStream(
+        firestore
+            .collection('tables')
+            .where('active', isEqualTo: ACTIVE)
+            .where('status', isNotEqualTo: TABLE_STATUS_MERGED)
+            .where('table_id', isNotEqualTo: currentOrder.table_id)
+            .where('area_id', isEqualTo: areaIdSelected)
+            .snapshots()
+            .map(
+          (QuerySnapshot query) {
+            List<model.Table> retValue = [];
+            for (var element in query.docs) {
+              retValue.add(model.Table.fromSnap(element));
+              print(element);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (areaIdSelected.isNotEmpty &&
+        areaIdSelected != defaultArea &&
+        keySearch.isNotEmpty) {
+      // theo khu vực và có search
+      print("theo khu vực và có search");
+
+      _tables.bindStream(firestore
+          .collection('tables')
+          .where('active', isEqualTo: ACTIVE)
+          .where('status', isNotEqualTo: TABLE_STATUS_MERGED)
+          .where('table_id', isNotEqualTo: currentOrder.table_id)
+          .where('area_id', isEqualTo: areaIdSelected)
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<model.Table> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(model.Table.fromSnap(elem));
+          }
+        }
+        return retVal;
+      }));
+    } else if (areaIdSelected == defaultArea && keySearch.isNotEmpty) {
+      //tìm kiếm theo khu vực
+      print("tìm kiếm theo khu vực");
+      _tables.bindStream(firestore
+          .collection('tables')
+          .where('status', isNotEqualTo: TABLE_STATUS_MERGED)
+          .where('table_id', isNotEqualTo: currentOrder.table_id)
+          .where('active', isEqualTo: ACTIVE)
+          .orderBy('name')
+          .snapshots()
+          .map((QuerySnapshot query) {
+        List<model.Table> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            retVal.add(model.Table.fromSnap(elem));
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
 
 
   final Rx<List<model.Table>> _tablesActive = Rx<List<model.Table>>([]);

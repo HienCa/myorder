@@ -9,8 +9,10 @@ import 'package:myorder/controllers/discounts/discounts_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
 import 'package:myorder/models/order.dart';
+import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/order/actions/split/food/split_food_screen.dart';
+import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_single_food_screen.dart';
+import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
@@ -40,6 +42,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
 
   int selectedIndex = 0;
   bool isChecked = false;
+  List<OrderDetail> orderDetailNeedSplitArray = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,17 +149,32 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                         children: [
                                           SlidableAction(
                                             onPressed: (context) => {
-                                              
-                                              // Navigator.push(
-                                              //     context,
-                                              //     MaterialPageRoute(
-                                              //         builder: (context) =>
-                                              //             SplitFoodPage(
-                                              //               order:
-                                              //                   orderController
-                                              //                           .orders[
-                                              //                       index],
-                                              //             )))
+                                              print(
+                                                  "=================Món muốn tách==============="),
+                                              print(orderController
+                                                  .orderDetail
+                                                  .order_details[index]
+                                                  .food!
+                                                  .name),
+                                              orderController
+                                                  .orderDetail
+                                                  .order_details[index]
+                                                  .isSelected = true,
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return ChooseTargetTableSplitSingleFoodPage(
+                                                    order: orderController
+                                                        .orderDetail,
+                                                    orderDetailNeedSplitArray: [
+                                                      orderController
+                                                          .orderDetail
+                                                          .order_details[index]
+                                                    ],
+                                                  );
+                                                },
+                                              )
                                             },
                                             backgroundColor: primaryColor,
                                             foregroundColor: textWhiteColor,
@@ -270,8 +288,35 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                             motion: const ScrollMotion(),
                                             children: [
                                               SlidableAction(
-                                                onPressed: (context) =>
-                                                    doNothing(),
+                                                onPressed: (context) => {
+                                                  print(
+                                                      "=================Món muốn tách==============="),
+                                                  print(orderController
+                                                      .orderDetail
+                                                      .order_details[index]
+                                                      .food!
+                                                      .name),
+                                                  orderController
+                                                      .orderDetail
+                                                      .order_details[index]
+                                                      .isSelected = true,
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return ChooseTargetTableSplitSingleFoodPage(
+                                                        order: orderController
+                                                            .orderDetail,
+                                                        orderDetailNeedSplitArray: [
+                                                          orderController
+                                                                  .orderDetail
+                                                                  .order_details[
+                                                              index]
+                                                        ],
+                                                      );
+                                                    },
+                                                  )
+                                                },
                                                 backgroundColor: primaryColor,
                                                 foregroundColor: textWhiteColor,
                                                 icon: Icons.splitscreen,
@@ -484,7 +529,16 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                         ),
                       ),
                       InkWell(
-                        onTap: () => {},
+                        onTap: () => {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SplitFoodPage(
+                                order: orderController.orderDetail,
+                              );
+                            },
+                          )
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
