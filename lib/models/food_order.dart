@@ -3,18 +3,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FoodOrder {
-  String food_id;
-  String name;
-  String? image;
-  double price;
-  String? vat_id;
-  double? price_with_temporary;
+  String food_id ="";
+  String name = "";
+  String? image = "";
+  double price = 0;
+  String? vat_id = "";
+  double? price_with_temporary = 0;
   Timestamp? temporary_price_from_date;
   Timestamp? temporary_price_to_date;
-  int active;
-  String category_id;
-  String unit_id;
-  int temporary_percent;
+  int active = 1;
+  String category_id = "";
+  String unit_id = "";
+  int temporary_percent = 0;
   bool? isSelected = false;
   int? quantity = 1;
 

@@ -151,6 +151,19 @@ class FoodController extends GetxController {
             List<FoodOrder> retValue = [];
             for (var element in query.docs) {
               FoodOrder food = FoodOrder.fromSnap(element);
+              print(food.temporary_price_from_date);
+              print(food.temporary_price_to_date);
+
+              //lỗi temporary_price_from_date, temporary_price_to_date khi null
+              // fix tạm thời
+              if (food.temporary_price_from_date == null &&
+                  food.temporary_price_to_date == null) {
+                food.temporary_price_from_date =
+                    Timestamp.fromDate(DateTime(1900, 1, 1));
+                food.temporary_price_to_date =
+                    Timestamp.fromDate(DateTime(1900, 1, 1));
+              }
+
               food.isSelected = false;
               food.quantity = 1;
               retValue.add(food);
@@ -170,7 +183,6 @@ class FoodController extends GetxController {
             .where('category_id', isEqualTo: categoryIdSelected)
             .snapshots()
             .map(
-      
           (QuerySnapshot query) {
             List<FoodOrder> retValue = [];
             for (var element in query.docs) {
@@ -195,7 +207,6 @@ class FoodController extends GetxController {
           .where('category_id', isEqualTo: categoryIdSelected)
           .orderBy('name')
           .snapshots()
-          
           .map((QuerySnapshot query) {
         List<FoodOrder> retValue = [];
         for (var element in query.docs) {
@@ -207,7 +218,6 @@ class FoodController extends GetxController {
           if (name.contains(search)) {
             retValue.add(food);
           }
-          
         }
         Utils.showDataJson(query);
 

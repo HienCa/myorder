@@ -10,6 +10,7 @@ class OrderDetail {
   int food_status;
   String food_id;
   FoodOrderDetail? food;
+  bool is_gift = false;
   bool isSelected = false;
   OrderDetail({
     required this.order_detail_id,
@@ -17,6 +18,7 @@ class OrderDetail {
     required this.quantity,
     required this.food_status,
     required this.food_id,
+    required this.is_gift,
     this.food
   });
 
@@ -26,6 +28,7 @@ class OrderDetail {
         "quantity": quantity,
         "food_status": food_status,
         "food_id": food_id,
+        "is_gift": is_gift,
       };
 
   static OrderDetail fromSnap(DocumentSnapshot snap) {
@@ -37,6 +40,7 @@ class OrderDetail {
       quantity: snapshot['quantity'],
       food_status: snapshot['food_status'],
       food_id: snapshot['food_id'],
+      is_gift: snapshot['is_gift'],
     );
   }
 }

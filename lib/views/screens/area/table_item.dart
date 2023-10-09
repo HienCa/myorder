@@ -66,7 +66,7 @@ class _TableItemState extends State<TableItem> {
                     MaterialPageRoute(
                         builder: (context) => AddFoodToOrderPage(
                               table: tables[i],
-                              booking: true,
+                              booking: true, isGift: false,
                             )),
                   );
                 } else {

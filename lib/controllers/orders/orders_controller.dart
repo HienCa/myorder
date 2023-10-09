@@ -635,7 +635,7 @@ class OrderController extends GetxController {
   // tao order
   //them tung orderdetail
   void createOrder(String table_id, List<OrderDetail> orderDetailList,
-      BuildContext context) async {
+      bool isGift, BuildContext context) async {
     try {
       //kiểm tra xem don hang đã được order chưa
       var tableOrdered = await firestore
@@ -679,7 +679,13 @@ class OrderController extends GetxController {
 
         for (OrderDetail orderDetail in orderDetailList) {
           orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
-
+          //nếu là món tặng -> không tính tiền món ăn
+          if (isGift) {
+            orderDetail.is_gift = true;
+            orderDetail.price = 0;
+          } else {
+            orderDetail.is_gift = false;
+          }
           await firestore
               .collection('orders')
               .doc('Order-$len')

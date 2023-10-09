@@ -13,18 +13,21 @@ import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 
-class AddFoodToOrderPage extends StatefulWidget {
+class AddGiftFoodToOrderPage extends StatefulWidget {
   final model.Table table;
   final bool booking; // vào thêm món nếu true - false đặt bàn
   final bool isGift; // vào thêm món nếu true - false đặt bàn
-  const AddFoodToOrderPage(
-      {super.key, required this.table, required this.booking, required this.isGift});
+  const AddGiftFoodToOrderPage(
+      {super.key,
+      required this.table,
+      required this.booking,
+      required this.isGift});
 
   @override
-  State<AddFoodToOrderPage> createState() => _AddFoodToOrderPageState();
+  State<AddGiftFoodToOrderPage> createState() => _AddGiftFoodToOrderPageState();
 }
 
-class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
+class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
   int selectedIndex = 0;
   int categoryselectedIndex = 0;
   bool isAddFood = false;
@@ -40,9 +43,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
     super.initState();
     categoryController.getCategoriesActive();
     foodController.getfoodsToOrder(keySearch, defaultCategory);
-    print("ssssss");
-    // foods = foodController.getfoods(keySearch);
-    // Khởi tạo lắng nghe dữ liệu realtime từ Firebase Firestore
+    print("TẶNG MÓN ĂN");
   }
 
   @override
@@ -56,7 +57,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
             color: iconWhiteColor,
           ),
         ),
-        title: Center(child: Text("GỌI MÓN - ${widget.table.name}")),
+        title: Center(child: Text("TẶNG MÓN - ${widget.table.name}")),
         backgroundColor: primaryColor,
       ),
       body: Column(
@@ -283,110 +284,22 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                       true
                                                   ? textStyleWhiteRegular16
                                                   : textStyleFoodNameBold16),
-                                          (Utils.isDateTimeInRange(
-                                                  foodController
-                                                      .foodsToOrder[index]
-                                                      .temporary_price_from_date!,
-                                                  foodController
-                                                      .foodsToOrder[index]
-                                                      .temporary_price_to_date!)
-                                              ? (foodController
-                                                          .foodsToOrder[index]
-                                                          .price_with_temporary! >
-                                                      0
-                                                  ? const WidgetSpan(
-                                                      child: Icon(
-                                                        Icons.arrow_drop_up,
-                                                        size: 24.0,
-                                                        color:
-                                                            colorPriceIncrease,
-                                                      ),
-                                                    )
-                                                  : const WidgetSpan(
-                                                      child: Icon(
-                                                        Icons.arrow_drop_down,
-                                                        size: 24.0,
-                                                        color:
-                                                            colorPriceDecrease,
-                                                      ),
-                                                    ))
-                                              : const TextSpan()),
                                         ],
                                       ))),
-                                  subtitle: foodController.foodsToOrder[index]
-                                              .price_with_temporary !=
-                                          0
-                                      ? (Utils.isDateTimeInRange(
-                                              foodController.foodsToOrder[index]
-                                                  .temporary_price_from_date!,
-                                              foodController.foodsToOrder[index]
-                                                  .temporary_price_to_date!)
-                                          ? Row(
-                                              children: <Widget>[
-                                                Expanded(
-                                                  child: Marquee(
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      textDirection: TextDirection
-                                                          .ltr,
-                                                      animationDuration:
-                                                          const Duration(
-                                                              seconds: 1),
-                                                      backDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  4000),
-                                                      pauseDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  1000),
-                                                      directionMarguee:
-                                                          DirectionMarguee
-                                                              .TwoDirection,
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          style: DefaultTextStyle
-                                                                  .of(context)
-                                                              .style,
-                                                          children: <TextSpan>[
-                                                            TextSpan(
-                                                              text:
-                                                                  "${Utils.formatCurrency(foodController.foodsToOrder[index].price + foodController.foodsToOrder[index].price_with_temporary!)} / ",
-                                                              style:
-                                                                  textStyleTemporaryPriceDeActive16,
-                                                            ),
-                                                            TextSpan(
-                                                              text: Utils.formatCurrency(
-                                                                  foodController
-                                                                      .foodsToOrder[
-                                                                          index]
-                                                                      .price),
-                                                              style:
-                                                                  textStyleTemporaryPriceActive14,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )),
-                                                ),
-                                              ],
-                                            )
-                                          : Text(
-                                              Utils.formatCurrency(
-                                                  foodController
-                                                      .foodsToOrder[index]
-                                                      .price),
-                                              style:
-                                                  textStyleTemporaryPriceDeActive16,
-                                            ))
-                                      : Text(
-                                          Utils.formatCurrency(foodController
-                                              .foodsToOrder[index].price),
-                                          style: foodController
-                                                      .foodsToOrder[index]
-                                                      .isSelected ==
-                                                  true
-                                              ? textStyleWhiteBold16
-                                              : textStyleTemporaryPriceDeActive16),
+                                  subtitle: const SizedBox(
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.card_giftcard, color: Color(0xFFFFA41B)),
+                                        marginRight10,
+                                        Expanded(
+                                          child: Text(
+                                            "món tặng",
+                                            style: textStyleFreePrice16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                   trailing: foodController
                                               .foodsToOrder[index].isSelected ==
                                           true
@@ -496,15 +409,11 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
                                 OrderDetail orderDetail = OrderDetail(
                                   order_detail_id: "",
-                                  price: Utils.isDateTimeInRange(
-                                          foodOrder.temporary_price_from_date!,
-                                          foodOrder.temporary_price_to_date!)
-                                      ? (foodOrder.price +
-                                          foodOrder.price_with_temporary!)
-                                      : foodOrder.price,
+                                  price: 0,
                                   quantity: foodOrder.quantity!,
                                   food_status: FOOD_STATUS_IN_CHEFT,
-                                  food_id: foodOrder.food_id, is_gift: false,
+                                  food_id: foodOrder.food_id,
+                                  is_gift: false,
                                 );
 
                                 orderDetailList.add(orderDetail);
@@ -513,7 +422,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 print("--------------------------------");
                                 print("ID: ${foodOrder.food_id}");
                                 print("Name: ${foodOrder.name}");
-                                print("Price: ${foodOrder.price}");
+                                print("Price: 0");
                                 print("Quantity: ${foodOrder.quantity}");
                                 print("Is Selected: ${foodOrder.isSelected}");
                                 print("--------------------------------");
@@ -530,7 +439,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                         // order theo table_id
                                         orderController.createOrder(
                                             widget.table.table_id,
-                                            orderDetailList, widget.isGift,
+                                            orderDetailList,
+                                            widget.isGift,
                                             context);
                                       },
                                     )
@@ -543,7 +453,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                         // order theo table_id
                                         orderController.createOrder(
                                             widget.table.table_id,
-                                            orderDetailList, widget.isGift,
+                                            orderDetailList,
+                                            widget.isGift,
                                             context);
                                       },
                                     );
@@ -551,14 +462,6 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                               orderController.createOrder(widget.table.table_id,
                                   orderDetailList, widget.isGift, context);
                             }
-                            //quay về gốc 
-                            // Future.delayed(const Duration(seconds: 1), () {
-                            //   Navigator.popUntil(
-                            //     context,
-                            //     ModalRoute.withName(
-                            //         '/'), // This assumes that FirstPage is the first page in your navigation stack
-                            //   );
-                            // });
                           },
                           child: Container(
                             height: 50,

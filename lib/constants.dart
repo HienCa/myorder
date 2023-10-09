@@ -145,6 +145,9 @@ const textStyleTemporaryPriceWhiteBold16 =
 const textStyleTemporaryPriceDeActive16 = TextStyle(
     color: Colors.black54, fontSize: 16, fontWeight: FontWeight.normal);
 
+const textStyleFreePrice16 = TextStyle(
+    color: Color(0xFFFFA41B), fontSize: 16, fontWeight: FontWeight.normal);
+
 const textStyleTemporaryPriceActive14 = TextStyle(
   color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.normal,
   decoration: TextDecoration.lineThrough, // Thêm gạch ngang

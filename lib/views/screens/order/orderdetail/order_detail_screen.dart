@@ -14,6 +14,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_single_food_screen.dart';
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
+import 'package:myorder/views/screens/order/orderdetail/add_gift_food_to_order_screen.dart';
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
@@ -503,12 +504,14 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                     children: [
                       InkWell(
                         onTap: () => {
+                          // thêm món -> không phải món tặng
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AddFoodToOrderPage(
                                         table: widget.order.table!,
                                         booking: false,
+                                        isGift: false,
                                       )))
                         },
                         child: Container(
@@ -557,7 +560,17 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                         ),
                       ),
                       InkWell(
-                        onTap: () => {},
+                        onTap: () => {
+                          // là món tặng -> isGift = true
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddGiftFoodToOrderPage(
+                                        table: widget.order.table!,
+                                        booking: false,
+                                        isGift: true,
+                                      )))
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
