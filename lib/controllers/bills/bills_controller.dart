@@ -12,6 +12,7 @@ import 'package:myorder/models/food_order_detail.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/order_screen.dart';
 
 class BillController extends GetxController {
@@ -533,8 +534,7 @@ class BillController extends GetxController {
   void createBill(model.Order order, double? vat_amount,
       double? discount_amount, BuildContext context) async {
     try {
-      var allDocs = await firestore.collection('bills').get();
-      int len = allDocs.docs.length;
+      String id = Utils.generateUUID();
 
       //total_amount: tổng tiền đơn hàng đã cộng trừ vat và discount -> số tiền thực tế phải trả
       //vat_amount: tổng tiền vat đã áp dụng cho đơn hàng
@@ -542,7 +542,7 @@ class BillController extends GetxController {
       Timestamp now = Timestamp.now();
 
       Bill bill = Bill(
-          bill_id: 'Bill-$len',
+          bill_id: id,
           order_id: order.order_id,
           total_amount: order.total_amount ?? 0.0,
           total_estimate_amount: 0.0,
@@ -561,7 +561,7 @@ class BillController extends GetxController {
       CollectionReference billsCollection =
           FirebaseFirestore.instance.collection('bills');
 
-      await billsCollection.doc('Bill-$len').set(bill.toJson());
+      await billsCollection.doc(id).set(bill.toJson());
 
       //Cập nhật trạng thái đơn hàng -> đã thanh toán
       await firestore.collection('orders').doc(order.order_id).update({

@@ -9,6 +9,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/category.dart' as model;
 import 'package:myorder/models/category.dart';
+import 'package:myorder/utils.dart';
 
 class CategoryController extends GetxController {
   getCategoryById(String category_id) async {
@@ -98,18 +99,17 @@ class CategoryController extends GetxController {
   ) async {
     try {
       if (name.isNotEmpty) {
-        var allDocs = await firestore.collection('categories').get();
-        int len = allDocs.docs.length;
+        String id = Utils.generateUUID();
 
         model.Category category = model.Category(
-          category_id: 'Category-$len',
+          category_id: id,
           name: name.trim(),
           active: 1,
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('categories');
 
-        await usersCollection.doc('Category-$len').set(category.toJson());
+        await usersCollection.doc(id).set(category.toJson());
         Get.snackbar(
           'THÀNH CÔNG!',
           'Thêm đơn vị tính mới thành công!',

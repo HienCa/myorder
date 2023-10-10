@@ -11,6 +11,7 @@ import 'package:myorder/models/food_order_detail.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/utils.dart';
 
 class OrderController extends GetxController {
   //don hang
@@ -646,11 +647,10 @@ class OrderController extends GetxController {
 
       if (tableOrdered.docs.isEmpty) {
         //nếu don hang đang trống thì tạo order mới
-        var allDocs = await firestore.collection('orders').get();
-        int len = allDocs.docs.length;
+        String id = Utils.generateUUID();
         // bo sung them note neu can
         model.Order Order = model.Order(
-          order_id: 'Order-$len',
+          order_id: id,
           table_id: table_id,
           employee_id: authController.user.uid,
           order_status: FOOD_STATUS_IN_CHEFT,
@@ -666,19 +666,18 @@ class OrderController extends GetxController {
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('orders');
 
-        await usersCollection.doc('Order-$len').set(Order.toJson());
+        await usersCollection.doc(id).set(Order.toJson());
 
         // add order detail
         var allDocsOrderDetail = await firestore
             .collection('orders')
-            .doc('Order-$len')
+            .doc(id)
             .collection("orderDetails")
             .get();
-        int orderDetaillen =
-            allDocsOrderDetail.docs.length; // lay count cua order detail
+        String idDetail = Utils.generateUUID();
 
         for (OrderDetail orderDetail in orderDetailList) {
-          orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
+          orderDetail.order_detail_id = idDetail;
           //nếu là món tặng -> không tính tiền món ăn
           if (isGift) {
             orderDetail.is_gift = true;
@@ -688,19 +687,18 @@ class OrderController extends GetxController {
           }
           await firestore
               .collection('orders')
-              .doc('Order-$len')
+              .doc(id)
               .collection("orderDetails")
-              .doc("OrderDetail-$orderDetaillen")
+              .doc(idDetail)
               .set(orderDetail.toJson());
 
-          orderDetaillen++;
         }
 
         // cập nhật trạng thái don hang empty -> serving
         await firestore.collection('tables').doc(table_id).update({
           "status": TABLE_STATUS_SERVING, // đang phục vụ
         });
-        print("Order-$len");
+        print(id);
       } else {
         // thêm foods vào order hiện tại đang phục vụ
         // add order detail
@@ -716,20 +714,19 @@ class OrderController extends GetxController {
             .get();
 
         print(order_id);
-        int orderDetaillen =
-            allDocsOrderDetail.docs.length; // lay count cua order detail
+        String idDetail = Utils.generateUUID();
 
         for (OrderDetail orderDetail in orderDetailList) {
-          orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
+          orderDetail.order_detail_id = idDetail;
 
           await firestore
               .collection('orders')
               .doc(order_id) //order_id của don hang hiện đang được phục vụ
               .collection("orderDetails")
-              .doc("OrderDetail-$orderDetaillen")
+              .doc(idDetail)
               .set(orderDetail.toJson());
 
-          orderDetaillen++;
+
         }
       }
       Get.snackbar(
@@ -1153,10 +1150,10 @@ class OrderController extends GetxController {
         if (tableOrdered.docs.isEmpty) {
           //nếu don hang đang trống thì tạo order mới
           var allDocs = await firestore.collection('orders').get();
-          int len = allDocs.docs.length;
+          String id = Utils.generateUUID();
           // bo sung them note neu can
           model.Order Order = model.Order(
-            order_id: 'Order-$len',
+            order_id: id,
             table_id: targetTable.table_id,
             employee_id: authController.user.uid,
             order_status: FOOD_STATUS_IN_CHEFT,
@@ -1172,28 +1169,25 @@ class OrderController extends GetxController {
           CollectionReference usersCollection =
               FirebaseFirestore.instance.collection('orders');
 
-          await usersCollection.doc('Order-$len').set(Order.toJson());
+          await usersCollection.doc(id).set(Order.toJson());
 
           // add order detail
           var allDocsOrderDetail = await firestore
               .collection('orders')
-              .doc('Order-$len')
+              .doc(id)
               .collection("orderDetails")
               .get();
-          int orderDetaillen =
-              allDocsOrderDetail.docs.length; // lay count cua order detail
+         String idDetail = Utils.generateUUID();
 
           for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
-            orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
+            orderDetail.order_detail_id = idDetail;
             if (orderDetail.isSelected) {
               await firestore
                   .collection('orders')
-                  .doc('Order-$len')
+                  .doc(id)
                   .collection("orderDetails")
-                  .doc("OrderDetail-$orderDetaillen")
+                  .doc(idDetail)
                   .set(orderDetail.toJson());
-
-              orderDetaillen++;
             }
           }
 
@@ -1204,7 +1198,7 @@ class OrderController extends GetxController {
               .update({
             "status": TABLE_STATUS_SERVING, // đang phục vụ
           });
-          print("Order-$len");
+          print(id);
         } else {
           // thêm foods vào order hiện tại đang phục vụ
           // add order detail
@@ -1220,19 +1214,18 @@ class OrderController extends GetxController {
               .get();
 
           print(order_id);
-          int orderDetaillen =
-              allDocsOrderDetail.docs.length; // lay count cua order detail
+          String idDetail = Utils.generateUUID();
 
           for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
-            orderDetail.order_detail_id = "OrderDetail-$orderDetaillen";
+            orderDetail.order_detail_id = idDetail;
             if (orderDetail.isSelected) {
               await firestore
                   .collection('orders')
                   .doc(order_id) //order_id của don hang hiện đang được phục vụ
                   .collection("orderDetails")
-                  .doc("OrderDetail-$orderDetaillen")
+                  .doc(idDetail)
                   .set(orderDetail.toJson());
-              orderDetaillen++;
+
             }
           }
         }

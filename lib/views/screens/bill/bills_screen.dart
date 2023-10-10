@@ -53,7 +53,7 @@ class _BillPageState extends State<BillPage> {
             title: Center(
                 child: InkWell(
               onTap: () => {
-                // orderController.deleteOrdersAndDetails(), orderController.deleteBills()
+                orderController.deleteOrdersAndDetails(), orderController.deleteBills()
               },
               child: const Text(
                 "QUẢN LÝ HÓA ĐƠN",

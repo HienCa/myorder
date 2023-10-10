@@ -308,11 +308,10 @@ class FoodController extends GetxController {
           downloadUrl = await _uploadToStorage(image);
         }
 
-        var allDocs = await firestore.collection('foods').get();
-        int len = allDocs.docs.length;
+        String id = Utils.generateUUID();
         if (price_with_temporary != "") {
           model.Food Food = model.Food(
-            food_id: 'Food-$len',
+            food_id: id,
             name: name,
             image: downloadUrl,
             price: double.tryParse(price) ?? 0.0,
@@ -330,10 +329,10 @@ class FoodController extends GetxController {
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
 
-          await foodsCollection.doc('Food-$len').set(Food.toJson());
+          await foodsCollection.doc(id).set(Food.toJson());
         } else {
           model.Food Food = model.Food(
-            food_id: 'Food-$len',
+            food_id: id,
             name: name,
             image: downloadUrl,
             price: double.tryParse(price) ?? 0.0,
@@ -349,7 +348,7 @@ class FoodController extends GetxController {
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
 
-          await foodsCollection.doc('Food-$len').set(Food.toJson());
+          await foodsCollection.doc(id).set(Food.toJson());
         }
 
         Get.snackbar(

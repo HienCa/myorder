@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/discount.dart';
+import 'package:myorder/utils.dart';
 
 
 class DiscountController extends GetxController {
@@ -95,11 +96,10 @@ class DiscountController extends GetxController {
   ) async {
     try {
       if (name.isNotEmpty) {
-        var allDocs = await firestore.collection('discounts').get();
-        int len = allDocs.docs.length;
+        String id = Utils.generateUUID();
 
         Discount discount = Discount(
-          discount_id: 'Discount-$len',
+          discount_id: id,
           name: name.trim().toUpperCase(),
           active: 1,
           discount_price: double.tryParse(discount_price) ?? 0,
@@ -107,7 +107,7 @@ class DiscountController extends GetxController {
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('discounts');
 
-        await usersCollection.doc('Discount-$len').set(discount.toJson());
+        await usersCollection.doc(id).set(discount.toJson());
         Get.snackbar(
           'THÀNH CÔNG!',
           'Thêm discount mới thành công!',

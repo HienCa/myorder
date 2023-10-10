@@ -9,6 +9,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/unit.dart';
 import 'package:myorder/models/unit.dart' as model;
+import 'package:myorder/utils.dart';
 
 class UnitController extends GetxController {
   getUnitById(String unit_id) async {
@@ -73,18 +74,17 @@ class UnitController extends GetxController {
   ) async {
     try {
       if (name.isNotEmpty) {
-        var allDocs = await firestore.collection('units').get();
-        int len = allDocs.docs.length;
+        String id = Utils.generateUUID();
 
         model.Unit unit = model.Unit(
-          unit_id: 'Unit-$len',
+          unit_id: id,
           name: name.trim(),
           active: 1,
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('units');
 
-        await usersCollection.doc('Unit-$len').set(unit.toJson());
+        await usersCollection.doc(id).set(unit.toJson());
         Get.snackbar(
           'THÀNH CÔNG!',
           'Thêm đơn vị tính mới thành công!',

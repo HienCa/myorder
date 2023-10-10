@@ -9,6 +9,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/models/vat.dart' as model;
+import 'package:myorder/utils.dart';
 
 class VatController extends GetxController {
   getVatById(String vat_id) async {
@@ -98,11 +99,9 @@ class VatController extends GetxController {
   ) async {
     try {
       if (name.isNotEmpty) {
-        var allDocs = await firestore.collection('vats').get();
-        int len = allDocs.docs.length;
-
+        String id = Utils.generateUUID();
         model.Vat Vat = model.Vat(
-          vat_id: 'Vat-$len',
+          vat_id: id,
           name: name.trim().toUpperCase(),
           active: 1,
           vat_percent: int.tryParse(vat_percent) ?? 0,
@@ -110,7 +109,7 @@ class VatController extends GetxController {
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('vats');
 
-        await usersCollection.doc('Vat-$len').set(Vat.toJson());
+        await usersCollection.doc(id).set(Vat.toJson());
         Get.snackbar(
           'THÀNH CÔNG!',
           'Thêm vat mới thành công!',

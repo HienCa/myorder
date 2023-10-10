@@ -9,6 +9,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/Area.dart';
 import 'package:myorder/models/Area.dart' as model;
+import 'package:myorder/utils.dart';
 
 class AreaController extends GetxController {
   getAreaById(String area_id) async {
@@ -101,18 +102,17 @@ class AreaController extends GetxController {
             colorText: Colors.white,
           );
         } else {
-          var allDocs = await firestore.collection('areas').get();
-          int len = allDocs.docs.length;
+          String id = Utils.generateUUID();
 
           model.Area Area = model.Area(
-            area_id: 'Area-$len',
+            area_id: id,
             name: name.trim().toUpperCase(),
             active: 1,
           );
           CollectionReference usersCollection =
               FirebaseFirestore.instance.collection('areas');
 
-          await usersCollection.doc('Area-$len').set(Area.toJson());
+          await usersCollection.doc(id).set(Area.toJson());
           Get.snackbar(
             'THÀNH CÔNG!',
             'Thêm đơn vị tính mới thành công!',

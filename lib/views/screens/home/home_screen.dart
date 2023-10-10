@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/bills/bills_controller.dart';
+import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/controllers/reports/reports_controller.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,6 +14,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  ReportController reportController = Get.put(ReportController());
+ @override
+  void initState() {
+    super.initState();
+    reportController.getOrders();
+    reportController.getBills();
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,15 +48,17 @@ class _HomePageState extends State<HomePage> {
                         style: textStyleTitleGrayBold20),
                   ),
                 ),
-                const ListTile(
-                  title:
-                      Text("Đã thanh toán", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingSuccessRegular16),
+                ListTile(
+                  title: const Text("Đã thanh toán",
+                      style: textStyleTitleGrayRegular16),
+                  trailing: Text("${reportController.numberOfOrder}",
+                      style: textStyleTrailingSuccessRegular16),
                 ),
-                const ListTile(
-                  title:
-                      Text("Đang phục vụ", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+                ListTile(
+                  title: const Text("Đang phục vụ",
+                      style: textStyleTitleGrayRegular16),
+                  trailing: Text("${reportController.numberOfBills}",
+                      style: textStyleTrailingPrimaryRegular16),
                 ),
                 Container(
                   height: 10,

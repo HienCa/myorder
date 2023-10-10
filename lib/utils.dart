@@ -4,10 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:myorder/models/food_order.dart';
 import 'package:myorder/models/order_detail.dart';
-
+import 'package:uuid/uuid.dart';
 //Các phương phức hay dùng
 class Utils {
-
+  //Tạo id
+  static String generateUUID() {
+    const uuid = Uuid();
+    return uuid.v4();
+  }
 
   //
   static List<Map<String, dynamic>> convertQuerySnapshotToJson(
@@ -63,6 +67,7 @@ class Utils {
     // Không có đối tượng nào được chọn
     return false;
   }
+
   static bool isAnyFoodSelected2(List<OrderDetail> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {

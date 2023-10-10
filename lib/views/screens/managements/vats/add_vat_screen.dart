@@ -181,9 +181,9 @@ class _AddVatPageState extends State<AddVatPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
-                                    if (!isErrorTextName &&
-                                        nameController.text != "" &&
-                                        vatPercentController.text != "0")
+                                    if (
+                                        nameController.text.trim().length > minlength2 && nameController.text.trim().length < maxlength50 &&
+                                        int.tryParse(vatPercentController.text)! > 0 && int.tryParse(vatPercentController.text)! <= 100)
                                       {
                                         vatController.createVat(
                                           nameController.text,

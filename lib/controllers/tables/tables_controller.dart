@@ -10,6 +10,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/models/area.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/models/order.dart' as order;
+import 'package:myorder/utils.dart';
 
 class TableController extends GetxController {
   getTableById(String table_id) async {
@@ -444,11 +445,10 @@ class TableController extends GetxController {
             colorText: Colors.white,
           );
         } else {
-          var allDocs = await firestore.collection('tables').get();
-          int len = allDocs.docs.length;
+          String id = Utils.generateUUID();
 
           model.Table Table = model.Table(
-            table_id: 'Table-$len',
+            table_id: id,
             name: name.trim().toUpperCase(),
             active: ACTIVE,
             total_slot: int.tryParse(total_slot) ?? 0,
@@ -458,7 +458,7 @@ class TableController extends GetxController {
           CollectionReference usersCollection =
               FirebaseFirestore.instance.collection('tables');
 
-          await usersCollection.doc('Table-$len').set(Table.toJson());
+          await usersCollection.doc(id).set(Table.toJson());
           Get.snackbar(
             'THÀNH CÔNG!',
             'Thêm đơn vị tính mới thành công!',
