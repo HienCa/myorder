@@ -674,9 +674,9 @@ class OrderController extends GetxController {
             .doc(id)
             .collection("orderDetails")
             .get();
-        String idDetail = Utils.generateUUID();
 
         for (OrderDetail orderDetail in orderDetailList) {
+          String idDetail = Utils.generateUUID();
           orderDetail.order_detail_id = idDetail;
           //nếu là món tặng -> không tính tiền món ăn
           if (isGift) {
@@ -691,7 +691,6 @@ class OrderController extends GetxController {
               .collection("orderDetails")
               .doc(idDetail)
               .set(orderDetail.toJson());
-
         }
 
         // cập nhật trạng thái don hang empty -> serving
@@ -714,9 +713,10 @@ class OrderController extends GetxController {
             .get();
 
         print(order_id);
-        String idDetail = Utils.generateUUID();
 
         for (OrderDetail orderDetail in orderDetailList) {
+          String idDetail = Utils.generateUUID();
+
           orderDetail.order_detail_id = idDetail;
 
           await firestore
@@ -725,8 +725,6 @@ class OrderController extends GetxController {
               .collection("orderDetails")
               .doc(idDetail)
               .set(orderDetail.toJson());
-
-
         }
       }
       Get.snackbar(
@@ -1177,9 +1175,10 @@ class OrderController extends GetxController {
               .doc(id)
               .collection("orderDetails")
               .get();
-         String idDetail = Utils.generateUUID();
 
           for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
+            String idDetail = Utils.generateUUID();
+
             orderDetail.order_detail_id = idDetail;
             if (orderDetail.isSelected) {
               await firestore
@@ -1214,9 +1213,10 @@ class OrderController extends GetxController {
               .get();
 
           print(order_id);
-          String idDetail = Utils.generateUUID();
 
           for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
+            String idDetail = Utils.generateUUID();
+
             orderDetail.order_detail_id = idDetail;
             if (orderDetail.isSelected) {
               await firestore
@@ -1225,7 +1225,6 @@ class OrderController extends GetxController {
                   .collection("orderDetails")
                   .doc(idDetail)
                   .set(orderDetail.toJson());
-
             }
           }
         }

@@ -38,15 +38,15 @@ class FoodController extends GetxController {
   }
 
   // upload to firebase storage
-  Future<String> _uploadToStorage(File image) async {
-    Reference ref = firebaseStorage.ref().child('profilePics');
-    // .child(firebaseAuth.currentUser!.uid);
+ Future<String> _uploadToStorage(File image) async {
+  String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}'; 
+  Reference ref = firebaseStorage.ref().child('profilePics/$fileName');
 
-    UploadTask uploadTask = ref.putFile(image);
-    TaskSnapshot snap = await uploadTask;
-    String downloadUrl = await snap.ref.getDownloadURL();
-    return downloadUrl;
-  }
+  UploadTask uploadTask = ref.putFile(image);
+  TaskSnapshot snap = await uploadTask;
+  String downloadUrl = await snap.ref.getDownloadURL();
+  return downloadUrl;
+}
 
   getFoodById(String foodId) async {
     try {

@@ -108,7 +108,7 @@ class _ManagementAreaTablePageState extends State<ManagementAreaTablePage> {
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
+                            height: MediaQuery.of(context).size.height * 0.55,
                             child: ResponsiveGridList(
                                 desiredItemWidth: 100,
                                 minSpacing: 10,
@@ -239,7 +239,7 @@ class _ManagementAreaTablePageState extends State<ManagementAreaTablePage> {
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.7,
+                            height: MediaQuery.of(context).size.height * 0.5,
                             child: ResponsiveGridList(
                                 desiredItemWidth: 100,
                                 minSpacing: 10,
