@@ -127,6 +127,7 @@ class BillController extends GetxController {
               if (orderCollection.exists) {
                 final orderData = orderCollection.data();
                 if (orderData != null && orderData is Map<String, dynamic>) {
+                  String order_code = orderData['order_code'] ?? '';
                   String employee_id = orderData['employee_id'] ?? '';
                   String table_id = orderData['table_id'] ?? '';
                   int order_status = orderData['order_status'] ?? '';
@@ -137,6 +138,7 @@ class BillController extends GetxController {
                   String discount_id = orderData['discount_id'] ?? '';
                   List table_merge_names = orderData['table_merge_names'] ?? [];
                   List table_merge_ids = orderData['table_merge_ids'] ?? [];
+                  bill.order!.order_code = order_code;
                   bill.order!.employee_id = employee_id;
                   bill.order!.table_id = table_id;
                   bill.order!.order_status = order_status;

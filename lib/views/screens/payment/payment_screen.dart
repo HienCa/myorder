@@ -94,7 +94,7 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         title: Center(
             child: Text(
-                "#${widget.order.order_id} - ${widget.order.table!.name}")),
+                "#${widget.order.order_code} - ${widget.order.table!.name}")),
         backgroundColor: primaryColor,
       ),
       body: Column(
@@ -156,7 +156,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     ),
                     const SizedBox(width: 20),
                     Text(
-                      "#${widget.order.order_id}",
+                      "#${widget.order.order_code}",
                       style: textStyleBlackRegular,
                     )
                   ],

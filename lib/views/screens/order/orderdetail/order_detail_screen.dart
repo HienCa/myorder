@@ -57,7 +57,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
         ),
         title: Center(
             child: Text(
-                "#${widget.order.order_id} - ${widget.order.table!.name}")),
+                "#${widget.order.order_code} - ${widget.order.table!.name}")),
         backgroundColor: primaryColor,
       ),
       body: Column(

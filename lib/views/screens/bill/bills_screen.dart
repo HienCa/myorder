@@ -359,8 +359,8 @@ class _BillPageState extends State<BillPage> {
                                                         Icons.abc_outlined,
                                                         color: iconColor),
                                                     marginRight10,
-                                                    Text(billController
-                                                        .bills[index].order_id),
+                                                    Text("#${billController
+                                                        .bills[index].order!.order_code}"),
                                                   ]),
                                                 ),
                                                 SizedBox(

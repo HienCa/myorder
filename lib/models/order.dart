@@ -6,6 +6,7 @@ import 'package:myorder/models/table.dart';
 
 class Order {
   String order_id;
+  String order_code;
   String vat_id;
   String discount_id;
   String? vat_name;
@@ -22,11 +23,12 @@ class Order {
   String table_id;
   Table? table;
   List<OrderDetail> order_details = [];
-  double? total_amount = 0;
+  double total_amount = 0;
   List table_merge_ids = [];
   List table_merge_names = [];
   Order({
     required this.order_id,
+    required this.order_code,
     required this.order_status,
     this.note,
     required this.create_at,
@@ -35,7 +37,7 @@ class Order {
     required this.employee_id,
     this.employee_name,
     required this.table_id,
-    this.total_amount,
+    required this.total_amount,
     this.table,
     required this.vat_id,
     required this.discount_id,
@@ -44,16 +46,19 @@ class Order {
   });
   Order.empty()
       : order_id = '',
+        order_code = '',
         vat_id = '',
         discount_id = '',
         order_status = 0,
+        total_amount = 0,
         create_at = Timestamp.now(),
-        active = 0,
+        active = 1,
         employee_id = '',
         table_id = '', table_merge_ids = [], table_merge_names = [];
 
   Map<String, dynamic> toJson() => {
         "order_id": order_id,
+        "order_code": order_code,
         "order_status": order_status,
         "note": note,
         "create_at": create_at,
@@ -72,6 +77,8 @@ class Order {
 
     return Order(
       order_id: snapshot['order_id'],
+      order_code: snapshot['order_code'],
+      total_amount: snapshot['total_amount'],
       order_status: snapshot['order_status'],
       note: snapshot['note'],
       create_at: snapshot['create_at'],

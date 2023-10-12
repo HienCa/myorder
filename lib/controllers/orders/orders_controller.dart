@@ -461,7 +461,9 @@ class OrderController extends GetxController {
       vat_id: '',
       discount_id: '',
       table_merge_ids: [],
-      table_merge_names: []));
+      table_merge_names: [],
+      order_code: '',
+      total_amount: 0));
 
   //lấy 1 order
   model.Order get orderDetail => _orderDetail.value;
@@ -484,7 +486,9 @@ class OrderController extends GetxController {
               vat_id: '',
               discount_id: '',
               table_merge_ids: [],
-              table_merge_names: []);
+              table_merge_names: [],
+              order_code: '',
+              total_amount: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -662,6 +666,8 @@ class OrderController extends GetxController {
           active: 1,
           table_merge_ids: [],
           table_merge_names: [],
+          order_code: id.substring(0, 8),
+          total_amount: 0,
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('orders');
@@ -674,8 +680,9 @@ class OrderController extends GetxController {
             .doc(id)
             .collection("orderDetails")
             .get();
-
+        double totalAmount = 0;
         for (OrderDetail orderDetail in orderDetailList) {
+          totalAmount += orderDetail.price;
           String idDetail = Utils.generateUUID();
           orderDetail.order_detail_id = idDetail;
           //nếu là món tặng -> không tính tiền món ăn
@@ -692,7 +699,10 @@ class OrderController extends GetxController {
               .doc(idDetail)
               .set(orderDetail.toJson());
         }
-
+        // cập nhật tổng tiền cho order
+        await firestore.collection('orders').doc(id).update({
+          "total_amount": totalAmount, 
+        });
         // cập nhật trạng thái don hang empty -> serving
         await firestore.collection('tables').doc(table_id).update({
           "status": TABLE_STATUS_SERVING, // đang phục vụ
@@ -1068,7 +1078,9 @@ class OrderController extends GetxController {
     try {
       print("===========================TÁCH MÓN=========================");
       if (orderDetailNeedSplitArray.isNotEmpty && targetTable.table_id != "") {
+        double totalAmountSplit = 0;
         for (int i = 0; i < orderDetailNeedSplitArray.length; i++) {
+          totalAmountSplit += orderDetailNeedSplitArray[i].price;//tiền món muốn tách
           if (orderDetailNeedSplitArray[i].isSelected) {
             print(orderDetailNeedSplitArray[i]);
             // Lấy thông tin order detail của phần tử thứ i
@@ -1137,6 +1149,10 @@ class OrderController extends GetxController {
             }
           }
         }
+        // cập nhật lại tổng tiền cho order
+        await firestore.collection('orders').doc(order.order_id).update({
+          "total_amount": totalAmountSplit, 
+        });
 
         //kiểm tra xem don hang đã được order chưa
         var tableOrdered = await firestore
@@ -1163,6 +1179,8 @@ class OrderController extends GetxController {
             active: 1,
             table_merge_ids: [],
             table_merge_names: [],
+            order_code: id.substring(0, 8),
+            total_amount: 0,
           );
           CollectionReference usersCollection =
               FirebaseFirestore.instance.collection('orders');
