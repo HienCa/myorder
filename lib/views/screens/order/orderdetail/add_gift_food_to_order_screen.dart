@@ -413,7 +413,7 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                   quantity: foodOrder.quantity!,
                                   food_status: FOOD_STATUS_IN_CHEFT,
                                   food_id: foodOrder.food_id,
-                                  is_gift: false,
+                                  is_gift: false, category_id: '', category_code: foodOrder.category_code,
                                 );
 
                                 orderDetailList.add(orderDetail);

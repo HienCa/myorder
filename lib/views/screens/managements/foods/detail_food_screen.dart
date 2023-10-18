@@ -345,7 +345,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         categoryOptions = categories;
         selectedCategoryValue = categoryList.firstWhere(
           (category) => category.category_id == widget.food.category_id,
-          orElse: () => model.Category(category_id: "", name: "", active: 1),
+          orElse: () => model.Category(category_id: "", name: "", active: 1, category_code: CATEGORY_ALL),
         );
       });
     });
@@ -443,7 +443,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   // get Categories
   List<model.Category> categoryOptions = List.empty();
   model.Category categoryFirstOption =
-      model.Category(category_id: "", name: "titleCategory", active: 1);
+      model.Category(category_id: "", name: "titleCategory", active: 1, category_code: CATEGORY_ALL);
   bool isErrorTextCategoryId = false;
   model.Category? selectedCategoryValue;
   List<model.Category> categoryList = [];

@@ -36,6 +36,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   void initState() {
     super.initState();
     orderController.getOrderDetailById(widget.order);
+    orderController.getTotalAmountById(widget.order);
 
     discountController.getActiveDiscounts();
     vatController.getActiveVats();
@@ -44,6 +45,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   int selectedIndex = 0;
   bool isChecked = false;
   List<OrderDetail> orderDetailNeedSplitArray = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,9 +90,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                   )),
                   Center(child: Obx(() {
                     return Text(
-                        Utils.formatCurrency(
-                            orderController.orderDetail.total_amount ??
-                                widget.order.total_amount),
+                        Utils.formatCurrency(orderController.order.total_amount),
                         style: textStylePriceBold20);
                   }))
                 ],
@@ -192,12 +192,12 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                 () async {
                                                   orderController
                                                       .cancelFoodByOrder(
-                                                          widget.order.order_id,
+                                                          context,
+                                                          widget.order,
                                                           orderController
-                                                              .orderDetail
-                                                              .order_details[
-                                                                  index]
-                                                              .order_detail_id);
+                                                                  .orderDetail
+                                                                  .order_details[
+                                                              index]);
                                                 },
                                               ),
                                               print("YÊU CẦU HỦY MÓN"),

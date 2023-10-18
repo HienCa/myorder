@@ -58,7 +58,6 @@ class OrderController extends GetxController {
                   .collection('orderDetails');
 
               // Tính tổng số tiền cho đơn hàng
-              double totalAmount = 0;
               List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
               var orderDetailQuery = await orderDetailCollection.get();
               for (var doc in orderDetailQuery.docs) {
@@ -73,26 +72,21 @@ class OrderController extends GetxController {
                   if (foodData != null && foodData is Map<String, dynamic>) {
                     String food_name = foodData['name'] ?? '';
                     String image = foodData['image'] ?? '';
+                    String category_id = foodData['category_id'] ?? '';
 
                     orderDetail.food = FoodOrderDetail(
                         food_id: orderDetail.food_id,
                         name: food_name,
-                        image: image);
+                        image: image,
+                        category_id: category_id);
                     print(food_name);
                   }
                 }
                 orderDetails.add(orderDetail);
                 //không tính món đã hủy
-
-                if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
-                  totalAmount += orderDetail.price * orderDetail.quantity;
-                }
               }
-              print(orderDetails);
-              print(totalAmount);
-              order.total_amount = totalAmount;
 
-              if (order.total_amount! < 0) {
+              if (order.total_amount < 0) {
                 order.total_amount = 0;
               }
               order.order_details = orderDetails; // danh sách chi tiết đơn hàng
@@ -165,7 +159,6 @@ class OrderController extends GetxController {
                   .collection('orderDetails');
 
               // Tính tổng số tiền cho đơn hàng
-              double totalAmount = 0;
               List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
               var orderDetailQuery = await orderDetailCollection.get();
               for (var doc in orderDetailQuery.docs) {
@@ -180,26 +173,21 @@ class OrderController extends GetxController {
                   if (foodData != null && foodData is Map<String, dynamic>) {
                     String food_name = foodData['name'] ?? '';
                     String image = foodData['image'] ?? '';
+                    String category_id = foodData['category_id'] ?? '';
 
                     orderDetail.food = FoodOrderDetail(
                         food_id: orderDetail.food_id,
                         name: food_name,
-                        image: image);
+                        image: image,
+                        category_id: category_id);
                     print(food_name);
                   }
                 }
                 orderDetails.add(orderDetail);
-                //không tính món đã hủy
-
-                if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
-                  totalAmount += orderDetail.price * orderDetail.quantity;
-                }
               }
-              print(orderDetails);
-              print(totalAmount);
-              order.total_amount = totalAmount;
+
               order.order_details = orderDetails; // danh sách chi tiết đơn hàng
-              if (order.total_amount! < 0) {
+              if (order.total_amount < 0) {
                 order.total_amount = 0;
               }
               // lấy tên bàn, tên bàn đã gộp
@@ -276,7 +264,6 @@ class OrderController extends GetxController {
                 .collection('orderDetails');
 
             // Tính tổng số tiền cho đơn hàng
-            double totalAmount = 0;
             List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
             var orderDetailQuery = await orderDetailCollection.get();
             for (var doc in orderDetailQuery.docs) {
@@ -291,26 +278,21 @@ class OrderController extends GetxController {
                 if (foodData != null && foodData is Map<String, dynamic>) {
                   String food_name = foodData['name'] ?? '';
                   String image = foodData['image'] ?? '';
+                  String category_id = foodData['category_id'] ?? '';
 
                   orderDetail.food = FoodOrderDetail(
                       food_id: orderDetail.food_id,
                       name: food_name,
-                      image: image);
+                      image: image,
+                      category_id: category_id);
                   print(food_name);
                 }
               }
               orderDetails.add(orderDetail);
-              //không tính món đã hủy
-
-              if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
-                totalAmount += orderDetail.price * orderDetail.quantity;
-              }
             }
-            print(orderDetails);
-            print(totalAmount);
-            order.total_amount = totalAmount;
+
             order.order_details = orderDetails; // danh sách chi tiết đơn hàng
-            if (order.total_amount! < 0) {
+            if (order.total_amount < 0) {
               order.total_amount = 0;
             }
             // lấy tên bàn, tên bàn đã gộp
@@ -382,7 +364,6 @@ class OrderController extends GetxController {
                 .collection('orderDetails');
 
             // Tính tổng số tiền cho đơn hàng
-            double totalAmount = 0;
             List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
             var orderDetailQuery = await orderDetailCollection.get();
             for (var doc in orderDetailQuery.docs) {
@@ -398,27 +379,22 @@ class OrderController extends GetxController {
                 if (foodData != null && foodData is Map<String, dynamic>) {
                   String food_name = foodData['name'] ?? '';
                   String image = foodData['image'] ?? '';
+                  String category_id = foodData['category_id'] ?? '';
 
                   orderDetail.food = FoodOrderDetail(
                       food_id: orderDetail.food_id,
                       name: food_name,
-                      image: image);
+                      image: image,
+                      category_id: category_id);
                   print(food_name);
                 }
               }
 
               orderDetails.add(orderDetail);
-              //không tính món đã hủy
-
-              if (orderDetail.food_status != FOOD_STATUS_CANCEL) {
-                totalAmount += orderDetail.price * orderDetail.quantity;
-              }
             }
-            print(orderDetails);
-            print(totalAmount);
-            order.total_amount = totalAmount;
+
             order.order_details = orderDetails; // danh sách chi tiết đơn hàng
-            if (order.total_amount! < 0) {
+            if (order.total_amount < 0) {
               order.total_amount = 0;
             }
             // lấy tên bàn, tên bàn đã gộp
@@ -451,6 +427,34 @@ class OrderController extends GetxController {
     }
   }
 
+  //Tổng hóa đơn
+  //lấy thông tin chi tiết
+
+  final Rx<model.Order> _order = Rx<model.Order>(model.Order.empty());
+
+  //lấy 1 order
+
+  model.Order get order => _order.value;
+  getTotalAmountById(model.Order order) async {
+    _order.bindStream(
+      firestore
+          .collection('orders')
+          .where('order_id', isEqualTo: order.order_id)
+          .snapshots()
+          .asyncMap(
+        (QuerySnapshot query) async {
+          model.Order order = model.Order.empty();
+          for (var element in query.docs) {
+            order = model.Order.fromSnap(element); // map đơn hàng chi tiết
+          }
+          return order;
+        },
+      ),
+    );
+  }
+
+  //lấy thông tin chi tiết
+
   final Rx<model.Order> _orderDetail = Rx<model.Order>(model.Order(
       order_id: '',
       order_status: 0,
@@ -458,14 +462,23 @@ class OrderController extends GetxController {
       active: 1,
       employee_id: '',
       table_id: '',
-      vat_id: '',
-      discount_id: '',
       table_merge_ids: [],
       table_merge_names: [],
       order_code: '',
-      total_amount: 0));
+      total_amount: 0,
+      is_vat: 0,
+      discount_amount_all: 0,
+      discount_amount_food: 0,
+      discount_amount_drink: 0,
+      discount_reason: '',
+      is_discount: 0,
+      total_vat_amount: 0,
+      total_discount_amount: 0,
+      discount_percent: 0,
+      discount_amount_other: 0));
 
   //lấy 1 order
+
   model.Order get orderDetail => _orderDetail.value;
   getOrderDetailById(model.Order order) async {
     _orderDetail.bindStream(
@@ -483,12 +496,20 @@ class OrderController extends GetxController {
               active: 1,
               employee_id: '',
               table_id: '',
-              vat_id: '',
-              discount_id: '',
               table_merge_ids: [],
               table_merge_names: [],
               order_code: '',
-              total_amount: 0);
+              total_amount: 0,
+              is_vat: 0,
+              discount_amount_all: 0,
+              discount_amount_food: 0,
+              discount_amount_drink: 0,
+              discount_reason: '',
+              is_discount: 0,
+              total_vat_amount: 0,
+              total_discount_amount: 0,
+              discount_percent: 0,
+              discount_amount_other: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -500,7 +521,6 @@ class OrderController extends GetxController {
           }
           retValue.order_details = orderDetails;
           // Tính tổng số tiền cho đơn hàng
-          double totalAmount = 0;
           for (int i = 0; i < orderDetails.length; i++) {
             // lấy thông tin của món ăn
             DocumentSnapshot foodCollection = await firestore
@@ -512,24 +532,28 @@ class OrderController extends GetxController {
               if (foodData != null && foodData is Map<String, dynamic>) {
                 String food_name = foodData['name'] ?? '';
                 String image = foodData['image'] ?? '';
+                String category_id = foodData['category_id'] ?? '';
 
                 retValue.order_details[i].food = FoodOrderDetail(
                     food_id: orderDetails[i].food_id,
                     name: food_name,
-                    image: image);
+                    image: image,
+                    category_id: category_id);
                 print(food_name);
               }
             }
-            //không tính món đã hủy
-            if (retValue.order_details[i].food_status != FOOD_STATUS_CANCEL) {
-              totalAmount += retValue.order_details[i].price *
-                  retValue.order_details[i].quantity;
+          }
+          DocumentSnapshot orderCollection =
+              await firestore.collection('orders').doc(order.order_id).get();
+          if (orderCollection.exists) {
+            final orderData = orderCollection.data();
+            if (orderData != null && orderData is Map<String, dynamic>) {
+              double total_amount = orderData['total_amount'] ?? 0;
+              retValue.total_amount = total_amount;
+              print(total_amount);
             }
           }
 
-          print(orderDetails);
-          print(totalAmount);
-          retValue.total_amount = totalAmount; // tính tổng tiền
           // lấy tên bàn, tên bàn đã gộp
           DocumentSnapshot tableCollection =
               await firestore.collection('tables').doc(order.table_id).get();
@@ -569,68 +593,6 @@ class OrderController extends GetxController {
               }
             }
           }
-          print("Nhân viên order: ${order.employee_name}");
-
-          int vat_percent = 0; // vat được áp dụng
-          // lấy thông tin thuế
-          if (order.vat_id != "") {
-            DocumentSnapshot vatCollection =
-                await firestore.collection('vats').doc(order.vat_id).get();
-            if (vatCollection.exists) {
-              final vatData = vatCollection.data();
-              if (vatData != null && vatData is Map<String, dynamic>) {
-                String name = vatData['name'] ?? '';
-                vat_percent = vatData['vat_percent'] ?? 0; // lấy % vat
-                retValue.vat_name = name;
-              }
-            }
-          }
-          print(order.vat_id);
-          print("VAT đã áp dụng: ${retValue.vat_name} - $vat_percent");
-
-          // lấy thông tin giảm giá
-          double discount_price = 0; // giảm giá được áp dụng
-          if (order.discount_id != "") {
-            DocumentSnapshot discountCollection = await firestore
-                .collection('discounts')
-                .doc(order.discount_id)
-                .get();
-
-            if (discountCollection.exists) {
-              final discountData = discountCollection.data();
-              if (discountData != null &&
-                  discountData is Map<String, dynamic>) {
-                String name = discountData['name'] ?? '';
-                discount_price = discountData['discount_price'] ?? 0;
-                retValue.discount_name = name;
-              }
-            }
-          }
-          print(order.discount_id);
-          print(
-              "DISCOUNT đã áp dụng: ${retValue.discount_name} - $discount_price");
-
-          print("Tổng tiền ban đầu: ${retValue.total_amount}");
-
-          //TỔNG HÓA ĐƠN CẦN THANH TOÁN:
-          //totalAmount: tổng tiền hóa đơn
-          //vat_percent: phần trăm thuế được áp dụng
-          //vat_price: tiền thuế được áp dụng
-          //discount_price: giảm giá được áp dụng
-
-          double vat_price = (totalAmount * vat_percent) / 100;
-          totalAmount = totalAmount - discount_price + vat_price;
-
-          retValue.total_vat_amount = vat_price;
-          retValue.total_discount_amount = discount_price;
-
-          retValue.total_amount = totalAmount;
-
-          if (retValue.total_amount! < 0) {
-            retValue.total_amount = 0;
-          }
-          print("Tổng tiền sau discount - vat: ${retValue.total_amount}");
-
           return retValue;
         },
       ),
@@ -661,13 +623,21 @@ class OrderController extends GetxController {
           note: "",
           create_at: Timestamp.fromDate(DateTime.now()),
           payment_at: null,
-          vat_id: '',
-          discount_id: '',
+          is_vat: 0,
+          discount_amount_all: 0,
+          discount_amount_food: 0,
+          discount_amount_drink: 0,
           active: 1,
           table_merge_ids: [],
           table_merge_names: [],
           order_code: id.substring(0, 8),
           total_amount: 0,
+          discount_reason: '',
+          is_discount: 0,
+          total_vat_amount: 0,
+          total_discount_amount: 0,
+          discount_percent: 0,
+          discount_amount_other: 0,
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('orders');
@@ -701,7 +671,7 @@ class OrderController extends GetxController {
         }
         // cập nhật tổng tiền cho order
         await firestore.collection('orders').doc(id).update({
-          "total_amount": totalAmount, 
+          "total_amount": totalAmount,
         });
         // cập nhật trạng thái don hang empty -> serving
         await firestore.collection('tables').doc(table_id).update({
@@ -761,36 +731,31 @@ class OrderController extends GetxController {
   //HỦY MÓN
   cancelFoodByOrder(
     // cung cấp order detail id (đại diện cho món ăn) thuộc order nào
-
-    String order_id,
-    String order_detail_id,
+    BuildContext context,
+    model.Order order,
+    OrderDetail orderDetail,
   ) async {
     try {
-      if (order_id != "" && order_detail_id != "") {
+      if (order.order_id != "" && orderDetail.order_detail_id != "") {
         // cho order detail (món ăn) về trạng thái hủy
         await firestore
             .collection('orders')
-            .doc(order_id)
+            .doc(order.order_id)
             .collection('orderDetails')
-            .doc(order_detail_id)
+            .doc(orderDetail.order_detail_id)
             .update({
           "food_status": FOOD_STATUS_CANCEL,
+        }).then((_) async {
+          await firestore.collection('orders').doc(order.order_id).update({
+            "total_amount": order.total_amount - orderDetail.price,
+          });
         });
+
         update();
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Hủy món thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+        Utils.showSuccessFlushbar(context, '', 'Hủy món thành công!');
       }
     } catch (e) {
-      Get.snackbar(
-        'Hủy món thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Hủy món thất bại!');
     }
   }
 
@@ -826,20 +791,11 @@ class OrderController extends GetxController {
         update();
 
         Navigator.pop(context);
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Hủy đơn hàng thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+
+        Utils.showSuccessFlushbar(context, '', 'Hủy đơn hàng thành công!');
       }
     } catch (e) {
-      Get.snackbar(
-        'Hủy đơn hàng thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Hủy đơn hàng thất bại!');
     }
   }
 
@@ -872,30 +828,15 @@ class OrderController extends GetxController {
             "status": TABLE_STATUS_SERVING, // cập nhật lại trạng thái bàn mới
           });
           update();
-          Get.snackbar(
-            'THÀNH CÔNG!',
-            'Chuyển bàn thành công!',
-            backgroundColor: backgroundSuccessColor,
-            colorText: Colors.white,
-          );
+          Utils.showSuccessFlushbar(context, '', 'Chuyển bàn thành công!');
         } else {
-          Get.snackbar(
-            'Chuyển bàn thất bại!',
-            'Bàn này đang được phục vụ, vui lòng chọn bàn khác!',
-            backgroundColor: backgroundFailureColor,
-            colorText: Colors.white,
-          );
+          Utils.showErrorFlushbar(context, '', 'Chuyển bàn thất bại!');
         }
 
         Navigator.pop(context);
       }
     } catch (e) {
-      Get.snackbar(
-        'Chuyển bàn thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Chuyển bàn thất bại!');
     }
   }
 
@@ -969,19 +910,9 @@ class OrderController extends GetxController {
                     "table_merge_names": FieldValue.arrayUnion(tableNames),
                   });
                 }).then((_) {
-                  Get.snackbar(
-                    'Thành công!',
-                    'Gộp bàn thành công',
-                    backgroundColor: backgroundSuccessColor,
-                    colorText: Colors.white,
-                  );
+                  Utils.showSuccessFlushbar(context, '', 'Gộp bàn thành công!');
                 }).catchError((error) {
-                  Get.snackbar(
-                    'Gộp bàn thất bại!',
-                    'Vui lòng kiểm tra lại các bàn cần gộp!',
-                    backgroundColor: backgroundFailureColor,
-                    colorText: Colors.white,
-                  );
+                  Utils.showErrorFlushbar(context, '', 'Gộp bàn thất bại!');
                 });
               }
             } else {
@@ -992,12 +923,7 @@ class OrderController extends GetxController {
           }
         } else {
           print("Tất cả các bàn cần gộp không còn trống");
-          Get.snackbar(
-            'Gộp bàn thất bại!',
-            'Tất cả các bàn cần gộp không còn trống!',
-            backgroundColor: backgroundFailureColor,
-            colorText: Colors.white,
-          );
+          Utils.showErrorFlushbar(context, '', 'Gộp bàn thất bại!');
         }
 
         Navigator.pop(context);
@@ -1041,19 +967,9 @@ class OrderController extends GetxController {
                 TABLE_STATUS_EMPTY, // cập nhật trạng thái bàn trống sau khi không còn gộp
           });
 
-          Get.snackbar(
-            'THÀNH CÔNG!',
-            'Hủy gộp bàn thành công.',
-            backgroundColor: backgroundSuccessColor,
-            colorText: Colors.white,
-          );
+          Utils.showSuccessFlushbar(context, '', 'Hủy gộp bàn thành công!');
         } else {
-          Get.snackbar(
-            'THẤT BẠI!',
-            'Hủy gộp bàn thất bại.',
-            backgroundColor: backgroundSuccessColor,
-            colorText: Colors.white,
-          );
+          Utils.showErrorFlushbar(context, '', 'Hủy gộp bàn thất bại!');
         }
 
         Navigator.pop(context);
@@ -1080,7 +996,8 @@ class OrderController extends GetxController {
       if (orderDetailNeedSplitArray.isNotEmpty && targetTable.table_id != "") {
         double totalAmountSplit = 0;
         for (int i = 0; i < orderDetailNeedSplitArray.length; i++) {
-          totalAmountSplit += orderDetailNeedSplitArray[i].price;//tiền món muốn tách
+          totalAmountSplit +=
+              orderDetailNeedSplitArray[i].price; //tiền món muốn tách
           if (orderDetailNeedSplitArray[i].isSelected) {
             print(orderDetailNeedSplitArray[i]);
             // Lấy thông tin order detail của phần tử thứ i
@@ -1151,7 +1068,7 @@ class OrderController extends GetxController {
         }
         // cập nhật lại tổng tiền cho order
         await firestore.collection('orders').doc(order.order_id).update({
-          "total_amount": totalAmountSplit, 
+          "total_amount": totalAmountSplit,
         });
 
         //kiểm tra xem don hang đã được order chưa
@@ -1174,13 +1091,21 @@ class OrderController extends GetxController {
             note: "",
             create_at: Timestamp.fromDate(DateTime.now()),
             payment_at: null,
-            vat_id: '',
-            discount_id: '',
+            is_vat: 0,
+            discount_amount_all: 0,
+            discount_amount_food: 0,
+            discount_amount_drink: 0,
             active: 1,
             table_merge_ids: [],
             table_merge_names: [],
             order_code: id.substring(0, 8),
             total_amount: 0,
+            discount_reason: '',
+            is_discount: 0,
+            total_vat_amount: 0,
+            total_discount_amount: 0,
+            discount_percent: 0,
+            discount_amount_other: 0,
           );
           CollectionReference usersCollection =
               FirebaseFirestore.instance.collection('orders');
@@ -1251,126 +1176,201 @@ class OrderController extends GetxController {
         Navigator.pop(context);
       }
     } catch (e) {
-      Get.snackbar(
-        'Tách món thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Tách món thất bại!');
     }
   }
 
   //ÁP DỤNG THUẾ
   applyVat(
-    String order_id,
-    String vat_id,
+    BuildContext context,
+    model.Order order,
+    List<OrderDetail> orderDetail,
   ) async {
     try {
-      if (order_id != "") {
-        // áp dụng thuế cho đơn hàng
-        await firestore.collection('orders').doc(order_id).update({
-          "vat_id": vat_id,
+      if (order.order_id != "") {
+        double totalAmount = 0;
+        double total = 0;
+        for (OrderDetail orderDetail in orderDetail) {
+          total += orderDetail.price;
+        }
+        //Phan tram vat dua vao tong tien order detail -> khong tinh da giam gia
+
+        double vat_price = (total * VAT_PERCENT) / 100;
+        totalAmount = order.total_amount + vat_price;
+
+        // cập nhật lại tổng tiền cho order
+        await firestore.collection('orders').doc(order.order_id).update({
+          "total_amount": totalAmount,
+          "total_vat_amount": vat_price,
+          "is_vat": ACTIVE,
+        }).then((_) async {
+          Utils.showSuccessFlushbar(context, '', 'Áp dụng thành công!');
         });
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Áp dụng thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
         update();
       }
     } catch (e) {
-      Get.snackbar(
-        'Áp dụng thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Áp dụng thất bại!');
     }
   }
 
   //KHÔNG ÁP DỤNG THUẾ
   cancelVat(
-    String order_id,
+    BuildContext context,
+    model.Order order,
+    List<OrderDetail> orderDetail,
   ) async {
     try {
-      if (order_id != "") {
-        // áp dụng thuế cho đơn hàng
-        await firestore.collection('orders').doc(order_id).update({
-          "vat_id": '',
+      if (order.order_id != "") {
+        double totalAmount = 0;
+        double total = 0;
+        for (OrderDetail orderDetail in orderDetail) {
+          total += orderDetail.price;
+        }
+        //Phan tram vat dua vao tong tien order detail -> khong tinh da giam gia
+        double vat_price = (total * VAT_PERCENT) / 100;
+        totalAmount = order.total_amount - vat_price;
+
+        // cập nhật lại tổng tiền cho order
+        await firestore.collection('orders').doc(order.order_id).update({
+          "total_amount": totalAmount,
+          "total_vat_amount": 0.0,
+          "is_vat": DEACTIVE,
+        }).then((_) async {
+          Utils.showSuccessFlushbar(context, '', 'Áp dụng thành công!');
         });
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Hủy thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
         update();
       }
     } catch (e) {
-      Get.snackbar(
-        'Hủy thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Áp dụng thất bại!');
     }
   }
 
   //ÁP DỤNG GIẢM GIÁ
-  applyDiscount(
-    String order_id,
-    String discount_id,
-  ) async {
+  applyDiscount(BuildContext context, model.Order order, int category_code,
+      double discount_price, int discount_percent) async {
     try {
-      if (order_id != "") {
-        // áp dụng giảm giá và thuế cho đơn hàng
-        await firestore.collection('orders').doc(order_id).update({
-          "discount_id": discount_id,
-        });
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Hủy thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
-        update();
+      if (order.order_id != "" && order.total_amount > 0) {
+        double totalAmount = 0;
+        double total = 0;
+
+        double discount_amount_all = 0;
+        double discount_amount_food = 0;
+        double discount_amount_drink = 0;
+        double discount_amount_other = 0;
+
+        for (OrderDetail orderDetail in order.order_details) {
+          //ap dung theo danh muc: mon an - mon nuoc - mon khac
+          if (category_code == orderDetail.category_code) {
+            total += orderDetail.price;
+          } else {
+            //ap dung tat ca
+            total += orderDetail.price;
+          }
+        }
+
+        total = total < 0 ? 0 : total;
+
+        //giảm tối đa số tiền món hiện có theo danh mục
+        //vd: muốn giảm 500k theo món ăn
+        //mà món ăn trong order chỉ có 400k -> chỉ giảm tối đá
+        print(discount_price);
+        print(total);
+        print(discount_price > total);
+        if (discount_price > total) {
+          discount_price = total;
+          print("discount_price = total $total");
+        }
+
+        //tính phần trăm sẽ giảm theo loại cần giảm
+        double discount_percent_amount = (total * discount_percent) / 100;
+        print("discount_percent_amount: $discount_percent_amount");
+
+        // cập nhật số tiền áp dụng theo từng loại
+
+        if (category_code == CATEGORY_FOOD) {
+          discount_amount_food =
+              discount_price > 0 ? discount_price : discount_percent_amount;
+          print("Tổng tiền theo món ăn: $total");
+        } else if (category_code == CATEGORY_DRINK) {
+          discount_amount_drink =
+              discount_price > 0 ? discount_price : discount_percent_amount;
+          print("Tổng tiền theo món nước: $total");
+        } else if (category_code == CATEGORY_OTHER) {
+          discount_amount_other =
+              discount_price > 0 ? discount_price : discount_percent_amount;
+          print("Tổng tiền theo món khác: $total");
+        } else {
+          discount_amount_all =
+              discount_price > 0 ? discount_price : discount_percent_amount;
+        }
+
+        //tính lại tổng tiền của hóa đơn
+        print(order.total_amount);
+
+        totalAmount =
+            order.total_amount - discount_price - discount_percent_amount;
+        print("totalAmount: $totalAmount");
+
+        double total_discount_amount = 0;
+        if (discount_price > 0) {
+          total_discount_amount = discount_price;
+        } else {
+          total_discount_amount = discount_percent_amount;
+          print("total_discount_amount: $total_discount_amount");
+        }
+        if (discount_price > 0 || discount_percent > 0) {
+          // cập nhật lại tổng tiền cho order
+          await firestore.collection('orders').doc(order.order_id).update({
+            "total_amount": totalAmount,
+            "total_discount_amount": total_discount_amount,
+            "discount_percent": discount_percent,
+            "discount_amount_all": discount_amount_all,
+            "discount_amount_food": discount_amount_food,
+            "discount_amount_drink": discount_amount_drink,
+            "discount_amount_other": discount_amount_other,
+            "is_discount": ACTIVE,
+          }).then((_) async {
+            Utils.myPop(context);
+            Get.snackbar(
+              'THÀNH CÔNG!',
+              'Giảm giá thành công!',
+              backgroundColor: backgroundSuccessColor,
+              colorText: Colors.white,
+            );
+          });
+          update();
+        }
       }
     } catch (e) {
-      Get.snackbar(
-        'Hủy thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Áp dụng giảm giá thất bại!');
     }
   }
 
   //KHÔNG ÁP DỤNG GIẢM GIÁ
   cancelDiscount(
-    String order_id,
+    BuildContext context,
+    model.Order order,
+    List<OrderDetail> orderDetail,
   ) async {
     try {
-      if (order_id != "") {
-        // áp dụng giảm giá và thuế cho đơn hàng
-        await firestore.collection('orders').doc(order_id).update({
-          "discount_id": '',
-        });
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Hủy thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+      if (order.order_id != "") {
+        double totalAmount = 0;
+
+        for (OrderDetail orderDetail in orderDetail) {
+          totalAmount += orderDetail.price;
+        }
+        // huy áp dụng giảm giá và thuế cho đơn hàng
+        await firestore.collection('orders').doc(order.order_id).update({
+          "total_discount_amount": 0.0,
+          "total_amount": totalAmount + order.total_vat_amount,
+          "is_discount": DEACTIVE,
+        }).then(
+            (_) => {Utils.showSuccessFlushbar(context, '', 'Hủy thành công!')});
+
         update();
       }
     } catch (e) {
-      Get.snackbar(
-        'Hủy thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
+      Utils.showErrorFlushbar(context, '', 'Hủy thất bại!');
     }
   }
 

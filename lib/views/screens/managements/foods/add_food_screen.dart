@@ -368,8 +368,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
 
   // get Categories
   List<model.Category> categoryOptions = List.empty();
-  model.Category categoryFirstOption =
-      model.Category(category_id: "", name: "titleCategory", active: 1);
+  model.Category categoryFirstOption = model.Category(
+      category_id: "",
+      name: "titleCategory",
+      active: 1,
+      category_code: CATEGORY_ALL);
   bool isErrorTextCategoryId = false;
   model.Category? selectedCategoryValue;
   List<model.Category> categoryList = [];
@@ -1149,7 +1152,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                       : null,
                                               errorStyle: textStyleErrorInput),
                                           onChanged: (value) => {
-                                                  
                                                 if (value.isNotEmpty &&
                                                     value.startsWith('0'))
                                                   {
@@ -1175,7 +1177,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                               .text =
                                                           Utils.convertTextFieldPrice(
                                                               value); // Format price 100,000,000
-
                                                     })
                                                   }
                                                 else

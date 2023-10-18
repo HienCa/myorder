@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/bills/bills_controller.dart';
-import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/reports/reports_controller.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
 

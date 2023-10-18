@@ -7,12 +7,18 @@ import 'package:myorder/models/table.dart';
 class Order {
   String order_id;
   String order_code;
-  String vat_id;
-  String discount_id;
+  int is_vat;
+  int is_discount;
+  double discount_amount_all;
+  double discount_amount_food;
+  double discount_amount_drink;
+  double discount_amount_other;
+  String discount_reason;
+  int discount_percent;
   String? vat_name;
   String? discount_name;
-  double? total_vat_amount;
-  double? total_discount_amount;
+  double total_vat_amount;
+  double total_discount_amount;
   int order_status;
   String? note;
   Timestamp create_at;
@@ -30,6 +36,7 @@ class Order {
     required this.order_id,
     required this.order_code,
     required this.order_status,
+    required this.discount_reason,
     this.note,
     required this.create_at,
     this.payment_at,
@@ -39,26 +46,44 @@ class Order {
     required this.table_id,
     required this.total_amount,
     this.table,
-    required this.vat_id,
-    required this.discount_id,
+    required this.is_vat,
+    required this.is_discount,
+    required this.total_vat_amount,
+    required this.total_discount_amount,
+    required this.discount_amount_all,
+    required this.discount_amount_food,
+    required this.discount_amount_drink,
+    required this.discount_amount_other,
+    required this.discount_percent,
     required this.table_merge_ids,
     required this.table_merge_names,
   });
   Order.empty()
       : order_id = '',
         order_code = '',
-        vat_id = '',
-        discount_id = '',
+        discount_reason = '',
+        is_vat = 0,
+        is_discount = 0,
+        discount_amount_all = 0,
+        discount_amount_food = 0,
+        discount_amount_drink = 0,
+        discount_amount_other = 0,
+        discount_percent = 0,
+        total_vat_amount = 0,
+        total_discount_amount = 0,
         order_status = 0,
         total_amount = 0,
         create_at = Timestamp.now(),
         active = 1,
         employee_id = '',
-        table_id = '', table_merge_ids = [], table_merge_names = [];
+        table_id = '',
+        table_merge_ids = [],
+        table_merge_names = [];
 
   Map<String, dynamic> toJson() => {
         "order_id": order_id,
         "order_code": order_code,
+        "discount_reason": discount_reason,
         "order_status": order_status,
         "note": note,
         "create_at": create_at,
@@ -66,8 +91,15 @@ class Order {
         "active": active,
         "employee_id": employee_id,
         "table_id": table_id,
-        "vat_id": vat_id,
-        "discount_id": discount_id,
+        "is_vat": is_vat,
+        "is_discount": is_discount,
+        "total_vat_amount": total_vat_amount,
+        "total_discount_amount": total_discount_amount,
+        "discount_amount_all": discount_amount_all,
+        "discount_amount_drink": discount_amount_drink,
+        "discount_amount_food": discount_amount_food,
+        "discount_amount_other": discount_amount_other,
+        "discount_percent": discount_percent,
         "table_merge_ids": table_merge_ids,
         "table_merge_names": table_merge_names,
       };
@@ -78,6 +110,7 @@ class Order {
     return Order(
       order_id: snapshot['order_id'],
       order_code: snapshot['order_code'],
+      discount_reason: snapshot['discount_reason'],
       total_amount: snapshot['total_amount'],
       order_status: snapshot['order_status'],
       note: snapshot['note'],
@@ -86,8 +119,15 @@ class Order {
       active: snapshot['active'],
       employee_id: snapshot['employee_id'],
       table_id: snapshot['table_id'],
-      vat_id: snapshot['vat_id'],
-      discount_id: snapshot['discount_id'],
+      is_vat: snapshot['is_vat'],
+      is_discount: snapshot['is_discount'],
+      total_vat_amount: snapshot['total_vat_amount'],
+      total_discount_amount: snapshot['total_discount_amount'],
+      discount_amount_all: snapshot['discount_amount_all'],
+      discount_amount_food: snapshot['discount_amount_food'],
+      discount_amount_drink: snapshot['discount_amount_drink'],
+      discount_amount_other: snapshot['discount_amount_other'],
+      discount_percent: snapshot['discount_percent'],
       table_merge_ids: snapshot['table_merge_ids'],
       table_merge_names: snapshot['table_merge_names'],
     );

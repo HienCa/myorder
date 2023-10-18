@@ -318,8 +318,7 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                         child: Text(
                                           Utils.formatCurrency(orderController
-                                                  .orders[index].total_amount ??
-                                              0),
+                                                  .orders[index].total_amount ),
                                           style: textStyleWhiteBold20,
                                         ),
                                       ),

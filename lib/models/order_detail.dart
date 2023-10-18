@@ -9,6 +9,8 @@ class OrderDetail {
   int quantity;
   int food_status;
   String food_id;
+  String category_id;
+  int category_code;
   FoodOrderDetail? food;
   bool is_gift = false;
   bool isSelected = false;
@@ -18,6 +20,8 @@ class OrderDetail {
     required this.quantity,
     required this.food_status,
     required this.food_id,
+    required this.category_id,
+    required this.category_code,
     required this.is_gift,
     this.food
   });
@@ -28,6 +32,8 @@ class OrderDetail {
         "quantity": quantity,
         "food_status": food_status,
         "food_id": food_id,
+        "category_id": category_id,
+        "category_code": category_code,
         "is_gift": is_gift,
       };
 
@@ -40,6 +46,8 @@ class OrderDetail {
       quantity: snapshot['quantity'],
       food_status: snapshot['food_status'],
       food_id: snapshot['food_id'],
+      category_id: snapshot['category_id'],
+      category_code: snapshot['category_code'],
       is_gift: snapshot['is_gift'],
     );
   }

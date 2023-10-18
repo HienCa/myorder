@@ -145,8 +145,8 @@ class BillController extends GetxController {
                   bill.order!.note = note;
                   bill.order!.create_at = create_at;
                   bill.order!.payment_at = payment_at;
-                  bill.order!.vat_id = vat_id;
-                  bill.order!.discount_id = discount_id;
+                  // bill.order!.vat_id = vat_id;
+                  // bill.order!.discount_id = discount_id;
                   bill.order!.table_merge_ids = table_merge_ids;
                   bill.order!.table_merge_names = table_merge_names;
 
@@ -156,8 +156,8 @@ class BillController extends GetxController {
                   print(bill.order!.note);
                   print(bill.order!.create_at);
                   print(bill.order!.payment_at);
-                  print(bill.order!.vat_id);
-                  print(bill.order!.discount_id);
+                  // print(bill.order!.vat_id);
+                  // print(bill.order!.discount_id);
                   print(bill.order!.table_merge_ids);
                   print(bill.order!.table_merge_names);
                 }
@@ -200,12 +200,13 @@ class BillController extends GetxController {
                   final foodData = foodCollection.data();
                   if (foodData != null && foodData is Map<String, dynamic>) {
                     String food_name = foodData['name'] ?? '';
+                    String category_id = foodData['category_id'] ?? '';
                     String image = foodData['image'] ?? '';
 
                     orderDetail.food = FoodOrderDetail(
                         food_id: orderDetail.food_id,
                         name: food_name,
-                        image: image);
+                        image: image, category_id: category_id);
                     print(food_name);
                   }
                 }
@@ -213,46 +214,7 @@ class BillController extends GetxController {
               }
               bill.order_details = orderDetails;
 
-              int vat_percent = 0; // vat được áp dụng
-              // lấy thông tin thuế
-              if (bill.order!.vat_id != "") {
-                DocumentSnapshot vatCollection = await firestore
-                    .collection('vats')
-                    .doc(bill.order!.vat_id)
-                    .get();
-                if (vatCollection.exists) {
-                  final vatData = vatCollection.data();
-                  if (vatData != null && vatData is Map<String, dynamic>) {
-                    String name = vatData['name'] ?? '';
-                    vat_percent = vatData['vat_percent'] ?? 0; // lấy % vat
-                    bill.order!.vat_name = name;
-                  }
-                }
-              }
-              print(bill.order!.vat_id);
-              print("VAT đã áp dụng: ${bill.order!.vat_name} - $vat_percent");
-
-              // lấy thông tin giảm giá
-              double discount_price = 0; // giảm giá được áp dụng
-              if (bill.order!.discount_id != "") {
-                DocumentSnapshot discountCollection = await firestore
-                    .collection('discounts')
-                    .doc(bill.order!.discount_id)
-                    .get();
-
-                if (discountCollection.exists) {
-                  final discountData = discountCollection.data();
-                  if (discountData != null &&
-                      discountData is Map<String, dynamic>) {
-                    String name = discountData['name'] ?? '';
-                    discount_price = discountData['discount_price'] ?? 0;
-                    bill.order!.discount_name = name;
-                  }
-                }
-              }
-              print(bill.order!.discount_id);
-              print(
-                  "Discount đã áp dụng: ${bill.order!.discount_name} - $discount_price");
+              
 
               // lấy tên bàn, tên bàn đã gộp
               DocumentSnapshot tableCollection = await firestore
@@ -386,8 +348,8 @@ class BillController extends GetxController {
                   bill.order!.note = note;
                   bill.order!.create_at = create_at;
                   bill.order!.payment_at = payment_at;
-                  bill.order!.vat_id = vat_id;
-                  bill.order!.discount_id = discount_id;
+                  // bill.order!.vat_id = vat_id;
+                  // bill.order!.discount_id = discount_id;
 
                   // print(bill.order!.employee_id);
                   // print(bill.order!.table_id);
@@ -467,11 +429,12 @@ class BillController extends GetxController {
                     if (foodData != null && foodData is Map<String, dynamic>) {
                       String food_name = foodData['name'] ?? '';
                       String image = foodData['image'] ?? '';
+                    String category_id = foodData['category_id'] ?? '';
 
                       orderDetail.food = FoodOrderDetail(
                           food_id: orderDetail.food_id,
                           name: food_name,
-                          image: image);
+                          image: image, category_id: category_id);
                       print(food_name);
                     }
                   }
@@ -479,47 +442,7 @@ class BillController extends GetxController {
                 }
                 bill.order_details = orderDetails;
 
-                int vat_percent = 0; // vat được áp dụng
-                // lấy thông tin thuế
-                if (bill.order!.vat_id != "") {
-                  DocumentSnapshot vatCollection = await firestore
-                      .collection('vats')
-                      .doc(bill.order!.vat_id)
-                      .get();
-                  if (vatCollection.exists) {
-                    final vatData = vatCollection.data();
-                    if (vatData != null && vatData is Map<String, dynamic>) {
-                      String name = vatData['name'] ?? '';
-                      vat_percent = vatData['vat_percent'] ?? 0; // lấy % vat
-                      bill.order!.vat_name = name;
-                    }
-                  }
-                }
-                print(bill.order!.vat_id);
-                print("VAT đã áp dụng: ${bill.order!.vat_name} - $vat_percent");
-
-                // lấy thông tin giảm giá
-                double discount_price = 0; // giảm giá được áp dụng
-                if (bill.order!.discount_id != "") {
-                  DocumentSnapshot discountCollection = await firestore
-                      .collection('discounts')
-                      .doc(bill.order!.discount_id)
-                      .get();
-
-                  if (discountCollection.exists) {
-                    final discountData = discountCollection.data();
-                    if (discountData != null &&
-                        discountData is Map<String, dynamic>) {
-                      String name = discountData['name'] ?? '';
-                      discount_price = discountData['discount_price'] ?? 0;
-                      bill.order!.discount_name = name;
-                    }
-                  }
-                }
-                print(bill.order!.discount_id);
-                print(
-                    "Discount đã áp dụng: ${bill.order!.discount_name} - $discount_price");
-                print("Tổng hóa đơn: ${bill.total_amount}");
+                
 
                 retValue.add(bill);
               }
@@ -546,7 +469,7 @@ class BillController extends GetxController {
       Bill bill = Bill(
           bill_id: id,
           order_id: order.order_id,
-          total_amount: order.total_amount ?? 0.0,
+          total_amount: order.total_amount ,
           total_estimate_amount: 0.0,
           vat_amount: vat_amount ?? 0,
           discount_amount: discount_amount ?? 0,

@@ -504,7 +504,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                       : foodOrder.price,
                                   quantity: foodOrder.quantity!,
                                   food_status: FOOD_STATUS_IN_CHEFT,
-                                  food_id: foodOrder.food_id, is_gift: false,
+                                  food_id: foodOrder.food_id, is_gift: false, category_id: '', category_code: foodOrder.category_code,
                                 );
 
                                 orderDetailList.add(orderDetail);

@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
@@ -14,6 +13,7 @@ import 'package:myorder/models/discount.dart';
 import 'package:myorder/models/order.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -31,9 +31,10 @@ class _PaymentPageState extends State<PaymentPage> {
   BillController billController = Get.put(BillController());
 
   int selectedIndex = 0;
+  bool isCheckedChooseTypeDiscrease = false;
   bool isCheckedGTGT = false;
   bool isCheckedDecrease = false;
-
+  int selectedRadioDecrease = CATEGORY_ALL;
   final TextEditingController decreasePrice = TextEditingController();
 //thuế giá trị gia tăng toàn đơn hàng
   final TextEditingController textVatController =
@@ -48,37 +49,28 @@ class _PaymentPageState extends State<PaymentPage> {
 
   late List<Vat> vats = [];
   late List<Discount> discounts = [];
-
   @override
   void initState() {
     super.initState();
     orderController.getOrderDetailById(widget.order);
+    orderController.getTotalAmountById(widget.order);
     discountController.getActiveDiscounts();
     vatController.getActiveVats();
     discounts = discountController.activeDiscounts;
     vats = vatController.activeVats;
 
-    // giá trị mặc định của giảm giá và thuế của đơn hàng hiện tại
-    textVatController.text =
-        widget.order.vat_name ?? orderController.orderDetail.vat_name ?? "";
-    textVatIdController.text = widget.order.vat_id;
+    print("orderController.order.is_vat");
 
-    textDiscountController.text = widget.order.discount_name ??
-        orderController.orderDetail.discount_name ??
-        "";
-    textDiscountIdController.text = widget.order.discount_id;
+    print(orderController.order.is_vat);
 
-    if (widget.order.vat_id != "") {
+    if (orderController.order.is_vat == ACTIVE) {
       isCheckedGTGT = true;
+      print("orderController.order.is_vat");
+      print(orderController.order.is_vat);
     }
-    if (widget.order.discount_id != "") {
+    if (orderController.order.is_discount == ACTIVE) {
       isCheckedDecrease = true;
     }
-    print(widget.order.vat_name);
-    print(widget.order.discount_name);
-    print("VAT-DISCOUNT");
-    print(orderController.orderDetail.vat_id);
-    print(orderController.orderDetail.discount_id);
   }
 
   @override
@@ -126,8 +118,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   Center(child: Obx(() {
                     return Text(
                         Utils.formatCurrency(
-                            orderController.orderDetail.total_amount ??
-                                widget.order.total_amount),
+                            orderController.order.total_amount),
                         style: textStylePriceBold20);
                   }))
                 ],
@@ -425,263 +416,58 @@ class _PaymentPageState extends State<PaymentPage> {
                             // })
                           },
                       child: ListTile(
-                        leading: Theme(
-                          data: ThemeData(unselectedWidgetColor: primaryColor),
-                          child: Checkbox(
-                            value: isCheckedGTGT,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isCheckedGTGT = value!;
-                                print(isCheckedGTGT);
-                                //Hủy VAT khi nhấn uncheck checkbox
-                                if (isCheckedGTGT == false) {
-                                  orderController
-                                      .cancelVat(widget.order.order_id);
-                                }
-
-                                // bật popup
-                                if (isCheckedGTGT) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Dialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              10.0), // Góc bo tròn
-                                        ),
-                                        elevation: 5, // Độ nâng của bóng đổ
-                                        backgroundColor: backgroundColor,
-                                        child: Container(
-                                          padding:
-                                              const EdgeInsets.only(top: 20),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Center(
-                                                child: Text(
-                                                  'ÁP DỤNG THUẾ VAT',
-                                                  style: textStylePrimaryBold,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              Container(
-                                                height: 50,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        width: 0.5,
-                                                        color: Colors.grey),
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                            Radius.circular(
-                                                                5))),
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12),
-                                                child: TypeAheadField<Vat>(
-                                                  textFieldConfiguration:
-                                                      TextFieldConfiguration(
-                                                    keyboardType:
-                                                        TextInputType.none,
-                                                    controller:
-                                                        textVatController,
-                                                    decoration: InputDecoration(
-                                                      labelText: textVatController
-                                                              .text.isEmpty
-                                                          ? 'Áp dụng thuế VAT'
-                                                          : "",
-                                                      suffixIcon: InkWell(
-                                                          onTap: () => {
-                                                                textVatController
-                                                                    .text = "",
-                                                                print(
-                                                                    textVatIdController
-                                                                        .text)
-                                                              },
-                                                          child: const Icon(
-                                                              Icons.close,
-                                                              color:
-                                                                  Colors.grey)),
-                                                      border:
-                                                          const OutlineInputBorder(),
-                                                      labelStyle: const TextStyle(
-                                                          color:
-                                                              tableemptyColor),
-                                                    ),
-                                                    style: const TextStyle(
-                                                        color: textColor),
-                                                  ),
-                                                  suggestionsCallback:
-                                                      (pattern) async {
-                                                    return vats.where((item) =>
-                                                        item
-                                                            .name
-                                                            .toLowerCase()
-                                                            .contains(pattern
-                                                                .toLowerCase()));
-                                                  },
-                                                  itemBuilder:
-                                                      (context, suggestion) {
-                                                    return ListTile(
-                                                      title: Text(
-                                                        suggestion.name,
-                                                      ),
-                                                    );
-                                                  },
-                                                  onSuggestionSelected:
-                                                      (suggestion) {
-                                                    setState(() {
-                                                      textVatController.text =
-                                                          suggestion
-                                                              .name; // Set the input value
-                                                      print(suggestion.vat_id);
-                                                      textVatIdController.text =
-                                                          suggestion.vat_id;
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () => {
-                                                        setState(() {
-                                                          isCheckedGTGT =
-                                                              !isCheckedGTGT;
-
-                                                          //hủy áp dụng vat
-                                                          if (orderController
-                                                                      .orderDetail
-                                                                      .vat_id !=
-                                                                  "" ||
-                                                              widget.order
-                                                                      .vat_id !=
-                                                                  "") {
-                                                            orderController
-                                                                .cancelVat(widget
-                                                                    .order
-                                                                    .order_id);
-                                                            widget.order
-                                                                .vat_id = "";
-                                                          }
-                                                        }),
-                                                        Navigator.pop(context)
-                                                      },
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 136,
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
-                                                          color:
-                                                              backgroundColorGray,
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            'HỦY BỎ',
-                                                            style:
-                                                                textStyleCancel,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () => {
-                                                        orderController.applyVat(
-                                                            widget
-                                                                .order.order_id,
-                                                            textVatIdController
-                                                                .text),
-                                                        widget.order.vat_id =
-                                                            textVatIdController
-                                                                .text,
-                                                        Navigator.pop(context)
-                                                      },
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 136,
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
-                                                          color: primaryColor,
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            'ÁP DỤNG',
-                                                            style:
-                                                                textStyleWhiteBold20,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ); // Hiển thị hộp thoại tùy chỉnh
-                                    },
-                                  );
-                                }
-                                //cập nhật lại thông tin
-                                //  orderController.getOrderDetailById(widget.order);
-                              });
-                            },
-                            activeColor: primaryColor,
+                          leading: Theme(
+                            data:
+                                ThemeData(unselectedWidgetColor: primaryColor),
+                            child: Checkbox(
+                              value: isCheckedGTGT,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isCheckedGTGT = value!;
+                                  print(isCheckedGTGT);
+                                  // asp thue
+                                  if (isCheckedGTGT) {
+                                    orderController.applyVat(
+                                        context,
+                                        orderController.order,
+                                        orderController
+                                            .orderDetail.order_details);
+                                  } else {
+                                    orderController.cancelVat(
+                                        context,
+                                        orderController.order,
+                                        orderController
+                                            .orderDetail.order_details);
+                                  }
+                                });
+                              },
+                              activeColor: primaryColor,
+                            ),
                           ),
-                        ),
-                        title: const SizedBox(
-                          width: 100,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.price_change,
-                                  color: iconColorPrimary,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "Thuế GTGT",
-                                  style: textStylePriceBold16,
-                                ),
-                              ]),
-                        ),
-                        trailing: Text(
-                          Utils.formatCurrency(
-                              orderController.orderDetail.total_vat_amount),
-                          style: textStylePriceBold16,
-                        ),
-                      )),
+                          title:  SizedBox(
+                            width: 100,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const Icon(
+                                    Icons.price_change,
+                                    color: iconColorPrimary,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "Thuế GTGT ($VAT_PERCENT%)",
+                                    style: textStylePriceBold16,
+                                  ),
+                                ]),
+                          ),
+                          trailing: Obx(() {
+                            return Text(
+                                Utils.formatCurrency(
+                                    orderController.order.total_vat_amount),
+                                style: textStylePriceBold20);
+                          }))),
                 ),
                 Container(
                   height: 40,
@@ -694,267 +480,59 @@ class _PaymentPageState extends State<PaymentPage> {
                   child: InkWell(
                       onTap: () => {},
                       child: ListTile(
-                        leading: Theme(
-                          data: ThemeData(unselectedWidgetColor: primaryColor),
-                          child: Checkbox(
-                            value: isCheckedDecrease,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isCheckedDecrease = value!;
-                                //Hủy DISCOUNT khi nhấn uncheck checkbox
-                                if (isCheckedDecrease == false) {
-                                  orderController
-                                      .cancelDiscount(widget.order.order_id);
-                                }
-                                // bật popup
-                                if (isCheckedDecrease) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Dialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              10.0), // Góc bo tròn
-                                        ),
-                                        elevation: 5, // Độ nâng của bóng đổ
-                                        backgroundColor: backgroundColor,
-                                        child: Container(
-                                          padding:
-                                              const EdgeInsets.only(top: 20),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Center(
-                                                child: Text(
-                                                  'GIẢM GIÁ HÓA ĐƠN',
-                                                  style: textStylePrimaryBold,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              Container(
-                                                height: 50,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        width: 0.5,
-                                                        color: Colors.grey),
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                            Radius.circular(
-                                                                5))),
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12),
-                                                child: TypeAheadField<Discount>(
-                                                  textFieldConfiguration:
-                                                      TextFieldConfiguration(
-                                                    keyboardType:
-                                                        TextInputType.none,
-                                                    controller:
-                                                        textDiscountController,
-                                                    decoration: InputDecoration(
-                                                      labelText:
-                                                          textDiscountController
-                                                                  .text.isEmpty
-                                                              ? 'Vui lòng chọn khuyến mãi'
-                                                              : "",
-                                                      suffixIcon: InkWell(
-                                                          onTap: () => {
-                                                                textDiscountController
-                                                                    .text = "",
-                                                                print(
-                                                                    textDiscountIdController
-                                                                        .text)
-                                                              },
-                                                          child: const Icon(
-                                                              Icons.close,
-                                                              color:
-                                                                  Colors.grey)),
-                                                      border:
-                                                          const OutlineInputBorder(),
-                                                      labelStyle: const TextStyle(
-                                                          color:
-                                                              tableemptyColor),
-                                                    ),
-                                                    style: const TextStyle(
-                                                        color: textColor),
-                                                  ),
-                                                  suggestionsCallback:
-                                                      (pattern) async {
-                                                    return discounts.where(
-                                                        (item) => item.name
-                                                            .toLowerCase()
-                                                            .contains(pattern
-                                                                .toLowerCase()));
-                                                  },
-                                                  itemBuilder:
-                                                      (context, suggestion) {
-                                                    return ListTile(
-                                                      title: Text(
-                                                        suggestion.name,
-                                                      ),
-                                                    );
-                                                  },
-                                                  onSuggestionSelected:
-                                                      (suggestion) {
-                                                    setState(() {
-                                                      textDiscountController
-                                                              .text =
-                                                          suggestion
-                                                              .name; // Set the input value
-                                                      print(suggestion
-                                                          .discount_id);
-                                                      textDiscountIdController
-                                                              .text =
-                                                          suggestion
-                                                              .discount_id;
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () => {
-                                                        setState(() {
-                                                          isCheckedDecrease =
-                                                              !isCheckedDecrease;
-
-                                                          //hủy áp dụng giảm giá
-                                                          if (orderController
-                                                                      .orderDetail
-                                                                      .discount_id !=
-                                                                  "" ||
-                                                              widget.order
-                                                                      .discount_id !=
-                                                                  "") {
-                                                            orderController
-                                                                .cancelDiscount(
-                                                                    widget.order
-                                                                        .order_id);
-                                                            widget.order
-                                                                .discount_id = "";
-                                                          }
-                                                        }),
-                                                        Navigator.pop(context)
-                                                      },
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 136,
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
-                                                          color:
-                                                              backgroundColorGray,
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            'HỦY BỎ',
-                                                            style:
-                                                                textStyleCancel,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () => {
-                                                        orderController
-                                                            .applyDiscount(
-                                                                widget.order
-                                                                    .order_id,
-                                                                textDiscountIdController
-                                                                    .text),
-                                                        widget.order
-                                                                .discount_id =
-                                                            textDiscountIdController
-                                                                .text,
-                                                        Navigator.pop(context)
-                                                      },
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 136,
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
-                                                          color: primaryColor,
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            'ÁP DỤNG',
-                                                            style:
-                                                                textStyleWhiteBold20,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ); // Hiển thị hộp thoại tùy chỉnh
-                                    },
-                                  );
-                                }
-                                //cập nhật thông tin
-                                // orderController.getOrderDetailById(widget.order);
-                              });
-                            },
-                            activeColor: primaryColor,
+                          leading: Theme(
+                            data:
+                                ThemeData(unselectedWidgetColor: primaryColor),
+                            child: Checkbox(
+                              value: isCheckedDecrease,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isCheckedDecrease = value!;
+                                  //Hủy DISCOUNT khi nhấn uncheck checkbox
+                                  if (isCheckedDecrease == false) {
+                                    orderController.cancelDiscount(
+                                        context, orderController.order, orderController.orderDetail.order_details);
+                                  }
+                                  // bật popup
+                                  if (isCheckedDecrease) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialogDecreasePrice(
+                                          order: orderController.order,
+                                        );
+                                      },
+                                    );
+                                  }
+                                });
+                              },
+                              activeColor: primaryColor,
+                            ),
                           ),
-                        ),
-                        title: const SizedBox(
-                          width: 100,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.price_change,
-                                  color: iconColorPrimary,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "Giảm giá",
-                                  style: textStylePriceBold16,
-                                ),
-                              ]),
-                        ),
-                        trailing: Text(
-                          Utils.formatCurrency(orderController
-                              .orderDetail.total_discount_amount),
-                          style: textStylePriceBold16,
-                        ),
-                      )),
+                          title: const SizedBox(
+                            width: 100,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.price_change,
+                                    color: iconColorPrimary,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "Giảm giá",
+                                    style: textStylePriceBold16,
+                                  ),
+                                ]),
+                          ),
+                          trailing: Obx(() {
+                            return Text(
+                                Utils.formatCurrency(orderController
+                                    .order.total_discount_amount),
+                                style: textStylePriceBold20);
+                          }))),
                 ),
                 const SizedBox(height: 10),
                 Container(
@@ -984,7 +562,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       //   Navigator.popUntil(
                       //     context,
                       //     ModalRoute.withName(
-                      //         '/'), 
+                      //         '/'),
                       //   );
                       // })
                     },

@@ -13,6 +13,7 @@ class FoodOrder {
   Timestamp? temporary_price_to_date;
   int active = 1;
   String category_id = "";
+  int category_code = 1;
   String unit_id = "";
   int temporary_percent = 0;
   bool? isSelected = false;
@@ -29,6 +30,7 @@ class FoodOrder {
     this.temporary_price_to_date,
     required this.active,
     required this.category_id,
+    required this.category_code,
     required this.unit_id,
     required this.temporary_percent,
     this.isSelected,
@@ -45,6 +47,7 @@ class FoodOrder {
         temporary_price_to_date = null,
         active = 1,
         category_id = '',
+        category_code = 1,
         unit_id = '',
         temporary_percent = 0,
         isSelected = false,
@@ -61,6 +64,7 @@ class FoodOrder {
         "temporary_price_to_date": temporary_price_to_date,
         "active": active,
         "category_id": category_id,
+        "category_code": category_code,
         "unit_id": unit_id,
         "temporary_percent": temporary_percent,
       };
@@ -78,6 +82,7 @@ class FoodOrder {
       temporary_price_to_date: snapshot['temporary_price_to_date'],
       active: snapshot['active'],
       category_id: snapshot['category_id'],
+      category_code: snapshot['category_code'],
       unit_id: snapshot['unit_id'],
       temporary_percent: snapshot['temporary_percent'],
     );

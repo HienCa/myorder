@@ -23,8 +23,8 @@ class _BillDetailPageState extends State<BillDetailPage> {
   @override
   void initState() {
     super.initState();
-    isCheckedGTGT = widget.bill.order!.vat_id != "" ? true : false;
-    isCheckedDecrease = widget.bill.order!.discount_id != "" ? true : false;
+    isCheckedGTGT = widget.bill.order!.is_vat == ACTIVE ? true : false;
+    isCheckedDecrease = widget.bill.order!.is_discount == ACTIVE ? true : false;
   }
 
   @override
@@ -345,7 +345,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                           value: isCheckedDecrease,
                           onChanged: (bool? value) {
                             isCheckedDecrease =
-                                widget.bill.order!.discount_id != ""
+                                widget.bill.order!.is_discount == ACTIVE
                                     ? true
                                     : false;
                           },
@@ -390,7 +390,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                           value: isCheckedGTGT,
                           onChanged: (bool? value) {
                             isCheckedGTGT =
-                                widget.bill.order!.vat_id != "" ? true : false;
+                                widget.bill.order!.is_vat == ACTIVE ? true : false;
                           },
                           activeColor: primaryColor,
                         ),
@@ -433,7 +433,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                           value: isCheckedDecrease,
                           onChanged: (bool? value) {
                             isCheckedDecrease =
-                                widget.bill.order!.discount_id != ""
+                                widget.bill.order!.is_discount == ACTIVE
                                     ? true
                                     : false;
                           },

@@ -21,15 +21,23 @@ class CategoryController extends GetxController {
         if (userData != null && userData is Map<String, dynamic>) {
           String category_id = userData['category_id'] ?? '';
           String name = userData['name'] ?? '';
+          int category_code = userData['category_code'] ?? CATEGORY_ALL;
 
           int active = userData['active'] ?? 1;
           return model.Category(
-              category_id: category_id, name: name, active: active);
+              category_id: category_id,
+              name: name,
+              active: active,
+              category_code: category_code);
         }
       }
     } catch (e) {
       print('Error fetching user data: $e');
-      return model.Category(category_id: category_id, name: "", active: 1);
+      return model.Category(
+          category_id: category_id,
+          name: "",
+          active: 1,
+          category_code: CATEGORY_ALL);
     }
   }
 
@@ -83,7 +91,9 @@ class CategoryController extends GetxController {
           retValue.add(Category(
               category_id: defaultCategory,
               name: 'Tất cả món',
-              active: 1)); // thêm một phần tử tất cả để gọi all
+              active: 1,
+              category_code:
+                  CATEGORY_ALL)); // thêm một phần tử tất cả để gọi all
           for (var element in query.docs) {
             retValue.add(Category.fromSnap(element));
             print(element);
@@ -96,6 +106,7 @@ class CategoryController extends GetxController {
 
   void createCategory(
     String name,
+    int code,
   ) async {
     try {
       if (name.isNotEmpty) {
@@ -105,17 +116,20 @@ class CategoryController extends GetxController {
           category_id: id,
           name: name.trim(),
           active: 1,
+          category_code: code,
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('categories');
 
-        await usersCollection.doc(id).set(category.toJson());
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Thêm đơn vị tính mới thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+        await usersCollection
+            .doc(id)
+            .set(category.toJson())
+            .then((_) => Get.snackbar(
+                  'THÀNH CÔNG!',
+                  'Thêm đơn vị tính mới thành công!',
+                  backgroundColor: backgroundSuccessColor,
+                  colorText: Colors.white,
+                ));
       } else {
         Get.snackbar(
           'Error!',
@@ -139,18 +153,35 @@ class CategoryController extends GetxController {
 
   updateCategory(
     String category_id,
+    int category_code,
     String name,
   ) async {
     try {
       await firestore.collection('categories').doc(category_id).update({
         "name": name.trim(),
-      });
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Cập nhật thông tin thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+        "category_code": category_code,
+      }).then((_) async {
+        // Sử dụng Transaction để đảm bảo tính nhất quán khi cập nhật nhiều documents
+        // Tìm tất cả foods có category_code bằng category_code cũ
+        QuerySnapshot foodsQuery = await firestore
+            .collection('foods')
+            .where("category_id", isEqualTo: category_id)
+            .get();
+
+        // Lặp qua từng food và cập nhật category_code mới
+        for (QueryDocumentSnapshot foodDoc in foodsQuery.docs) {
+          await firestore.collection('foods').doc(foodDoc['food_id']).update({
+            "category_code": category_code,
+          });
+          print(foodDoc['food_id']);
+        }
+      }).then((_) => Get.snackbar(
+            'THÀNH CÔNG!',
+            'Cập nhật thông tin thành công!',
+            backgroundColor: backgroundSuccessColor,
+            colorText: Colors.white,
+          ));
+
       update();
     } catch (e) {
       Get.snackbar(

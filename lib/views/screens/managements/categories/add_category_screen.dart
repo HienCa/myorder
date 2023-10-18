@@ -22,6 +22,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   CategoryController categoryController = Get.put(CategoryController());
 
   String? errorTextName = "";
+  int selectedRadioDecrease = CATEGORY_ALL;
 
   bool isErrorTextName = false;
 
@@ -61,6 +62,81 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            height: 50,
+                            width: 400,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Theme(
+                                    data: ThemeData(
+                                        unselectedWidgetColor: primaryColor),
+                                    child: Radio(
+                                      value: CATEGORY_FOOD,
+                                      groupValue: selectedRadioDecrease,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedRadioDecrease = value as int;
+                                          print(value);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const Expanded(
+                                  flex: 2,
+                                  child: Text('Món ăn',
+                                      style: textStyleTitleGrayRegular16),
+                                ),
+                                Expanded(
+                                  child: Theme(
+                                    data: ThemeData(
+                                        unselectedWidgetColor: primaryColor),
+                                    child: Radio(
+                                      value: CATEGORY_DRINK,
+                                      groupValue: selectedRadioDecrease,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedRadioDecrease = value as int;
+                                          print(selectedRadioDecrease);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    'Món nước',
+                                    style: textStyleTitleGrayRegular16,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Theme(
+                                    data: ThemeData(
+                                        unselectedWidgetColor: primaryColor),
+                                    child: Radio(
+                                      value: CATEGORY_OTHER,
+                                      groupValue: selectedRadioDecrease,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedRadioDecrease = value as int;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const Expanded(
+                                  flex: 2,
+                                  child: Text('Món khác',
+                                      style: textStyleTitleGrayRegular16),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         const SizedBox(
                           height: 20,
                         ),
@@ -69,11 +145,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                             style: textStyleInput,
                             decoration: InputDecoration(
                                 labelStyle: textStyleInput,
-                                labelText: "Tên danh mục",
+                                labelText: "Tên danh mục gợi nhớ",
                                 hintText: 'Nhập tên danh mục',
                                 hintStyle: const TextStyle(color: Colors.grey),
-                                border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30))),
                                 errorText:
                                     isErrorTextName ? errorTextName : null,
                                 errorStyle: textStyleErrorInput),
@@ -99,9 +177,9 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                                       })
                                     }
                                 }),
-                         SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
-                          ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.65,
+                        ),
                         SizedBox(
                           height: 50,
                           child: Row(
@@ -133,7 +211,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                                     if (!isErrorTextName)
                                       {
                                         categoryController.createCategory(
-                                          nameController.text,
+                                          nameController.text,selectedRadioDecrease
                                         ),
                                         Navigator.pop(context)
                                       }

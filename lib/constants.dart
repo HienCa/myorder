@@ -39,6 +39,7 @@ const kDefaultShadow = BoxShadow(
 //corlor
 const primaryColor = Color(0xFF40BAD5);
 const secondColor = Colors.white;
+const labelColor = Color(0xFF434343);
 
 const activeColor = Color(0xFF40BAD5);
 const deActiveColor = Colors.grey;
@@ -97,6 +98,10 @@ const textStyleErrorInput = TextStyle(
     fontSize: 14, fontWeight: FontWeight.normal, color: Colors.redAccent);
 
 //text style
+
+//Label
+const textStyleLabel16 = TextStyle(fontSize: 16, color: Colors.grey);
+const textStyleLabel20 = TextStyle(fontSize: 20, color: Colors.grey);
 
 //APPBAR
 const textStyleAppBar20 =
@@ -164,6 +169,9 @@ const textStylePriceBold16 =
 const textStylePriceBold20 =
     TextStyle(color: primaryColor, fontSize: 20, fontWeight: FontWeight.bold);
 
+const textStyleCalculaorBold20 =
+    TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, );
+
 const textStylePriceRegular16 =
     TextStyle(color: primaryColor, fontSize: 16, fontWeight: FontWeight.normal);
 
@@ -222,12 +230,15 @@ var buttonColor = const Color(0xFF40BAD5);
 var buttonCancelColor = Colors.redAccent;
 const buttonStyleBlackBold =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-const buttonStyleWhiteBold =
-    TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white);
+const buttonStyleWhiteBold = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
 const buttonStyleCancel = TextStyle(
     fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent);
-    const buttonStyleConfirm = TextStyle(
-    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white);
+const buttonStyleConfirm =
+    TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white);
 double buttonHeight = 50;
 double buttonWidth = 300;
 
@@ -251,6 +262,10 @@ const marginRight20 = SizedBox(width: 20);
 const sizeIconLarge = 30;
 const sizeIconSmall = 20;
 
+// 
+const duration = Duration(seconds: 2);
+
+
 //alert
 var alertStyle = AlertStyle(
   animationType: AnimationType.fromTop,
@@ -271,7 +286,6 @@ var alertStyle = AlertStyle(
   alertAlignment: Alignment.topCenter,
 );
 
-
 //ALERT
 var alertImageSuccess =
     Image.asset("assets/images/alert/3.0x/icon_success.png");
@@ -288,15 +302,16 @@ var defaultFoodImage = Image.asset(
 );
 
 //TABLE
-var tableImageServing = Image.asset("assets/images/icon-table-simple-serving.jpg");
+var tableImageServing =
+    Image.asset("assets/images/icon-table-simple-serving.jpg");
 var tableImageEmpty = Image.asset("assets/images/icon-table-simple-empty.jpg");
 var tableImageMerge = Image.asset("assets/images/icon-table-simple-cancel.jpg");
-var tableImageBooking = Image.asset( "assets/images/icon-table-simple-booking.jpg");
+var tableImageBooking =
+    Image.asset("assets/images/icon-table-simple-booking.jpg");
 
 //ICON CHECK
 var checkImageGreen = Image.asset("assets/images/icon-check-green.png");
 var checkImageOrange = Image.asset("assets/images/icon-check-orange.png");
-
 
 //FILTER
 const defaultArea = "allArea-hienca";

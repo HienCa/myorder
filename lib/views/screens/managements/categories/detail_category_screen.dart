@@ -28,21 +28,25 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   String? errorTextName = "";
 
   bool isErrorTextName = false;
+  int selectedRadioDecrease = CATEGORY_ALL;
 
   CategoryController categoryController = Get.put(CategoryController());
   late Category category;
   @override
   void initState() {
     super.initState();
-    category = Category(category_id: '', name: '', active: 1);
+    category = Category(
+        category_id: '', name: '', active: 1, category_code: CATEGORY_ALL);
   }
 
   Future<void> loadcategory() async {
-    final Category result = await categoryController.getCategoryById(widget.categoryId);
+    final Category result =
+        await categoryController.getCategoryById(widget.categoryId);
     if (result.category_id != "") {
       setState(() {
         category = result;
         nameController.text = category.name;
+        selectedRadioDecrease = category.category_code;
       });
     }
   }
@@ -87,6 +91,78 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  height: 50,
+                  width: 400,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Theme(
+                          data: ThemeData(unselectedWidgetColor: primaryColor),
+                          child: Radio(
+                            value: CATEGORY_FOOD,
+                            groupValue: selectedRadioDecrease,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedRadioDecrease = value as int;
+                                print(value);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        flex: 2,
+                        child:
+                            Text('Món ăn', style: textStyleTitleGrayRegular16),
+                      ),
+                      Expanded(
+                        child: Theme(
+                          data: ThemeData(unselectedWidgetColor: primaryColor),
+                          child: Radio(
+                            value: CATEGORY_DRINK,
+                            groupValue: selectedRadioDecrease,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedRadioDecrease = value as int;
+                                print(selectedRadioDecrease);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Món nước',
+                          style: textStyleTitleGrayRegular16,
+                        ),
+                      ),
+                      Expanded(
+                        child: Theme(
+                          data: ThemeData(unselectedWidgetColor: primaryColor),
+                          child: Radio(
+                            value: CATEGORY_OTHER,
+                            groupValue: selectedRadioDecrease,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedRadioDecrease = value as int;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        flex: 2,
+                        child: Text('Món khác',
+                            style: textStyleTitleGrayRegular16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Container(
                 margin: const EdgeInsets.all(10.0),
                 child: SingleChildScrollView(
@@ -100,17 +176,20 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                           style: textStyleInput,
                           decoration: InputDecoration(
                               labelStyle: textStyleInput,
-                              labelText: "Tên danh mục",
-                              hintText: 'Nhập danh mục',
+                              labelText: "Tên danh mục gợi nhớ",
+                              hintText: 'Nhập tên danh mục',
                               hintStyle: const TextStyle(color: Colors.grey),
-                              border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30))),
                               errorText: isErrorTextName ? errorTextName : null,
                               errorStyle: textStyleErrorInput),
                           maxLength: 50,
                           // autofocus: true,
                           onChanged: (value) => {
-                                if (value.trim().length > maxlengthCategoryName ||
+                                if (value.trim().length >
+                                        maxlengthCategoryName ||
                                     value.trim().length < minlengthCategoryName)
                                   {
                                     setState(() {
@@ -127,9 +206,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                                     })
                                   }
                               }),
-                       SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.65,
-                          ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.65,
+                      ),
                       SizedBox(
                         height: 50,
                         child: Row(
@@ -162,6 +241,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                                     {
                                       categoryController.updateCategory(
                                         category.category_id,
+                                        selectedRadioDecrease,
                                         nameController.text,
                                       ),
                                       Navigator.pop(context)
@@ -170,16 +250,16 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                                     {
                                       print("Chưa nhập đủ trường"),
                                       Alert(
-                            context: context,
-                            title: "THÔNG BÁO",
-                           desc: "Thông tin chưa chính xác!",
-                            image: alertImageError,
-                            buttons: [],
-                            
-                          ).show(),
-                          Future.delayed(const Duration(seconds: 2), () {
-                            Navigator.pop(context);
-                          })
+                                        context: context,
+                                        title: "THÔNG BÁO",
+                                        desc: "Thông tin chưa chính xác!",
+                                        image: alertImageError,
+                                        buttons: [],
+                                      ).show(),
+                                      Future.delayed(const Duration(seconds: 2),
+                                          () {
+                                        Navigator.pop(context);
+                                      })
                                     }
                                 },
                                 child: Container(

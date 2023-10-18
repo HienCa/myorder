@@ -33,6 +33,21 @@ int TABLE_STATUS_SPLIT = 4; // TÁCH BÀN
 int TABLE_STATUS_CANCEL = 5; // HỦY BÀN
 int TABLE_STATUS_BOOKING = 6; // HỦY BÀN
 
+//VAT - PAYMENT
+int VAT_PERCENT = 10;
+
+//DISCOUNT - PAYMENT
+int CATEGORY_ALL = 1; // giam gia tren bill
+int CATEGORY_FOOD = 2; // theo mon an
+int CATEGORY_DRINK = 3; // nuoc uong
+int CATEGORY_OTHER = 4; // khac
+
+//CALCULATOR
+int MIN_PRICE = 1000;
+int MAX_PRICE = 1000000000;
+int MIN_PERCENT = 1;
+int MAX_PERCENT = 1;
+
 // text length
 const maxlengthName = 50;
 const minlengthName = 2;
