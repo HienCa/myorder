@@ -7,20 +7,20 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 
 import 'package:myorder/models/order.dart' as model;
 
-class CustomDialogMergeTable extends StatefulWidget {
+class CustomDialogUpdateQuantityTable extends StatefulWidget {
   final model.Order order;
-  final List<dynamic> tableIds;
-  const CustomDialogMergeTable({
+  const CustomDialogUpdateQuantityTable({
     Key? key,
     required this.order,
-    required this.tableIds,
   }) : super(key: key);
 
   @override
-  State<CustomDialogMergeTable> createState() => _CustomDialogMergeTableState();
+  State<CustomDialogUpdateQuantityTable> createState() =>
+      _CustomDialogUpdateQuantityTableState();
 }
 
-class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
+class _CustomDialogUpdateQuantityTableState
+    extends State<CustomDialogUpdateQuantityTable> {
   @override
   void dispose() {
     super.dispose();
@@ -55,14 +55,14 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                   children: [
                     const Center(
                       child: Text(
-                        'XÁC NHẬN GỘP BÀN',
+                        'THAY ĐỔI SỐ LƯỢNG MÓN',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
-                    ListTile(
+                    const ListTile(
                       title: Text(
-                        "Tất cả những bàn được chọn sẽ được gộp vào bàn ${widget.order.table!.name} ?",
+                        "Bạn có chắc chắn muốn thay đổi số lượng?",
                         style: textStyleBlackRegular,
                       ),
                     ),
@@ -92,11 +92,10 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                           ),
                           InkWell(
                             onTap: () => {
-                              // merge
-                              orderController.mergeTable(
-                                  context, widget.order, widget.tableIds),
-                              Navigator.pop(context)
-                              
+                              orderController.updateQuantity(
+                                  context,
+                                  widget.order.order_id,
+                                  orderController.orderDetail.order_details)
                             },
                             child: Container(
                               height: 50,

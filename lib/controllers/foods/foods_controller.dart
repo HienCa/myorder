@@ -38,15 +38,16 @@ class FoodController extends GetxController {
   }
 
   // upload to firebase storage
- Future<String> _uploadToStorage(File image) async {
-  String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}'; 
-  Reference ref = firebaseStorage.ref().child('profilePics/$fileName');
+  Future<String> _uploadToStorage(File image) async {
+    String fileName =
+        '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+    Reference ref = firebaseStorage.ref().child('profilePics/$fileName');
 
-  UploadTask uploadTask = ref.putFile(image);
-  TaskSnapshot snap = await uploadTask;
-  String downloadUrl = await snap.ref.getDownloadURL();
-  return downloadUrl;
-}
+    UploadTask uploadTask = ref.putFile(image);
+    TaskSnapshot snap = await uploadTask;
+    String downloadUrl = await snap.ref.getDownloadURL();
+    return downloadUrl;
+  }
 
   getFoodById(String foodId) async {
     try {
@@ -153,6 +154,7 @@ class FoodController extends GetxController {
               FoodOrder food = FoodOrder.fromSnap(element);
               print(food.temporary_price_from_date);
               print(food.temporary_price_to_date);
+              print("category_code: ${food.category_code}");
 
               //lỗi temporary_price_from_date, temporary_price_to_date khi null
               // fix tạm thời

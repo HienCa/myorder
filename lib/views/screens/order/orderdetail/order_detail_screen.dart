@@ -15,6 +15,7 @@ import 'package:myorder/views/screens/order/actions/split/food/choose_target_tab
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_gift_food_to_order_screen.dart';
+import 'package:myorder/views/screens/order/orderdetail/dialog_confirm_update_quantity.dart';
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
@@ -36,15 +37,65 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   void initState() {
     super.initState();
     orderController.getOrderDetailById(widget.order);
+    orderController.getOrderDetailOriginById(widget.order);
     orderController.getTotalAmountById(widget.order);
 
     discountController.getActiveDiscounts();
     vatController.getActiveVats();
+    orderDetailOriginArray =
+        List.from(orderController.orderDetailOrigin.order_details);
+    print("orderDetailOriginArray: $orderDetailOriginArray");
+    print("orderDetailOriginArray: ${orderDetailOriginArray.length}");
   }
 
   int selectedIndex = 0;
   bool isChecked = false;
+  bool hasChanges = false;
   List<OrderDetail> orderDetailNeedSplitArray = [];
+  List<OrderDetail> orderDetailOriginArray = [];
+
+  void decreaseQuantity(OrderDetail orderDetail) {
+    print("Muốn giảm");
+    for (int i = 0; i < orderDetailOriginArray.length; i++) {
+      if (orderDetailOriginArray[i].food_id == orderDetail.food_id) {
+        if (orderDetail.quantity > 1) {
+          orderDetail.quantity = orderDetail.quantity - 1;
+        }
+
+        //nếu thay đổi về số lượng thì isSelected = true
+        orderDetailOriginArray[i].isSelected =
+            Utils.isQuantityChanged(orderDetailOriginArray, orderDetail);
+
+        print(
+            "orderDetailOriginArray[i].isSelected: ${orderDetailOriginArray[i].isSelected}");
+
+        print(
+            "số lượng orderDetailOriginArray: ${orderDetail.food!.name} : ${orderDetailOriginArray[i].quantity}");
+        print(
+            "Đã giảm số lượng orderDetail: ${orderDetail.food!.name} : ${orderDetail.quantity}");
+      }
+    }
+  }
+
+  void increaseQuantity(OrderDetail orderDetail) {
+    print("Muốn tăng");
+
+    for (int i = 0; i < orderDetailOriginArray.length; i++) {
+      if (orderDetailOriginArray[i].food_id == orderDetail.food_id) {
+        orderDetail.quantity = orderDetail.quantity + 1;
+
+        //nếu thay đổi về số lượng thì isSelected = true
+        orderDetailOriginArray[i].isSelected =
+            Utils.isQuantityChanged(orderDetailOriginArray, orderDetail);
+        print(
+            "orderDetailOriginArray[i].isSelected: ${orderDetailOriginArray[i].isSelected}");
+        print(
+            "Số lượng orderDetailOriginArray: ${orderDetail.food!.name} : ${orderDetailOriginArray[i].quantity}");
+        print(
+            "Đã tăng số lượng orderDetail: ${orderDetail.food!.name} : ${orderDetail.quantity}");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +141,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                   )),
                   Center(child: Obx(() {
                     return Text(
-                        Utils.formatCurrency(orderController.order.total_amount),
+                        Utils.formatCurrency(
+                            orderController.order.total_amount),
                         style: textStylePriceBold20);
                   }))
                 ],
@@ -261,19 +313,88 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                         .price),
                                                 style:
                                                     textStylePriceBlackRegular16),
+                                            // SizedBox(
+                                            //   width: 100,
+                                            //   child: Row(
+                                            //     children: [
+                                            //       const Text("Số lượng: ",
+                                            //           style:
+                                            //               textStylePriceBlackRegular16),
+                                            //       Text(
+                                            //           "${orderController.orderDetail.order_details[index].quantity}",
+                                            //           style: textStyleMaking),
+                                            //     ],
+                                            //   ),
+                                            // ),
                                             SizedBox(
                                               width: 100,
                                               child: Row(
                                                 children: [
-                                                  const Text("Số lượng: ",
-                                                      style:
-                                                          textStylePriceBlackRegular16),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        decreaseQuantity(
+                                                            orderController
+                                                                    .orderDetail
+                                                                    .order_details[
+                                                                index]);
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: iconColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                      ),
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: const Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Icon(
+                                                            Icons.remove,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 5),
                                                   Text(
                                                       "${orderController.orderDetail.order_details[index].quantity}",
                                                       style: textStyleMaking),
+                                                  const SizedBox(width: 5),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        increaseQuantity(
+                                                            orderController
+                                                                    .orderDetail
+                                                                    .order_details[
+                                                                index]);
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: iconColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                      ),
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: const Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Icon(Icons.add,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
-                                            ),
+                                            )
                                           ],
                                         ),
                                       ),
@@ -462,20 +583,110 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                               .price),
                                                       style:
                                                           textStylePriceBlackRegular16),
+                                                  // SizedBox(
+                                                  //   width: 100,
+                                                  //   child: Row(
+                                                  //     children: [
+                                                  //       const Text("Số lượng: ",
+                                                  //           style:
+                                                  //               textStylePriceBlackRegular16),
+                                                  //       Text(
+                                                  //           "${orderController.orderDetail.order_details[index].quantity}",
+                                                  //           style:
+                                                  //               textStyleCancel),
+                                                  //     ],
+                                                  //   ),
+                                                  // ),
                                                   SizedBox(
                                                     width: 100,
                                                     child: Row(
                                                       children: [
-                                                        const Text("Số lượng: ",
-                                                            style:
-                                                                textStylePriceBlackRegular16),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            // if (foodController
+                                                            //         .foodsToOrder[index]
+                                                            //         .quantity! >
+                                                            //     1) {
+                                                            //   setState(() {
+                                                            //     foodController
+                                                            //             .foodsToOrder[index]
+                                                            //             .quantity =
+                                                            //         foodController
+                                                            //                 .foodsToOrder[
+                                                            //                     index]
+                                                            //                 .quantity! -
+                                                            //             1;
+                                                            //   });
+                                                            // }
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: iconColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                            ),
+                                                            height: 30,
+                                                            width: 30,
+                                                            child: const Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: Icon(
+                                                                  Icons.remove,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
                                                         Text(
                                                             "${orderController.orderDetail.order_details[index].quantity}",
                                                             style:
-                                                                textStyleCancel),
+                                                                textStyleMaking),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              // foodController
+                                                              //         .foodsToOrder[index]
+                                                              //         .quantity =
+                                                              //     foodController
+                                                              //             .foodsToOrder[
+                                                              //                 index]
+                                                              //             .quantity! +
+                                                              //         1;
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: iconColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                            ),
+                                                            height: 30,
+                                                            width: 30,
+                                                            child: const Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: Icon(
+                                                                  Icons.add,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
-                                                  ),
+                                                  )
                                                 ],
                                               ),
                                             ),
@@ -489,9 +700,38 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
               }),
             ),
           ),
+          Utils.isAnyOrderDetailSelected(orderDetailOriginArray)
+              ? GestureDetector(
+                  onTap: () => {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CustomDialogUpdateQuantityTable(
+                          order: widget.order,
+                        );
+                      },
+                    )
+                  },
+                  child: Container(
+                      height: 50,
+                      width: 100,
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: colorSuccess,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Lưu (${Utils.counterOrderDetailSelected(orderDetailOriginArray)})",
+                          style: textStyleWhiteBold20,
+                        ),
+                      )),
+                )
+              : const SizedBox(),
           Column(
             children: [
-              const SizedBox(height: 10),
+              // const SizedBox(height: 10),
               Container(
                   height: 60,
                   margin:

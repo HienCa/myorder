@@ -551,14 +551,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                               orderController.createOrder(widget.table.table_id,
                                   orderDetailList, widget.isGift, context);
                             }
-                            //quay về gốc 
-                            // Future.delayed(const Duration(seconds: 1), () {
-                            //   Navigator.popUntil(
-                            //     context,
-                            //     ModalRoute.withName(
-                            //         '/'), // This assumes that FirstPage is the first page in your navigation stack
-                            //   );
-                            // });
+
                           },
                           child: Container(
                             height: 50,

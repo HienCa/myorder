@@ -599,6 +599,148 @@ class OrderController extends GetxController {
     );
   }
 
+  final Rx<model.Order> _orderDetailOrigin = Rx<model.Order>(model.Order(
+      order_id: '',
+      order_status: 0,
+      create_at: Timestamp.now(),
+      active: 1,
+      employee_id: '',
+      table_id: '',
+      table_merge_ids: [],
+      table_merge_names: [],
+      order_code: '',
+      total_amount: 0,
+      is_vat: 0,
+      discount_amount_all: 0,
+      discount_amount_food: 0,
+      discount_amount_drink: 0,
+      discount_reason: '',
+      is_discount: 0,
+      total_vat_amount: 0,
+      total_discount_amount: 0,
+      discount_percent: 0,
+      discount_amount_other: 0));
+
+  model.Order get orderDetailOrigin => _orderDetailOrigin.value;
+  getOrderDetailOriginById(model.Order order) async {
+    _orderDetailOrigin.bindStream(
+      firestore
+          .collection('orders')
+          .doc(order.order_id)
+          .collection('orderDetails')
+          .snapshots()
+          .asyncMap(
+        (QuerySnapshot query) async {
+          model.Order retValue = model.Order(
+              order_id: '',
+              order_status: 0,
+              create_at: Timestamp.now(),
+              active: 1,
+              employee_id: '',
+              table_id: '',
+              table_merge_ids: [],
+              table_merge_names: [],
+              order_code: '',
+              total_amount: 0,
+              is_vat: 0,
+              discount_amount_all: 0,
+              discount_amount_food: 0,
+              discount_amount_drink: 0,
+              discount_reason: '',
+              is_discount: 0,
+              total_vat_amount: 0,
+              total_discount_amount: 0,
+              discount_percent: 0,
+              discount_amount_other: 0);
+          retValue.order_id = order.order_id;
+
+          List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
+
+          for (var element in query.docs) {
+            OrderDetail orderDetail =
+                OrderDetail.fromSnap(element); // map đơn hàng chi tiết
+            orderDetails.add(orderDetail);
+          }
+          retValue.order_details = orderDetails;
+          // Tính tổng số tiền cho đơn hàng
+          for (int i = 0; i < orderDetails.length; i++) {
+            // lấy thông tin của món ăn
+            DocumentSnapshot foodCollection = await firestore
+                .collection('foods')
+                .doc(orderDetails[i].food_id)
+                .get();
+            if (foodCollection.exists) {
+              final foodData = foodCollection.data();
+              if (foodData != null && foodData is Map<String, dynamic>) {
+                String food_name = foodData['name'] ?? '';
+                String image = foodData['image'] ?? '';
+                String category_id = foodData['category_id'] ?? '';
+
+                retValue.order_details[i].food = FoodOrderDetail(
+                    food_id: orderDetails[i].food_id,
+                    name: food_name,
+                    image: image,
+                    category_id: category_id);
+                print(food_name);
+              }
+            }
+          }
+          DocumentSnapshot orderCollection =
+              await firestore.collection('orders').doc(order.order_id).get();
+          if (orderCollection.exists) {
+            final orderData = orderCollection.data();
+            if (orderData != null && orderData is Map<String, dynamic>) {
+              double total_amount = orderData['total_amount'] ?? 0;
+              retValue.total_amount = total_amount;
+              print(total_amount);
+            }
+          }
+
+          // lấy tên bàn, tên bàn đã gộp
+          DocumentSnapshot tableCollection =
+              await firestore.collection('tables').doc(order.table_id).get();
+          if (tableCollection.exists) {
+            final tableData = tableCollection.data();
+            if (tableData != null && tableData is Map<String, dynamic>) {
+              String name = tableData['name'] ?? '';
+              int total_slot = tableData['total_slot'] ?? '';
+              int status = tableData['status'] ?? '';
+              int active = tableData['active'] ?? '';
+              String area_id = tableData['area_id'] ?? '';
+              retValue.table = table.Table(
+                  table_id: order.table_id,
+                  name: name,
+                  total_slot: total_slot,
+                  status: status,
+                  active: active,
+                  area_id: area_id);
+            }
+          }
+          retValue.table_id = order.table_id;
+          print(retValue.table!.table_id);
+          print("ORDER DETAIL: ${retValue.total_amount}");
+
+          //Thông tin nhân viên phụ trách đơn hàng
+          if (order.employee_id != "") {
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(order.employee_id)
+                .get();
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                order.employee_name = name;
+              }
+            }
+          }
+          return retValue;
+        },
+      ),
+    );
+  }
+
   // tao order
   //them tung orderdetail
   void createOrder(String table_id, List<OrderDetail> orderDetailList,
@@ -662,6 +804,10 @@ class OrderController extends GetxController {
           } else {
             orderDetail.is_gift = false;
           }
+          //nếu là món nước -> trạng thái Hoàn Thành
+          if (orderDetail.category_code == CATEGORY_DRINK) {
+            orderDetail.food_status = FOOD_STATUS_FINISH;
+          }
           await firestore
               .collection('orders')
               .doc(id)
@@ -699,6 +845,10 @@ class OrderController extends GetxController {
 
           orderDetail.order_detail_id = idDetail;
 
+          //nếu là món nước -> trạng thái Hoàn Thành
+          if (orderDetail.category_code == CATEGORY_DRINK) {
+            orderDetail.food_status = FOOD_STATUS_FINISH;
+          }
           await firestore
               .collection('orders')
               .doc(order_id) //order_id của don hang hiện đang được phục vụ
@@ -833,7 +983,7 @@ class OrderController extends GetxController {
           Utils.showErrorFlushbar(context, '', 'Chuyển bàn thất bại!');
         }
 
-        Navigator.pop(context);
+        // Navigator.pop(context);
       }
     } catch (e) {
       Utils.showErrorFlushbar(context, '', 'Chuyển bàn thất bại!');
@@ -926,7 +1076,7 @@ class OrderController extends GetxController {
           Utils.showErrorFlushbar(context, '', 'Gộp bàn thất bại!');
         }
 
-        Navigator.pop(context);
+        // Navigator.pop(context);
       }
     } catch (e) {
       // Get.snackbar(
@@ -1177,6 +1327,40 @@ class OrderController extends GetxController {
       }
     } catch (e) {
       Utils.showErrorFlushbar(context, '', 'Tách món thất bại!');
+    }
+  }
+
+  //Cập nhật số lượng món
+  updateQuantity(
+    BuildContext context,
+    String order_id,
+    List<OrderDetail> orderDetailNeedUpdate,
+  ) async {
+    try {
+      print(
+          "===========================CẬP NHẬT SỐ LƯỢNG MÓN=========================");
+      if (orderDetailNeedUpdate.isNotEmpty) {
+        for (int i = 0; i < orderDetailNeedUpdate.length; i++) {
+          print("Món: ${orderDetailNeedUpdate[i].food!.name}");
+          print("SL: ${orderDetailNeedUpdate[i].quantity}");
+          print("----------------------------------------");
+          await firestore
+              .collection("orders")
+              .doc(order_id)
+              .collection("orderDetails")
+              .doc(orderDetailNeedUpdate[i].order_detail_id)
+              .update({
+            "quantity": orderDetailNeedUpdate[i].quantity,
+          });
+        }
+
+        update();
+        Utils.showErrorFlushbar(context, '', 'Số lượng món đã được cập nhật!');
+
+        // Navigator.pop(context);
+      }
+    } catch (e) {
+      Utils.showErrorFlushbar(context, '', 'Cập nhật thất bại!');
     }
   }
 
