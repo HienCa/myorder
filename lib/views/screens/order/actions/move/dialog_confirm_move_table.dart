@@ -8,6 +8,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/order.dart' as model;
 // ignore: library_prefixes
 import 'package:myorder/models/table.dart' as tableModel;
+import 'package:myorder/utils.dart';
 
 class CustomDialogMoveTable extends StatefulWidget {
   final model.Order order;
@@ -80,12 +81,12 @@ class _CustomDialogMoveTableState extends State<CustomDialogMoveTable> {
                                     child: tableImageServing,
                                   ),
                                   Text(
-                                      widget.order.table!.name,
-                                      style: const TextStyle(
-                                          fontSize: 30,
-                                          color: textWhiteColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                    widget.order.table!.name,
+                                    style: const TextStyle(
+                                        fontSize: 30,
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ],
                               )),
                         ),
@@ -101,15 +102,8 @@ class _CustomDialogMoveTableState extends State<CustomDialogMoveTable> {
                                 alignment: Alignment.center,
                                 children: [
                                   ClipOval(
-                                    child: tableImageServing,
+                                    child: arrowRightImage,
                                   ),
-                                  Text(
-                                      widget.order.table!.name,
-                                      style: const TextStyle(
-                                          fontSize: 30,
-                                          color: textWhiteColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
                                 ],
                               )),
                         ),
@@ -128,18 +122,17 @@ class _CustomDialogMoveTableState extends State<CustomDialogMoveTable> {
                                     child: tableImageEmpty,
                                   ),
                                   Text(
-                                      widget.table.name,
-                                      style: const TextStyle(
-                                          fontSize: 30,
-                                          color: textWhiteColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                    widget.table.name,
+                                    style: const TextStyle(
+                                        fontSize: 30,
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ],
                               )),
                         )
                       ],
                     ),
-
                     marginTop30,
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
@@ -166,7 +159,9 @@ class _CustomDialogMoveTableState extends State<CustomDialogMoveTable> {
                           ),
                           InkWell(
                             onTap: () => {
-                              orderController.moveTable(context, widget.order, widget.table)
+                              orderController.moveTable(
+                                  context, widget.order, widget.table),
+                              Utils.myPopResult(context, 'success')
                             },
                             child: Container(
                               height: 50,

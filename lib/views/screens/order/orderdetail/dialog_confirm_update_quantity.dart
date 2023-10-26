@@ -6,6 +6,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 
 import 'package:myorder/models/order.dart' as model;
+import 'package:myorder/utils.dart';
 
 class CustomDialogUpdateQuantityTable extends StatefulWidget {
   final model.Order order;
@@ -95,7 +96,9 @@ class _CustomDialogUpdateQuantityTableState
                               orderController.updateQuantity(
                                   context,
                                   widget.order.order_id,
-                                  orderController.orderDetail.order_details)
+                                  orderController.orderDetail.order_details),
+                              
+                              Navigator.pop(context, 'success')
                             },
                             child: Container(
                               height: 50,

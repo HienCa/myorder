@@ -1,9 +1,10 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
 import 'package:myorder/views/screens/order/actions/move/dialog_confirm_move_table.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -106,8 +107,8 @@ class _MoveTablePageState extends State<MoveTablePage> {
                                   color: Colors.transparent,
                                 ),
                                 child: InkWell(
-                                  onTap: () => {
-                                    showDialog(
+                                  onTap: () async {
+                                    final result = await showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return CustomDialogMoveTable(
@@ -115,14 +116,20 @@ class _MoveTablePageState extends State<MoveTablePage> {
                                           table: tableController.tables[i],
                                         );
                                       },
-                                    )
+                                    );
+                                    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$result');
+                                    if (result != null) {
+                                      Utils.myPopResult(context, 'success');
+                                    print('aaggggggggggggggggggggggggggggggg');
+
+                                    }
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
                                       ClipOval(
-                                              child: tableImageEmpty,
-                                            ),
+                                        child: tableImageEmpty,
+                                      ),
                                       Text(
                                         tableController.tables[i].name,
                                         style: const TextStyle(

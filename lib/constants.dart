@@ -169,8 +169,11 @@ const textStylePriceBold16 =
 const textStylePriceBold20 =
     TextStyle(color: primaryColor, fontSize: 20, fontWeight: FontWeight.bold);
 
-const textStyleCalculaorBold20 =
-    TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, );
+const textStyleCalculaorBold20 = TextStyle(
+  color: Colors.white,
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+);
 
 const textStylePriceRegular16 =
     TextStyle(color: primaryColor, fontSize: 16, fontWeight: FontWeight.normal);
@@ -262,9 +265,8 @@ const marginRight20 = SizedBox(width: 20);
 const sizeIconLarge = 30;
 const sizeIconSmall = 20;
 
-// 
+//
 const duration = Duration(seconds: 2);
-
 
 //alert
 var alertStyle = AlertStyle(
@@ -308,6 +310,9 @@ var tableImageEmpty = Image.asset("assets/images/icon-table-simple-empty.jpg");
 var tableImageMerge = Image.asset("assets/images/icon-table-simple-cancel.jpg");
 var tableImageBooking =
     Image.asset("assets/images/icon-table-simple-booking.jpg");
+
+var arrowRightImage =
+    Image.asset("assets/images/arrow-right.jpg");
 
 //ICON CHECK
 var checkImageGreen = Image.asset("assets/images/icon-check-green.png");

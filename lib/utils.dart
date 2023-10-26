@@ -176,6 +176,15 @@ class Utils {
     return false;
   }
 
+  static void refeshSelected(List<dynamic> array) {
+    for (var item in array) {
+      if (item.isSelected == true) {
+        item.isSelected = false;
+        print("refeshSelected");
+      }
+    }
+  }
+
   //Đếm số lượng orderDetail muốn thay đổi
   static int counterOrderDetailSelected(List<OrderDetail> foods) {
     int count = 0;

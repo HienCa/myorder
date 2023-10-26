@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -318,7 +318,7 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                         child: Text(
                                           Utils.formatCurrency(orderController
-                                                  .orders[index].total_amount ),
+                                              .orders[index].total_amount),
                                           style: textStyleWhiteBold20,
                                         ),
                                       ),
@@ -404,14 +404,17 @@ class _OrderPageState extends State<OrderPage> {
                                                                           Wrap(
                                                                         children: [
                                                                           InkWell(
-                                                                            onTap: () =>
-                                                                                {
-                                                                              Navigator.push(
+                                                                            onTap:
+                                                                                () async {
+                                                                              final result = await Navigator.push(
                                                                                   context,
                                                                                   MaterialPageRoute(
                                                                                       builder: (context) => MoveTablePage(
                                                                                             order: orderController.orders[index],
-                                                                                          )))
+                                                                                          )));
+                                                                              if (result) {
+                                                                                Utils.showSuccessFlushbar(context, '', 'Chuyển bàn thành công!');
+                                                                              }
                                                                             },
                                                                             child:
                                                                                 const ListTile(

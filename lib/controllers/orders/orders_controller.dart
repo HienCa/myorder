@@ -978,7 +978,7 @@ class OrderController extends GetxController {
             "status": TABLE_STATUS_SERVING, // cập nhật lại trạng thái bàn mới
           });
           update();
-          Utils.showSuccessFlushbar(context, '', 'Chuyển bàn thành công!');
+          // Utils.showSuccessFlushbar(context, '', 'Chuyển bàn thành công!');
         } else {
           Utils.showErrorFlushbar(context, '', 'Chuyển bàn thất bại!');
         }
@@ -1344,6 +1344,7 @@ class OrderController extends GetxController {
           print("Món: ${orderDetailNeedUpdate[i].food!.name}");
           print("SL: ${orderDetailNeedUpdate[i].quantity}");
           print("----------------------------------------");
+          // if (orderDetailNeedUpdate[i].isSelected) {
           await firestore
               .collection("orders")
               .doc(order_id)
@@ -1352,12 +1353,11 @@ class OrderController extends GetxController {
               .update({
             "quantity": orderDetailNeedUpdate[i].quantity,
           });
+          // }
         }
 
         update();
-        Utils.showErrorFlushbar(context, '', 'Số lượng món đã được cập nhật!');
 
-        // Navigator.pop(context);
       }
     } catch (e) {
       Utils.showErrorFlushbar(context, '', 'Cập nhật thất bại!');

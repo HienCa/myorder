@@ -1,5 +1,6 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/discounts/discounts_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
-import 'package:myorder/models/order.dart';
+import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_single_food_screen.dart';
@@ -21,7 +22,7 @@ import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 
 class OrderdetailPage extends StatefulWidget {
-  final Order order;
+  final model.Order order;
   const OrderdetailPage({super.key, required this.order});
 
   @override
@@ -37,15 +38,29 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   void initState() {
     super.initState();
     orderController.getOrderDetailById(widget.order);
-    orderController.getOrderDetailOriginById(widget.order);
+    _refreshOrderDetailArray();
     orderController.getTotalAmountById(widget.order);
 
     discountController.getActiveDiscounts();
     vatController.getActiveVats();
-    orderDetailOriginArray =
-        List.from(orderController.orderDetailOrigin.order_details);
+
     print("orderDetailOriginArray: $orderDetailOriginArray");
     print("orderDetailOriginArray: ${orderDetailOriginArray.length}");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  void _refreshOrderDetailArray() {
+    getAllOrderDetails(widget.order.order_id);
+    print(orderDetailOriginArray.length);
+    print("========================Refeshing(========================");
+    for (int i = 0; i < orderDetailOriginArray.length; i++) {
+      print(orderDetailOriginArray[i].food!.name);
+    }
+    print("========================Refeshed(========================");
   }
 
   int selectedIndex = 0;
@@ -63,8 +78,10 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
         }
 
         //nếu thay đổi về số lượng thì isSelected = true
-        orderDetailOriginArray[i].isSelected =
+        orderDetail.isSelected =
             Utils.isQuantityChanged(orderDetailOriginArray, orderDetail);
+
+        orderDetailOriginArray[i].isSelected = orderDetail.isSelected;
 
         print(
             "orderDetailOriginArray[i].isSelected: ${orderDetailOriginArray[i].isSelected}");
@@ -78,15 +95,15 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   }
 
   void increaseQuantity(OrderDetail orderDetail) {
-    print("Muốn tăng");
-
     for (int i = 0; i < orderDetailOriginArray.length; i++) {
       if (orderDetailOriginArray[i].food_id == orderDetail.food_id) {
         orderDetail.quantity = orderDetail.quantity + 1;
 
         //nếu thay đổi về số lượng thì isSelected = true
-        orderDetailOriginArray[i].isSelected =
+        orderDetail.isSelected =
             Utils.isQuantityChanged(orderDetailOriginArray, orderDetail);
+        orderDetailOriginArray[i].isSelected = orderDetail.isSelected;
+
         print(
             "orderDetailOriginArray[i].isSelected: ${orderDetailOriginArray[i].isSelected}");
         print(
@@ -94,6 +111,23 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
         print(
             "Đã tăng số lượng orderDetail: ${orderDetail.food!.name} : ${orderDetail.quantity}");
       }
+    }
+  }
+
+  void getAllOrderDetails(String id) async {
+    try {
+      QuerySnapshot orderDetailDocs = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(id)
+          .collection('orderDetails')
+          .get();
+
+      List<OrderDetail> orderDetails =
+          orderDetailDocs.docs.map((doc) => OrderDetail.fromSnap(doc)).toList();
+
+      orderDetailOriginArray = orderDetails;
+    } catch (e) {
+      print('Error getting all order details: $e');
     }
   }
 
@@ -702,15 +736,25 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
           ),
           Utils.isAnyOrderDetailSelected(orderDetailOriginArray)
               ? GestureDetector(
-                  onTap: () => {
-                    showDialog(
+                  onTap: () async {
+                    final result = await showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return CustomDialogUpdateQuantityTable(
                           order: widget.order,
                         );
                       },
-                    )
+                    );
+                    if (result != null) {
+                      Utils.refeshSelected(orderDetailOriginArray);
+                      setState(() {
+                        Utils.isAnyOrderDetailSelected(
+                            orderController.orderDetail.order_details);
+
+                        Utils.showSuccessFlushbar(
+                            context, '', 'Số lượng món đã được cập nhật!');
+                      });
+                    }
                   },
                   child: Container(
                       height: 50,
@@ -723,7 +767,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                       ),
                       child: Center(
                         child: Text(
-                          "Lưu (${Utils.counterOrderDetailSelected(orderDetailOriginArray)})",
+                          "Lưu (${Utils.counterOrderDetailSelected(orderController.orderDetail.order_details)})",
                           style: textStyleWhiteBold20,
                         ),
                       )),
