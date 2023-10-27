@@ -417,6 +417,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                               'success') {
                                                                             Utils.myPopResult(context,
                                                                                 'MOVE-TABLE');
+                                                                            setState(() {});
                                                                           } else if (result ==
                                                                               'cancel') {
                                                                             Utils.myPopResult(context,
@@ -457,6 +458,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                               'success') {
                                                                             Utils.myPopResult(context,
                                                                                 'MERGE-TABLE');
+                                                                            setState(() {});
                                                                           } else if (result ==
                                                                               'cancel') {
                                                                             Utils.myPopResult(context,
@@ -496,6 +498,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                               'success') {
                                                                             Utils.myPopResult(context,
                                                                                 'SPLIT-FOOD');
+                                                                            setState(() {});
                                                                           }
                                                                           if (result ==
                                                                               'cancel') {
@@ -573,6 +576,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                                           } else {
                                                                                             orderController.cancelOrder(context, orderController.orders[index]);
                                                                                             Utils.myPopResult(context, 'success');
+                                                                                            setState(() {});
                                                                                           }
                                                                                         },
                                                                                         child: Expanded(
@@ -599,6 +603,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                               'success') {
                                                                             Utils.myPopResult(context,
                                                                                 'CANCEL-TABLE');
+                                                                            setState(() {});
                                                                           } else if (result ==
                                                                               'cancel') {
                                                                             Utils.myPopResult(context,
@@ -664,6 +669,7 @@ class _OrderPageState extends State<OrderPage> {
                                                             context,
                                                             '',
                                                             'Chuyển bàn thành công!');
+
                                                         setState(() {
                                                           orderController.getOrders(
                                                               employeeIdSelected,
@@ -675,7 +681,11 @@ class _OrderPageState extends State<OrderPage> {
                                                             context,
                                                             '',
                                                             'Gộp bàn thành công!');
-                                                        setState(() {});
+                                                        setState(() {
+                                                          orderController.getOrders(
+                                                              employeeIdSelected,
+                                                              keySearch);
+                                                        });
                                                       } else if (result ==
                                                           "SPLIT-FOOD") {
                                                         Utils.showSuccessFlushbar(
@@ -688,13 +698,13 @@ class _OrderPageState extends State<OrderPage> {
                                                             context,
                                                             '',
                                                             'Hủy bàn thành công!');
-                                                        setState(() {});
+                                                        setState(() {
+                                                          orderController.getOrders(
+                                                              employeeIdSelected,
+                                                              keySearch);
+                                                        });
                                                       } else if (result ==
                                                           'FAIL-CANCEL-TABLE') {
-                                                        // Utils.showErrorFlushbar(
-                                                        //     context,
-                                                        //     'Thông báo',
-                                                        //     'Bàn này đang có món ăn không thể đóng bàn, vui lòng hủy tất cả món trước khi thao tác');
                                                         Utils.showErrorFlushbar(
                                                             context,
                                                             'Thông báo',
