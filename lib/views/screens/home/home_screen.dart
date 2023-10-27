@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/reports/reports_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,12 +14,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   ReportController reportController = Get.put(ReportController());
- @override
+  @override
   void initState() {
     super.initState();
-    reportController.getOrders();
+    reportController.getReportServingOrders();
     reportController.getBills();
+    reportController.getNumberOfCanceledOrders();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,29 +38,41 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 //ĐƠN HÀNG HÔM NAY
-                const SizedBox(
+                SizedBox(
                   height: 40,
                   child: ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.bookmark,
                       color: iconColor,
                     ),
-                    title: Text("ĐƠN HÀNG HÔM NAY",
+                    title: const Text("ĐƠN HÀNG HÔM NAY",
                         style: textStyleTitleGrayBold20),
+                    subtitle: Text(
+                        "${reportController.reportBills.quantity + reportController.reportServingOrder.quantity + reportController.reportCancelOrder.quantity}",
+                        style: textStyleSubTitlePrimaryRegular20),
                   ),
-                ),
-                ListTile(
-                  title: const Text("Đã thanh toán",
-                      style: textStyleTitleGrayRegular16),
-                  trailing: Text("${reportController.numberOfOrder}",
-                      style: textStyleTrailingSuccessRegular16),
                 ),
                 ListTile(
                   title: const Text("Đang phục vụ",
                       style: textStyleTitleGrayRegular16),
-                  trailing: Text("${reportController.numberOfBills}",
-                      style: textStyleTrailingPrimaryRegular16),
+                  trailing: Text(
+                      "${reportController.reportServingOrder.quantity}",
+                      style: textStylePrimary16),
                 ),
+                ListTile(
+                  title:
+                      const Text("Đã hủy", style: textStyleTitleGrayRegular16),
+                  trailing: Text(
+                      "${reportController.reportCancelOrder.quantity}",
+                      style: textStyleCancel16),
+                ),
+                ListTile(
+                  title: const Text("Đã thanh toán",
+                      style: textStyleTitleGrayRegular16),
+                  trailing: Text("${reportController.reportBills.quantity}",
+                      style: textStyleSuccess16),
+                ),
+
                 Container(
                   height: 10,
                   decoration: const BoxDecoration(
@@ -109,26 +124,47 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 //DOANH THU TẠM TÍNH HÔM NAY
-                const SizedBox(
-                  height: 40,
+                SizedBox(
+                  height: 50,
                   child: ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.bookmark,
                       color: iconColor,
                     ),
-                    title: Text("DOANH THU TẠM TÍNH HÔM NAY",
+                    title: const Text("DOANH THU TẠM TÍNH HÔM NAY",
                         style: textStyleTitleGrayBold20),
+                    subtitle: Text(
+                        Utils.formatCurrency(reportController
+                                .reportBills.total_amount +
+                            reportController.reportServingOrder.total_amount +
+                            reportController.reportCancelOrder.total_amount),
+                        style: textStyleSubTitlePrimaryRegular20),
                   ),
                 ),
-                const ListTile(
-                  title:
-                      Text("Đã thanh toán", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingSuccessRegular16),
+
+                ListTile(
+                  title: const Text("Đang phục vụ",
+                      style: textStyleTitleGrayRegular16),
+                  trailing: Text(
+                      Utils.formatCurrency(
+                          reportController.reportServingOrder.total_amount),
+                      style: textStylePrimary16),
                 ),
-                const ListTile(
+                ListTile(
                   title:
-                      Text("Đang phục vụ", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+                      const Text("Đã hủy", style: textStyleTitleGrayRegular16),
+                  trailing: Text(
+                      Utils.formatCurrency(
+                          reportController.reportCancelOrder.total_amount),
+                      style: textStyleCancel16),
+                ),
+                ListTile(
+                  title: const Text("Đã thanh toán",
+                      style: textStyleTitleGrayRegular16),
+                  trailing: Text(
+                      Utils.formatCurrency(
+                          reportController.reportBills.total_amount),
+                      style: textStyleSuccess16),
                 ),
                 //line char
                 Container(
@@ -147,7 +183,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: Text("DOANH THU HÔM QUA",
                         style: textStyleTitleGrayBold20),
-                    subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+                    subtitle:
+                        Text("0", style: textStyleSubTitlePrimaryRegular20),
                   ),
                 ),
 
@@ -168,7 +205,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: Text("DOANH THU TUẦN NÀY",
                         style: textStyleTitleGrayBold20),
-                    subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+                    subtitle:
+                        Text("0", style: textStyleSubTitlePrimaryRegular20),
                   ),
                 ),
 
@@ -189,7 +227,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: Text("DOANH THU THÁNG NÀY",
                         style: textStyleTitleGrayBold20),
-                    subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+                    subtitle:
+                        Text("0", style: textStyleSubTitlePrimaryRegular20),
                   ),
                 ),
 
@@ -210,7 +249,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: Text("DOANH THU 3 THÁNG GẦN NHẤT",
                         style: textStyleTitleGrayBold20),
-                    subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+                    subtitle:
+                        Text("0", style: textStyleSubTitlePrimaryRegular20),
                   ),
                 ),
 
@@ -231,7 +271,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: Text("DOANH THU NĂM NAY",
                         style: textStyleTitleGrayBold20),
-                    subtitle: Text("0", style: textStyleSubTitleGrayRegular16),
+                    subtitle:
+                        Text("0", style: textStyleSubTitlePrimaryRegular20),
                   ),
                 ),
 
@@ -256,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                         title: Text("DOANH THU - CHI PHÍ - LỢI NHUẬN",
                             style: textStyleTitleGrayBold20),
                         subtitle: Text("100,000,000",
-                            style: textStyleSubTitleGrayRegular16),
+                            style: textStyleSubTitlePrimaryRegular20),
                       ),
                       ListTile(
                         title: Text("Doanh thu",

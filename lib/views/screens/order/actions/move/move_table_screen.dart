@@ -93,7 +93,7 @@ class _MoveTablePageState extends State<MoveTablePage> {
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.65,
+                      height: MediaQuery.of(context).size.height * 0.55,
                       child: ResponsiveGridList(
                           desiredItemWidth: 100,
                           minSpacing: 10,
@@ -117,10 +117,8 @@ class _MoveTablePageState extends State<MoveTablePage> {
                                         );
                                       },
                                     );
-                                    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$result');
                                     if (result != null) {
                                       Utils.myPopResult(context, 'success');
-                                    print('aaggggggggggggggggggggggggggggggg');
 
                                     }
                                   },
@@ -146,7 +144,7 @@ class _MoveTablePageState extends State<MoveTablePage> {
                       height: 10,
                     ),
                     InkWell(
-                      onTap: () => {Navigator.pop(context)},
+                      onTap: () => {Utils.myPopResult(context, 'cancel')},
                       child: Container(
                         height: 50,
                         margin:

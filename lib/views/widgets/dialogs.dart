@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/utils.dart';
 
 Future<void> showAlertDialogButtons(BuildContext context) async {
   return showDialog<void>(
@@ -80,9 +81,7 @@ void showCustomAlertDialogConfirm(BuildContext context, String title,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                onTap: () => {
-                  Navigator.pop(context),
-                },
+                onTap: () => {Utils.myPopResult(context, 'DEFAULT')},
                 child: Expanded(
                   child: Container(
                     height: 50,

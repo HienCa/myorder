@@ -937,6 +937,7 @@ class OrderController extends GetxController {
         await firestore.collection('orders').doc(order.order_id).update({
           "order_status": ORDER_STATUS_CANCEL, // đơn hàng đã hủy
           "payment_at": Timestamp.now(), // đơn hàng đã hủy
+          "active": DEACTIVE, // đơn hàng đã hủy
         });
         update();
 

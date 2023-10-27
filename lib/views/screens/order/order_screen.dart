@@ -12,7 +12,6 @@ import 'package:myorder/views/screens/order/actions/move/move_table_screen.dart'
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
-import 'package:myorder/views/widgets/dialogs.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -367,182 +366,326 @@ class _OrderPageState extends State<OrderPage> {
                                                   color: kBlueColor,
                                                 ),
                                                 child: InkWell(
-                                                    onTap: () => {
-                                                          showModalBottomSheet(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return SizedBox(
-                                                                //đây
-                                                                height: 350,
-                                                                width: MediaQuery.of(
+                                                    onTap: () async {
+                                                      final result =
+                                                          await showModalBottomSheet(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return SizedBox(
+                                                            //đây
+                                                            height: 350,
+                                                            width:
+                                                                MediaQuery.of(
                                                                         context)
                                                                     .size
                                                                     .width,
-                                                                child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Container(
-                                                                      height:
-                                                                          230,
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width /
-                                                                          1.5,
-                                                                      decoration:
-                                                                          const BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.all(Radius.circular(10)),
-                                                                        color:
-                                                                            secondColor,
-                                                                      ),
-                                                                      child:
-                                                                          Wrap(
-                                                                        children: [
-                                                                          InkWell(
-                                                                            onTap:
-                                                                                () async {
-                                                                              final result = await Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                      builder: (context) => MoveTablePage(
-                                                                                            order: orderController.orders[index],
-                                                                                          )));
-                                                                              if (result) {
-                                                                                Utils.showSuccessFlushbar(context, '', 'Chuyển bàn thành công!');
-                                                                              }
-                                                                            },
-                                                                            child:
-                                                                                const ListTile(
-                                                                              leading: Icon(
-                                                                                Icons.move_up_outlined,
-                                                                                color: iconColor,
-                                                                              ),
-                                                                              title: Text(
-                                                                                'Chuyển bàn',
-                                                                                style: textStyleTitleGrayBold20,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Divider(
-                                                                              color: dividerColor,
-                                                                              height: 0.05),
-                                                                          InkWell(
-                                                                            onTap: () =>
-                                                                                {
-                                                                              Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                      builder: (context) => MergeTablePage(
-                                                                                            order: orderController.orders[index],
-                                                                                          )))
-                                                                            },
-                                                                            child:
-                                                                                const ListTile(
-                                                                              leading: Icon(Icons.merge_rounded, color: iconColor),
-                                                                              title: Text('Gộp bàn', style: textStyleTitleGrayBold20),
-                                                                            ),
-                                                                          ),
-                                                                          const Divider(
-                                                                              color: dividerColor,
-                                                                              height: 0.05),
-                                                                          InkWell(
-                                                                            onTap: () =>
-                                                                                {
-                                                                              showDialog(
-                                                                                context: context,
-                                                                                builder: (BuildContext context) {
-                                                                                  return SplitFoodPage(
-                                                                                    order: orderController.orders[index],
-                                                                                  );
-                                                                                },
-                                                                              )
-                                                                            },
-                                                                            child:
-                                                                                const ListTile(
-                                                                              leading: Icon(Icons.share_outlined, color: iconColor),
-                                                                              title: Text('Tách món', style: textStyleTitleGrayBold20),
-                                                                            ),
-                                                                          ),
-                                                                          const Divider(
-                                                                              color: dividerColor,
-                                                                              height: 0.05),
-                                                                          InkWell(
-                                                                            onTap: () =>
-                                                                                {
-                                                                              showCustomAlertDialogConfirm(
-                                                                                context,
-                                                                                "XÁC NHẬN HỦY BÀN",
-                                                                                "Bạn có muốn hủy bàn ${orderController.orders[index].table!.name} ?",
-                                                                                colorWarning,
-                                                                                () async {
-                                                                                  //kiểm tra có món nào chưa hủy không
-                                                                                  var isCheckStatusFood = orderController.orders[index].order_details.any((element) => element.food_status != FOOD_STATUS_CANCEL);
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Container(
+                                                                  height: 230,
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width /
+                                                                      1.5,
+                                                                  decoration:
+                                                                      const BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(10)),
+                                                                    color:
+                                                                        secondColor,
+                                                                  ),
+                                                                  child: Wrap(
+                                                                    children: [
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () async {
+                                                                          final result = await Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                  builder: (context) => MoveTablePage(
+                                                                                        order: orderController.orders[index],
+                                                                                      )));
 
-                                                                                  if (isCheckStatusFood) {
-                                                                                    //tất cả món ăn chưa được hủy
-                                                                                    showAlertDialog(context, 'Thông báo', 'Bàn này đang có món ăn không thể đóng bàn, vui lòng hủy tất cả món trước khi thao tác');
-
-                                                                                    Future.delayed(const Duration(seconds: 1), () {
-                                                                                      Navigator.pop(context);
-                                                                                      Navigator.pop(context);
-                                                                                      Navigator.pop(context);
-                                                                                    });
-                                                                                  } else {
-                                                                                    orderController.cancelOrder(context, orderController.orders[index]);
-                                                                                    Navigator.pop(context);
-                                                                                  }
-                                                                                },
-                                                                              )
-                                                                            },
-                                                                            child:
-                                                                                const ListTile(
-                                                                              leading: Icon(Icons.close, color: iconColor),
-                                                                              title: Text('Hủy bàn', style: textStyleTitleGrayBold20),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                    marginTop10,
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () =>
-                                                                              {
-                                                                        Navigator.pop(
-                                                                            context)
-                                                                      },
-                                                                      child:
-                                                                          Container(
-                                                                        height:
-                                                                            50,
-                                                                        width: MediaQuery.of(context).size.width /
-                                                                            1.5,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              primaryColor,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10),
-                                                                        ),
+                                                                          if (result ==
+                                                                              'success') {
+                                                                            Utils.myPopResult(context,
+                                                                                'MOVE-TABLE');
+                                                                          } else if (result ==
+                                                                              'cancel') {
+                                                                            Utils.myPopResult(context,
+                                                                                'DEFAULT');
+                                                                          }
+                                                                        },
                                                                         child:
-                                                                            const Center(
-                                                                          child: Text(
-                                                                              'Hủy',
-                                                                              style: textStyleOrderSuccessBold24),
+                                                                            const ListTile(
+                                                                          leading:
+                                                                              Icon(
+                                                                            Icons.move_up_outlined,
+                                                                            color:
+                                                                                iconColor,
+                                                                          ),
+                                                                          title:
+                                                                              Text(
+                                                                            'Chuyển bàn',
+                                                                            style:
+                                                                                textStyleTitleGrayBold20,
+                                                                          ),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                  ],
+                                                                      const Divider(
+                                                                          color:
+                                                                              dividerColor,
+                                                                          height:
+                                                                              0.05),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () =>
+                                                                                {
+                                                                          Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                  builder: (context) => MergeTablePage(
+                                                                                        order: orderController.orders[index],
+                                                                                      )))
+                                                                        },
+                                                                        child:
+                                                                            const ListTile(
+                                                                          leading: Icon(
+                                                                              Icons.merge_rounded,
+                                                                              color: iconColor),
+                                                                          title: Text(
+                                                                              'Gộp bàn',
+                                                                              style: textStyleTitleGrayBold20),
+                                                                        ),
+                                                                      ),
+                                                                      const Divider(
+                                                                          color:
+                                                                              dividerColor,
+                                                                          height:
+                                                                              0.05),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () =>
+                                                                                {
+                                                                          showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (BuildContext context) {
+                                                                              return SplitFoodPage(
+                                                                                order: orderController.orders[index],
+                                                                              );
+                                                                            },
+                                                                          )
+                                                                        },
+                                                                        child:
+                                                                            const ListTile(
+                                                                          leading: Icon(
+                                                                              Icons.share_outlined,
+                                                                              color: iconColor),
+                                                                          title: Text(
+                                                                              'Tách món',
+                                                                              style: textStyleTitleGrayBold20),
+                                                                        ),
+                                                                      ),
+                                                                      const Divider(
+                                                                          color:
+                                                                              dividerColor,
+                                                                          height:
+                                                                              0.05),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () async {
+                                                                          final result =
+                                                                              await showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (BuildContext context) {
+                                                                              return AlertDialog(
+                                                                                backgroundColor: backgroundColor,
+                                                                                title: const Center(
+                                                                                    child: Text(
+                                                                                  "XÁC NHẬN HỦY BÀN",
+                                                                                  style: TextStyle(color: colorWarning),
+                                                                                )),
+                                                                                content: SingleChildScrollView(
+                                                                                  child: ListBody(
+                                                                                    children: <Widget>[
+                                                                                      Text("Bạn có muốn hủy bàn ${orderController.orders[index].table!.name} ?", style: const TextStyle(color: Colors.black54)),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                actions: <Widget>[
+                                                                                  Row(
+                                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                                    children: [
+                                                                                      InkWell(
+                                                                                        onTap: () => {
+                                                                                          Utils.myPopResult(context, 'cancel')
+                                                                                        },
+                                                                                        child: Expanded(
+                                                                                          child: Container(
+                                                                                            height: 50,
+                                                                                            width: MediaQuery.of(context).size.width / 3,
+                                                                                            color: backgroundColorCancel,
+                                                                                            child: const Center(
+                                                                                              child: Text(
+                                                                                                'HỦY',
+                                                                                                style: buttonStyleCancel,
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                      InkWell(
+                                                                                        onTap: () async {
+                                                                                          var isCheckStatusFood = orderController.orders[index].order_details.any((element) => element.food_status != FOOD_STATUS_IN_CHEFT);
+                                                                                          print("isCheckStatusFood: $isCheckStatusFood");
+                                                                                          if (isCheckStatusFood) {
+                                                                                            //muốn hủy bàn thì tất cả các món phải ở trạng thái chờ chế biến.
+                                                                                            Utils.myPopResult(context, 'FAIL-CANCEL-TABLE');
+                                                                                          } else {
+                                                                                            orderController.cancelOrder(context, orderController.orders[index]);
+                                                                                            Utils.myPopResult(context, 'success');
+                                                                                          }
+                                                                                        },
+                                                                                        child: Expanded(
+                                                                                          child: Container(
+                                                                                            height: 50,
+                                                                                            width: MediaQuery.of(context).size.width / 3,
+                                                                                            color: primaryColor,
+                                                                                            child: const Center(
+                                                                                              child: Text(
+                                                                                                'XÁC NHẬN',
+                                                                                                style: buttonStyleConfirm,
+                                                                                              ),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      )
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              );
+                                                                            },
+                                                                          );
+                                                                          if (result ==
+                                                                              'success') {
+                                                                            Utils.myPopResult(context,
+                                                                                'CANCEL-TABLE');
+                                                                          } else if (result ==
+                                                                              'cancel') {
+                                                                            Utils.myPopResult(context,
+                                                                                'DEFAULT');
+                                                                          } else if (result ==
+                                                                              "FAIL-CANCEL-TABLE") {
+                                                                            Utils.myPopResult(context,
+                                                                                'FAIL-CANCEL-TABLE');
+                                                                          }
+                                                                        },
+                                                                        child:
+                                                                            const ListTile(
+                                                                          leading: Icon(
+                                                                              Icons.close,
+                                                                              color: iconColor),
+                                                                          title: Text(
+                                                                              'Hủy bàn',
+                                                                              style: textStyleTitleGrayBold20),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              );
-                                                            },
-                                                          )
+                                                                marginTop10,
+                                                                InkWell(
+                                                                  onTap: () => {
+                                                                    Utils.myPopResult(
+                                                                        context,
+                                                                        'DEFAULT')
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 50,
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        1.5,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color:
+                                                                          primaryColor,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                    ),
+                                                                    child:
+                                                                        const Center(
+                                                                      child: Text(
+                                                                          'Hủy',
+                                                                          style:
+                                                                              textStyleOrderSuccessBold24),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
                                                         },
+                                                      );
+                                                      if (result ==
+                                                          "MOVE-TABLE") {
+                                                        Utils.showSuccessFlushbar(
+                                                            context,
+                                                            '',
+                                                            'Chuyển bàn thành công!');
+                                                        setState(() {
+                                                          orderController.getOrders(
+                                                              employeeIdSelected,
+                                                              keySearch);
+                                                        });
+                                                      } else if (result ==
+                                                          "MERGE-TABLE") {
+                                                        Utils.showSuccessFlushbar(
+                                                            context,
+                                                            '',
+                                                            'Chuyển bàn thành công!');
+                                                        setState(() {});
+                                                      } else if (result ==
+                                                          "SPLIT-FOOD") {
+                                                        Utils.showSuccessFlushbar(
+                                                            context,
+                                                            '',
+                                                            'Chuyển bàn thành công!');
+                                                      } else if (result ==
+                                                          "CANCEL-TABLE") {
+                                                        Utils.showSuccessFlushbar(
+                                                            context,
+                                                            '',
+                                                            'Hủy bàn thành công!');
+                                                        setState(() {});
+                                                      } else if (result ==
+                                                          'FAIL-CANCEL-TABLE') {
+                                                        // Utils.showErrorFlushbar(
+                                                        //     context,
+                                                        //     'Thông báo',
+                                                        //     'Bàn này đang có món ăn không thể đóng bàn, vui lòng hủy tất cả món trước khi thao tác');
+                                                        Utils.showErrorFlushbar(
+                                                            context,
+                                                            'Thông báo',
+                                                            'Chỉ có thể hủy bàn khi tất cả món ăn ở trạng thái CHỜ CHẾ BIẾN');
+                                                      } else if (result ==
+                                                          "DEFAULT") {}
+
+                                                      setState(() {});
+                                                    },
                                                     child: const Icon(
                                                         Icons.more_horiz)),
                                               ),

@@ -122,13 +122,25 @@ const backgroundOrderColor = primaryColor;
 const textStyleOrderSuccessBold24 =
     TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold);
 
+//===============================
+
+//PRIMARY
+const textStylePrimary16 = TextStyle(fontSize: 16, color: primaryColor);
+//CANCEL
+const textStyleCancel16 = TextStyle(fontSize: 16, color: colorCancel);
+//SUCCESS
+const textStyleSuccess16 = TextStyle(fontSize: 16, color: colorSuccess);
+
+
+
+
 //
 const textStyleTitleGrayBold20 =
     TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
 const textStyleTitlePrimaryBold20 =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor);
 const textStyleTitleGrayRegular16 = TextStyle(fontSize: 16, color: Colors.grey);
-const textStyleSubTitleGrayRegular16 =
+const textStyleSubTitlePrimaryRegular20 =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: primaryColor);
 const textStyleTrailingPrimaryRegular16 =
     TextStyle(fontSize: 16, color: primaryColor);
@@ -311,8 +323,7 @@ var tableImageMerge = Image.asset("assets/images/icon-table-simple-cancel.jpg");
 var tableImageBooking =
     Image.asset("assets/images/icon-table-simple-booking.jpg");
 
-var arrowRightImage =
-    Image.asset("assets/images/arrow-right.jpg");
+var arrowRightImage = Image.asset("assets/images/arrow-right.jpg");
 
 //ICON CHECK
 var checkImageGreen = Image.asset("assets/images/icon-check-green.png");
