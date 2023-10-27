@@ -9,6 +9,7 @@ import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/order_detail.dart';
 // ignore: library_prefixes
 import 'package:myorder/models/table.dart' as tableModel;
+import 'package:myorder/utils.dart';
 
 class CustomDialogSplitFood extends StatefulWidget {
   final model.Order order;
@@ -92,7 +93,7 @@ class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
                         children: [
                           InkWell(
                             onTap: () {
-                              Navigator.pop(context);
+                              Utils.myPopCancel(context);
                             },
                             child: Container(
                               height: 50,
@@ -116,7 +117,9 @@ class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
                                   context,
                                   widget.order,
                                   widget.orderDetailNeedSplitArray,
+                                  // widget.order.order_details,
                                   widget.table);
+                              Utils.myPopSuccess(context);
                             },
                             child: Container(
                               height: 50,

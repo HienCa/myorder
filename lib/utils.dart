@@ -101,6 +101,16 @@ class Utils {
     Navigator.pop(context, result);
   }
 
+  //Pop Screen Success
+  static void myPopSuccess(BuildContext context) {
+    Navigator.pop(context, 'success');
+  }
+
+  //Pop Screen Cancel
+  static void myPopCancel(BuildContext context) {
+    Navigator.pop(context, 'cancel');
+  }
+
 //Pop Screen
   static void myPop(BuildContext context) {
     Navigator.pop(context);

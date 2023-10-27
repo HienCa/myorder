@@ -794,7 +794,6 @@ class OrderController extends GetxController {
             .get();
         double totalAmount = 0;
         for (OrderDetail orderDetail in orderDetailList) {
-          totalAmount += orderDetail.price;
           String idDetail = Utils.generateUUID();
           orderDetail.order_detail_id = idDetail;
           //nếu là món tặng -> không tính tiền món ăn
@@ -808,6 +807,8 @@ class OrderController extends GetxController {
           if (orderDetail.category_code == CATEGORY_DRINK) {
             orderDetail.food_status = FOOD_STATUS_FINISH;
           }
+          totalAmount += (orderDetail.price * orderDetail.quantity);
+
           await firestore
               .collection('orders')
               .doc(id)
@@ -823,7 +824,6 @@ class OrderController extends GetxController {
         await firestore.collection('tables').doc(table_id).update({
           "status": TABLE_STATUS_SERVING, // đang phục vụ
         });
-        print(id);
       } else {
         // thêm foods vào order hiện tại đang phục vụ
         // add order detail
@@ -834,37 +834,52 @@ class OrderController extends GetxController {
         }
         var allDocsOrderDetail = await firestore
             .collection('orders')
-            .doc(order_id) //order_id của don hang hiện đang được phục vụ
-            .collection("orderDetails")
+            .doc(order_id) //order_id của don hang hiện tại
             .get();
 
-        print(order_id);
+        double totalAmount = 0;
 
         for (OrderDetail orderDetail in orderDetailList) {
           String idDetail = Utils.generateUUID();
 
           orderDetail.order_detail_id = idDetail;
-
+          //nếu là món tặng -> không tính tiền món ăn
+          if (isGift) {
+            orderDetail.is_gift = true;
+            orderDetail.price = 0;
+          } else {
+            orderDetail.is_gift = false;
+          }
           //nếu là món nước -> trạng thái Hoàn Thành
           if (orderDetail.category_code == CATEGORY_DRINK) {
             orderDetail.food_status = FOOD_STATUS_FINISH;
           }
+          totalAmount += (orderDetail.price * orderDetail.quantity);
+
           await firestore
               .collection('orders')
               .doc(order_id) //order_id của don hang hiện đang được phục vụ
               .collection("orderDetails")
               .doc(idDetail)
               .set(orderDetail.toJson());
+
+          //cập nhật lại total_amount
+
+          var orderCollection =
+              await firestore.collection("orders").doc(order_id).get();
+          var orderData = orderCollection.data();
+
+          double totalAmountOrigin = 0;
+          if (orderCollection.exists && orderData is Map<String, dynamic>) {
+            double totalAmountCurrent = orderCollection['total_amount'] ?? 0;
+            await firestore.collection("orders").doc(order_id).update({
+              "total_amount": totalAmount + totalAmountCurrent,
+            });
+          }
         }
       }
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Thêm mới thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+
       Navigator.pop(context);
-      // Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',
@@ -1140,6 +1155,7 @@ class OrderController extends GetxController {
     BuildContext context,
     model.Order order,
     List<OrderDetail> orderDetailNeedSplitArray,
+    // List<OrderDetail> orderDetailOriginArray,
     table.Table targetTable,
   ) async {
     try {
@@ -1147,9 +1163,10 @@ class OrderController extends GetxController {
       if (orderDetailNeedSplitArray.isNotEmpty && targetTable.table_id != "") {
         double totalAmountSplit = 0;
         for (int i = 0; i < orderDetailNeedSplitArray.length; i++) {
-          totalAmountSplit +=
-              orderDetailNeedSplitArray[i].price; //tiền món muốn tách
           if (orderDetailNeedSplitArray[i].isSelected) {
+            totalAmountSplit += (orderDetailNeedSplitArray[i].price *
+                orderDetailNeedSplitArray[i].quantity); //tiền món muốn tách
+
             print(orderDetailNeedSplitArray[i]);
             // Lấy thông tin order detail của phần tử thứ i
             var orderCollection = await firestore
@@ -1198,29 +1215,11 @@ class OrderController extends GetxController {
                     .doc(orderDetailNeedSplitArray[i].order_detail_id)
                     .update({
                   "quantity": newQuantity,
-                }).then((_) {
-                  Get.snackbar(
-                    'Thành công!',
-                    'Tách món thành công',
-                    backgroundColor: backgroundSuccessColor,
-                    colorText: Colors.white,
-                  );
-                }).catchError((error) {
-                  Get.snackbar(
-                    'THẤT BẠI!',
-                    'Vui lòng kiểm tra lại!',
-                    backgroundColor: backgroundFailureColor,
-                    colorText: Colors.white,
-                  );
                 });
               }
             }
           }
         }
-        // cập nhật lại tổng tiền cho order
-        await firestore.collection('orders').doc(order.order_id).update({
-          "total_amount": totalAmountSplit,
-        });
 
         //kiểm tra xem don hang đã được order chưa
         var tableOrdered = await firestore
@@ -1228,6 +1227,15 @@ class OrderController extends GetxController {
             .where("table_id", isEqualTo: targetTable.table_id)
             .where("active", isEqualTo: ACTIVE)
             .get();
+
+        var orderCollection =
+            await firestore.collection("orders").doc(order.order_id).get();
+        var orderData = orderCollection.data();
+
+        double totalAmountOrigin = 0;
+        if (orderCollection.exists && orderData is Map<String, dynamic>) {
+          totalAmountOrigin = orderCollection['total_amount'] ?? 0;
+        }
 
         if (tableOrdered.docs.isEmpty) {
           //nếu don hang đang trống thì tạo order mới
@@ -1258,6 +1266,10 @@ class OrderController extends GetxController {
             discount_percent: 0,
             discount_amount_other: 0,
           );
+          // cập nhật lại tổng tiền cho order
+
+          Order.total_amount = totalAmountSplit;
+
           CollectionReference usersCollection =
               FirebaseFirestore.instance.collection('orders');
 
@@ -1291,22 +1303,17 @@ class OrderController extends GetxController {
               .update({
             "status": TABLE_STATUS_SERVING, // đang phục vụ
           });
-          print(id);
+
+          await firestore.collection("orders").doc(order.order_id).update({
+            "total_amount": totalAmountOrigin - totalAmountSplit,
+          });
         } else {
-          // thêm foods vào order hiện tại đang phục vụ
-          // add order detail
-          var order_id = "";
-          for (var doc in tableOrdered.docs) {
-            // Lấy order_id từ mỗi tài liệu và thêm vào danh sách
-            order_id = doc.id;
-          }
           var allDocsOrderDetail = await firestore
               .collection('orders')
-              .doc(order_id) //order_id của don hang hiện đang được phục vụ
+              .doc(
+                  order.order_id) //order_id của don hang hiện đang được phục vụ
               .collection("orderDetails")
               .get();
-
-          print(order_id);
 
           for (OrderDetail orderDetail in orderDetailNeedSplitArray) {
             String idDetail = Utils.generateUUID();
@@ -1315,16 +1322,20 @@ class OrderController extends GetxController {
             if (orderDetail.isSelected) {
               await firestore
                   .collection('orders')
-                  .doc(order_id) //order_id của don hang hiện đang được phục vụ
+                  .doc(order
+                      .order_id) //order_id của don hang hiện đang được phục vụ
                   .collection("orderDetails")
                   .doc(idDetail)
                   .set(orderDetail.toJson());
             }
           }
+          await firestore.collection("orders").doc(order.order_id).update({
+            "total_amount": totalAmountOrigin + totalAmountSplit,
+          });
         }
-        update();
 
-        Navigator.pop(context);
+        update();
+        Utils.showSuccessFlushbar(context, '', 'Tách món thành công!');
       }
     } catch (e) {
       Utils.showErrorFlushbar(context, '', 'Tách món thất bại!');
@@ -1358,7 +1369,6 @@ class OrderController extends GetxController {
         }
 
         update();
-
       }
     } catch (e) {
       Utils.showErrorFlushbar(context, '', 'Cập nhật thất bại!');
@@ -1376,7 +1386,7 @@ class OrderController extends GetxController {
         double totalAmount = 0;
         double total = 0;
         for (OrderDetail orderDetail in orderDetail) {
-          total += orderDetail.price;
+          total += (orderDetail.price * orderDetail.quantity);
         }
         //Phan tram vat dua vao tong tien order detail -> khong tinh da giam gia
 
@@ -1409,7 +1419,7 @@ class OrderController extends GetxController {
         double totalAmount = 0;
         double total = 0;
         for (OrderDetail orderDetail in orderDetail) {
-          total += orderDetail.price;
+          total += (orderDetail.price * orderDetail.quantity);
         }
         //Phan tram vat dua vao tong tien order detail -> khong tinh da giam gia
         double vat_price = (total * VAT_PERCENT) / 100;
@@ -1446,10 +1456,10 @@ class OrderController extends GetxController {
         for (OrderDetail orderDetail in order.order_details) {
           //ap dung theo danh muc: mon an - mon nuoc - mon khac
           if (category_code == orderDetail.category_code) {
-            total += orderDetail.price;
+            total += (orderDetail.price * orderDetail.quantity);
           } else {
             //ap dung tat ca
-            total += orderDetail.price;
+            total += (orderDetail.price * orderDetail.quantity);
           }
         }
 
@@ -1542,7 +1552,7 @@ class OrderController extends GetxController {
         double totalAmount = 0;
 
         for (OrderDetail orderDetail in orderDetail) {
-          totalAmount += orderDetail.price;
+          totalAmount += (orderDetail.price * orderDetail.quantity);
         }
         // huy áp dụng giảm giá và thuế cho đơn hàng
         await firestore.collection('orders').doc(order.order_id).update({

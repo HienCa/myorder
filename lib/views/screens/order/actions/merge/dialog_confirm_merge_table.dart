@@ -6,6 +6,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 
 import 'package:myorder/models/order.dart' as model;
+import 'package:myorder/utils.dart';
 
 class CustomDialogMergeTable extends StatefulWidget {
   final model.Order order;
@@ -73,7 +74,7 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
-                            onTap: () => {Navigator.pop(context)},
+                            onTap: () => {Utils.myPopCancel(context)},
                             child: Container(
                               height: 50,
                               width: 136,
@@ -95,8 +96,7 @@ class _CustomDialogMergeTableState extends State<CustomDialogMergeTable> {
                               // merge
                               orderController.mergeTable(
                                   context, widget.order, widget.tableIds),
-                              Navigator.pop(context)
-                              
+                              Utils.myPopSuccess(context)
                             },
                             child: Container(
                               height: 50,

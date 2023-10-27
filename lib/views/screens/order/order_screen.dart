@@ -446,14 +446,22 @@ class _OrderPageState extends State<OrderPage> {
                                                                               0.05),
                                                                       InkWell(
                                                                         onTap:
-                                                                            () =>
-                                                                                {
-                                                                          Navigator.push(
+                                                                            () async {
+                                                                          final result = await Navigator.push(
                                                                               context,
                                                                               MaterialPageRoute(
                                                                                   builder: (context) => MergeTablePage(
                                                                                         order: orderController.orders[index],
-                                                                                      )))
+                                                                                      )));
+                                                                          if (result ==
+                                                                              'success') {
+                                                                            Utils.myPopResult(context,
+                                                                                'MERGE-TABLE');
+                                                                          } else if (result ==
+                                                                              'cancel') {
+                                                                            Utils.myPopResult(context,
+                                                                                'DEFAULT');
+                                                                          }
                                                                         },
                                                                         child:
                                                                             const ListTile(
@@ -472,9 +480,9 @@ class _OrderPageState extends State<OrderPage> {
                                                                               0.05),
                                                                       InkWell(
                                                                         onTap:
-                                                                            () =>
-                                                                                {
-                                                                          showDialog(
+                                                                            () async {
+                                                                          final result =
+                                                                              await showDialog(
                                                                             context:
                                                                                 context,
                                                                             builder:
@@ -483,7 +491,17 @@ class _OrderPageState extends State<OrderPage> {
                                                                                 order: orderController.orders[index],
                                                                               );
                                                                             },
-                                                                          )
+                                                                          );
+                                                                          if (result ==
+                                                                              'success') {
+                                                                            Utils.myPopResult(context,
+                                                                                'SPLIT-FOOD');
+                                                                          }
+                                                                          if (result ==
+                                                                              'cancel') {
+                                                                            Utils.myPopResult(context,
+                                                                                'DEFAULT');
+                                                                          }
                                                                         },
                                                                         child:
                                                                             const ListTile(
@@ -656,14 +674,14 @@ class _OrderPageState extends State<OrderPage> {
                                                         Utils.showSuccessFlushbar(
                                                             context,
                                                             '',
-                                                            'Chuyển bàn thành công!');
+                                                            'Gộp bàn thành công!');
                                                         setState(() {});
                                                       } else if (result ==
                                                           "SPLIT-FOOD") {
                                                         Utils.showSuccessFlushbar(
                                                             context,
                                                             '',
-                                                            'Chuyển bàn thành công!');
+                                                            'Tách món thành công!');
                                                       } else if (result ==
                                                           "CANCEL-TABLE") {
                                                         Utils.showSuccessFlushbar(

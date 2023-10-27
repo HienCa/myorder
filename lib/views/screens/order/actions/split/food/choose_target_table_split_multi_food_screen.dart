@@ -1,10 +1,11 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
 import 'package:myorder/views/screens/order/actions/split/food/list_food_need_split_screen.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -113,8 +114,8 @@ class _SplitFoodPageState extends State<SplitFoodPage> {
                                   color: Colors.transparent,
                                 ),
                                 child: InkWell(
-                                  onTap: () => {
-                                    Navigator.push(
+                                  onTap: () async {
+                                    final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -122,7 +123,10 @@ class _SplitFoodPageState extends State<SplitFoodPage> {
                                                   order: widget.order,
                                                   table:
                                                       tableController.tables[i],
-                                                )))
+                                                )));
+                                    if (result == 'success') {
+                                      Utils.myPopResult(context, 'success');
+                                    }
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -148,7 +152,7 @@ class _SplitFoodPageState extends State<SplitFoodPage> {
                   height: 10,
                 ),
                 InkWell(
-                  onTap: () => {Navigator.pop(context)},
+                  onTap: () => {Utils.myPopResult(context, 'cancel')},
                   child: Container(
                     height: 50,
                     margin: const EdgeInsets.only(left: 10, right: 10, top: 10),

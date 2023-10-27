@@ -1,10 +1,11 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
 import 'package:myorder/views/screens/order/actions/split/food/dialog_confirm_split_food.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -31,7 +32,8 @@ class _ChooseTargetTableSplitSingleFoodPageState
   @override
   void initState() {
     super.initState();
-    tableController.getActiveTablesOfAreaHasSearchExceptId(widget.order,defaultArea, "");
+    tableController.getActiveTablesOfAreaHasSearchExceptId(
+        widget.order, defaultArea, "");
   }
 
   @override
@@ -56,7 +58,9 @@ class _ChooseTargetTableSplitSingleFoodPageState
                     print('Đã nhận được giá trị từ OptionArea: $selectedValue');
                     setState(() {
                       areaIdSelected = selectedValue;
-                      tableController.getActiveTablesOfAreaHasSearchExceptId(widget.order, selectedValue,
+                      tableController.getActiveTablesOfAreaHasSearchExceptId(
+                          widget.order,
+                          selectedValue,
                           keySearch); // tìm tất cả bàn theo khu vực
                     });
                   },
@@ -76,8 +80,8 @@ class _ChooseTargetTableSplitSingleFoodPageState
                   child: TextField(
                     onChanged: (value) {
                       //tìm tất cả bàn theo khu vực và keysearch
-                      tableController.getActiveTablesOfAreaHasSearchExceptId(widget.order,
-                          areaIdSelected, value);
+                      tableController.getActiveTablesOfAreaHasSearchExceptId(
+                          widget.order, areaIdSelected, value);
                       setState(() {
                         keySearch = value;
                       });
@@ -115,18 +119,20 @@ class _ChooseTargetTableSplitSingleFoodPageState
                                   color: Colors.transparent,
                                 ),
                                 child: InkWell(
-                                  onTap: () => {
-                                    showDialog(
+                                  onTap: () async {
+                                    final result = await showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return CustomDialogSplitFood(
-                                          order: widget.order,
-                                          table: tableController.tables[i],
-                                          orderDetailNeedSplitArray: widget
-                                                  .orderDetailNeedSplitArray 
-                                        );
+                                            order: widget.order,
+                                            table: tableController.tables[i],
+                                            orderDetailNeedSplitArray: widget
+                                                .orderDetailNeedSplitArray);
                                       },
-                                    )
+                                    );
+                                    if (result == 'success') {
+                                      Utils.myPopSuccess(context);
+                                    }
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -152,7 +158,7 @@ class _ChooseTargetTableSplitSingleFoodPageState
                   height: 10,
                 ),
                 InkWell(
-                  onTap: () => {Navigator.pop(context)},
+                  onTap: () => {Utils.myPopCancel(context)},
                   child: Container(
                     height: 50,
                     margin: const EdgeInsets.only(left: 10, right: 10, top: 10),

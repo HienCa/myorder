@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +24,7 @@ class ListFoodNeedSplitPage extends StatefulWidget {
 class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
   List<String> foodIdArray = [];
   List<OrderDetail> orderDetailNeedSplitArray = [];
+  List<OrderDetail> orderDetailNeedSplitArray2 = [];
   int selectedIndex = 0;
   int categoryselectedIndex = 0;
   bool isAddFood = false;
@@ -35,7 +36,10 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
   @override
   void initState() {
     super.initState();
-    orderDetailNeedSplitArray = widget.order.order_details;
+    // Tạo một bản sao không tham chiếu của danh sách
+    orderDetailNeedSplitArray = widget.order.order_details
+        .map((orderDetail) => OrderDetail.copy(orderDetail))
+        .toList();
   }
 
   @override
@@ -244,42 +248,29 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                                             const SizedBox(width: 5),
                                             InkWell(
                                               onTap: () {
-                                                setState(() {
+                                                if (orderDetailNeedSplitArray[
+                                                            index]
+                                                        .quantity <
+                                                    widget
+                                                        .order
+                                                        .order_details[index]
+                                                        .quantity) {
                                                   orderDetailNeedSplitArray[
                                                               index]
                                                           .quantity =
-                                                      orderDetailNeedSplitArray[
+                                                      (orderDetailNeedSplitArray[
                                                                   index]
                                                               .quantity +
-                                                          1;
-                                                  print(
-                                                      orderDetailNeedSplitArray[
-                                                              index]
-                                                          .quantity);
-                                                  print(widget
-                                                      .order
-                                                      .order_details[index]
-                                                      .quantity);
-                                                  //số lượng cần tách không lớn hơn số lượng hiện có
-                                                  if (orderDetailNeedSplitArray[
-                                                              index]
-                                                          .quantity >
-                                                      widget
-                                                          .order
-                                                          .order_details[index]
-                                                          .quantity) {
-                                                    print(
-                                                        "số lượng cần tách vượt quá số lượng hiện có");
-                                                    orderDetailNeedSplitArray[
-                                                                index]
-                                                            .quantity =
-                                                        widget
-                                                            .order
-                                                            .order_details[
-                                                                index]
-                                                            .quantity;
-                                                  }
-                                                });
+                                                          1);
+                                                }
+
+                                                for (OrderDetail orderDetail
+                                                    in widget
+                                                        .order.order_details) {
+                                                  print(orderDetail.food!.name);
+                                                  print(orderDetail.quantity);
+                                                }
+                                                setState(() {});
                                               },
                                               child: Container(
                                                 decoration: BoxDecoration(
@@ -314,8 +305,8 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                       children: [
                         const SizedBox(height: 10),
                         InkWell(
-                          onTap: () {
-                            showDialog(
+                          onTap: () async {
+                            final result = await showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomDialogSplitFood(
@@ -325,8 +316,9 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                                         orderDetailNeedSplitArray);
                               },
                             );
-                            // orderController.splitFood(context, widget.order,
-                            //     orderDetailNeedSplitArray, widget.table);
+                            if (result == 'success') {
+                              Utils.myPopResult(context, 'success');
+                            }
                           },
                           child: Container(
                             height: 50,

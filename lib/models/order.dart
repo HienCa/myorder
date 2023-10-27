@@ -93,6 +93,7 @@ class Order {
         "table_id": table_id,
         "is_vat": is_vat,
         "is_discount": is_discount,
+        "total_amount": total_amount,
         "total_vat_amount": total_vat_amount,
         "total_discount_amount": total_discount_amount,
         "discount_amount_all": discount_amount_all,

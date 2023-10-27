@@ -1,10 +1,11 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
 import 'package:myorder/views/screens/order/actions/merge/dialog_confirm_merge_table.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -182,7 +183,7 @@ class _MergeTablePageState extends State<MergeTablePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           InkWell(
-                            onTap: () => {Navigator.pop(context)},
+                            onTap: () => {Utils.myPopCancel(context)},
                             child: Expanded(
                               child: Container(
                                 height: 50,
@@ -202,10 +203,10 @@ class _MergeTablePageState extends State<MergeTablePage> {
                           ),
                           marginRight20,
                           InkWell(
-                            onTap: () => {
+                            onTap: () async {
                               //Truyền vào order và tableIds
 
-                              showDialog(
+                              final result = await showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CustomDialogMergeTable(
@@ -213,7 +214,10 @@ class _MergeTablePageState extends State<MergeTablePage> {
                                     tableIds: tableIds,
                                   );
                                 },
-                              )
+                              );
+                              if (result == 'success') {
+                                Utils.myPopSuccess(context);
+                              }
                             },
                             child: Expanded(
                               child: Container(

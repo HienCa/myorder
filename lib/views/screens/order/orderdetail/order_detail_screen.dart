@@ -444,19 +444,20 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                             motion: const ScrollMotion(),
                                             children: [
                                               SlidableAction(
-                                                onPressed: (context) => {
+                                                onPressed: (context) async {
                                                   print(
-                                                      "=================Món muốn tách==============="),
+                                                      "=================Món muốn tách===============");
                                                   print(orderController
                                                       .orderDetail
                                                       .order_details[index]
                                                       .food!
-                                                      .name),
+                                                      .name);
                                                   orderController
                                                       .orderDetail
                                                       .order_details[index]
-                                                      .isSelected = true,
-                                                  showDialog(
+                                                      .isSelected = true;
+                                                  final result =
+                                                      await showDialog(
                                                     context: context,
                                                     builder:
                                                         (BuildContext context) {
@@ -471,7 +472,18 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                         ],
                                                       );
                                                     },
-                                                  )
+                                                  );
+                                                  if (result == 'success') {
+                                                    // Utils.myPopResult(
+                                                    //     context, 'success');
+                                                    Utils.showSuccessFlushbar(
+                                                        context,
+                                                        '',
+                                                        'Tách món thành công!');
+                                                  } else if (result ==
+                                                      'cancel') {
+                                                    Utils.myPopCancel(context);
+                                                  }
                                                 },
                                                 backgroundColor: primaryColor,
                                                 foregroundColor: textWhiteColor,
@@ -816,15 +828,22 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                         ),
                       ),
                       InkWell(
-                        onTap: () => {
-                          showDialog(
+                        onTap: () async {
+                          final result = await showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return SplitFoodPage(
                                 order: orderController.orderDetail,
                               );
                             },
-                          )
+                          );
+                          if (result == 'success') {
+                            Utils.showSuccessFlushbar(
+                                context, '', 'Tách món thành công!');
+                          } else if (result == 'cancel') {
+                            // Utils.showSuccessFlushbar(
+                            //     context, '', 'Tách món thành công cancel!');
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.all(5),

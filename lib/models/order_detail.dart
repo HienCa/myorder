@@ -14,17 +14,27 @@ class OrderDetail {
   FoodOrderDetail? food;
   bool is_gift = false;
   bool isSelected = false;
-  OrderDetail({
-    required this.order_detail_id,
-    required this.price,
-    required this.quantity,
-    required this.food_status,
-    required this.food_id,
-    required this.category_id,
-    required this.category_code,
-    required this.is_gift,
-    this.food
-  });
+  OrderDetail(
+      {required this.order_detail_id,
+      required this.price,
+      required this.quantity,
+      required this.food_status,
+      required this.food_id,
+      required this.category_id,
+      required this.category_code,
+      required this.is_gift,
+      this.food});
+
+  OrderDetail.copy(OrderDetail other)
+      : order_detail_id = other.order_detail_id,
+        price = other.price,
+        quantity = other.quantity,
+        food_status = other.food_status,
+        food_id = other.food_id,
+        category_id = other.category_id,
+        food = other.food,
+        is_gift = other.is_gift,
+        category_code = other.category_code;
 
   Map<String, dynamic> toJson() => {
         "order_detail_id": order_detail_id,
