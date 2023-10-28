@@ -709,6 +709,12 @@ class _OrderPageState extends State<OrderPage> {
                                                             context,
                                                             'Thông báo',
                                                             'Chỉ có thể hủy bàn khi tất cả món ăn ở trạng thái CHỜ CHẾ BIẾN');
+                                                      }else if (result ==
+                                                          'PAID') {
+                                                        Utils.showErrorFlushbar(
+                                                            context,
+                                                            'THANH TOÁN',
+                                                            'Đã hoàn tất đơn hàng thanh công!');
                                                       } else if (result ==
                                                           "DEFAULT") {}
 

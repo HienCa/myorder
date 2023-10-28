@@ -473,7 +473,7 @@ class BillController extends GetxController {
           total_estimate_amount: 0.0,
           vat_amount: vat_amount ?? 0,
           discount_amount: discount_amount ?? 0,
-          payment_at: now);
+          payment_at: now, order_code: order.order_code);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ
@@ -499,6 +499,7 @@ class BillController extends GetxController {
       await firestore.collection('tables').doc(order.table_id).update({
         "status": TABLE_STATUS_EMPTY, // đã thanh toán
       });
+      
       //Cập nhật trạng thái các bàn đã gộp -> trống
       for (var i = 0; i < order.table_merge_ids.length; i++) {
         await firestore
@@ -509,16 +510,11 @@ class BillController extends GetxController {
         });
       }
       Get.snackbar(
-        'THÀNH CÔNG!',
+        'THANH TOÁN',
         'Thanh toán thành công!',
         backgroundColor: backgroundSuccessColor,
         colorText: Colors.white,
       );
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  const OrderPage())); // do nó nằm trong bottomBar nên không push được NO Material
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',

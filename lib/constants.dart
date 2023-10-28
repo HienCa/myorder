@@ -40,6 +40,7 @@ const kDefaultShadow = BoxShadow(
 const primaryColor = Color(0xFF40BAD5);
 const secondColor = Colors.white;
 const labelColor = Color(0xFF434343);
+const transparentColor = Colors.transparent;
 
 const activeColor = Color(0xFF40BAD5);
 const deActiveColor = Colors.grey;
@@ -131,9 +132,6 @@ const textStyleCancel16 = TextStyle(fontSize: 16, color: colorCancel);
 //SUCCESS
 const textStyleSuccess16 = TextStyle(fontSize: 16, color: colorSuccess);
 
-
-
-
 //
 const textStyleTitleGrayBold20 =
     TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey);
@@ -215,7 +213,8 @@ const textRegular = TextStyle(
 
 const textStyleBlackBold =
     TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold);
-
+const textStyleBlack =
+    TextStyle(color: Colors.black, fontSize: 20);
 const textStyleGrayBold = TextStyle(
     color: tableemptyColor, fontSize: 20, fontWeight: FontWeight.bold);
 

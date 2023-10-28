@@ -7,6 +7,7 @@ import 'package:myorder/models/order_detail.dart';
 class Bill {
   String bill_id;
   String order_id;
+  String order_code;
   model.Order? order = model.Order.empty();
   List<OrderDetail> order_details = [];
   double total_amount;
@@ -17,6 +18,7 @@ class Bill {
   Bill({
     required this.bill_id,
     required this.order_id,
+    required this.order_code,
     required this.total_amount,
     required this.total_estimate_amount,
     required this.vat_amount,
@@ -27,6 +29,7 @@ class Bill {
   Bill.empty()
       : bill_id = '',
         order_id = '',
+        order_code = '',
         order = null,
         total_amount = 0.0,
         total_estimate_amount = 0.0,
@@ -38,6 +41,7 @@ class Bill {
   Map<String, dynamic> toJson() => {
         "bill_id": bill_id,
         "order_id": order_id,
+        "order_code": order_code,
         "total_amount": total_amount,
         "total_estimate_amount": total_estimate_amount,
         "vat_amount": vat_amount,
@@ -51,6 +55,7 @@ class Bill {
     return Bill(
       bill_id: snapshot['bill_id'],
       order_id: snapshot['order_id'],
+      order_code: snapshot['order_code'],
       total_amount: snapshot['total_amount'],
       total_estimate_amount: snapshot['total_estimate_amount'],
       vat_amount: snapshot['vat_amount'],

@@ -66,9 +66,9 @@ class ReportController extends GetxController {
       print("Đơn hàng đã thanh toán hôm nay: $count");
       double totalAmount = 0;
       for (var element in query.docs) {
-        model.Order order =
-            model.Order.fromSnap(element); // map đơn hàng chi tiết
-        totalAmount += order.total_amount;
+        Bill bill =
+            Bill.fromSnap(element); // map đơn hàng chi tiết
+        totalAmount += bill.total_amount;
       }
       report.total_amount = totalAmount;
 

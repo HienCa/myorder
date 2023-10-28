@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,10 +11,10 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
 import 'package:myorder/models/discount.dart';
 import 'package:myorder/models/order.dart';
+import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
-import 'package:myorder/views/widgets/dialogs.dart';
 
 class PaymentPage extends StatefulWidget {
   final Order order;
@@ -59,18 +59,20 @@ class _PaymentPageState extends State<PaymentPage> {
     discounts = discountController.activeDiscounts;
     vats = vatController.activeVats;
 
-    print("orderController.order.is_vat");
-
-    print(orderController.order.is_vat);
-
     if (orderController.order.is_vat == ACTIVE) {
       isCheckedGTGT = true;
-      print("orderController.order.is_vat");
-      print(orderController.order.is_vat);
     }
     if (orderController.order.is_discount == ACTIVE) {
       isCheckedDecrease = true;
     }
+  }
+
+  double getTotalAmount(Order order) {
+    double totalAmount = 0;
+    for (OrderDetail item in order.order_details) {
+      totalAmount += (item.price * item.quantity);
+    }
+    return totalAmount;
   }
 
   @override
@@ -112,15 +114,13 @@ class _PaymentPageState extends State<PaymentPage> {
                 children: [
                   const Center(
                       child: Text(
-                    "TỔNG THANH TOÁN",
+                    "TỔNG TẠM TÍNH",
                     style: textStyleGrayBold,
                   )),
-                  Center(child: Obx(() {
-                    return Text(
-                        Utils.formatCurrency(
-                            orderController.order.total_amount),
-                        style: textStylePriceBold20);
-                  }))
+                  Center(
+                      child: Text(
+                          Utils.formatCurrency(getTotalAmount(widget.order)),
+                          style: textStylePriceBold20))
                 ],
               ),
             ),
@@ -444,7 +444,7 @@ class _PaymentPageState extends State<PaymentPage> {
                               activeColor: primaryColor,
                             ),
                           ),
-                          title:  SizedBox(
+                          title: SizedBox(
                             width: 100,
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -491,7 +491,10 @@ class _PaymentPageState extends State<PaymentPage> {
                                   //Hủy DISCOUNT khi nhấn uncheck checkbox
                                   if (isCheckedDecrease == false) {
                                     orderController.cancelDiscount(
-                                        context, orderController.order, orderController.orderDetail.order_details);
+                                        context,
+                                        orderController.order,
+                                        orderController
+                                            .orderDetail.order_details);
                                   }
                                   // bật popup
                                   if (isCheckedDecrease) {
@@ -534,6 +537,32 @@ class _PaymentPageState extends State<PaymentPage> {
                                 style: textStylePriceBold20);
                           }))),
                 ),
+                Container(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
+                    ),
+                    child: ListTile(
+                        title: const SizedBox(
+                          width: 50,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Tổng thanh toán",
+                                  style: textStylePriceBold20,
+                                ),
+                              ]),
+                        ),
+                        trailing: Obx(() {
+                          return Text(
+                              Utils.formatCurrency(
+                                  orderController.order.total_amount),
+                              style: textStylePriceBold20);
+                        }))),
                 const SizedBox(height: 10),
                 Container(
                   height: 50,
@@ -544,27 +573,85 @@ class _PaymentPageState extends State<PaymentPage> {
                     color: backgroundColor,
                   ),
                   child: InkWell(
-                    onTap: () => {
-                      showCustomAlertDialogConfirm(
-                        context,
-                        "YÊU CẦU THANH TOÁN",
-                        "Bạn có chắc chắn muốn hoàn tất hóa đơn này?",
-                        colorInformation,
-                        () async {
-                          billController.createBill(
-                              orderController.orderDetail,
-                              orderController.orderDetail.total_vat_amount,
-                              orderController.orderDetail.total_discount_amount,
-                              context);
+                    onTap: () async {
+                      final result = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: backgroundColor,
+                            title: const Center(
+                                child: Text(
+                              "YÊU CẦU THANH TOÁN",
+                              style: TextStyle(color: colorInformation),
+                            )),
+                            content: const SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  Text(
+                                      "Bạn có chắc chắn muốn hoàn tất hóa đơn này?",
+                                      style: TextStyle(color: Colors.black54)),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () => {Utils.myPop(context)},
+                                    child: Expanded(
+                                      child: Container(
+                                        height: 50,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                3,
+                                        color: backgroundColorCancel,
+                                        child: const Center(
+                                          child: Text(
+                                            'HỦY',
+                                            style: buttonStyleCancel,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () async => {
+                                      billController.createBill(
+                                          orderController.orderDetail,
+                                          orderController
+                                              .orderDetail.total_vat_amount,
+                                          orderController.orderDetail
+                                              .total_discount_amount,
+                                          context),
+                                          Utils.myPopSuccess(context)
+                                    },
+                                    child: Expanded(
+                                      child: Container(
+                                        height: 50,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                3,
+                                        color: primaryColor,
+                                        child: const Center(
+                                          child: Text(
+                                            'XÁC NHẬN',
+                                            style: buttonStyleConfirm,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          );
                         },
-                      ),
-                      // Future.delayed(const Duration(seconds: 1), () {
-                      //   Navigator.popUntil(
-                      //     context,
-                      //     ModalRoute.withName(
-                      //         '/'),
-                      //   );
-                      // })
+                      );
+                      if (result == 'success') {
+                        Utils.myPopSuccess(context);
+                        
+                      }
                     },
                     child: Container(
                         padding: const EdgeInsets.all(10),

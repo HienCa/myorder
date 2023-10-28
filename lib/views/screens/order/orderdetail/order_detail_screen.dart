@@ -892,14 +892,17 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                         ),
                       ),
                       InkWell(
-                        onTap: () => {
-                          Navigator.push(
+                        onTap: () async {
+                          final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => PaymentPage(
                                   order: widget.order,
                                 ),
-                              ))
+                              ));
+                          if (result == 'success') {
+                            Utils.myPopResult(context, 'PAID');
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.all(5),

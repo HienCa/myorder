@@ -26,7 +26,7 @@ class OrderController extends GetxController {
         firestore
             .collection('orders')
             .where("active", isEqualTo: ACTIVE)
-            .where('order_status', isNotEqualTo: ORDER_STATUS_CANCEL)
+            .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -127,7 +127,7 @@ class OrderController extends GetxController {
             .collection('orders')
             .where('employee_id', isEqualTo: employeeIdSelected)
             .where("active", isEqualTo: ACTIVE)
-            .where('order_status', isNotEqualTo: ORDER_STATUS_CANCEL)
+            .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -228,7 +228,7 @@ class OrderController extends GetxController {
           .collection('orders')
           .where('employee_id', isEqualTo: employeeIdSelected)
           .where("active", isEqualTo: ACTIVE)
-          .where('order_status', isNotEqualTo: ORDER_STATUS_CANCEL)
+          .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<model.Order> retVal = [];
@@ -329,7 +329,7 @@ class OrderController extends GetxController {
       _orders.bindStream(firestore
           .collection('orders')
           .where("active", isEqualTo: ACTIVE)
-          .where('order_status', isNotEqualTo: ORDER_STATUS_CANCEL)
+          .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
           .orderBy('name')
           .snapshots()
           .asyncMap((QuerySnapshot query) async {

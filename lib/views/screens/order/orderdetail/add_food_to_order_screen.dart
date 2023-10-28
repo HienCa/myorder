@@ -40,9 +40,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
     super.initState();
     categoryController.getCategoriesActive();
     foodController.getfoodsToOrder(keySearch, defaultCategory);
-    print("ssssss");
-    // foods = foodController.getfoods(keySearch);
-    // Khởi tạo lắng nghe dữ liệu realtime từ Firebase Firestore
+
   }
 
   @override
