@@ -18,7 +18,10 @@ class AddFoodToOrderPage extends StatefulWidget {
   final bool booking; // vào thêm món nếu true - false đặt bàn
   final bool isGift; // vào thêm món nếu true - false đặt bàn
   const AddFoodToOrderPage(
-      {super.key, required this.table, required this.booking, required this.isGift});
+      {super.key,
+      required this.table,
+      required this.booking,
+      required this.isGift});
 
   @override
   State<AddFoodToOrderPage> createState() => _AddFoodToOrderPageState();
@@ -40,7 +43,6 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
     super.initState();
     categoryController.getCategoriesActive();
     foodController.getfoodsToOrder(keySearch, defaultCategory);
-
   }
 
   @override
@@ -48,13 +50,28 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          onTap: () => {Navigator.pop(context)},
-          child: const Icon(
-            Icons.arrow_back_ios,
-            color: iconWhiteColor,
-          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back_ios, color: secondColor,),
         ),
-        title: Center(child: Text("GỌI MÓN - ${widget.table.name}")),
+        title: Center(
+            child: Text(
+          "GỌI MÓN - ${widget.table.name}",
+          style: const TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Column(
@@ -502,7 +519,10 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                       : foodOrder.price,
                                   quantity: foodOrder.quantity!,
                                   food_status: FOOD_STATUS_IN_CHEFT,
-                                  food_id: foodOrder.food_id, is_gift: false, category_id: '', category_code: foodOrder.category_code,
+                                  food_id: foodOrder.food_id,
+                                  is_gift: false,
+                                  category_id: '',
+                                  category_code: foodOrder.category_code,
                                 );
 
                                 orderDetailList.add(orderDetail);
@@ -528,7 +548,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                         // order theo table_id
                                         orderController.createOrder(
                                             widget.table.table_id,
-                                            orderDetailList, widget.isGift,
+                                            orderDetailList,
+                                            widget.isGift,
                                             context);
                                       },
                                     )
@@ -541,7 +562,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                         // order theo table_id
                                         orderController.createOrder(
                                             widget.table.table_id,
-                                            orderDetailList, widget.isGift,
+                                            orderDetailList,
+                                            widget.isGift,
                                             context);
                                       },
                                     );
@@ -549,7 +571,6 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                               orderController.createOrder(widget.table.table_id,
                                   orderDetailList, widget.isGift, context);
                             }
-
                           },
                           child: Container(
                             height: 50,

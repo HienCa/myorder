@@ -45,22 +45,32 @@ class _BillPageState extends State<BillPage> {
         home: Scaffold(
           appBar: AppBar(
             leading: InkWell(
-                onTap: () => {Navigator.pop(context)},
-                child: const Icon(
-                  Icons.arrow_back_ios,
-                  color: colorSuccess,
-                )),
-            title: Center(
-                child: InkWell(
-              onTap: () => {
-                orderController.deleteOrdersAndDetails(), orderController.deleteBills()
+              onTap: () {
+                Navigator.pop(context);
               },
-              child: const Text(
-                "QUẢN LÝ HÓA ĐƠN",
-                style: TextStyle(color: colorSuccess),
+              child: const Icon(
+                Icons.arrow_back_ios,
+                color: secondColor,
               ),
+            ),
+            title: const Center(
+                child: Text(
+              "QUẢN LÝ HÓA ĐƠN",
+              style: TextStyle(color: secondColor),
             )),
-            backgroundColor: secondColor,
+            actions: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                child: const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Icon(
+                    Icons.add_circle_outline,
+                    color: transparentColor,
+                  ),
+                ),
+              ),
+            ],
+            backgroundColor: primaryColor,
           ),
           body: SafeArea(
             bottom: false,
@@ -271,7 +281,14 @@ class _BillPageState extends State<BillPage> {
                                                       Expanded(
                                                         child: Center(
                                                             child: Text(
-                                                                billController.bills[index].order!.table_merge_names.isNotEmpty ? "(${billController.bills[index].order!.table_merge_names.join(', ')})" : "",
+                                                                billController
+                                                                        .bills[
+                                                                            index]
+                                                                        .order!
+                                                                        .table_merge_names
+                                                                        .isNotEmpty
+                                                                    ? "(${billController.bills[index].order!.table_merge_names.join(', ')})"
+                                                                    : "",
                                                                 style:
                                                                     textStyleBillTableMergeName16)),
                                                       ),
@@ -359,8 +376,8 @@ class _BillPageState extends State<BillPage> {
                                                         Icons.abc_outlined,
                                                         color: iconColor),
                                                     marginRight10,
-                                                    Text("#${billController
-                                                        .bills[index].order!.order_code}"),
+                                                    Text(
+                                                        "#${billController.bills[index].order!.order_code}"),
                                                   ]),
                                                 ),
                                                 SizedBox(

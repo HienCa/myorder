@@ -32,15 +32,31 @@ class _BillDetailPageState extends State<BillDetailPage> {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          onTap: () => {Navigator.pop(context)},
+          onTap: () {
+            Navigator.pop(context);
+          },
           child: const Icon(
             Icons.arrow_back_ios,
-            color: iconWhiteColor,
+            color: secondColor,
           ),
         ),
         title: Center(
             child: Text(
-                "#${widget.bill.bill_id} - ${widget.bill.order!.table!.name}")),
+          "#${widget.bill.bill_id} - ${widget.bill.order!.table!.name}",
+          style: const TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Column(
@@ -99,7 +115,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                     ),
                     const SizedBox(width: 20),
                     Text(
-                      "#${widget.bill.bill_id}",
+                      "#${widget.bill.order_code}",
                       style: textStyleBlackRegular,
                     )
                   ],
@@ -329,52 +345,52 @@ class _BillDetailPageState extends State<BillDetailPage> {
           SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                    ),
-                    child: ListTile(
-                      leading: Theme(
-                        data: ThemeData(
-                            unselectedWidgetColor: Colors.transparent),
-                        child: Checkbox(
-                          value: isCheckedDecrease,
-                          onChanged: (bool? value) {
-                            isCheckedDecrease =
-                                widget.bill.order!.is_discount == ACTIVE
-                                    ? true
-                                    : false;
-                          },
-                          activeColor: Colors.transparent,
-                        ),
-                      ),
-                      title: const SizedBox(
-                        width: 100,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.price_change,
-                                color: Colors.transparent,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "Tổng ước tính",
-                                style: textStylePriceBold16,
-                              ),
-                            ]),
-                      ),
-                      trailing: Text(
-                        Utils.formatCurrency(widget.bill.total_estimate_amount),
-                        style: textStylePriceBold16,
-                      ),
-                    )),
+                // Container(
+                //     height: 40,
+                //     width: MediaQuery.of(context).size.width * 0.9,
+                //     margin:
+                //         const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                //     decoration: const BoxDecoration(
+                //       color: Colors.transparent,
+                //     ),
+                //     child: ListTile(
+                //       leading: Theme(
+                //         data: ThemeData(
+                //             unselectedWidgetColor: Colors.transparent),
+                //         child: Checkbox(
+                //           value: isCheckedDecrease,
+                //           onChanged: (bool? value) {
+                //             isCheckedDecrease =
+                //                 widget.bill.order!.is_discount == ACTIVE
+                //                     ? true
+                //                     : false;
+                //           },
+                //           activeColor: Colors.transparent,
+                //         ),
+                //       ),
+                //       title: const SizedBox(
+                //         width: 100,
+                //         child: Row(
+                //             mainAxisAlignment: MainAxisAlignment.start,
+                //             children: [
+                //               Icon(
+                //                 Icons.price_change,
+                //                 color: Colors.transparent,
+                //               ),
+                //               SizedBox(
+                //                 width: 10,
+                //               ),
+                //               Text(
+                //                 "Tổng ước tính",
+                //                 style: textStylePriceBold16,
+                //               ),
+                //             ]),
+                //       ),
+                //       trailing: Text(
+                //         Utils.formatCurrency(widget.bill.total_estimate_amount),
+                //         style: textStylePriceBold16,
+                //       ),
+                //     )),
                 Container(
                     height: 40,
                     width: MediaQuery.of(context).size.width * 0.9,
@@ -389,8 +405,9 @@ class _BillDetailPageState extends State<BillDetailPage> {
                         child: Checkbox(
                           value: isCheckedGTGT,
                           onChanged: (bool? value) {
-                            isCheckedGTGT =
-                                widget.bill.order!.is_vat == ACTIVE ? true : false;
+                            isCheckedGTGT = widget.bill.order!.is_vat == ACTIVE
+                                ? true
+                                : false;
                           },
                           activeColor: primaryColor,
                         ),

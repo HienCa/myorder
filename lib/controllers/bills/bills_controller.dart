@@ -13,7 +13,6 @@ import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/order/order_screen.dart';
 
 class BillController extends GetxController {
   //hóa đơn
@@ -456,7 +455,7 @@ class BillController extends GetxController {
 
   // tao hóa đơn
 
-  void createBill(model.Order order, double? vat_amount,
+  void createBill(model.Order order,String order_code, double? vat_amount,
       double? discount_amount, BuildContext context) async {
     try {
       String id = Utils.generateUUID();
@@ -473,7 +472,7 @@ class BillController extends GetxController {
           total_estimate_amount: 0.0,
           vat_amount: vat_amount ?? 0,
           discount_amount: discount_amount ?? 0,
-          payment_at: now, order_code: order.order_code);
+          payment_at: now, order_code: order_code);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ

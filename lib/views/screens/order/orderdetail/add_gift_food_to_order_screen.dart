@@ -51,13 +51,31 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          onTap: () => {Navigator.pop(context)},
+          onTap: () {
+            Navigator.pop(context);
+          },
           child: const Icon(
             Icons.arrow_back_ios,
-            color: iconWhiteColor,
+            color: secondColor,
           ),
         ),
-        title: Center(child: Text("TẶNG MÓN - ${widget.table.name}")),
+        title: Center(
+            child: Text(
+          "TẶNG MÓN - ${widget.table.name}",
+          style: const TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Column(

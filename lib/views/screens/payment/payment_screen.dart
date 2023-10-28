@@ -80,15 +80,31 @@ class _PaymentPageState extends State<PaymentPage> {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          onTap: () => {Navigator.pop(context)},
+          onTap: () {
+            Navigator.pop(context);
+          },
           child: const Icon(
             Icons.arrow_back_ios,
-            color: iconWhiteColor,
+            color: secondColor,
           ),
         ),
         title: Center(
             child: Text(
-                "#${widget.order.order_code} - ${widget.order.table!.name}")),
+          "#${widget.order.order_code} - ${widget.order.table!.name}",
+          style: const TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Column(
@@ -619,12 +635,13 @@ class _PaymentPageState extends State<PaymentPage> {
                                     onTap: () async => {
                                       billController.createBill(
                                           orderController.orderDetail,
+                                          widget.order.order_code,
                                           orderController
                                               .orderDetail.total_vat_amount,
                                           orderController.orderDetail
                                               .total_discount_amount,
                                           context),
-                                          Utils.myPopSuccess(context)
+                                      Utils.myPopSuccess(context)
                                     },
                                     child: Expanded(
                                       child: Container(
@@ -650,7 +667,6 @@ class _PaymentPageState extends State<PaymentPage> {
                       );
                       if (result == 'success') {
                         Utils.myPopSuccess(context);
-                        
                       }
                     },
                     child: Container(
