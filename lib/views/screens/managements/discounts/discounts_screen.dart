@@ -1,4 +1,4 @@
-// ignore_for_file: library_pridiscounte_types_in_public_api
+// ignore_for_file: library_pridiscounte_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,14 +6,17 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/discounts/discounts_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/discounts/add_discount_screen.dart';
 import 'package:myorder/views/screens/managements/discounts/detail_discount_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementDiscountsPage extends StatefulWidget {
   const ManagementDiscountsPage({Key? key}) : super(key: key);
   @override
-  _ManagementDiscountsPageState createState() => _ManagementDiscountsPageState();
+  _ManagementDiscountsPageState createState() =>
+      _ManagementDiscountsPageState();
 }
 
 class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
@@ -44,10 +47,19 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
             Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddDiscountPage())),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddDiscountPage()));
+                      if (result == 'success') {
+                        Utils.showStylishDialog(
+                            context,
+                            'THÀNH CÔNG!',
+                            'Thêm mới vat thành công!',
+                            StylishDialogType.SUCCESS);
+                      }
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(Icons.add_circle_outline),
@@ -106,12 +118,23 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                               title: Row(
                                 children: [
                                   InkWell(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => DiscountDetailPage(
-                                                  discountId: discount.discount_id,
-                                                ))),
+                                    onTap: () async {
+                                      final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DiscountDetailPage(
+                                                    discountId:
+                                                        discount.discount_id,
+                                                  )));
+                                      if (result == 'success') {
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÀNH CÔNG!',
+                                            'Cập nhật giảm giá thành công!',
+                                            StylishDialogType.SUCCESS);
+                                      }
+                                    },
                                     child: Marquee(
                                       direction: Axis.horizontal,
                                       textDirection: TextDirection.ltr,
@@ -136,7 +159,9 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            DiscountDetailPage(discountId: discount.discount_id))),
+                                            DiscountDetailPage(
+                                                discountId:
+                                                    discount.discount_id))),
                                 child: RichText(
                                   text: TextSpan(
                                     text: discount.active == ACTIVE
@@ -162,11 +187,12 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                     context,
                                     "TRẠNG THÁI HOẠT ĐỘNG",
                                     "Bạn có chắc chắn muốn $string đơn vị tính này?",
-                                                                  colorWarning,
-
+                                    colorWarning,
                                     () async {
-                                      await discountController.updateToggleActive(
-                                          discount.discount_id, discount.active);
+                                      await discountController
+                                          .updateToggleActive(
+                                              discount.discount_id,
+                                              discount.active);
                                     },
                                   )
                                 },

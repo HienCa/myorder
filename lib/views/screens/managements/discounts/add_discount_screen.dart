@@ -3,14 +3,15 @@
 // import 'package:awesome_dialog/awesome_dialog.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/discounts/discounts_controller.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/textfields/text_field_price.dart';
+import 'package:myorder/views/widgets/textfields/text_field_string.dart';
 
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddDiscountPage extends StatefulWidget {
   const AddDiscountPage({
@@ -51,9 +52,31 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
       // backgroundColor: backgroundColor,
       appBar: AppBar(
         leading: InkWell(
-            onTap: () => {Navigator.pop(context)},
-            child: const Icon(Icons.arrow_back_ios)),
-        title: const Center(child: Text("THÊM MỚI GIẢM GIÁ")),
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: secondColor,
+          ),
+        ),
+        title: const Center(
+            child: Text(
+          "THÊM MỚI GIẢM GIÁ",
+          style: TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Theme(
@@ -61,194 +84,123 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
         child: SingleChildScrollView(
             padding: const EdgeInsets.all(10),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  margin: const EdgeInsets.all(10.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                            controller: nameController,
-                            style: textStyleInput,
-                            decoration: InputDecoration(
-                                labelStyle: textStyleInput,
-                                labelText: "Tên giảm giá",
-                                hintText: 'Nhập tên giảm giá',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                errorText:
-                                    isErrorTextName ? errorTextName : null,
-                                errorStyle: textStyleErrorInput),
-                            maxLength: 50,
-                            onChanged: (value) => {
-                                  if (value.trim().length > maxlength50 ||
-                                      value.trim().length < minlength2)
-                                    {
-                                      setState(() {
-                                        errorTextName =
-                                            "Từ $minlength2 đến $maxlength50 ký tự.";
-                                        isErrorTextName = true;
-                                      })
-                                    }
-                                  else
-                                    {
-                                      setState(() {
-                                        errorTextName = "";
-                                        isErrorTextName = false;
-                                      })
-                                    }
-                                }),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 0, right: 0),
-                          child: TextField(
-                              controller: discountPriceController,
-                              style: textStyleInput,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter
-                                    .digitsOnly, // Only allows digits
-                              ],
-                              decoration: InputDecoration(
-                                  labelStyle: textStyleInput,
-                                  labelText: "Giá muốn giảm",
-                                  hintText: 'Nhập giá muốn giảm',
-                                  hintStyle:
-                                      const TextStyle(color: Colors.grey),
-                                  border: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(30))),
-                                  errorText: isErrorTextVatPercent
-                                      ? errorTextVatPercent
-                                      : null,
-                                  errorStyle: textStyleErrorInput),
-                              // autofocus: true,
-                              onChanged: (value) => {
-                                    if (value.isEmpty ||
-                                        int.parse(value) < discountMin)
-                                      {
-                                        setState(() {
-                                          errorTextVatPercent =
-                                              "Giá phải lớn hơn 1,000";
-                                          isErrorTextVatPercent = true;
-                                        })
-                                      }
-                                    else
-                                      {
-                                        setState(() {
-                                          errorTextVatPercent = "";
-                                          isErrorTextVatPercent = false;
-
-                                          discountPriceController.text =
-                                              Utils.convertTextFieldPrice(
-                                                  value);
-
-                                          if (int.parse(value) >= discountMax) {
-                                            print(int.parse(value));
-                                            discountPriceController.text =
-                                                Utils.convertTextFieldPrice(
-                                                    discountMax.toString());
-                                            print(discountPriceController.text);
-                                          }
-                                        })
-                                      }
-                                  }),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.55,
-                        ),
-                        SizedBox(
-                          height: 50,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => {Navigator.pop(context)},
-                                  child: Container(
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                        color: dividerColor,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5))),
-                                    child: const Align(
-                                      alignment: Alignment.center,
-                                      child: Text("QUAY LẠI",
-                                          style: buttonStyleCancel),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => {
-                                    discountPriceController.text =
-                                            Utils.formatCurrencytoDouble(
-                                                discountPriceController.text),
-                                    if (!isErrorTextName &&
-                                        nameController.text != "" &&
-                                        (int.tryParse(discountPriceController
-                                                    .text) ?? 0) >
-                                            1000)
-                                      {
-                                        
-                                        discountController.createDiscount(
-                                          nameController.text,
-                                          discountPriceController.text,
-                                        ),
-                                        Navigator.pop(context)
-                                      }
-                                    else
-                                      {
-                                        print("Chưa nhập đủ trường"),
-                                        Alert(
-                                          context: context,
-                                          title: "THÔNG BÁO",
-                                          desc: "Thông tin chưa chính xác!",
-                                          image: alertImageError,
-                                          buttons: [],
-                                        ).show(),
-                                        Future.delayed(
-                                            const Duration(seconds: 2), () {
-                                          Navigator.pop(context);
-                                        })
-                                      }
-                                  },
-                                  child: Container(
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    child: const Align(
-                                      alignment: Alignment.center,
-                                      child: Text("THÊM MỚI",
-                                          style: buttonStyleBlackBold),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      marginTop10,
+                      MyTextFieldString(
+                        textController: nameController,
+                        label: 'Giảm giá',
+                        placeholder: 'Nhập tên',
+                        isReadOnly: false,
+                        min: minlength2,
+                        max: maxlength50,
+                        isRequire: true,
+                      ),
+                      MyTextFieldPrice(
+                          textEditingController: discountPriceController,
+                          label: 'Số tiền muốn giảm',
+                          placeholder: 'Nhập số tiền...',
+                          min: MIN_PRICE,
+                          max: MAX_PRICE,
+                          isRequire: true)
+                    ],
                   ),
                 ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                ),
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => {Navigator.pop(context)},
+                          child: Container(
+                            height: 50,
+                            decoration: const BoxDecoration(
+                                color: dividerColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child: Text("QUAY LẠI", style: buttonStyleCancel),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            discountPriceController.text =
+                                discountPriceController.text
+                                    .replaceAll(r',', '');
+                            if (!Utils.isValidLengthTextEditController(
+                                    nameController, minlength2, maxlength50) &&
+                                !Utils.isValidRangeTextEditController(
+                                    discountPriceController,
+                                    MIN_PRICE,
+                                    MAX_PRICE)) {
+                              Utils.showStylishDialog(
+                                  context,
+                                  'THÔNG BÁO',
+                                  'Vui lòng kiểm tra lại thông tin nhập liệu.',
+                                  StylishDialogType.ERROR);
+                            } else if (!Utils.isValidLengthTextEditController(
+                                nameController, minlength2, maxlength50)) {
+                              discountPriceController.text =
+                                  Utils.convertTextFieldPrice(
+                                      discountPriceController.text);
+
+                              Utils.showStylishDialog(
+                                  context,
+                                  'THÔNG BÁO',
+                                  'Tên vat phải từ $minlength2 đến $maxlength50 ký tự.',
+                                  StylishDialogType.ERROR);
+                            } else if (!Utils.isValidRangeTextEditController(
+                                discountPriceController, 1000, 10000000)) {
+                              discountPriceController.text =
+                                  Utils.convertTextFieldPrice(
+                                      discountPriceController.text);
+
+                              Utils.showStylishDialog(
+                                  context,
+                                  'THÔNG BÁO',
+                                  'Số tiền phải từ ${Utils.convertTextFieldPrice('$MIN_PRICE')} đến ${Utils.convertTextFieldPrice('$MAX_PRICE')}',
+                                  StylishDialogType.ERROR);
+                            } else {
+                              discountController.createDiscount(
+                                nameController.text,
+                                discountPriceController.text,
+                              );
+                              Utils.myPopSuccess(context);
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: const BoxDecoration(
+                              color: primaryColor,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child:
+                                  Text("THÊM MỚI", style: buttonStyleBlackBold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               ],
             )),
       ),

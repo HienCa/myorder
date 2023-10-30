@@ -329,7 +329,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                               .orderDetail
                                               .order_details[index]
                                               .food_status ==
-                                          FOOD_STATUS_IN_CHEFT
+                                          FOOD_STATUS_IN_CHEF
                                       ? Text(
                                           FOOD_STATUS_IN_CHEFT_STRING,
                                           style: textStyleMaking,

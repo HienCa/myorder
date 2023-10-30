@@ -6,12 +6,13 @@ class MyTextFieldChoosePrice extends StatefulWidget {
   final TextEditingController textController;
   final String label;
   final String placeholder;
+  final bool isRequire;
 
   const MyTextFieldChoosePrice({
     super.key,
     required this.textController,
     required this.label,
-    required this.placeholder,
+    required this.placeholder, required this.isRequire,
   });
 
   @override
@@ -25,16 +26,26 @@ class _MyTextFieldChoosePriceState extends State<MyTextFieldChoosePrice> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          margin: marginLeft8,
-          child: Text(
-            widget.label,
-            style: textStyleLabel16,
+        Padding(
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              Text(
+                widget.label,
+                style: textStyleLabel16,
+              ),
+              marginRight10,
+              widget.isRequire
+                  ? const Text(
+                      '(*)',
+                      style: textStyleErrorInput,
+                    )
+                  : const Text('')
+            ],
           ),
         ),
         Container(
           height: 50,
-          margin: marginAll8,
           padding: paddingLeftRight8,
           decoration: BoxDecoration(
               borderRadius: borderContainer8,

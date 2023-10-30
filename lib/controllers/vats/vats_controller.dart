@@ -110,12 +110,6 @@ class VatController extends GetxController {
             FirebaseFirestore.instance.collection('vats');
 
         await usersCollection.doc(id).set(Vat.toJson());
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Thêm vat mới thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
       } else {
         Get.snackbar(
           'Error!',
@@ -147,12 +141,7 @@ class VatController extends GetxController {
         "name": name.trim().toUpperCase(),
         "vat_percent": int.tryParse(vat_percent) ?? 0,
       });
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Cập nhật thông tin thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+      
       update();
     } catch (e) {
       Get.snackbar(

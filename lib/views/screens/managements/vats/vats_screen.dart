@@ -1,12 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/vats/add_vat_screen.dart';
 import 'package:myorder/views/screens/managements/vats/detail_vat_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementVatsPage extends StatefulWidget {
   const ManagementVatsPage({Key? key}) : super(key: key);
@@ -42,10 +46,19 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
             Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddVatPage())),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddVatPage()));
+                      if (result == 'success') {
+                        Utils.showStylishDialog(
+                            context,
+                            'THÀNH CÔNG!',
+                            'Thêm mới vat thành công!',
+                            StylishDialogType.SUCCESS);
+                      }
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(Icons.add_circle_outline),
@@ -104,12 +117,22 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
                               title: Row(
                                 children: [
                                   InkWell(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => VatDetailPage(
-                                                  vatId: vat.vat_id,
-                                                ))),
+                                    onTap: () async {
+                                      final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  VatDetailPage(
+                                                    vatId: vat.vat_id,
+                                                  )));
+                                      if (result == 'success') {
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÀNH CÔNG!',
+                                            'Cập nhật vat thành công!',
+                                            StylishDialogType.SUCCESS);
+                                      }
+                                    },
                                     child: Marquee(
                                       direction: Axis.horizontal,
                                       textDirection: TextDirection.ltr,

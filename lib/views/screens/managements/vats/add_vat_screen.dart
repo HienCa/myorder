@@ -3,12 +3,14 @@
 // import 'package:awesome_dialog/awesome_dialog.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/textfields/text_field_number.dart';
+import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddVatPage extends StatefulWidget {
   const AddVatPage({
@@ -49,186 +51,143 @@ class _AddVatPageState extends State<AddVatPage> {
       // backgroundColor: backgroundColor,
       appBar: AppBar(
         leading: InkWell(
-            onTap: () => {Navigator.pop(context)},
-            child: const Icon(Icons.arrow_back_ios)),
-        title: const Center(child: Text("THÊM MỚI VAT")),
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: secondColor,
+          ),
+        ),
+        title: const Center(
+            child: Text(
+          "THÊM MỚI VAT",
+          style: TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Theme(
-         data: ThemeData(unselectedWidgetColor: primaryColor),
+        data: ThemeData(unselectedWidgetColor: primaryColor),
         child: SingleChildScrollView(
             padding: const EdgeInsets.all(10),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  margin: const EdgeInsets.all(10.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                            controller: nameController,
-                            style: textStyleInput,
-                            decoration: InputDecoration(
-                                labelStyle: textStyleInput,
-                                labelText: "Thuế giá trị gia tăng",
-                                hintText: 'Nhập tên vat',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
-                                errorText: isErrorTextName ? errorTextName : null,
-                                errorStyle: textStyleErrorInput),
-                            maxLength: 50,
-                            onChanged: (value) => {
-                                  if (value.trim().length > maxlength50 ||
-                                      value.trim().length < minlength2)
-                                    {
-                                      setState(() {
-                                        errorTextName =
-                                            "Từ $minlength2 đến $maxlength50 ký tự.";
-                                        isErrorTextName = true;
-                                      })
-                                    }
-                                  else
-                                    {
-                                      setState(() {
-                                        errorTextName = "";
-                                        isErrorTextName = false;
-                                      })
-                                    }
-                                }),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 0, right: 0),
-                          child: TextField(
-                              controller: vatPercentController,
-                              style: textStyleInput,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter
-                                    .digitsOnly, // Only allows digits
-                              ],
-                              decoration: InputDecoration(
-                                  labelStyle: textStyleInput,
-                                  labelText: "Phần trăm (%)",
-                                  hintText: 'Nhập %',
-                                  hintStyle: const TextStyle(color: Colors.grey),
-                                  border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
-                                  errorText: isErrorTextVatPercent
-                                      ? errorTextVatPercent
-                                      : null,
-                                  errorStyle: textStyleErrorInput),
-                              maxLength: 3,
-                              // autofocus: true,
-                              onChanged: (value) => {
-                                    if (value.isEmpty ||
-                                        int.parse(value) <= 0 ||
-                                        int.parse(value) > 100)
-                                      {
-                                        setState(() {
-                                          errorTextVatPercent =
-                                              "Phần trăm (%) phải lớn hơn 1";
-                                          isErrorTextVatPercent = true;
-                                          if (int.parse(value) > 100) {
-                                            vatPercentController.text = "100";
-                                            errorTextVatPercent = "";
-                                            isErrorTextVatPercent = false;
-                                          }
-                                        })
-                                      }
-                                    else
-                                      {
-                                        setState(() {
-                                          errorTextVatPercent = "";
-                                          isErrorTextVatPercent = false;
-                                        })
-                                      }
-                                  }),
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.55,
-                          ),
-                        SizedBox(
-                          height: 50,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => {Navigator.pop(context)},
-                                  child: Container(
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                        color: dividerColor,
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(5))),
-                                    child: const Align(
-                                      alignment: Alignment.center,
-                                      child: Text("QUAY LẠI",
-                                          style: buttonStyleCancel),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => {
-                                    if (
-                                        nameController.text.trim().length > minlength2 && nameController.text.trim().length < maxlength50 &&
-                                        int.tryParse(vatPercentController.text)! > 0 && int.tryParse(vatPercentController.text)! <= 100)
-                                      {
-                                        vatController.createVat(
-                                          nameController.text,
-                                          vatPercentController.text,
-                                        ),
-                                        Navigator.pop(context)
-                                      }
-                                    else
-                                      {
-                                        print("Chưa nhập đủ trường"),
-                                        Alert(
-                                          context: context,
-                                          title: "THÔNG BÁO",
-                                          desc: "Thông tin chưa chính xác!",
-                                          image: alertImageError,
-                                          buttons: [],
-                                        ).show(),
-                                        Future.delayed(const Duration(seconds: 2),
-                                            () {
-                                          Navigator.pop(context);
-                                        })
-                                      }
-                                  },
-                                  child: Container(
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    child: const Align(
-                                      alignment: Alignment.center,
-                                      child: Text("THÊM MỚI",
-                                          style: buttonStyleBlackBold),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      marginTop10,
+                      MyTextFieldString(
+                        textController: nameController,
+                        label: 'Thuế giá trị gia tăng',
+                        placeholder: 'Nhập tên',
+                        isReadOnly: false,
+                        min: minlength2,
+                        max: maxlength50,
+                        isRequire: true,
+                      ),
+                      MyTextFieldNumber(
+                          textController: vatPercentController,
+                          label: 'Phần trăm (%)',
+                          placeholder: 'Nhập %',
+                          isReadOnly: false,
+                          max: 100,
+                          min: 1,
+                          isRequire: true),
+                    ],
                   ),
                 ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                ),
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => {Navigator.pop(context)},
+                          child: Container(
+                            height: 50,
+                            decoration: const BoxDecoration(
+                                color: dividerColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child: Text("QUAY LẠI", style: buttonStyleCancel),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            if (!Utils.isValidLengthTextEditController(
+                                    nameController, minlength2, maxlength50) &&
+                                !Utils.isValidRangeTextEditController(
+                                    vatPercentController, 1, 100)) {
+                              Utils.showStylishDialog(
+                                  context,
+                                  'THÔNG BÁO',
+                                  'Vui lòng kiểm tra lại thông tin nhập liệu.',
+                                  StylishDialogType.ERROR);
+                            } else if (!Utils.isValidLengthTextEditController(
+                                nameController, minlength2, maxlength50)) {
+                              Utils.showStylishDialog(
+                                  context,
+                                  'THÔNG BÁO',
+                                  'Tên vat phải từ $minlength2 đến $maxlength50',
+                                  StylishDialogType.ERROR);
+                            } else if (!Utils.isValidRangeTextEditController(
+                                vatPercentController, 1, 100)) {
+                              Utils.showStylishDialog(
+                                  context,
+                                  'THÔNG BÁO',
+                                  'Phần trăm phải từ 1 đến 100',
+                                  StylishDialogType.ERROR);
+                            } else {
+                              vatController.createVat(
+                                nameController.text,
+                                vatPercentController.text,
+                              );
+                              Utils.myPopSuccess(context);
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: const BoxDecoration(
+                              color: primaryColor,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child:
+                                  Text("THÊM MỚI", style: buttonStyleBlackBold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               ],
             )),
       ),

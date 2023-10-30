@@ -36,6 +36,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
   FoodController foodController = Get.put(FoodController());
   CategoryController categoryController = Get.put(CategoryController());
   OrderController orderController = Get.put(OrderController());
+  final TextEditingController slotTextEditingController =
+      TextEditingController();
 
   String keySearch = "";
   @override
@@ -53,7 +55,10 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: const Icon(Icons.arrow_back_ios, color: secondColor,),
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: secondColor,
+          ),
         ),
         title: Center(
             child: Text(
@@ -518,7 +523,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                           foodOrder.price_with_temporary!)
                                       : foodOrder.price,
                                   quantity: foodOrder.quantity!,
-                                  food_status: FOOD_STATUS_IN_CHEFT,
+                                  food_status: FOOD_STATUS_IN_CHEF,
                                   food_id: foodOrder.food_id,
                                   is_gift: false,
                                   category_id: '',
@@ -539,18 +544,42 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                             }
                             if (widget.booking) {
                               widget.table.status == TABLE_STATUS_EMPTY
-                                  ? showCustomAlertDialogConfirm(
+                                  ? showCustomAlertDialogConfirmOrder(
                                       context,
-                                      "YÊU CẦU ĐẶT BÀN",
+                                      "YÊU CẦU ĐẶT BÀN ${widget.table.name}",
                                       "Bạn đang muốn đặt bàn ${widget.table.name} ?",
                                       colorInformation,
+                                      slotTextEditingController, //số khách muốn đặt
+                                      widget.table
+                                          .total_slot, // số lượng khách tối đa có thể tiếp của 1 bàn
                                       () async {
                                         // order theo table_id
-                                        orderController.createOrder(
-                                            widget.table.table_id,
-                                            orderDetailList,
-                                            widget.isGift,
-                                            context);
+                                        print(
+                                            "SỐ KHÁCH CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController
+                                                        .text}");
+                                        if (int.tryParse(
+                                                    slotTextEditingController
+                                                        .text)! >
+                                                1 &&
+                                            int.tryParse(
+                                                    slotTextEditingController
+                                                        .text)! <=
+                                                widget.table.total_slot) {
+                                          //Nếu là đơn hàng mới thì phải nhập số khách
+                                          orderController.createOrder(
+                                              widget.table.table_id,
+                                              orderDetailList,
+                                              widget.isGift,
+                                              context,
+                                              int.tryParse(
+                                                  slotTextEditingController
+                                                      .text));
+                                        } else {
+                                          Utils.showErrorFlushbar(
+                                              context,
+                                              'BẮT BUỘC',
+                                              'Bạn phải nhập số lượng khách của bàn này');
+                                        }
                                       },
                                     )
                                   : showCustomAlertDialogConfirm(
@@ -564,12 +593,19 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                             widget.table.table_id,
                                             orderDetailList,
                                             widget.isGift,
-                                            context);
+                                            context,
+                                            int.tryParse(
+                                                slotTextEditingController
+                                                    .text));
                                       },
                                     );
                             } else {
-                              orderController.createOrder(widget.table.table_id,
-                                  orderDetailList, widget.isGift, context);
+                              orderController.createOrder(
+                                  widget.table.table_id,
+                                  orderDetailList,
+                                  widget.isGift,
+                                  context,
+                                  int.tryParse(slotTextEditingController.text));
                             }
                           },
                           child: Container(

@@ -3,39 +3,53 @@ import 'package:flutter/services.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 
-class MyTextFieldPercent extends StatefulWidget {
+class MyTextFieldNumber extends StatefulWidget {
   final TextEditingController textController;
   final String label;
   final String placeholder;
   final bool isReadOnly;
+  final bool isRequire;
+  final int max;
+  final int min;
 
-  const MyTextFieldPercent(
+  const MyTextFieldNumber(
       {super.key,
       required this.textController,
       required this.label,
-      required this.placeholder, required this.isReadOnly});
+      required this.placeholder,
+      required this.isReadOnly,
+      required this.max,
+      required this.min, required this.isRequire});
 
   @override
-  State<MyTextFieldPercent> createState() => _MyTextFieldPercentState();
+  State<MyTextFieldNumber> createState() => _MyTextFieldNumberState();
 }
 
-class _MyTextFieldPercentState extends State<MyTextFieldPercent> {
+class _MyTextFieldNumberState extends State<MyTextFieldNumber> {
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          margin: marginLeft8,
-          child: Text(
-            widget.label,
-            style: textStyleLabel16,
+        Padding(
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              Text(
+                widget.label,
+                style: textStyleLabel16,
+              ),
+              marginRight10,
+              widget.isRequire ? const Text(
+                '(*)',
+                style: textStyleErrorInput,
+              ):const Text('')
+            ],
           ),
         ),
         Container(
           height: 50,
-          margin: marginAll8,
           padding: paddingLeftRight8,
           decoration: BoxDecoration(
               borderRadius: borderContainer8,
@@ -59,10 +73,10 @@ class _MyTextFieldPercentState extends State<MyTextFieldPercent> {
                   // autofocus: true,
                   onChanged: (value) => {
                         setState(() {
-                          if (int.parse(value) > 100) {
-                            widget.textController.text = "100";
-                          } else if (int.parse(value) <= 0) {
-                            widget.textController.text = "1";
+                          if (int.parse(value) > widget.max) {
+                            widget.textController.text = "${widget.max}";
+                          } else if (int.parse(value) <= widget.min) {
+                            widget.textController.text = "${widget.min}";
                           }
                         })
                       }),

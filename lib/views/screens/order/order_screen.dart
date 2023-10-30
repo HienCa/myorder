@@ -12,6 +12,7 @@ import 'package:myorder/views/screens/order/actions/move/move_table_screen.dart'
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
+import 'package:myorder/views/widgets/dialogs.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -21,6 +22,8 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
+  final TextEditingController slotTextEditingController =
+      TextEditingController();
   OrderController orderController = Get.put(OrderController());
   String keySearch = "";
   String employeeIdSelected = defaultEmployee;
@@ -213,25 +216,76 @@ class _OrderPageState extends State<OrderPage> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: kDefaultPadding),
                                         height: 120,
-                                        width: 180,
+                                        width: 200,
                                         child: Column(
                                           children: [
                                             Expanded(
                                               flex: 1,
-                                              child: Container(
-                                                height: 120,
-                                                width: 180,
-                                                decoration: const BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(10),
+                                              child: InkWell(
+                                                onTap: () => {
+                                                  showCustomAlertDialogConfirmOrder(
+                                                    context,
+                                                    "SỐ LƯỢNG KHÁCH ${orderController.orders[index].table!.name}",
+                                                    "",
+                                                    colorInformation,
+                                                    slotTextEditingController, //số khách muốn đặt
+                                                    orderController
+                                                        .orders[index]
+                                                        .table!
+                                                        .total_slot, // số lượng khách tối đa có thể tiếp của 1 bàn
+                                                    () async {
+                                                      // order theo table_id
+                                                      print(
+                                                          "SỐ KHÁCH MỚI CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController.text}");
+                                                      if (int.tryParse(
+                                                                  slotTextEditingController
+                                                                      .text)! >
+                                                              1 &&
+                                                          int.tryParse(
+                                                                  slotTextEditingController
+                                                                      .text)! <=
+                                                              orderController
+                                                                  .orders[index]
+                                                                  .table!
+                                                                  .total_slot) {
+                                                        //Nếu là đơn hàng mới thì phải nhập số khách
+                                                        orderController.updateSlot(
+                                                            orderController
+                                                                .orders[index],
+                                                            int.tryParse(
+                                                                    slotTextEditingController
+                                                                        .text) ??
+                                                                orderController
+                                                                    .orders[
+                                                                        index]
+                                                                    .total_slot,
+                                                            context);
+                                                      } else {
+                                                        Utils.showErrorFlushbar(
+                                                            context,
+                                                            '',
+                                                            'Số lượng khách không hợp lệ!');
+                                                      }
+                                                    },
+                                                  )
+                                                },
+                                                child: Container(
+                                                  height: 120,
+                                                  width: 200,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(10),
+                                                    ),
+                                                    color: backgroundOrderColor,
                                                   ),
-                                                  color: backgroundOrderColor,
+                                                  child: Center(
+                                                      child: Text(
+                                                          "ĐANG PHỤC VỤ (${orderController.orders[index].total_slot})",
+                                                          style:
+                                                              textStyleOrderTitleBold16)),
                                                 ),
-                                                child: const Center(
-                                                    child: Text("ĐANG PHỤC VỤ",
-                                                        style:
-                                                            textStyleOrderSuccessBold24)),
                                               ),
                                             ),
                                             marginTop10,
@@ -239,7 +293,7 @@ class _OrderPageState extends State<OrderPage> {
                                               flex: 2,
                                               child: Container(
                                                 height: 120,
-                                                width: 180,
+                                                width: 200,
                                                 decoration: const BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.all(
@@ -298,7 +352,7 @@ class _OrderPageState extends State<OrderPage> {
                                 child: SizedBox(
                                   height: 136,
                                   // our image take 200 width, thats why we set out total width - 200
-                                  width: size.width - 200,
+                                  width: size.width - 250,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
@@ -568,7 +622,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                                       ),
                                                                                       InkWell(
                                                                                         onTap: () async {
-                                                                                          var isCheckStatusFood = orderController.orders[index].order_details.any((element) => element.food_status != FOOD_STATUS_IN_CHEFT);
+                                                                                          var isCheckStatusFood = orderController.orders[index].order_details.any((element) => element.food_status != FOOD_STATUS_IN_CHEF);
                                                                                           print("isCheckStatusFood: $isCheckStatusFood");
                                                                                           if (isCheckStatusFood) {
                                                                                             //muốn hủy bàn thì tất cả các món phải ở trạng thái chờ chế biến.
@@ -709,7 +763,7 @@ class _OrderPageState extends State<OrderPage> {
                                                             context,
                                                             'Thông báo',
                                                             'Chỉ có thể hủy bàn khi tất cả món ăn ở trạng thái CHỜ CHẾ BIẾN');
-                                                      }else if (result ==
+                                                      } else if (result ==
                                                           'PAID') {
                                                         Utils.showErrorFlushbar(
                                                             context,

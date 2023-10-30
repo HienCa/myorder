@@ -37,6 +37,7 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
   CategoryController categoryController = Get.put(CategoryController());
   OrderController orderController = Get.put(OrderController());
 
+
   String keySearch = "";
   @override
   void initState() {
@@ -429,7 +430,7 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                   order_detail_id: "",
                                   price: 0,
                                   quantity: foodOrder.quantity!,
-                                  food_status: FOOD_STATUS_IN_CHEFT,
+                                  food_status: FOOD_STATUS_IN_CHEF,
                                   food_id: foodOrder.food_id,
                                   is_gift: false, category_id: '', category_code: foodOrder.category_code,
                                 );
@@ -455,6 +456,7 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                       colorInformation,
                                       () async {
                                         // order theo table_id
+                                        
                                         orderController.createOrder(
                                             widget.table.table_id,
                                             orderDetailList,

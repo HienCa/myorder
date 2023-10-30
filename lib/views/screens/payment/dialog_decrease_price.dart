@@ -10,7 +10,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/buttons/button.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price.dart';
 import 'package:myorder/views/widgets/headers/header_icon.dart';
-import 'package:myorder/views/widgets/textfields/text_field_percent.dart';
+import 'package:myorder/views/widgets/textfields/text_field_number.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/views/widgets/textfields/text_field_price_calculator.dart';
 
@@ -202,7 +202,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                         child: MyTextFieldChoosePrice(
                           textController: priceTextEditController,
                           label: 'Số tiền muốn giảm',
-                          placeholder: 'Chọn số tiền',
+                          placeholder: 'Chọn số tiền', isRequire: true,
                         ),
                       )
                     : const SizedBox()),
@@ -232,11 +232,11 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                 duration:
                     const Duration(milliseconds: 500), // Độ dài của animation
                 child: isCheckedPercent
-                    ? MyTextFieldPercent(
+                    ? MyTextFieldNumber(
                         textController: percentTextEditController,
                         label: 'Phần trăm (%) muốn giảm',
                         placeholder: 'Nhập %',
-                        isReadOnly: !isCheckedPercent,
+                        isReadOnly: !isCheckedPercent, min: 1, max: 100, isRequire: true,
                       )
                     : const SizedBox()),
             marginTop20,

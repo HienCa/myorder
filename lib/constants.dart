@@ -123,6 +123,9 @@ const backgroundOrderColor = primaryColor;
 const textStyleOrderSuccessBold24 =
     TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold);
 
+const textStyleOrderTitleBold16 =
+    TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);
+
 //===============================
 
 //PRIMARY
@@ -213,8 +216,7 @@ const textRegular = TextStyle(
 
 const textStyleBlackBold =
     TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold);
-const textStyleBlack =
-    TextStyle(color: Colors.black, fontSize: 20);
+const textStyleBlack = TextStyle(color: Colors.black, fontSize: 20);
 const textStyleGrayBold = TextStyle(
     color: tableemptyColor, fontSize: 20, fontWeight: FontWeight.bold);
 

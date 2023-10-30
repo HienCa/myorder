@@ -7,6 +7,7 @@ import 'package:myorder/models/table.dart';
 class Order {
   String order_id;
   String order_code;
+  int total_slot;
   int is_vat;
   int is_discount;
   double discount_amount_all;
@@ -37,6 +38,7 @@ class Order {
     required this.order_code,
     required this.order_status,
     required this.discount_reason,
+    required this.total_slot,
     this.note,
     required this.create_at,
     this.payment_at,
@@ -62,6 +64,7 @@ class Order {
       : order_id = '',
         order_code = '',
         discount_reason = '',
+        total_slot = 1,
         is_vat = 0,
         is_discount = 0,
         discount_amount_all = 0,
@@ -83,6 +86,7 @@ class Order {
   Map<String, dynamic> toJson() => {
         "order_id": order_id,
         "order_code": order_code,
+        "total_slot": total_slot,
         "discount_reason": discount_reason,
         "order_status": order_status,
         "note": note,
@@ -111,6 +115,7 @@ class Order {
     return Order(
       order_id: snapshot['order_id'],
       order_code: snapshot['order_code'],
+      total_slot: snapshot['total_slot'],
       discount_reason: snapshot['discount_reason'],
       total_amount: snapshot['total_amount'],
       order_status: snapshot['order_status'],

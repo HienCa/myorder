@@ -5,9 +5,11 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/food_order.dart';
 import 'package:myorder/models/order_detail.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 import 'package:uuid/uuid.dart';
 
 //Các phương phức hay dùng
@@ -177,6 +179,15 @@ class Utils {
     return false;
   }
 
+  static bool isAnyFoodInChef(List<OrderDetail> foods) {
+    for (var food in foods) {
+      if (food.food_status == FOOD_STATUS_IN_CHEF) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static bool isAnyOrderDetailSelected(List<OrderDetail> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {
@@ -317,4 +328,111 @@ class Utils {
     final String validText = validMatches.join('');
     return validText;
   }
+
+  //BEGIN=========================VALIDATE TEXT FIELD===========================
+  //String
+  static bool isValidLengthString(String string, int min, int max) {
+    if (string.trim().length >= min && string.trim().length <= max) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //String
+  static bool isValidRangeString(String string, int min, int max) {
+    if ((int.tryParse(string) ?? 0) >= min &&
+        (int.tryParse(string) ?? 0) <= max) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //TextEditingController
+  static bool isValidLengthTextEditController(
+      TextEditingController textEditingController, int min, int max) {
+    if (textEditingController.text.trim().length >= min &&
+        textEditingController.text.trim().length <= max) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //TextEditingController
+  static bool isValidRangeTextEditController(
+      TextEditingController textEditingController, int min, int max) {
+    if ((int.tryParse(textEditingController.text) ?? 0) >= min &&
+        (int.tryParse(textEditingController.text) ?? 0) <= max) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //END============================VALIDATE TEXT FIELD==========================
+
+  //BEGIN===============================DIALOG==================================
+
+  //Link: https://pub.dev/packages/stylish_dialog
+
+  //VÍ DỤ
+
+  //Utils.showStylishDialog(context,'THÔNG BÁO', 'Vui lòng nhập đầy đủ các trường', StylishDialogType.NORMAL);
+  //Utils.showStylishDialog(context,'THÔNG BÁO', 'Vui lòng nhập đầy đủ các trường', StylishDialogType.WARNING);
+  //Utils.showStylishDialog(context,'THÔNG BÁO', 'Vui lòng nhập đầy đủ các trường', StylishDialogType.SUCCESS);
+  //Utils.showStylishDialog(context,'THÔNG BÁO', 'Vui lòng nhập đầy đủ các trường', StylishDialogType.INFO);
+  //Utils.showStylishDialog(context,'THÔNG BÁO', 'Vui lòng nhập đầy đủ các trường', StylishDialogType.ERROR);
+  //Utils.showStylishDialog(context,'THÔNG BÁO', 'Vui lòng nhập đầy đủ các trường', StylishDialogType.PROGRESS);
+
+  static void showStylishDialog(BuildContext context, String title,
+      String description, StylishDialogType style) {
+    DialogController controller = DialogController(
+      listener: (status) {
+        if (status == DialogStatus.Showing) {
+          debugPrint("Dialog is showing");
+        } else if (status == DialogStatus.Changed) {
+          debugPrint("Dialog type changed");
+        } else if (status == DialogStatus.Dismissed) {
+          debugPrint("Dialog dismissed");
+        }
+      },
+    );
+    StylishDialog dialog = StylishDialog(
+      //sau 2s dismiss nên không cần nhấn bên ngoài dimiss sẽ gây ra lỗi
+      dismissOnTouchOutside: false,
+      context: context,
+      alertType: style,
+      style: DefaultStyle(),
+      controller: controller,
+      title: Text(
+        title,
+        style: textStylePlaceholder,
+      ),
+      content: Text(description, style: textStylePlaceholder),
+      // animationLoop: true,
+    );
+
+    // StylishDialog dialog = StylishDialog(
+    //  dismissOnTouchOutside: false,
+    //   context: context,
+    //   alertType: style,
+    //   style: Style1(),
+    //   controller: controller,
+    //   title: Text(
+    //     title,
+    //     style: textStylePlaceholder,
+    //   ),
+    //   content: Text(description, style: textStylePlaceholder),
+    //   // animationLoop: true,
+    // );
+
+    dialog.show();
+    Future.delayed(const Duration(seconds: 2), () {
+      dialog.dismiss();
+    });
+  }
+
+  //END=================================DIALOG==================================
 }

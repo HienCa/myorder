@@ -475,7 +475,8 @@ class OrderController extends GetxController {
       total_vat_amount: 0,
       total_discount_amount: 0,
       discount_percent: 0,
-      discount_amount_other: 0));
+      discount_amount_other: 0,
+      total_slot: 1));
 
   //lấy 1 order
 
@@ -509,7 +510,8 @@ class OrderController extends GetxController {
               total_vat_amount: 0,
               total_discount_amount: 0,
               discount_percent: 0,
-              discount_amount_other: 0);
+              discount_amount_other: 0,
+              total_slot: 1);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -619,7 +621,8 @@ class OrderController extends GetxController {
       total_vat_amount: 0,
       total_discount_amount: 0,
       discount_percent: 0,
-      discount_amount_other: 0));
+      discount_amount_other: 0,
+      total_slot: 1));
 
   model.Order get orderDetailOrigin => _orderDetailOrigin.value;
   getOrderDetailOriginById(model.Order order) async {
@@ -651,7 +654,8 @@ class OrderController extends GetxController {
               total_vat_amount: 0,
               total_discount_amount: 0,
               discount_percent: 0,
-              discount_amount_other: 0);
+              discount_amount_other: 0,
+              total_slot: 1);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -744,7 +748,8 @@ class OrderController extends GetxController {
   // tao order
   //them tung orderdetail
   void createOrder(String table_id, List<OrderDetail> orderDetailList,
-      bool isGift, BuildContext context) async {
+      bool isGift, BuildContext context,
+      [int? slot]) async {
     try {
       //kiểm tra xem don hang đã được order chưa
       var tableOrdered = await firestore
@@ -761,7 +766,7 @@ class OrderController extends GetxController {
           order_id: id,
           table_id: table_id,
           employee_id: authController.user.uid,
-          order_status: FOOD_STATUS_IN_CHEFT,
+          order_status: ORDER_STATUS_SERVING,
           note: "",
           create_at: Timestamp.fromDate(DateTime.now()),
           payment_at: null,
@@ -780,7 +785,12 @@ class OrderController extends GetxController {
           total_discount_amount: 0,
           discount_percent: 0,
           discount_amount_other: 0,
+          total_slot: 1,
         );
+
+        if (slot! > 0) {
+          Order.total_slot = slot;
+        }
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('orders');
 
@@ -1006,6 +1016,25 @@ class OrderController extends GetxController {
     }
   }
 
+  updateSlot(model.Order order, int new_slot, BuildContext context) async {
+    try {
+      await firestore.collection('orders').doc(order.order_id).update({
+        "total_slot":
+            new_slot, // cập nhật trạng thái bàn trống sau khi không còn gộp
+      }).then((_) async {
+        Utils.showSuccessFlushbar(context, 'SỐ LƯỢNG KHÁCH',
+            'Cập nhật số lượng khách của bàn ${order.table!.name} thành công!');
+      });
+    } catch (e) {
+      Get.snackbar(
+        'Cập nhật thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   //GỘP BÀN
   mergeTable(
       BuildContext context, model.Order order, List<dynamic> tableIds) async {
@@ -1190,7 +1219,7 @@ class OrderController extends GetxController {
               int quantity =
                   orderCollection['quantity'] ?? 1; // số lượng ban đầu
               int food_status =
-                  orderCollection['food_status'] ?? FOOD_STATUS_IN_CHEFT;
+                  orderCollection['food_status'] ?? FOOD_STATUS_IN_CHEF;
 
               // Cập nhật đơn hàng cần tách: số lượng
               int newQuantity =
@@ -1246,7 +1275,7 @@ class OrderController extends GetxController {
             order_id: id,
             table_id: targetTable.table_id,
             employee_id: authController.user.uid,
-            order_status: FOOD_STATUS_IN_CHEFT,
+            order_status: FOOD_STATUS_IN_CHEF,
             note: "",
             create_at: Timestamp.fromDate(DateTime.now()),
             payment_at: null,
@@ -1265,6 +1294,7 @@ class OrderController extends GetxController {
             total_discount_amount: 0,
             discount_percent: 0,
             discount_amount_other: 0,
+            total_slot: 1,
           );
           // cập nhật lại tổng tiền cho order
 
