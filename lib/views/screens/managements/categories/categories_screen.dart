@@ -1,12 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/categories/add_category_screen.dart';
 import 'package:myorder/views/screens/managements/categories/detail_category_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementCategoriesPage extends StatefulWidget {
   const ManagementCategoriesPage({Key? key}) : super(key: key);
@@ -43,10 +47,19 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
             Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddCategoryPage())),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddCategoryPage()));
+                      if (result == 'success') {
+                        Utils.showStylishDialog(
+                            context,
+                            'THÀNH CÔNG!',
+                            'Thêm mới danh mục thành công!',
+                            StylishDialogType.SUCCESS);
+                      }
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(Icons.add_circle_outline),
@@ -99,21 +112,28 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
                         itemBuilder: (context, index) {
                           final category = categoryController.categories[index];
                           String string;
-                          return Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.ac_unit),
-                              title: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CategoryDetailPage(
-                                                  categoryId:
-                                                      category.category_id,
-                                                ))),
-                                    child: Marquee(
+                          return InkWell(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CategoryDetailPage(
+                                            categoryId: category.category_id,
+                                          )));
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật danh mục thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
+                            child: Card(
+                              child: ListTile(
+                                leading: const Icon(Icons.ac_unit),
+                                title: Row(
+                                  children: [
+                                    Marquee(
                                       direction: Axis.horizontal,
                                       textDirection: TextDirection.ltr,
                                       animationDuration:
@@ -129,18 +149,9 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              subtitle: InkWell(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CategoryDetailPage(
-                                                categoryId:
-                                                    category.category_id))),
-                                child: RichText(
+                                  ],
+                                ),
+                                subtitle: RichText(
                                   text: TextSpan(
                                     text: category.active == ACTIVE
                                         ? "Đang hoạt động"
@@ -155,37 +166,36 @@ class _ManagementCategoriesPageState extends State<ManagementCategoriesPage> {
                                   overflow: TextOverflow
                                       .ellipsis, // Hiển thị dấu ba chấm khi văn bản quá dài
                                 ),
-                              ),
-                              trailing: InkWell(
-                                onTap: () => {
-                                  string = category.active == ACTIVE
-                                      ? "ngừng hoạt động"
-                                      : "hoạt động trở lại",
-                                  showCustomAlertDialogConfirm(
-                                    context,
-                                    "TRẠNG THÁI HOẠT ĐỘNG",
-                                    "Bạn có chắc chắn muốn $string danh mục này?",
-                                                                  colorWarning,
-
-                                    () async {
-                                      await categoryController
-                                          .updateToggleActive(
-                                              category.category_id,
-                                              category.active);
-                                    },
-                                  )
-                                },
-                                child: category.active == ACTIVE
-                                    ? const Icon(
-                                        Icons.key,
-                                        size: 25,
-                                        color: activeColor,
-                                      )
-                                    : const Icon(
-                                        Icons.key_off,
-                                        size: 25,
-                                        color: deActiveColor,
-                                      ),
+                                trailing: InkWell(
+                                  onTap: () => {
+                                    string = category.active == ACTIVE
+                                        ? "ngừng hoạt động"
+                                        : "hoạt động trở lại",
+                                    showCustomAlertDialogConfirm(
+                                      context,
+                                      "TRẠNG THÁI HOẠT ĐỘNG",
+                                      "Bạn có chắc chắn muốn $string danh mục này?",
+                                      colorWarning,
+                                      () async {
+                                        await categoryController
+                                            .updateToggleActive(
+                                                category.category_id,
+                                                category.active);
+                                      },
+                                    )
+                                  },
+                                  child: category.active == ACTIVE
+                                      ? const Icon(
+                                          Icons.key,
+                                          size: 25,
+                                          color: activeColor,
+                                        )
+                                      : const Icon(
+                                          Icons.key_off,
+                                          size: 25,
+                                          color: deActiveColor,
+                                        ),
+                                ),
                               ),
                             ),
                           );

@@ -20,6 +20,7 @@ import 'package:myorder/views/screens/order/orderdetail/dialog_confirm_update_qu
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class OrderdetailPage extends StatefulWidget {
   final model.Order order;
@@ -907,36 +908,62 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               ]),
                         ),
                       ),
-                      InkWell(
-                        onTap: () async {
-                          final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PaymentPage(
-                                  order: widget.order,
+                      Utils.isAnyFoodInChef(orderDetailOriginArray)
+                          ? InkWell(
+                              onTap: () => {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÔNG BÁO',
+                                    'Có một số món chưa được gửi Bếp/Bar. Vui lòng gửi bếp trước khi tiến hành thanh toán',
+                                    StylishDialogType.INFO)
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                              ));
-                          if (result == 'success') {
-                            Utils.myPopResult(context, 'PAID');
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.receipt_long_outlined),
-                                Text(
-                                  "Thanh toán",
-                                  style: textStyleWhiteRegular16,
-                                )
-                              ]),
-                        ),
-                      ),
+                                child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.receipt_long_outlined),
+                                      Text(
+                                        "Thanh toán",
+                                        style: textStyleWhiteRegular16,
+                                      )
+                                    ]),
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PaymentPage(
+                                        order: widget.order,
+                                      ),
+                                    ));
+                                if (result == 'success') {
+                                  Utils.myPopResult(context, 'PAID');
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.receipt_long_outlined),
+                                      Text(
+                                        "Thanh toán",
+                                        style: textStyleWhiteRegular16,
+                                      )
+                                    ]),
+                              ),
+                            ),
                     ],
                   )),
               const SizedBox(height: 10),

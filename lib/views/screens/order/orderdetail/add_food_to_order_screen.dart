@@ -12,6 +12,7 @@ import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddFoodToOrderPage extends StatefulWidget {
   final model.Table table;
@@ -555,16 +556,11 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                       () async {
                                         // order theo table_id
                                         print(
-                                            "SỐ KHÁCH CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController
-                                                        .text}");
-                                        if (int.tryParse(
-                                                    slotTextEditingController
-                                                        .text)! >
-                                                1 &&
-                                            int.tryParse(
-                                                    slotTextEditingController
-                                                        .text)! <=
-                                                widget.table.total_slot) {
+                                            "SỐ KHÁCH CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController.text}");
+                                        if (Utils.isValidRangeString(
+                                            slotTextEditingController.text,
+                                            1,
+                                            widget.table.total_slot)) {
                                           //Nếu là đơn hàng mới thì phải nhập số khách
                                           orderController.createOrder(
                                               widget.table.table_id,
@@ -577,8 +573,13 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                         } else {
                                           Utils.showErrorFlushbar(
                                               context,
-                                              'BẮT BUỘC',
+                                              'THÔNG BÁO',
                                               'Bạn phải nhập số lượng khách của bàn này');
+                                          // Utils.showStylishDialog(
+                                          //     context,
+                                          //     'THÔNG BÁO',
+                                          //     'Bạn phải nhập số lượng khách của bàn này',
+                                          //     StylishDialogType.ERROR);
                                         }
                                       },
                                     )

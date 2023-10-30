@@ -1,12 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/units/add_unit_screen.dart';
 import 'package:myorder/views/screens/managements/units/detail_unit_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementUnitsPage extends StatefulWidget {
   const ManagementUnitsPage({Key? key}) : super(key: key);
@@ -42,10 +46,19 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
             Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddUnitPage())),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddUnitPage()));
+                      if (result == 'success') {
+                        Utils.showStylishDialog(
+                            context,
+                            'THÀNH CÔNG!',
+                            'Thêm mới đơn vị thành công!',
+                            StylishDialogType.SUCCESS);
+                      }
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(Icons.add_circle_outline),
@@ -98,20 +111,28 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                         itemBuilder: (context, index) {
                           final unit = unitController.units[index];
                           String string;
-                          return Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.ac_unit),
-                              title: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                UnitDetailPage(
-                                                  unitId: unit.unit_id,
-                                                ))),
-                                    child: Marquee(
+                          return InkWell(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UnitDetailPage(
+                                            unitId: unit.unit_id,
+                                          )));
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật đơn vị thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
+                            child: Card(
+                              child: ListTile(
+                                leading: const Icon(Icons.ac_unit),
+                                title: Row(
+                                  children: [
+                                    Marquee(
                                       direction: Axis.horizontal,
                                       textDirection: TextDirection.ltr,
                                       animationDuration:
@@ -127,16 +148,9 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              subtitle: InkWell(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UnitDetailPage(
-                                            unitId: unit.unit_id))),
-                                child: RichText(
+                                  ],
+                                ),
+                                subtitle: RichText(
                                   text: TextSpan(
                                     text: unit.active == ACTIVE
                                         ? "Đang hoạt động"
@@ -151,34 +165,34 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                                   overflow: TextOverflow
                                       .ellipsis, // Hiển thị dấu ba chấm khi văn bản quá dài
                                 ),
-                              ),
-                              trailing: InkWell(
-                                onTap: () => {
-                                  string = unit.active == ACTIVE
-                                      ? "ngừng hoạt động"
-                                      : "hoạt động trở lại",
-                                  showCustomAlertDialogConfirm(
-                                    context,
-                                    "TRẠNG THÁI HOẠT ĐỘNG",
-                                    "Bạn có chắc chắn muốn $string đơn vị tính này?",
-                                    colorWarning,
-                                    () async {
-                                      await unitController.updateToggleActive(
-                                          unit.unit_id, unit.active);
-                                    },
-                                  )
-                                },
-                                child: unit.active == ACTIVE
-                                    ? const Icon(
-                                        Icons.key,
-                                        size: 25,
-                                        color: activeColor,
-                                      )
-                                    : const Icon(
-                                        Icons.key_off,
-                                        size: 25,
-                                        color: deActiveColor,
-                                      ),
+                                trailing: InkWell(
+                                  onTap: () => {
+                                    string = unit.active == ACTIVE
+                                        ? "ngừng hoạt động"
+                                        : "hoạt động trở lại",
+                                    showCustomAlertDialogConfirm(
+                                      context,
+                                      "TRẠNG THÁI HOẠT ĐỘNG",
+                                      "Bạn có chắc chắn muốn $string đơn vị tính này?",
+                                      colorWarning,
+                                      () async {
+                                        await unitController.updateToggleActive(
+                                            unit.unit_id, unit.active);
+                                      },
+                                    )
+                                  },
+                                  child: unit.active == ACTIVE
+                                      ? const Icon(
+                                          Icons.key,
+                                          size: 25,
+                                          color: activeColor,
+                                        )
+                                      : const Icon(
+                                          Icons.key_off,
+                                          size: 25,
+                                          color: deActiveColor,
+                                        ),
+                                ),
                               ),
                             ),
                           );

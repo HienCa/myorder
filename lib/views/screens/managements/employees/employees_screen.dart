@@ -1,12 +1,16 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/employees/employees_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/employees/add_employee_screen.dart';
 import 'package:myorder/views/screens/managements/employees/detail_employee_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementEmployeesPage extends StatefulWidget {
   const ManagementEmployeesPage({Key? key}) : super(key: key);
@@ -43,10 +47,19 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
             Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddEmployeePage())),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddEmployeePage()));
+                      if (result == 'success') {
+                        Utils.showStylishDialog(
+                            context,
+                            'THÀNH CÔNG!',
+                            'Thêm mới nhân viên thành công!',
+                            StylishDialogType.SUCCESS);
+                      }
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(Icons.add_circle_outline),
@@ -99,17 +112,24 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                         itemBuilder: (context, index) {
                           final employee = employeeController.employees[index];
                           String string;
-                          return Card(
-                            child: ListTile(
-                              leading: InkWell(
-                                onTap: () => Navigator.push(
+                          return InkWell(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EmployeeDetailPage(
+                                          employeeId: employee.employee_id)));
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            EmployeeDetailPage(
-                                                employeeId:
-                                                    employee.employee_id))),
-                                child: employee.avatar != ""
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật thông tin nhân viên thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
+                            child: Card(
+                              child: ListTile(
+                                leading: employee.avatar != ""
                                     ? CircleAvatar(
                                         radius: 25,
                                         backgroundColor: Colors.black,
@@ -123,18 +143,9 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                                           height: 100,
                                         ),
                                       ),
-                              ),
-                              title: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                EmployeeDetailPage(
-                                                    employeeId:
-                                                        employee.employee_id))),
-                                    child: Marquee(
+                                title: Row(
+                                  children: [
+                                    Marquee(
                                       direction: Axis.horizontal,
                                       textDirection: TextDirection.ltr,
                                       animationDuration:
@@ -150,18 +161,9 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              subtitle: InkWell(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            EmployeeDetailPage(
-                                                employeeId:
-                                                    employee.employee_id))),
-                                child: RichText(
+                                  ],
+                                ),
+                                subtitle: RichText(
                                   text: TextSpan(
                                     text: employee.role,
                                     style: const TextStyle(
@@ -172,37 +174,36 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                                   overflow: TextOverflow
                                       .ellipsis, // Hiển thị dấu ba chấm khi văn bản quá dài
                                 ),
-                              ),
-                              trailing: InkWell(
-                                onTap: () => {
-                                  string = employee.active == ACTIVE
-                                      ? "khóa"
-                                      : "bỏ khóa",
-                                  showCustomAlertDialogConfirm(
-                                    context,
-                                    "TRẠNG THÁI HOẠT ĐỘNG",
-                                    "Bạn có chắc chắn muốn $string người dùng này?",
-                                                                  colorWarning,
-
-                                    () async {
-                                      await employeeController
-                                          .updateToggleActive(
-                                              employee.employee_id,
-                                              employee.active);
-                                    },
-                                  )
-                                },
-                                child: employee.active == ACTIVE
-                                    ? const Icon(
-                                        Icons.key,
-                                        size: 25,
-                                        color: activeColor,
-                                      )
-                                    : const Icon(
-                                        Icons.key_off,
-                                        size: 25,
-                                        color: deActiveColor,
-                                      ),
+                                trailing: InkWell(
+                                  onTap: () => {
+                                    string = employee.active == ACTIVE
+                                        ? "khóa"
+                                        : "bỏ khóa",
+                                    showCustomAlertDialogConfirm(
+                                      context,
+                                      "TRẠNG THÁI HOẠT ĐỘNG",
+                                      "Bạn có chắc chắn muốn $string người dùng này?",
+                                      colorWarning,
+                                      () async {
+                                        await employeeController
+                                            .updateToggleActive(
+                                                employee.employee_id,
+                                                employee.active);
+                                      },
+                                    )
+                                  },
+                                  child: employee.active == ACTIVE
+                                      ? const Icon(
+                                          Icons.key,
+                                          size: 25,
+                                          color: activeColor,
+                                        )
+                                      : const Icon(
+                                          Icons.key_off,
+                                          size: 25,
+                                          color: deActiveColor,
+                                        ),
+                                ),
                               ),
                             ),
                           );

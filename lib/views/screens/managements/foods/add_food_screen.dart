@@ -20,8 +20,9 @@ import 'package:myorder/models/unit.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/models/category.dart' as model;
 import 'package:myorder/utils.dart';
-
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:myorder/views/widgets/textfields/text_field_price.dart';
+import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddFoodPage extends StatefulWidget {
   const AddFoodPage({
@@ -160,16 +161,21 @@ class _AddFoodPageState extends State<AddFoodPage> {
         isErrorTextTemporaryPriceFromDate = true;
         errorTextTemporaryPriceFromDate =
             "Thời gian bắt đầu phải lớn hơn hiện tại.";
-        Alert(
-          context: context,
-          title: "THÔNG BÁO",
-          desc: "Thời gian bắt đầu phải lớn hơn hiện tại!",
-          image: alertImageError,
-          buttons: [],
-        ).show();
-        Future.delayed(const Duration(seconds: 2), () {
-          Navigator.pop(context);
-        });
+        // Alert(
+        //   context: context,
+        //   title: "THÔNG BÁO",
+        //   desc: "Thời gian bắt đầu phải lớn hơn hiện tại!",
+        //   image: alertImageError,
+        //   buttons: [],
+        // ).show();
+        // Future.delayed(const Duration(seconds: 2), () {
+        //   Navigator.pop(context);
+        // });
+        Utils.showStylishDialog(
+            context,
+            'THÔNG BÁO',
+            'Thời gian bắt đầu phải lớn hơn hiện tại.',
+            StylishDialogType.ERROR);
       });
     }
   }
@@ -201,16 +207,18 @@ class _AddFoodPageState extends State<AddFoodPage> {
     );
     if (!isFromDateTimeSelected) {
       isErrorTextTemporaryPriceToDate = true;
-      Alert(
-        context: context,
-        title: "THÔNG BÁO",
-        desc: "Vui lòng chọn thời gian bắt đầu!",
-        image: alertImageError,
-        buttons: [],
-      ).show();
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pop(context);
-      });
+      // Alert(
+      //   context: context,
+      //   title: "THÔNG BÁO",
+      //   desc: "Vui lòng chọn thời gian bắt đầu!",
+      //   image: alertImageError,
+      //   buttons: [],
+      // ).show();
+      // Future.delayed(const Duration(seconds: 2), () {
+      //   Navigator.pop(context);
+      // });
+      Utils.showStylishDialog(context, 'THÔNG BÁO',
+          "Vui lòng chọn thời gian bắt đầu!", StylishDialogType.ERROR);
     }
     if (pickedDateTime.isAfter(currentDate) &&
         pickedDateTime.isAfter(pickedFromDateTime) &&
@@ -239,16 +247,21 @@ class _AddFoodPageState extends State<AddFoodPage> {
             errorTextTemporaryPriceToDate = "";
           }
 
-          Alert(
-            context: context,
-            title: "THÔNG BÁO",
-            desc: "Thời gian kết thúc phải lớn hơn thời gian bắt đầu!",
-            image: alertImageError,
-            buttons: [],
-          ).show();
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.pop(context);
-          });
+          // Alert(
+          //   context: context,
+          //   title: "THÔNG BÁO",
+          //   desc: "Thời gian kết thúc phải lớn hơn thời gian bắt đầu!",
+          //   image: alertImageError,
+          //   buttons: [],
+          // ).show();
+          // Future.delayed(const Duration(seconds: 2), () {
+          //   Navigator.pop(context);
+          // });
+          Utils.showStylishDialog(
+              context,
+              'THÔNG BÁO',
+              "Thời gian kết thúc phải lớn hơn thời gian bắt đầu!",
+              StylishDialogType.ERROR);
         });
       }
     }
@@ -305,6 +318,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
       TextEditingController();
   final TextEditingController textSearchVatController = TextEditingController();
   final TextEditingController textCategoryIdController =
+      TextEditingController();
+  final TextEditingController textCategoryCodeController =
       TextEditingController();
   final TextEditingController textUnitIdController = TextEditingController();
   final TextEditingController textVatIdController = TextEditingController();
@@ -401,9 +416,31 @@ class _AddFoodPageState extends State<AddFoodPage> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         leading: InkWell(
-            onTap: () => {Navigator.pop(context)},
-            child: const Icon(Icons.arrow_back_ios)),
-        title: const Center(child: Text("THÊM MÓN")),
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: secondColor,
+          ),
+        ),
+        title: const Center(
+            child: Text(
+          "THÊM MÓN",
+          style: TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Theme(
@@ -471,104 +508,22 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
+                        MyTextFieldString(
+                          textController: nameController,
+                          label: 'Tên món',
+                          placeholder: 'Nhập tên món',
+                          isReadOnly: false,
+                          min: minlength2,
+                          max: maxlength255,
+                          isRequire: true,
                         ),
-                        TextField(
-                            controller: nameController,
-                            style: textStyleInput,
-                            decoration: InputDecoration(
-                                labelStyle: textStyleInput,
-                                labelText: "Tên món ăn",
-                                hintText: 'Nhập tên món ăn',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                errorText:
-                                    isErrorTextName ? errorTextName : null,
-                                errorStyle: textStyleErrorInput),
-                            maxLength: 50,
-                            // autofocus: true,
-                            onChanged: (value) => {
-                                  if (value.trim().length > maxlengthName ||
-                                      value.trim().length < minlengthName)
-                                    {
-                                      setState(() {
-                                        errorTextName =
-                                            "Từ $minlengthName đến $maxlengthName ký tự.";
-                                        isErrorTextName = true;
-                                      })
-                                    }
-                                  else
-                                    {
-                                      setState(() {
-                                        errorTextName = "";
-                                        isErrorTextName = false;
-                                      })
-                                    }
-                                }),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                            controller: priceController,
-                            style: textStyleInput,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter
-                                  .digitsOnly, // Only allows digits
-                            ],
-                            decoration: InputDecoration(
-                                labelStyle: textStyleInput,
-                                labelText: "Giá tiền",
-                                hintText: 'Nhập giá món ăn',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                errorText:
-                                    isErrorTextPrice ? errorTextPrice : null,
-                                errorStyle: textStyleErrorInput),
-                            onChanged: (value) => {
-                                  if (value.isNotEmpty && value.startsWith('0'))
-                                    {
-                                      priceController.text = value.substring(
-                                          1), // Loại bỏ ký tự đầu tiên (số 0)
-                                    },
-                                  if (int.tryParse(priceController.text)! >
-                                          100 &&
-                                      int.tryParse(priceController.text)! <=
-                                          1000000000)
-                                    {
-                                      setState(() {
-                                        errorTextPrice = "";
-                                        isErrorTextPrice = false;
-                                        priceController.text =
-                                            Utils.convertTextFieldPrice(
-                                                value); // Format price 100,000,000
-                                      })
-                                    }
-                                  else
-                                    {
-                                      setState(() {
-                                        errorTextPrice =
-                                            "Giá món ăn phải lớn hơn 100đ";
-                                        isErrorTextPrice = true;
-
-                                        if (int.tryParse(
-                                                priceController.text)! >=
-                                            1000000000) {
-                                          priceController.text =
-                                              "1,000,000,000";
-                                          errorTextPrice = "";
-                                          isErrorTextPrice = false;
-                                        }
-                                      }),
-                                    }
-                                }),
+                        MyTextFieldPrice(
+                            textEditingController: priceController,
+                            label: 'Đơn giá',
+                            placeholder: 'Nhập giá món',
+                            min: MIN_PRICE,
+                            max: MAX_PERCENT,
+                            isRequire: true),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
                           height: 50,
@@ -620,6 +575,9 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                 textCategoryIdController.text =
                                                     selectedCategoryValue!
                                                         .category_id;
+                                                textCategoryCodeController
+                                                        .text =
+                                                    '${selectedCategoryValue!.category_code}';
                                               } else {
                                                 isErrorTextCategoryId = true;
                                               }
@@ -1395,7 +1353,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                         !isCheckTemporaryPrice && !isCheckVAT
                             ? SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.2,
+                                    MediaQuery.of(context).size.height * 0.12,
                               )
                             : const SizedBox(),
                         isCheckVAT
@@ -1438,12 +1396,36 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                     temporaryWithPriceController.text =
                                         Utils.formatCurrencytoDouble(
                                             temporaryWithPriceController.text),
-                                    if (nameController.text != "" &&
-                                        priceController.text != "" &&
-                                        priceController.text != "0" &&
-                                        int.tryParse(priceController.text)! >
-                                            100 &&
-                                        textCategoryIdController.text != "" &&
+                                    if (!Utils.isValidLengthTextEditController(
+                                        nameController,
+                                        minlength2,
+                                        maxlength255))
+                                      {
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Tên món phải từ $minlength2 đến $maxlength255 ký tự.',
+                                            StylishDialogType.ERROR)
+                                      }
+                                    else if (textCategoryIdController.text ==
+                                        "")
+                                      {
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Vui lòng chọn loại danh mục.',
+                                            StylishDialogType.ERROR)
+                                      }
+                                    else if (textUnitIdController.text == "")
+                                      {
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Vui lòng chọn loại đơn vị.',
+                                            StylishDialogType.ERROR)
+                                      }
+                                    else if (textCategoryIdController.text !=
+                                            "" &&
                                         textUnitIdController.text != "")
                                       {
                                         if (isCheckTemporaryPrice)
@@ -1478,7 +1460,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0),
+                                                        0,
+                                                    int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD),
+                                                Utils.myPopSuccess(context)
                                               }
                                             else if (isFromDateTimeSelected &&
                                                 isToDateTimeSelected &&
@@ -1535,7 +1522,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0),
+                                                        0,
+                                                    int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD),
+                                                Utils.myPopSuccess(context)
                                               }
                                           }
                                         else
@@ -1557,7 +1549,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0),
+                                                        0,
+                                                    int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD),
+                                                Utils.myPopSuccess(context)
                                               }
                                             else
                                               {
@@ -1577,25 +1574,23 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0),
+                                                        0,
+                                                    int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD),
+                                                Utils.myPopSuccess(context)
                                               }
                                           },
-                                        Navigator.pop(context)
                                       }
                                     else
                                       {
                                         print("Chưa nhập đủ trường"),
-                                        Alert(
-                                          context: context,
-                                          title: "THÔNG BÁO",
-                                          desc: "Thông tin chưa chính xác!",
-                                          image: alertImageError,
-                                          buttons: [],
-                                        ).show(),
-                                        Future.delayed(
-                                            const Duration(seconds: 2), () {
-                                          Navigator.pop(context);
-                                        })
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Vui lòng nhập đầy đủ các trường!',
+                                            StylishDialogType.ERROR)
                                       }
                                   },
                                   child: Container(

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
@@ -8,6 +10,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/foods/add_food_screen.dart';
 import 'package:myorder/views/screens/managements/foods/detail_food_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementFoodsPage extends StatefulWidget {
   const ManagementFoodsPage({Key? key}) : super(key: key);
@@ -43,10 +46,19 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
             Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddFoodPage())),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddFoodPage()));
+                      if (result == 'success') {
+                        Utils.showStylishDialog(
+                            context,
+                            'THÀNH CÔNG!',
+                            'Thêm món mới thành công!',
+                            StylishDialogType.SUCCESS);
+                      }
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(Icons.add_circle_outline),
@@ -99,19 +111,28 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                         itemBuilder: (context, index) {
                           final food = foodController.foods[index];
                           String string;
-                          return Card(
-                            color: food.active == 1
-                                ? backgroundColor
-                                : const Color.fromARGB(255, 213, 211, 211),
-                            child: ListTile(
-                              leading: InkWell(
-                                onTap: () => Navigator.push(
+                          return InkWell(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FoodDetailPage(
+                                          food: foodController.foods[index])));
+                              print('ssssssssssssssssssssssssssssssss$result');
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FoodDetailPage(
-                                            food:
-                                                foodController.foods[index]))),
-                                child: food.image != ""
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật thông tin món thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
+                            child: Card(
+                              color: food.active == 1
+                                  ? backgroundColor
+                                  : const Color.fromARGB(255, 213, 211, 211),
+                              child: ListTile(
+                                leading: food.image != ""
                                     ? CircleAvatar(
                                         radius: 25,
                                         backgroundColor: Colors.black,
@@ -125,15 +146,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                           height: 100,
                                         ),
                                       ),
-                              ),
-                              title: InkWell(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FoodDetailPage(
-                                              food: food,
-                                            ))),
-                                child: Marquee(
+                                title: Marquee(
                                   direction: Axis.horizontal,
                                   textDirection: TextDirection.ltr,
                                   animationDuration: const Duration(seconds: 1),
@@ -148,15 +161,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                     style: textStyleNameBlackRegular,
                                   ),
                                 ),
-                              ),
-                              subtitle: InkWell(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FoodDetailPage(
-                                              food: food,
-                                            ))),
-                                child: RichText(
+                                subtitle: RichText(
                                   text: food.price_with_temporary! != 0
                                       ? (Utils.isDateTimeInRange(
                                               food.temporary_price_from_date!,
@@ -228,35 +233,34 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                   overflow: TextOverflow
                                       .ellipsis, // Hiển thị dấu ba chấm khi văn bản quá dài
                                 ),
-                              ),
-                              trailing: InkWell(
-                                onTap: () => {
-                                  string = food.active == ACTIVE
-                                      ? "khóa"
-                                      : "bỏ khóa",
-                                  showCustomAlertDialogConfirm(
-                                    context,
-                                    "TRẠNG THÁI HOẠT ĐỘNG",
-                                    "Bạn có chắc chắn muốn $string món này?",
-                                                                  colorWarning,
-
-                                    () async {
-                                      await foodController.updateToggleActive(
-                                          food.food_id, food.active);
-                                    },
-                                  )
-                                },
-                                child: food.active == ACTIVE
-                                    ? const Icon(
-                                        Icons.key,
-                                        size: 25,
-                                        color: activeColor,
-                                      )
-                                    : const Icon(
-                                        Icons.key_off,
-                                        size: 25,
-                                        color: deActiveColor,
-                                      ),
+                                trailing: InkWell(
+                                  onTap: () => {
+                                    string = food.active == ACTIVE
+                                        ? "khóa"
+                                        : "bỏ khóa",
+                                    showCustomAlertDialogConfirm(
+                                      context,
+                                      "TRẠNG THÁI HOẠT ĐỘNG",
+                                      "Bạn có chắc chắn muốn $string món này?",
+                                      colorWarning,
+                                      () async {
+                                        await foodController.updateToggleActive(
+                                            food.food_id, food.active);
+                                      },
+                                    )
+                                  },
+                                  child: food.active == ACTIVE
+                                      ? const Icon(
+                                          Icons.key,
+                                          size: 25,
+                                          color: activeColor,
+                                        )
+                                      : const Icon(
+                                          Icons.key_off,
+                                          size: 25,
+                                          color: deActiveColor,
+                                        ),
+                                ),
                               ),
                             ),
                           );

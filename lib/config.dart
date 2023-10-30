@@ -48,6 +48,10 @@ int MAX_PRICE = 1000000000;
 int MIN_PERCENT = 1;
 int MAX_PERCENT = 1;
 
+//TABLE
+int MIN_SLOT_TABLE = 1;
+int MAX_SLOT_TABLE = 50;
+
 // text length
 const maxlengthName = 50;
 const minlengthName = 2;
@@ -55,7 +59,7 @@ const minlengthName = 2;
 const maxlengthCCCD = 12;
 const minlengthCCCD = 10;
 
-const maxlengthPhone = 12;
+const maxlengthPhone = 10;
 const minlengthPhone = 10;
 
 const maxlengthAddress = 255;
@@ -74,7 +78,7 @@ const maxlengthAreaName = 50;
 const minlengthAreaName = 2;
 
 const maxlength50 = 50;
-const maxlength255 = 50;
+const maxlength255 = 255;
 const minlength1 = 1;
 const minlength2 = 2;
 const minlength0 = 0;

@@ -121,15 +121,13 @@ class CategoryController extends GetxController {
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('categories');
 
-        await usersCollection
-            .doc(id)
-            .set(category.toJson())
-            .then((_) => Get.snackbar(
-                  'THÀNH CÔNG!',
-                  'Thêm đơn vị tính mới thành công!',
-                  backgroundColor: backgroundSuccessColor,
-                  colorText: Colors.white,
-                ));
+        await usersCollection.doc(id).set(category.toJson());
+        // .then((_) => Get.snackbar(
+        //       'THÀNH CÔNG!',
+        //       'Thêm đơn vị tính mới thành công!',
+        //       backgroundColor: backgroundSuccessColor,
+        //       colorText: Colors.white,
+        //     ));
       } else {
         Get.snackbar(
           'Error!',
@@ -175,12 +173,13 @@ class CategoryController extends GetxController {
           });
           print(foodDoc['food_id']);
         }
-      }).then((_) => Get.snackbar(
-            'THÀNH CÔNG!',
-            'Cập nhật thông tin thành công!',
-            backgroundColor: backgroundSuccessColor,
-            colorText: Colors.white,
-          ));
+      });
+      // .then((_) => Get.snackbar(
+      //       'THÀNH CÔNG!',
+      //       'Cập nhật thông tin thành công!',
+      //       backgroundColor: backgroundSuccessColor,
+      //       colorText: Colors.white,
+      //     ));
 
       update();
     } catch (e) {

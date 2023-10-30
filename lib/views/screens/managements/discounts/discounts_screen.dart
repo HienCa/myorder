@@ -112,30 +112,28 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                         itemBuilder: (context, index) {
                           final discount = discountController.discounts[index];
                           String string;
-                          return Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.ac_unit),
-                              title: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () async {
-                                      final result = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DiscountDetailPage(
-                                                    discountId:
-                                                        discount.discount_id,
-                                                  )));
-                                      if (result == 'success') {
-                                        Utils.showStylishDialog(
-                                            context,
-                                            'THÀNH CÔNG!',
-                                            'Cập nhật giảm giá thành công!',
-                                            StylishDialogType.SUCCESS);
-                                      }
-                                    },
-                                    child: Marquee(
+                          return InkWell(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DiscountDetailPage(
+                                            discountId: discount.discount_id,
+                                          )));
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật giảm giá thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
+                            child: Card(
+                              child: ListTile(
+                                leading: const Icon(Icons.ac_unit),
+                                title: Row(
+                                  children: [
+                                    Marquee(
                                       direction: Axis.horizontal,
                                       textDirection: TextDirection.ltr,
                                       animationDuration:
@@ -151,18 +149,9 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              subtitle: InkWell(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DiscountDetailPage(
-                                                discountId:
-                                                    discount.discount_id))),
-                                child: RichText(
+                                  ],
+                                ),
+                                subtitle: RichText(
                                   text: TextSpan(
                                     text: discount.active == ACTIVE
                                         ? "Đang hoạt động"
@@ -177,36 +166,36 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                   overflow: TextOverflow
                                       .ellipsis, // Hiển thị dấu ba chấm khi văn bản quá dài
                                 ),
-                              ),
-                              trailing: InkWell(
-                                onTap: () => {
-                                  string = discount.active == ACTIVE
-                                      ? "ngừng hoạt động"
-                                      : "hoạt động trở lại",
-                                  showCustomAlertDialogConfirm(
-                                    context,
-                                    "TRẠNG THÁI HOẠT ĐỘNG",
-                                    "Bạn có chắc chắn muốn $string đơn vị tính này?",
-                                    colorWarning,
-                                    () async {
-                                      await discountController
-                                          .updateToggleActive(
-                                              discount.discount_id,
-                                              discount.active);
-                                    },
-                                  )
-                                },
-                                child: discount.active == ACTIVE
-                                    ? const Icon(
-                                        Icons.key,
-                                        size: 25,
-                                        color: activeColor,
-                                      )
-                                    : const Icon(
-                                        Icons.key_off,
-                                        size: 25,
-                                        color: deActiveColor,
-                                      ),
+                                trailing: InkWell(
+                                  onTap: () => {
+                                    string = discount.active == ACTIVE
+                                        ? "ngừng hoạt động"
+                                        : "hoạt động trở lại",
+                                    showCustomAlertDialogConfirm(
+                                      context,
+                                      "TRẠNG THÁI HOẠT ĐỘNG",
+                                      "Bạn có chắc chắn muốn $string đơn vị tính này?",
+                                      colorWarning,
+                                      () async {
+                                        await discountController
+                                            .updateToggleActive(
+                                                discount.discount_id,
+                                                discount.active);
+                                      },
+                                    )
+                                  },
+                                  child: discount.active == ACTIVE
+                                      ? const Icon(
+                                          Icons.key,
+                                          size: 25,
+                                          color: activeColor,
+                                        )
+                                      : const Icon(
+                                          Icons.key_off,
+                                          size: 25,
+                                          color: deActiveColor,
+                                        ),
+                                ),
                               ),
                             ),
                           );

@@ -85,12 +85,12 @@ class UnitController extends GetxController {
             FirebaseFirestore.instance.collection('units');
 
         await usersCollection.doc(id).set(unit.toJson());
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Thêm đơn vị tính mới thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'THÀNH CÔNG!',
+        //   'Thêm đơn vị tính mới thành công!',
+        //   backgroundColor: backgroundSuccessColor,
+        //   colorText: Colors.white,
+        // );
       } else {
         Get.snackbar(
           'Error!',
@@ -120,12 +120,12 @@ class UnitController extends GetxController {
       await firestore.collection('units').doc(unit_id).update({
         "name": name.trim(),
       });
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Cập nhật thông tin thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   'THÀNH CÔNG!',
+      //   'Cập nhật thông tin thành công!',
+      //   backgroundColor: backgroundSuccessColor,
+      //   colorText: Colors.white,
+      // );
       update();
     } catch (e) {
       Get.snackbar(

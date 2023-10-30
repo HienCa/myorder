@@ -111,29 +111,28 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
                         itemBuilder: (context, index) {
                           final vat = vatController.vats[index];
                           String string;
-                          return Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.ac_unit),
-                              title: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () async {
-                                      final result = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  VatDetailPage(
-                                                    vatId: vat.vat_id,
-                                                  )));
-                                      if (result == 'success') {
-                                        Utils.showStylishDialog(
-                                            context,
-                                            'THÀNH CÔNG!',
-                                            'Cập nhật vat thành công!',
-                                            StylishDialogType.SUCCESS);
-                                      }
-                                    },
-                                    child: Marquee(
+                          return InkWell(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => VatDetailPage(
+                                            vatId: vat.vat_id,
+                                          )));
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật vat thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
+                            child: Card(
+                              child: ListTile(
+                                leading: const Icon(Icons.ac_unit),
+                                title: Row(
+                                  children: [
+                                    Marquee(
                                       direction: Axis.horizontal,
                                       textDirection: TextDirection.ltr,
                                       animationDuration:
@@ -149,16 +148,9 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              subtitle: InkWell(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            VatDetailPage(vatId: vat.vat_id))),
-                                child: RichText(
+                                  ],
+                                ),
+                                subtitle: RichText(
                                   text: TextSpan(
                                     text: vat.active == ACTIVE
                                         ? "Đang hoạt động"
@@ -173,34 +165,34 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
                                   overflow: TextOverflow
                                       .ellipsis, // Hiển thị dấu ba chấm khi văn bản quá dài
                                 ),
-                              ),
-                              trailing: InkWell(
-                                onTap: () => {
-                                  string = vat.active == ACTIVE
-                                      ? "ngừng hoạt động"
-                                      : "hoạt động trở lại",
-                                  showCustomAlertDialogConfirm(
-                                    context,
-                                    "TRẠNG THÁI HOẠT ĐỘNG",
-                                    "Bạn có chắc chắn muốn $string đơn vị tính này?",
-                                    colorWarning,
-                                    () async {
-                                      await vatController.updateToggleActive(
-                                          vat.vat_id, vat.active);
-                                    },
-                                  )
-                                },
-                                child: vat.active == ACTIVE
-                                    ? const Icon(
-                                        Icons.key,
-                                        size: 25,
-                                        color: activeColor,
-                                      )
-                                    : const Icon(
-                                        Icons.key_off,
-                                        size: 25,
-                                        color: deActiveColor,
-                                      ),
+                                trailing: InkWell(
+                                  onTap: () => {
+                                    string = vat.active == ACTIVE
+                                        ? "ngừng hoạt động"
+                                        : "hoạt động trở lại",
+                                    showCustomAlertDialogConfirm(
+                                      context,
+                                      "TRẠNG THÁI HOẠT ĐỘNG",
+                                      "Bạn có chắc chắn muốn $string đơn vị tính này?",
+                                      colorWarning,
+                                      () async {
+                                        await vatController.updateToggleActive(
+                                            vat.vat_id, vat.active);
+                                      },
+                                    )
+                                  },
+                                  child: vat.active == ACTIVE
+                                      ? const Icon(
+                                          Icons.key,
+                                          size: 25,
+                                          color: activeColor,
+                                        )
+                                      : const Icon(
+                                          Icons.key_off,
+                                          size: 25,
+                                          color: deActiveColor,
+                                        ),
+                                ),
                               ),
                             ),
                           );

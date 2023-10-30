@@ -70,6 +70,7 @@ class FoodController extends GetxController {
           // double temporary_price = foodData['temporary_price'] ?? 0;
           // double temporary_percent = foodData['temporary_percent'] ?? 0;
           String category_id = foodData['category_id'] ?? "";
+          int category_code = foodData['category_code'] ?? CATEGORY_FOOD;
           String unit_id = foodData['unit_id'] ?? "";
           String vat_id = foodData['vat_id'] ?? "";
           int temporary_percent = foodData['temporary_percent'];
@@ -89,7 +90,7 @@ class FoodController extends GetxController {
             unit_id: unit_id,
             vat_id: vat_id,
             temporary_percent: temporary_percent,
-            active: active,
+            active: active, category_code: category_code,
           );
         }
       }
@@ -302,7 +303,7 @@ class FoodController extends GetxController {
       String category_id,
       String unit_id,
       String? vat_id,
-      int temporary_percent) async {
+      int temporary_percent, int category_code) async {
     try {
       if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
         String downloadUrl = "";
@@ -326,7 +327,7 @@ class FoodController extends GetxController {
             unit_id: unit_id,
             vat_id: vat_id,
             temporary_percent: temporary_percent,
-            active: 1,
+            active: 1, category_code: category_code,
           );
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
@@ -345,7 +346,7 @@ class FoodController extends GetxController {
             unit_id: unit_id,
             vat_id: vat_id,
             temporary_percent: temporary_percent,
-            active: 1,
+            active: 1, category_code: 0,
           );
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
@@ -353,12 +354,12 @@ class FoodController extends GetxController {
           await foodsCollection.doc(id).set(Food.toJson());
         }
 
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Thêm món mới thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'THÀNH CÔNG!',
+        //   'Thêm món mới thành công!',
+        //   backgroundColor: backgroundSuccessColor,
+        //   colorText: Colors.white,
+        // );
       } else {
         Get.snackbar(
           'Error!',
@@ -447,12 +448,12 @@ class FoodController extends GetxController {
           "temporary_percent": temporary_percent,
         });
       }
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Cập nhật thông tin thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   'THÀNH CÔNG!',
+      //   'Cập nhật thông tin thành công!',
+      //   backgroundColor: backgroundSuccessColor,
+      //   colorText: Colors.white,
+      // );
       update();
     } catch (e) {
       Get.snackbar(

@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/area/areas_controller.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class CustomDialogCreateUpdateArea extends StatefulWidget {
   final bool isUpdate;
@@ -47,7 +49,7 @@ class _CustomDialogCreateUpdateAreaState
   @override
   Widget build(BuildContext context) {
     return Theme(
-       data: ThemeData(unselectedWidgetColor: primaryColor),
+      data: ThemeData(unselectedWidgetColor: primaryColor),
       child: Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
@@ -70,41 +72,16 @@ class _CustomDialogCreateUpdateAreaState
                 height: 20,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: TextField(
-                    controller: nameController,
-                    style: textStyleInput,
-                    decoration: InputDecoration(
-                        labelStyle: textStyleInput,
-                        labelText: "Tên khu vực",
-                        hintText: 'Nhập tên khu vực',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border:  const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),borderRadius: BorderRadius.all(Radius.circular(30))),
-                        errorText: isErrorTextName ? errorTextName : null,
-                        errorStyle: textStyleErrorInput),
-                    maxLength: maxlengthAreaName,
-                    onChanged: (value) => {
-                          if (value.trim().length > maxlengthAreaName ||
-                              value.trim().length < minlengthAreaName)
-                            {
-                              setState(() {
-                                errorTextName =
-                                    "Từ $minlengthAreaName đến $maxlengthAreaName ký tự.";
-                                isErrorTextName = true;
-                              })
-                            }
-                          else
-                            {
-                              setState(() {
-                                errorTextName = "";
-                                isErrorTextName = false;
-                              })
-                            }
-                        }),
-              ),
-              const SizedBox(
-                height: 10,
+                padding: const EdgeInsets.all(8.0),
+                child: MyTextFieldString(
+                  textController: nameController,
+                  label: 'Tên khu vực',
+                  placeholder: 'Nhập tên khu vực...',
+                  isReadOnly: false,
+                  min: minlength2,
+                  max: maxlength50,
+                  isRequire: true,
+                ),
               ),
               isUpdate
                   ? ListTile(
@@ -153,35 +130,29 @@ class _CustomDialogCreateUpdateAreaState
                     ),
                     InkWell(
                       onTap: () => {
-                        if (!isErrorTextName)
+                        if (!Utils.isValidLengthTextEditController(
+                            nameController, minlength2, maxlength50))
+                          {
+                            Utils.showStylishDialog(
+                                context,
+                                'THÔNG BÁO',
+                                'Tên khu vực phải từ $minlength2 đến $maxlength50 ký tự.',
+                                StylishDialogType.ERROR)
+                          }
+                        else
                           {
                             if (widget.area_id != null)
                               {
                                 areaController.updateArea(widget.area_id!,
-                                    nameController.text, isActive)
+                                    nameController.text.toUpperCase(), isActive)
                               }
                             else
                               {
-                                areaController.createArea(nameController.text),
+                                areaController.createArea(
+                                    nameController.text.toUpperCase()),
                               },
-                            Navigator.pop(context),
+                            Utils.myPopSuccess(context)
                           }
-                        else
-                          {
-                            print("Chưa nhập đủ trường"),
-                            Alert(
-                              context: context,
-                              title: "THÔNG BÁO",
-                              desc: "Thông tin chưa chính xác!",
-                              image: alertImageError,
-                              buttons: [],
-                              
-                            ).show(),
-                            Future.delayed(const Duration(seconds: 2), () {
-                              Navigator.pop(context);
-                            })
-                          }
-                          
                       },
                       child: Container(
                         height: 50,

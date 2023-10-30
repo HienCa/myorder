@@ -3,14 +3,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/area/areas_controller.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/models/area.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/textfields/text_field_number.dart';
+import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class CustomDialogCreateUpdateTable extends StatefulWidget {
   final bool isUpdate;
@@ -141,89 +143,26 @@ class _CustomDialogCreateUpdateTableState
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: TextField(
-                          controller: nameController,
-                          style: textStyleInput,
-                          decoration: InputDecoration(
-                              labelStyle: textStyleInput,
-                              labelText: "Tên bàn",
-                              hintText: 'Nhập tên bàn',
-                              hintStyle: const TextStyle(color: Colors.grey),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30))),
-                              errorText: isErrorTextName ? errorTextName : null,
-                              errorStyle: textStyleErrorInput),
-                          maxLength: maxlengthAreaTableName,
-                          // autofocus: true,
-                          onChanged: (value) => {
-                                if (value.trim().length >
-                                        maxlengthAreaTableName ||
-                                    value.trim().length <
-                                        minlengthAreaTableName)
-                                  {
-                                    setState(() {
-                                      errorTextName =
-                                          "Từ $minlengthAreaTableName đến $maxlengthAreaTableName ký tự.";
-                                      isErrorTextName = true;
-                                    })
-                                  }
-                                else
-                                  {
-                                    setState(() {
-                                      errorTextName = "";
-                                      isErrorTextName = false;
-                                    })
-                                  }
-                              }),
-                    ),
-                    const SizedBox(
-                      height: 10,
+                      child: MyTextFieldString(
+                        textController: nameController,
+                        label: 'Tên bàn',
+                        placeholder: 'Nhập tên bàn...',
+                        isReadOnly: false,
+                        min: minlength2,
+                        max: minlength2,
+                        isRequire: true,
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: TextField(
-                          controller: totalSlotController,
-                          style: textStyleInput,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter
-                                .digitsOnly, // Only allows digits
-                          ],
-                          decoration: InputDecoration(
-                              labelStyle: textStyleInput,
-                              labelText: "Số khách",
-                              hintText: 'Nhập số khách của bàn',
-                              hintStyle: const TextStyle(color: Colors.grey),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30))),
-                              errorText: isErrorTextTotalSlot
-                                  ? errorTextTotalSlot
-                                  : null,
-                              errorStyle: textStyleErrorInput),
-                          maxLength: maxlength50,
-                          // autofocus: true,
-                          onChanged: (value) => {
-                                if (value.isEmpty || int.parse(value) <= 0)
-                                  {
-                                    setState(() {
-                                      errorTextTotalSlot =
-                                          "Số lượng khách phải lơn hơn 1";
-                                      isErrorTextTotalSlot = true;
-                                    })
-                                  }
-                                else
-                                  {
-                                    setState(() {
-                                      errorTextTotalSlot = "";
-                                      isErrorTextTotalSlot = false;
-                                    })
-                                  }
-                              }),
-                    ),
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: MyTextFieldNumber(
+                            textController: totalSlotController,
+                            label: 'Số khách',
+                            placeholder: 'Nhập số khách tối đa của bàn',
+                            isReadOnly: false,
+                            max: MAX_SLOT_TABLE,
+                            min: MIN_SLOT_TABLE,
+                            isRequire: true)),
                     const SizedBox(
                       height: 10,
                     ),
@@ -235,9 +174,18 @@ class _CustomDialogCreateUpdateTableState
                           Expanded(
                             child: Row(
                               children: [
-                                const Text(
-                                  'Khu vực:',
-                                  style: textStyleInput,
+                                const Row(
+                                  children: [
+                                    Text(
+                                      'Khu vực:',
+                                      style: textStyleInput,
+                                    ),
+                                    marginRight10,
+                                    Text(
+                                      '(*)',
+                                      style: textStyleErrorInput,
+                                    )
+                                  ],
                                 ),
                                 const SizedBox(
                                   width: 10,
@@ -404,12 +352,27 @@ class _CustomDialogCreateUpdateTableState
                           ),
                           InkWell(
                             onTap: () => {
-                              print(isErrorTextName),
-                              print(isErrorTextAreaId),
-                              print(totalSlotController),
-                              if (!isErrorTextName &&
-                                  !isErrorTextAreaId &&
-                                  totalSlotController.text != "0")
+                              if (!Utils.isValidLengthTextEditController(
+                                  nameController, minlength2, minlength2))
+                                {
+                                  Utils.showStylishDialog(
+                                      context,
+                                      'THÔNG BÁO',
+                                      'Tên bàn phải đủ 2 ký tự.',
+                                      StylishDialogType.ERROR)
+                                }
+                              else if (!Utils.isValidRangeString(
+                                  totalSlotController.text,
+                                  MIN_SLOT_TABLE,
+                                  MAX_SLOT_TABLE))
+                                {
+                                  Utils.showStylishDialog(
+                                      context,
+                                      'THÔNG BÁO',
+                                      'Số lượng khách phải từ $MIN_SLOT_TABLE đến $MAX_SLOT_TABLE.',
+                                      StylishDialogType.ERROR)
+                                }
+                              else
                                 {
                                   if (widget.table_id != null &&
                                       areaIdController.text != "")
@@ -431,22 +394,7 @@ class _CustomDialogCreateUpdateTableState
                                               areaIdController.text),
                                         }
                                     },
-                                  Navigator.pop(context),
-                                }
-                              else
-                                {
-                                  print("Chưa nhập đủ trường"),
-                                  Alert(
-                                    context: context,
-                                    title: "THÔNG BÁO",
-                                    desc: "Thông tin chưa chính xác!",
-                                    image: alertImageError,
-                                    buttons: [],
-                                  ).show(),
-                                  Future.delayed(const Duration(seconds: 2),
-                                      () {
-                                    Navigator.pop(context);
-                                  })
+                                  Utils.myPopSuccess(context)
                                 }
                             },
                             child: Container(

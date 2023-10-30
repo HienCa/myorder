@@ -13,12 +13,14 @@ class Food {
   Timestamp? temporary_price_to_date;
   int active;
   String category_id;
+  int category_code;
   String unit_id;
   int temporary_percent;
 
   Food({
     required this.food_id,
     required this.name,
+    required this.category_code,
     this.image,
     required this.price,
     this.vat_id,
@@ -41,6 +43,7 @@ class Food {
         "temporary_price_to_date": temporary_price_to_date,
         "active": active,
         "category_id": category_id,
+        "category_code": category_code,
         "unit_id": unit_id,
         "temporary_percent": temporary_percent,
       };
@@ -58,6 +61,7 @@ class Food {
       temporary_price_to_date: snapshot['temporary_price_to_date'],
       active: snapshot['active'],
       category_id: snapshot['category_id'],
+      category_code: snapshot['category_code'],
       unit_id: snapshot['unit_id'],
       temporary_percent: snapshot['temporary_percent'],
     );

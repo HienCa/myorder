@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddCategoryPage extends StatefulWidget {
   const AddCategoryPage({
@@ -46,9 +48,31 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         leading: InkWell(
-            onTap: () => {Navigator.pop(context)},
-            child: const Icon(Icons.arrow_back_ios)),
-        title: const Center(child: Text("THÊM MỚI DANH MỤC")),
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: secondColor,
+          ),
+        ),
+        title: const Center(
+            child: Text(
+          "THÊM MỚI DANH MỤC",
+          style: TextStyle(color: secondColor),
+        )),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Padding(
+              padding: EdgeInsets.all(10),
+              child: Icon(
+                Icons.add_circle_outline,
+                color: transparentColor,
+              ),
+            ),
+          ),
+        ],
         backgroundColor: primaryColor,
       ),
       body: Theme(
@@ -140,45 +164,17 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        TextField(
-                            controller: nameController,
-                            style: textStyleInput,
-                            decoration: InputDecoration(
-                                labelStyle: textStyleInput,
-                                labelText: "Tên danh mục gợi nhớ",
-                                hintText: 'Nhập tên danh mục',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                errorText:
-                                    isErrorTextName ? errorTextName : null,
-                                errorStyle: textStyleErrorInput),
-                            maxLength: 50,
-                            // autofocus: true,
-                            onChanged: (value) => {
-                                  if (value.trim().length >
-                                          maxlengthCategoryName ||
-                                      value.trim().length <
-                                          minlengthCategoryName)
-                                    {
-                                      setState(() {
-                                        errorTextName =
-                                            "Từ $minlengthCategoryName đến $maxlengthCategoryName ký tự.";
-                                        isErrorTextName = true;
-                                      })
-                                    }
-                                  else
-                                    {
-                                      setState(() {
-                                        errorTextName = "";
-                                        isErrorTextName = false;
-                                      })
-                                    }
-                                }),
+                        MyTextFieldString(
+                          textController: nameController,
+                          label: 'Tên danh mục',
+                          placeholder: 'Nhập tên danh mục',
+                          isReadOnly: false,
+                          min: minlength2,
+                          max: maxlength50,
+                          isRequire: true,
+                        ),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.65,
+                          height: MediaQuery.of(context).size.height * 0.5,
                         ),
                         SizedBox(
                           height: 50,
@@ -208,27 +204,23 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
-                                    if (!isErrorTextName)
+                                    if (!Utils.isValidLengthTextEditController(
+                                        nameController,
+                                        minlength2,
+                                        maxlength50))
                                       {
-                                        categoryController.createCategory(
-                                          nameController.text,selectedRadioDecrease
-                                        ),
-                                        Navigator.pop(context)
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Tên danh mục phải từ $minlength2 đến $maxlength50 ký tự.',
+                                            StylishDialogType.ERROR)
                                       }
                                     else
                                       {
-                                        print("Chưa nhập đủ trường"),
-                                        Alert(
-                                          context: context,
-                                          title: "THÔNG BÁO",
-                                          desc: "Thông tin chưa chính xác!",
-                                          image: alertImageError,
-                                          buttons: [],
-                                        ).show(),
-                                        Future.delayed(
-                                            const Duration(seconds: 2), () {
-                                          Navigator.pop(context);
-                                        })
+                                        categoryController.createCategory(
+                                            nameController.text,
+                                            selectedRadioDecrease),
+                                        Utils.myPopSuccess(context)
                                       }
                                   },
                                   child: Container(

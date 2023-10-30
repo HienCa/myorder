@@ -191,12 +191,12 @@ class EmployeeController extends GetxController {
             FirebaseFirestore.instance.collection('employees');
 
         await usersCollection.doc(cred.user!.uid).set(employee.toJson());
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Thêm nhân viên mới thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'THÀNH CÔNG!',
+        //   'Thêm nhân viên mới thành công!',
+        //   backgroundColor: backgroundSuccessColor,
+        //   colorText: Colors.white,
+        // );
       } else {
         Get.snackbar(
           'Error!',
@@ -282,12 +282,12 @@ class EmployeeController extends GetxController {
           "role": role.trim(),
         });
       }
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Cập nhật thông tin thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   'THÀNH CÔNG!',
+      //   'Cập nhật thông tin thành công!',
+      //   backgroundColor: backgroundSuccessColor,
+      //   colorText: Colors.white,
+      // );
       update();
     } catch (e) {
       Get.snackbar(
@@ -296,9 +296,7 @@ class EmployeeController extends GetxController {
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,
       );
-      print("Fail...");
     }
-    print("bb...");
   }
 
   // Block account
