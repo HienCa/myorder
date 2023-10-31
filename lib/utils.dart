@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, avoid_print
+// ignore_for_file: depend_on_referenced_packages, avoid_print, constant_identifier_names
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -12,7 +12,12 @@ import 'package:myorder/models/food_order.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 import 'package:uuid/uuid.dart';
-
+enum TypeToast {
+  SUCCESS,
+  ERROR,
+  WARNING,
+  INFO,
+}
 //Các phương phức hay dùng
 class Utils {
   static bool isShowingFlushbar = false;
@@ -438,11 +443,11 @@ class Utils {
   //END=================================DIALOG==================================
   //BEGIN===============================TOAST===================================
   
-  static void showToast(String message, TypeToast type,
+  static void showToast(String message, TypeToast typeToast,
       {ToastGravity toastGravity = ToastGravity.BOTTOM,
       Toast toast = Toast.LENGTH_LONG}) {
     Color backgroundColor = secondColor;
-    switch (type) {
+    switch (typeToast) {
       case TypeToast.SUCCESS:
         backgroundColor = colorSuccess;
         break;

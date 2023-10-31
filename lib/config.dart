@@ -52,13 +52,6 @@ int MAX_PERCENT = 1;
 int MIN_SLOT_TABLE = 1;
 int MAX_SLOT_TABLE = 50;
 
-enum TypeToast {
-  SUCCESS,
-  ERROR,
-  WARNING,
-  INFO,
-}
-
 // text length
 const maxlengthName = 50;
 const minlengthName = 2;

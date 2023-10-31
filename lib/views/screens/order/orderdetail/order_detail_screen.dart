@@ -935,9 +935,12 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                         orderController
                                             .orderDetail.order_details);
 
-                                    Utils.showSuccessFlushbar(context, '',
-                                        'Số lượng món đã được cập nhật!');
-                                    // getAllOrderDetails(widget.order.order_id);
+                                    Utils.showStylishDialog(
+                                        context,
+                                        'THÀNH CÔNG',
+                                        'Số lượng món đã được cập nhật!',
+                                        StylishDialogType.SUCCESS);
+
                                     refeshOrderDetailOriginArray();
                                   });
                                 }
