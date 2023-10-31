@@ -35,10 +35,13 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   //Load trước danh sách vat và discount trước khi vào thanh toán (nếu không sẽ nhận về mảng rỗng vì get discounts và vats mà chưa từng gọi trong controller)
   DiscountController discountController = Get.put(DiscountController());
   VatController vatController = Get.put(VatController());
+  late Future<dynamic> fetchData;
   @override
   void initState() {
     super.initState();
-    orderController.getOrderDetailById(widget.order);
+    //kiểm tra có bất kỳ món nào còn "CHỜ CHẾ BIẾN"
+    isAnyFoodInChef = Utils.isAnyFoodInChef(widget.order.order_details);
+    fetchData = orderController.getOrderDetailById(widget.order);
     _refreshOrderDetailArray();
     orderController.getTotalAmountById(widget.order);
 
@@ -64,6 +67,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
     print("========================Refeshed(========================");
   }
 
+  bool isAnyFoodInChef = false;
   int selectedIndex = 0;
   bool isChecked = false;
   bool hasChanges = false;
@@ -125,853 +129,955 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
 
       List<OrderDetail> orderDetails =
           orderDetailDocs.docs.map((doc) => OrderDetail.fromSnap(doc)).toList();
-
+      orderDetailOriginArray = [];
       orderDetailOriginArray = orderDetails;
+
+      //kiểm tra có bất kỳ món nào còn "CHỜ CHẾ BIẾN"
+      isAnyFoodInChef = Utils.isAnyFoodInChef(orderDetailOriginArray);
+      print('Error getting all order detailsisAnyFoodInChef: $isAnyFoodInChef');
+      print(
+          'Error getting all order detailsisAnyFoodInChef: ${orderController.orderDetail.order_details}');
     } catch (e) {
       print('Error getting all order details: $e');
     }
   }
 
+  void refeshOrderDetailOriginArray() {
+    for (int i = 0; i < orderController.orderDetail.order_details.length; i++) {
+      orderController.orderDetail.order_details[i].isSelected = false;
+      orderDetailOriginArray = orderController.orderDetail.order_details;
+      print(orderDetailOriginArray[i].quantity);
+    }
+    isAnyFoodInChef = Utils.isAnyFoodInChef(orderDetailOriginArray);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(
-            Icons.arrow_back_ios,
-            color: secondColor,
-          ),
-        ),
-        title: Center(
-            child: Text(
-          "#${widget.order.order_code} - ${widget.order.table!.name}",
-          style: const TextStyle(color: secondColor),
-        )),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: const Padding(
-              padding: EdgeInsets.all(10),
-              child: Icon(
-                Icons.add_circle_outline,
-                color: transparentColor,
-              ),
+        appBar: AppBar(
+          leading: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: const Icon(
+              Icons.arrow_back_ios,
+              color: secondColor,
             ),
           ),
-        ],
-        backgroundColor: primaryColor,
-      ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(kDefaultPadding),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
+          title: Center(
+              child: Text(
+            "#${widget.order.order_code} - ${widget.order.table!.name}",
+            style: const TextStyle(color: secondColor),
+          )),
+          actions: [
+            Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: const Padding(
+                padding: EdgeInsets.all(10),
+                child: Icon(
+                  Icons.add_circle_outline,
+                  color: transparentColor,
                 ),
-              ],
+              ),
             ),
-            child: SizedBox(
-              height: 50,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          ],
+          backgroundColor: primaryColor,
+        ),
+        body: FutureBuilder(
+          future: fetchData,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              // List<String> data = snapshot.data as List<String>;
+              print("snapshot.data${snapshot.data}");
+              // Hiển thị nhiều widget khi dữ liệu đã sẵn sàng
+              return Column(
                 children: [
-                  const Center(
-                      child: Text(
-                    "TỔNG TẠM TÍNH",
-                    style: textStyleGrayBold,
-                  )),
-                  Center(child: Obx(() {
-                    return Text(
-                        Utils.formatCurrency(
-                            orderController.order.total_amount),
-                        style: textStylePriceBold20);
-                  }))
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              margin:
-                  const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Obx(() {
-                return ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: orderController.orderDetail.order_details.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin:
-                          const EdgeInsets.all(4), // Khoảng cách dưới dạng đệm
-
-                      decoration: const BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(width: 0.1, color: borderColor)),
+                  Container(
+                    margin: const EdgeInsets.all(kDefaultPadding),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: SizedBox(
+                      height: 50,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Center(
+                              child: Text(
+                            "TỔNG TẠM TÍNH",
+                            style: textStyleGrayBold,
+                          )),
+                          Center(child: Obx(() {
+                            return Text(
+                                Utils.formatCurrency(
+                                    orderController.order.total_amount),
+                                style: textStylePriceBold20);
+                          }))
+                        ],
                       ),
-                      child: GestureDetector(
-                          onTap: () {},
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            child: InkWell(
-                              onTap: () => {},
-                              child: (orderController
-                                              .orderDetail
-                                              .order_details[index]
-                                              .food_status !=
-                                          FOOD_STATUS_CANCEL &&
-                                      orderController
-                                              .orderDetail
-                                              .order_details[index]
-                                              .food_status !=
-                                          FOOD_STATUS_FINISH)
-                                  ? Slidable(
-                                      key: const ValueKey(0),
-                                      endActionPane: ActionPane(
-                                        motion: const ScrollMotion(),
-                                        children: [
-                                          SlidableAction(
-                                            onPressed: (context) => {
-                                              print(
-                                                  "=================Món muốn tách==============="),
-                                              print(orderController
-                                                  .orderDetail
-                                                  .order_details[index]
-                                                  .food!
-                                                  .name),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                          left: 0, right: 0, top: 0, bottom: 0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Obx(() {
+                        return ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount:
+                              orderController.orderDetail.order_details.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.all(
+                                  4), // Khoảng cách dưới dạng đệm
+
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        width: 0.1, color: borderColor)),
+                              ),
+                              child: GestureDetector(
+                                  onTap: () {},
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                    child: InkWell(
+                                      onTap: () => {},
+                                      child: (orderController
+                                                      .orderDetail
+                                                      .order_details[index]
+                                                      .food_status !=
+                                                  FOOD_STATUS_CANCEL &&
                                               orderController
-                                                  .orderDetail
-                                                  .order_details[index]
-                                                  .isSelected = true,
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return ChooseTargetTableSplitSingleFoodPage(
-                                                    order: orderController
-                                                        .orderDetail,
-                                                    orderDetailNeedSplitArray: [
-                                                      orderController
-                                                          .orderDetail
-                                                          .order_details[index]
-                                                    ],
-                                                  );
-                                                },
-                                              )
-                                            },
-                                            backgroundColor: primaryColor,
-                                            foregroundColor: textWhiteColor,
-                                            icon: Icons.splitscreen,
-                                            label: 'Tách món',
-                                          ),
-                                          SlidableAction(
-                                            onPressed: (context) => {
-                                              showCustomAlertDialogConfirm(
-                                                context,
-                                                "YÊU CẦU HỦY MÓN",
-                                                "Có chắc chắn muốn hủy món \"${orderController.orderDetail.order_details[index].food!.name}\" ?",
-                                                colorWarning,
-                                                () async {
-                                                  orderController
-                                                      .cancelFoodByOrder(
-                                                          context,
-                                                          widget.order,
-                                                          orderController
-                                                                  .orderDetail
-                                                                  .order_details[
-                                                              index]);
-                                                },
-                                              ),
-                                              print("YÊU CẦU HỦY MÓN"),
-                                              print(
-                                                  "Order: ${orderController.orderDetail.order_id}"),
-                                              print(
-                                                  "Food: ${orderController.orderDetail.order_details[index].order_detail_id}"),
-                                            },
-                                            backgroundColor: cancelFoodColor,
-                                            foregroundColor: textWhiteColor,
-                                            icon: Icons.cancel,
-                                            label: 'Hủy món',
-                                          )
-                                        ],
-                                      ),
-                                      child: ListTile(
-                                        selectedColor: primaryColor,
-                                        leading: orderController
-                                                    .orderDetail
-                                                    .order_details[index]
-                                                    .food !=
-                                                null
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                child: Image.network(
-                                                  orderController
                                                       .orderDetail
                                                       .order_details[index]
-                                                      .food!
-                                                      .image,
-                                                  width: 50,
-                                                  height: 50,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )
-                                            : ClipRRect(
-                                                child:
-                                                    defaultFoodImage, // ảnh trong constants
-                                              ),
-                                        title: Text(
-                                            orderController
-                                                .orderDetail
-                                                .order_details[index]
-                                                .food!
-                                                .name,
-                                            style: textStyleFoodNameBold16),
-                                        subtitle: Text(
-                                          FOOD_STATUS_IN_CHEFT_STRING,
-                                          style: textStyleMaking,
-                                        ),
-                                        trailing: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                                Utils.formatCurrency(
-                                                    orderController
-                                                        .orderDetail
-                                                        .order_details[index]
-                                                        .price),
-                                                style:
-                                                    textStylePriceBlackRegular16),
-                                            // SizedBox(
-                                            //   width: 100,
-                                            //   child: Row(
-                                            //     children: [
-                                            //       const Text("Số lượng: ",
-                                            //           style:
-                                            //               textStylePriceBlackRegular16),
-                                            //       Text(
-                                            //           "${orderController.orderDetail.order_details[index].quantity}",
-                                            //           style: textStyleMaking),
-                                            //     ],
-                                            //   ),
-                                            // ),
-                                            SizedBox(
-                                              width: 100,
-                                              child: Row(
+                                                      .food_status !=
+                                                  FOOD_STATUS_FINISH)
+                                          ? Slidable(
+                                              key: const ValueKey(0),
+                                              endActionPane: ActionPane(
+                                                motion: const ScrollMotion(),
                                                 children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        decreaseQuantity(
-                                                            orderController
-                                                                    .orderDetail
-                                                                    .order_details[
-                                                                index]);
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: iconColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                      ),
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: const Align(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Icon(
-                                                            Icons.remove,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  Text(
-                                                      "${orderController.orderDetail.order_details[index].quantity}",
-                                                      style: textStyleMaking),
-                                                  const SizedBox(width: 5),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        increaseQuantity(
-                                                            orderController
-                                                                    .orderDetail
-                                                                    .order_details[
-                                                                index]);
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: iconColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                      ),
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: const Align(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Icon(Icons.add,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  : orderController
-                                              .orderDetail
-                                              .order_details[index]
-                                              .food_status ==
-                                          FOOD_STATUS_FINISH
-                                      ? Slidable(
-                                          key: const ValueKey(0),
-                                          endActionPane: ActionPane(
-                                            motion: const ScrollMotion(),
-                                            children: [
-                                              SlidableAction(
-                                                onPressed: (context) async {
-                                                  print(
-                                                      "=================Món muốn tách===============");
-                                                  print(orderController
-                                                      .orderDetail
-                                                      .order_details[index]
-                                                      .food!
-                                                      .name);
-                                                  orderController
-                                                      .orderDetail
-                                                      .order_details[index]
-                                                      .isSelected = true;
-                                                  final result =
-                                                      await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return ChooseTargetTableSplitSingleFoodPage(
-                                                        order: orderController
-                                                            .orderDetail,
-                                                        orderDetailNeedSplitArray: [
-                                                          orderController
-                                                                  .orderDetail
-                                                                  .order_details[
-                                                              index]
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                  if (result == 'success') {
-                                                    // Utils.myPopResult(
-                                                    //     context, 'success');
-                                                    Utils.showSuccessFlushbar(
-                                                        context,
-                                                        '',
-                                                        'Tách món thành công!');
-                                                  } else if (result ==
-                                                      'cancel') {
-                                                    Utils.myPopCancel(context);
-                                                  }
-                                                },
-                                                backgroundColor: primaryColor,
-                                                foregroundColor: textWhiteColor,
-                                                icon: Icons.splitscreen,
-                                                label: 'Tách món',
-                                              ),
-                                            ],
-                                          ),
-                                          child: ListTile(
-                                            selectedColor: primaryColor,
-                                            leading: orderController
-                                                        .orderDetail
-                                                        .order_details[index]
-                                                        .food !=
-                                                    null
-                                                ? ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    child: Image.network(
-                                                      orderController
+                                                  SlidableAction(
+                                                    onPressed: (context) => {
+                                                      print(
+                                                          "=================Món muốn tách==============="),
+                                                      print(orderController
                                                           .orderDetail
                                                           .order_details[index]
                                                           .food!
-                                                          .image,
-                                                      width: 50,
-                                                      height: 50,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  )
-                                                : ClipRRect(
-                                                    child: Image.asset(
-                                                      "assets/images/lykem.jpg",
-                                                      width: 50,
-                                                      height: 50,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                                          .name),
+                                                      orderController
+                                                          .orderDetail
+                                                          .order_details[index]
+                                                          .isSelected = true,
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return ChooseTargetTableSplitSingleFoodPage(
+                                                            order:
+                                                                orderController
+                                                                    .orderDetail,
+                                                            orderDetailNeedSplitArray: [
+                                                              orderController
+                                                                  .orderDetail
+                                                                  .order_details[index]
+                                                            ],
+                                                          );
+                                                        },
+                                                      )
+                                                    },
+                                                    backgroundColor:
+                                                        primaryColor,
+                                                    foregroundColor:
+                                                        textWhiteColor,
+                                                    icon: Icons.splitscreen,
+                                                    label: 'Tách món',
                                                   ),
-                                            title: Text(
-                                                orderController
-                                                    .orderDetail
-                                                    .order_details[index]
-                                                    .food!
-                                                    .name,
-                                                style: textStyleFoodNameBold16),
-                                            subtitle: Text(
-                                              FOOD_STATUS_FINISH_STRING,
-                                              style: textStyleSeccess,
-                                            ),
-                                            trailing: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                    Utils.formatCurrency(
-                                                        orderController
+                                                  SlidableAction(
+                                                    onPressed: (context) => {
+                                                      showCustomAlertDialogConfirm(
+                                                        context,
+                                                        "YÊU CẦU HỦY MÓN",
+                                                        "Có chắc chắn muốn hủy món \"${orderController.orderDetail.order_details[index].food!.name}\" ?",
+                                                        colorWarning,
+                                                        () async {
+                                                          orderController
+                                                              .cancelFoodByOrder(
+                                                                  context,
+                                                                  widget.order,
+                                                                  orderController
+                                                                      .orderDetail
+                                                                      .order_details[index]);
+                                                        },
+                                                      ),
+                                                      print("YÊU CẦU HỦY MÓN"),
+                                                      print(
+                                                          "Order: ${orderController.orderDetail.order_id}"),
+                                                      print(
+                                                          "Food: ${orderController.orderDetail.order_details[index].order_detail_id}"),
+                                                    },
+                                                    backgroundColor:
+                                                        cancelFoodColor,
+                                                    foregroundColor:
+                                                        textWhiteColor,
+                                                    icon: Icons.cancel,
+                                                    label: 'Hủy món',
+                                                  )
+                                                ],
+                                              ),
+                                              child: ListTile(
+                                                selectedColor: primaryColor,
+                                                leading: orderController
                                                             .orderDetail
                                                             .order_details[
                                                                 index]
-                                                            .price),
+                                                            .food !=
+                                                        null
+                                                    ? ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                        child: Image.network(
+                                                          orderController
+                                                              .orderDetail
+                                                              .order_details[
+                                                                  index]
+                                                              .food!
+                                                              .image,
+                                                          width: 50,
+                                                          height: 50,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      )
+                                                    : ClipRRect(
+                                                        child:
+                                                            defaultFoodImage, // ảnh trong constants
+                                                      ),
+                                                title: Text(
+                                                    orderController
+                                                        .orderDetail
+                                                        .order_details[index]
+                                                        .food!
+                                                        .name,
                                                     style:
-                                                        textStylePriceBlackRegular16),
-                                                SizedBox(
-                                                  width: 100,
-                                                  child: Row(
+                                                        textStyleFoodNameBold16),
+                                                subtitle: Text(
+                                                  FOOD_STATUS_IN_CHEFT_STRING,
+                                                  style: textStyleMaking,
+                                                ),
+                                                trailing: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                        Utils.formatCurrency(
+                                                            orderController
+                                                                .orderDetail
+                                                                .order_details[
+                                                                    index]
+                                                                .price),
+                                                        style:
+                                                            textStylePriceBlackRegular16),
+                                                    // SizedBox(
+                                                    //   width: 100,
+                                                    //   child: Row(
+                                                    //     children: [
+                                                    //       const Text("Số lượng: ",
+                                                    //           style:
+                                                    //               textStylePriceBlackRegular16),
+                                                    //       Text(
+                                                    //           "${orderController.orderDetail.order_details[index].quantity}",
+                                                    //           style: textStyleMaking),
+                                                    //     ],
+                                                    //   ),
+                                                    // ),
+                                                    SizedBox(
+                                                      width: 100,
+                                                      child: Row(
+                                                        children: [
+                                                          InkWell(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                decreaseQuantity(
+                                                                    orderController
+                                                                        .orderDetail
+                                                                        .order_details[index]);
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color:
+                                                                    iconColor,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                              ),
+                                                              height: 30,
+                                                              width: 30,
+                                                              child:
+                                                                  const Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: Icon(
+                                                                    Icons
+                                                                        .remove,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Text(
+                                                              "${orderController.orderDetail.order_details[index].quantity}",
+                                                              style:
+                                                                  textStyleMaking),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          InkWell(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                increaseQuantity(
+                                                                    orderController
+                                                                        .orderDetail
+                                                                        .order_details[index]);
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color:
+                                                                    iconColor,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                              ),
+                                                              height: 30,
+                                                              width: 30,
+                                                              child:
+                                                                  const Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: Icon(
+                                                                    Icons.add,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          : orderController
+                                                      .orderDetail
+                                                      .order_details[index]
+                                                      .food_status ==
+                                                  FOOD_STATUS_FINISH
+                                              ? Slidable(
+                                                  key: const ValueKey(0),
+                                                  endActionPane: ActionPane(
+                                                    motion:
+                                                        const ScrollMotion(),
                                                     children: [
-                                                      const Text("Số lượng: ",
-                                                          style:
-                                                              textStylePriceBlackRegular16),
-                                                      Text(
-                                                          "${orderController.orderDetail.order_details[index].quantity}",
-                                                          style:
-                                                              textStyleSeccess),
+                                                      SlidableAction(
+                                                        onPressed:
+                                                            (context) async {
+                                                          print(
+                                                              "=================Món muốn tách===============");
+                                                          print(orderController
+                                                              .orderDetail
+                                                              .order_details[
+                                                                  index]
+                                                              .food!
+                                                              .name);
+                                                          orderController
+                                                              .orderDetail
+                                                              .order_details[
+                                                                  index]
+                                                              .isSelected = true;
+                                                          final result =
+                                                              await showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return ChooseTargetTableSplitSingleFoodPage(
+                                                                order: orderController
+                                                                    .orderDetail,
+                                                                orderDetailNeedSplitArray: [
+                                                                  orderController
+                                                                      .orderDetail
+                                                                      .order_details[index]
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                          if (result ==
+                                                              'success') {
+                                                            // Utils.myPopResult(
+                                                            //     context, 'success');
+                                                            Utils.showSuccessFlushbar(
+                                                                context,
+                                                                '',
+                                                                'Tách món thành công!');
+                                                          } else if (result ==
+                                                              'cancel') {
+                                                            Utils.myPopCancel(
+                                                                context);
+                                                          }
+                                                        },
+                                                        backgroundColor:
+                                                            primaryColor,
+                                                        foregroundColor:
+                                                            textWhiteColor,
+                                                        icon: Icons.splitscreen,
+                                                        label: 'Tách món',
+                                                      ),
                                                     ],
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      : Slidable(
-                                          key: const ValueKey(0),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: backgroundCancelFoodColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: ListTile(
-                                              tileColor: Colors.redAccent,
-                                              selectedColor: primaryColor,
-                                              leading: orderController
-                                                          .orderDetail
-                                                          .order_details[index]
-                                                          .food !=
-                                                      null
-                                                  ? ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      child: Image.network(
+                                                  child: ListTile(
+                                                    selectedColor: primaryColor,
+                                                    leading: orderController
+                                                                .orderDetail
+                                                                .order_details[
+                                                                    index]
+                                                                .food !=
+                                                            null
+                                                        ? ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                            child:
+                                                                Image.network(
+                                                              orderController
+                                                                  .orderDetail
+                                                                  .order_details[
+                                                                      index]
+                                                                  .food!
+                                                                  .image,
+                                                              width: 50,
+                                                              height: 50,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          )
+                                                        : ClipRRect(
+                                                            child: Image.asset(
+                                                              "assets/images/lykem.jpg",
+                                                              width: 50,
+                                                              height: 50,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                    title: Text(
                                                         orderController
                                                             .orderDetail
                                                             .order_details[
                                                                 index]
                                                             .food!
-                                                            .image,
-                                                        width: 50,
-                                                        height: 50,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    )
-                                                  : ClipRRect(
-                                                      child: Image.asset(
-                                                        "assets/images/lykem.jpg",
-                                                        width: 50,
-                                                        height: 50,
-                                                        fit: BoxFit.cover,
-                                                      ),
+                                                            .name,
+                                                        style:
+                                                            textStyleFoodNameBold16),
+                                                    subtitle: Text(
+                                                      FOOD_STATUS_FINISH_STRING,
+                                                      style: textStyleSeccess,
                                                     ),
-                                              title: Text(
-                                                  orderController
-                                                      .orderDetail
-                                                      .order_details[index]
-                                                      .food!
-                                                      .name,
-                                                  style:
-                                                      textStyleFoodNameBold16),
-                                              subtitle: Text(
-                                                FOOD_STATUS_CANCEL_STRING,
-                                                style: textStyleCancel,
-                                              ),
-                                              trailing: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                      Utils.formatCurrency(
-                                                          orderController
-                                                              .orderDetail
-                                                              .order_details[
-                                                                  index]
-                                                              .price),
-                                                      style:
-                                                          textStylePriceBlackRegular16),
-                                                  // SizedBox(
-                                                  //   width: 100,
-                                                  //   child: Row(
-                                                  //     children: [
-                                                  //       const Text("Số lượng: ",
-                                                  //           style:
-                                                  //               textStylePriceBlackRegular16),
-                                                  //       Text(
-                                                  //           "${orderController.orderDetail.order_details[index].quantity}",
-                                                  //           style:
-                                                  //               textStyleCancel),
-                                                  //     ],
-                                                  //   ),
-                                                  // ),
-                                                  SizedBox(
-                                                    width: 100,
-                                                    child: Row(
+                                                    trailing: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
-                                                        InkWell(
-                                                          onTap: () {
-                                                            // if (foodController
-                                                            //         .foodsToOrder[index]
-                                                            //         .quantity! >
-                                                            //     1) {
-                                                            //   setState(() {
-                                                            //     foodController
-                                                            //             .foodsToOrder[index]
-                                                            //             .quantity =
-                                                            //         foodController
-                                                            //                 .foodsToOrder[
-                                                            //                     index]
-                                                            //                 .quantity! -
-                                                            //             1;
-                                                            //   });
-                                                            // }
-                                                          },
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: iconColor,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
-                                                            ),
-                                                            height: 30,
-                                                            width: 30,
-                                                            child: const Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              child: Icon(
-                                                                  Icons.remove,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 5),
                                                         Text(
-                                                            "${orderController.orderDetail.order_details[index].quantity}",
+                                                            Utils.formatCurrency(
+                                                                orderController
+                                                                    .orderDetail
+                                                                    .order_details[
+                                                                        index]
+                                                                    .price),
                                                             style:
-                                                                textStyleMaking),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              // foodController
-                                                              //         .foodsToOrder[index]
-                                                              //         .quantity =
-                                                              //     foodController
-                                                              //             .foodsToOrder[
-                                                              //                 index]
-                                                              //             .quantity! +
-                                                              //         1;
-                                                            });
-                                                          },
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: iconColor,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
-                                                            ),
-                                                            height: 30,
-                                                            width: 30,
-                                                            child: const Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              child: Icon(
-                                                                  Icons.add,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
+                                                                textStylePriceBlackRegular16),
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Row(
+                                                            children: [
+                                                              const Text(
+                                                                  "Số lượng: ",
+                                                                  style:
+                                                                      textStylePriceBlackRegular16),
+                                                              Text(
+                                                                  "${orderController.orderDetail.order_details[index].quantity}",
+                                                                  style:
+                                                                      textStyleSeccess),
+                                                            ],
                                                           ),
                                                         ),
                                                       ],
                                                     ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                            ),
-                          )),
-                    );
-                  },
-                );
-              }),
-            ),
-          ),
-          Utils.isAnyOrderDetailSelected(orderDetailOriginArray)
-              ? GestureDetector(
-                  onTap: () async {
-                    final result = await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CustomDialogUpdateQuantityTable(
-                          order: widget.order,
+                                                  ),
+                                                )
+                                              : Slidable(
+                                                  key: const ValueKey(0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          backgroundCancelFoodColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: ListTile(
+                                                      tileColor:
+                                                          Colors.redAccent,
+                                                      selectedColor:
+                                                          primaryColor,
+                                                      leading: orderController
+                                                                  .orderDetail
+                                                                  .order_details[
+                                                                      index]
+                                                                  .food !=
+                                                              null
+                                                          ? ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                              child:
+                                                                  Image.network(
+                                                                orderController
+                                                                    .orderDetail
+                                                                    .order_details[
+                                                                        index]
+                                                                    .food!
+                                                                    .image,
+                                                                width: 50,
+                                                                height: 50,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            )
+                                                          : ClipRRect(
+                                                              child:
+                                                                  Image.asset(
+                                                                "assets/images/lykem.jpg",
+                                                                width: 50,
+                                                                height: 50,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                      title: Text(
+                                                          orderController
+                                                              .orderDetail
+                                                              .order_details[
+                                                                  index]
+                                                              .food!
+                                                              .name,
+                                                          style:
+                                                              textStyleFoodNameBold16),
+                                                      subtitle: Text(
+                                                        FOOD_STATUS_CANCEL_STRING,
+                                                        style: textStyleCancel,
+                                                      ),
+                                                      trailing: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                              Utils.formatCurrency(
+                                                                  orderController
+                                                                      .orderDetail
+                                                                      .order_details[
+                                                                          index]
+                                                                      .price),
+                                                              style:
+                                                                  textStylePriceBlackRegular16),
+                                                          // SizedBox(
+                                                          //   width: 100,
+                                                          //   child: Row(
+                                                          //     children: [
+                                                          //       const Text("Số lượng: ",
+                                                          //           style:
+                                                          //               textStylePriceBlackRegular16),
+                                                          //       Text(
+                                                          //           "${orderController.orderDetail.order_details[index].quantity}",
+                                                          //           style:
+                                                          //               textStyleCancel),
+                                                          //     ],
+                                                          //   ),
+                                                          // ),
+                                                          SizedBox(
+                                                            width: 100,
+                                                            child: Row(
+                                                              children: [
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    // if (foodController
+                                                                    //         .foodsToOrder[index]
+                                                                    //         .quantity! >
+                                                                    //     1) {
+                                                                    //   setState(() {
+                                                                    //     foodController
+                                                                    //             .foodsToOrder[index]
+                                                                    //             .quantity =
+                                                                    //         foodController
+                                                                    //                 .foodsToOrder[
+                                                                    //                     index]
+                                                                    //                 .quantity! -
+                                                                    //             1;
+                                                                    //   });
+                                                                    // }
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color:
+                                                                          iconColor,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5),
+                                                                    ),
+                                                                    height: 30,
+                                                                    width: 30,
+                                                                    child:
+                                                                        const Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .remove,
+                                                                          color:
+                                                                              Colors.white),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 5),
+                                                                Text(
+                                                                    "${orderController.orderDetail.order_details[index].quantity}",
+                                                                    style:
+                                                                        textStyleMaking),
+                                                                const SizedBox(
+                                                                    width: 5),
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      // foodController
+                                                                      //         .foodsToOrder[index]
+                                                                      //         .quantity =
+                                                                      //     foodController
+                                                                      //             .foodsToOrder[
+                                                                      //                 index]
+                                                                      //             .quantity! +
+                                                                      //         1;
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color:
+                                                                          iconColor,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5),
+                                                                    ),
+                                                                    height: 30,
+                                                                    width: 30,
+                                                                    child:
+                                                                        const Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .add,
+                                                                          color:
+                                                                              Colors.white),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                    ),
+                                  )),
+                            );
+                          },
                         );
-                      },
-                    );
-                    if (result != null) {
-                      Utils.refeshSelected(orderDetailOriginArray);
-                      setState(() {
-                        Utils.isAnyOrderDetailSelected(
-                            orderController.orderDetail.order_details);
-
-                        Utils.showSuccessFlushbar(
-                            context, '', 'Số lượng món đã được cập nhật!');
-                      });
-                    }
-                  },
-                  child: Container(
-                      height: 50,
-                      width: 100,
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: colorSuccess,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Lưu (${Utils.counterOrderDetailSelected(orderController.orderDetail.order_details)})",
-                          style: textStyleWhiteBold20,
-                        ),
-                      )),
-                )
-              : const SizedBox(),
-          Column(
-            children: [
-              // const SizedBox(height: 10),
-              Container(
-                  height: 60,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: const BoxDecoration(
-                    color: backgroundColor,
+                      }),
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Utils.isAnyOrderDetailSelected(orderDetailOriginArray)
+                      ? GestureDetector(
+                          onTap: () async {
+                            final result = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialogUpdateQuantityTable(
+                                  order: widget.order,
+                                );
+                              },
+                            );
+                            if (result != null) {
+                              Utils.refeshSelected(orderDetailOriginArray);
+                              setState(() {
+                                Utils.isAnyOrderDetailSelected(
+                                    orderController.orderDetail.order_details);
+
+                                Utils.showSuccessFlushbar(context, '',
+                                    'Số lượng món đã được cập nhật!');
+                                // getAllOrderDetails(widget.order.order_id);
+                                refeshOrderDetailOriginArray();
+                              });
+                            }
+                          },
+                          child: Container(
+                              height: 50,
+                              width: 100,
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: colorSuccess,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Lưu (${Utils.counterOrderDetailSelected(orderController.orderDetail.order_details)})",
+                                  style: textStyleWhiteBold20,
+                                ),
+                              )),
+                        )
+                      : const SizedBox(),
+                  Column(
                     children: [
-                      InkWell(
-                        onTap: () => {
-                          // thêm món -> không phải món tặng
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddFoodToOrderPage(
-                                        table: widget.order.table!,
-                                        booking: false,
-                                        isGift: false,
-                                      )))
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(10),
+                      // const SizedBox(height: 10),
+                      Container(
+                          height: 60,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: const BoxDecoration(
+                            color: backgroundColor,
                           ),
-                          child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.fastfood),
-                                Text(
-                                  "Thêm món",
-                                  style: textStyleWhiteRegular16,
-                                )
-                              ]),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          final result = await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SplitFoodPage(
-                                order: orderController.orderDetail,
-                              );
-                            },
-                          );
-                          if (result == 'success') {
-                            Utils.showSuccessFlushbar(
-                                context, '', 'Tách món thành công!');
-                          } else if (result == 'cancel') {
-                            // Utils.showSuccessFlushbar(
-                            //     context, '', 'Tách món thành công cancel!');
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.splitscreen),
-                                Text(
-                                  "Tách món",
-                                  style: textStyleWhiteRegular16,
-                                )
-                              ]),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          // là món tặng -> isGift = true
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddGiftFoodToOrderPage(
-                                        table: widget.order.table!,
-                                        booking: false,
-                                        isGift: true,
-                                      )))
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.card_giftcard),
-                                Text(
-                                  "Tặng món",
-                                  style: textStyleWhiteRegular16,
-                                )
-                              ]),
-                        ),
-                      ),
-                      Utils.isAnyFoodInChef(orderDetailOriginArray)
-                          ? InkWell(
-                              onTap: () => {
-                                Utils.showStylishDialog(
-                                    context,
-                                    'THÔNG BÁO',
-                                    'Có một số món chưa được gửi Bếp/Bar. Vui lòng gửi bếp trước khi tiến hành thanh toán',
-                                    StylishDialogType.INFO)
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: primaryColor,
-                                  borderRadius: BorderRadius.circular(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InkWell(
+                                onTap: () => {
+                                  // thêm món -> không phải món tặng
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AddFoodToOrderPage(
+                                                table: widget.order.table!,
+                                                booking: false,
+                                                isGift: false,
+                                              )))
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.fastfood),
+                                        Text(
+                                          "Thêm món",
+                                          style: textStyleWhiteRegular16,
+                                        )
+                                      ]),
                                 ),
-                                child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.receipt_long_outlined),
-                                      Text(
-                                        "Thanh toán",
-                                        style: textStyleWhiteRegular16,
-                                      )
-                                    ]),
                               ),
-                            )
-                          : InkWell(
-                              onTap: () async {
-                                final result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PaymentPage(
-                                        order: widget.order,
+                              InkWell(
+                                onTap: () async {
+                                  final result = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return SplitFoodPage(
+                                        order: orderController.orderDetail,
+                                      );
+                                    },
+                                  );
+                                  if (result == 'success') {
+                                    Utils.showSuccessFlushbar(
+                                        context, '', 'Tách món thành công!');
+                                  } else if (result == 'cancel') {
+                                    // Utils.showSuccessFlushbar(
+                                    //     context, '', 'Tách món thành công cancel!');
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.splitscreen),
+                                        Text(
+                                          "Tách món",
+                                          style: textStyleWhiteRegular16,
+                                        )
+                                      ]),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () => {
+                                  // là món tặng -> isGift = true
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AddGiftFoodToOrderPage(
+                                                table: widget.order.table!,
+                                                booking: false,
+                                                isGift: true,
+                                              )))
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.card_giftcard),
+                                        Text(
+                                          "Tặng món",
+                                          style: textStyleWhiteRegular16,
+                                        )
+                                      ]),
+                                ),
+                              ),
+                              isAnyFoodInChef
+                                  ? InkWell(
+                                      onTap: () => {
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Có một số món chưa được gửi Bếp/Bar. Vui lòng gửi bếp trước khi tiến hành thanh toán',
+                                            StylishDialogType.INFO)
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: const Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.receipt_long_outlined),
+                                              Text(
+                                                "Thanh toán",
+                                                style: textStyleWhiteRegular16,
+                                              )
+                                            ]),
                                       ),
-                                    ));
-                                if (result == 'success') {
-                                  Utils.myPopResult(context, 'PAID');
-                                }
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: primaryColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.receipt_long_outlined),
-                                      Text(
-                                        "Thanh toán",
-                                        style: textStyleWhiteRegular16,
-                                      )
-                                    ]),
-                              ),
-                            ),
+                                    )
+                                  : InkWell(
+                                      onTap: () async {
+                                        final result = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PaymentPage(
+                                                order: widget.order,
+                                              ),
+                                            ));
+                                        if (result == 'success') {
+                                          Utils.myPopResult(context, 'PAID');
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: const Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.receipt_long_outlined),
+                                              Text(
+                                                "Thanh toán",
+                                                style: textStyleWhiteRegular16,
+                                              )
+                                            ]),
+                                      ),
+                                    ),
+                            ],
+                          )),
+                      const SizedBox(height: 10),
                     ],
-                  )),
-              const SizedBox(height: 10),
-            ],
-          )
-        ],
-      ),
-    );
+                  )
+                ],
+              );
+            }
+          },
+        ));
   }
 }
 

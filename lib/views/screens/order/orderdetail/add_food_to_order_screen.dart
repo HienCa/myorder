@@ -571,15 +571,14 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                   slotTextEditingController
                                                       .text));
                                         } else {
-                                          Utils.showErrorFlushbar(
-                                              context,
-                                              'THÔNG BÁO',
-                                              'Bạn phải nhập số lượng khách của bàn này');
-                                          // Utils.showStylishDialog(
-                                          //     context,
-                                          //     'THÔNG BÁO',
-                                          //     'Bạn phải nhập số lượng khách của bàn này',
-                                          //     StylishDialogType.ERROR);
+                                          Get.snackbar(
+                                            'THÔNG BÁO',
+                                            'Bạn phải nhập số lượng khách của bàn này.',
+                                            backgroundColor:
+                                                backgroundFailureColor,
+                                            colorText: Colors.white,
+                                          );
+                                          
                                         }
                                       },
                                     )
