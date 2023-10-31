@@ -20,6 +20,7 @@ import 'package:myorder/views/screens/order/orderdetail/dialog_confirm_update_qu
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_confirm.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class OrderdetailPage extends StatefulWidget {
@@ -187,7 +188,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
           future: fetchData,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             } else if (snapshot.hasError) {
@@ -856,47 +857,110 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                       }),
                     ),
                   ),
-                  Utils.isAnyOrderDetailSelected(orderDetailOriginArray)
-                      ? GestureDetector(
-                          onTap: () async {
-                            final result = await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomDialogUpdateQuantityTable(
-                                  order: widget.order,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      isAnyFoodInChef
+                          ? GestureDetector(
+                              onTap: () async {
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const MyDialogMessage(
+                                      title: 'GUI BEP/BAR',
+                                      discription:
+                                          'Ban muon gui don hang nay toi bep/bar',
+                                    );
+                                  },
                                 );
+                                if (result == 'success') {
+                                  setState(() {
+                                    Utils.showStylishDialog(
+                                        context,
+                                        'CHEF/BAR',
+                                        'Gui Bep/Bar thanh cong!',
+                                        StylishDialogType.SUCCESS);
+                                  });
+                                }
                               },
-                            );
-                            if (result != null) {
-                              Utils.refeshSelected(orderDetailOriginArray);
-                              setState(() {
-                                Utils.isAnyOrderDetailSelected(
-                                    orderController.orderDetail.order_details);
+                              child: Container(
+                                  height: 50,
+                                  width: 150,
+                                  padding: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: colorWarning,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Transform.rotate(
+                                          angle: 320 *
+                                              3.1415926535 /
+                                              180, // Góc xoay 45 độ (đổi ra radian)
+                                          child: const Icon(
+                                            Icons.send,
+                                            color: secondColor,
+                                          ),
+                                        ),
+                                        const Text(
+                                          "Gửi BẾP/BAR",
+                                          style: textStyleWhiteBold16,
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            )
+                          : const SizedBox(),
+                      Utils.isAnyOrderDetailSelected(orderDetailOriginArray)
+                          ? GestureDetector(
+                              onTap: () async {
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialogUpdateQuantityTable(
+                                      order: widget.order,
+                                    );
+                                  },
+                                );
+                                if (result != null) {
+                                  Utils.refeshSelected(orderDetailOriginArray);
+                                  setState(() {
+                                    Utils.isAnyOrderDetailSelected(
+                                        orderController
+                                            .orderDetail.order_details);
 
-                                Utils.showSuccessFlushbar(context, '',
-                                    'Số lượng món đã được cập nhật!');
-                                // getAllOrderDetails(widget.order.order_id);
-                                refeshOrderDetailOriginArray();
-                              });
-                            }
-                          },
-                          child: Container(
-                              height: 50,
-                              width: 100,
-                              padding: const EdgeInsets.all(10),
-                              margin: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: colorSuccess,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Lưu (${Utils.counterOrderDetailSelected(orderController.orderDetail.order_details)})",
-                                  style: textStyleWhiteBold20,
-                                ),
-                              )),
-                        )
-                      : const SizedBox(),
+                                    Utils.showSuccessFlushbar(context, '',
+                                        'Số lượng món đã được cập nhật!');
+                                    // getAllOrderDetails(widget.order.order_id);
+                                    refeshOrderDetailOriginArray();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                  height: 50,
+                                  width: 100,
+                                  padding: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: colorSuccess,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Lưu (${Utils.counterOrderDetailSelected(orderController.orderDetail.order_details)})",
+                                      style: textStyleWhiteBold20,
+                                    ),
+                                  )),
+                            )
+                          : const SizedBox(),
+                    ],
+                  ),
                   Column(
                     children: [
                       // const SizedBox(height: 10),
