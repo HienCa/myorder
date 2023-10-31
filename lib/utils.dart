@@ -4,6 +4,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
@@ -435,4 +436,37 @@ class Utils {
   }
 
   //END=================================DIALOG==================================
+  //BEGIN===============================TOAST===================================
+  
+  static void showToast(String message, TypeToast type,
+      {ToastGravity toastGravity = ToastGravity.BOTTOM,
+      Toast toast = Toast.LENGTH_LONG}) {
+    Color backgroundColor = secondColor;
+    switch (type) {
+      case TypeToast.SUCCESS:
+        backgroundColor = colorSuccess;
+        break;
+      case TypeToast.ERROR:
+        backgroundColor = colorCancel;
+        break;
+      case TypeToast.WARNING:
+        backgroundColor = colorWarning;
+        break;
+      case TypeToast.INFO:
+        backgroundColor = colorInformation;
+        break;
+      default:
+        backgroundColor = secondColor;
+        break;
+    }
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: toast,
+        gravity: toastGravity,
+        timeInSecForIosWeb: 1,
+        backgroundColor: backgroundColor,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+  //END=================================TOAST===================================
 }

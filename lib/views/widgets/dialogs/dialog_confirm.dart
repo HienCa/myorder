@@ -11,7 +11,7 @@ class MyDialogMessage extends StatefulWidget {
     Key? key,
     required this.title,
     required this.discription,
-     this.func,
+    this.func,
   }) : super(key: key);
 
   @override

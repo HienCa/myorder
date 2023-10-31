@@ -1,5 +1,5 @@
 //Gía trị cố định của biến
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names
 //chung
 int ACTIVE = 1; // HOẠT ĐỘNG
 int DEACTIVE = 0;
@@ -51,6 +51,13 @@ int MAX_PERCENT = 1;
 //TABLE
 int MIN_SLOT_TABLE = 1;
 int MAX_SLOT_TABLE = 50;
+
+enum TypeToast {
+  SUCCESS,
+  ERROR,
+  WARNING,
+  INFO,
+}
 
 // text length
 const maxlengthName = 50;

@@ -867,9 +867,9 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return const MyDialogMessage(
-                                      title: 'GUI BEP/BAR',
+                                      title: 'BẾP/BAR',
                                       discription:
-                                          'Ban muon gui don hang nay toi bep/bar',
+                                          'Bạn muốn gửi đơn hàng này tới Bếp/Bar',
                                     );
                                   },
                                 );
@@ -877,8 +877,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                   setState(() {
                                     Utils.showStylishDialog(
                                         context,
-                                        'CHEF/BAR',
-                                        'Gui Bep/Bar thanh cong!',
+                                        'BẾP/BAR',
+                                        'Gửi Bếp/Bar thành công!',
                                         StylishDialogType.SUCCESS);
                                   });
                                 }
