@@ -12,7 +12,6 @@ import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
-import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddFoodToOrderPage extends StatefulWidget {
   final model.Table table;
@@ -43,6 +42,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
   String keySearch = "";
   @override
   void initState() {
+    
     super.initState();
     categoryController.getCategoriesActive();
     foodController.getfoodsToOrder(keySearch, defaultCategory);
@@ -528,7 +528,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                   food_id: foodOrder.food_id,
                                   is_gift: false,
                                   category_id: '',
-                                  category_code: foodOrder.category_code,
+                                  category_code: foodOrder.category_code, chef_bar_status: CHEF_BAR_STATUS,
                                 );
 
                                 orderDetailList.add(orderDetail);
@@ -564,6 +564,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                           //Nếu là đơn hàng mới thì phải nhập số khách
                                           orderController.createOrder(
                                               widget.table.table_id,
+                                              widget.table.name,
                                               orderDetailList,
                                               widget.isGift,
                                               context,
@@ -578,7 +579,6 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                 backgroundFailureColor,
                                             colorText: Colors.white,
                                           );
-                                          
                                         }
                                       },
                                     )
@@ -591,6 +591,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                         // order theo table_id
                                         orderController.createOrder(
                                             widget.table.table_id,
+                                            widget.table.name,
                                             orderDetailList,
                                             widget.isGift,
                                             context,
@@ -602,6 +603,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                             } else {
                               orderController.createOrder(
                                   widget.table.table_id,
+                                  widget.table.name,
                                   orderDetailList,
                                   widget.isGift,
                                   context,

@@ -22,9 +22,18 @@ int ORDER_STATUS_CANCEL = 3; // ĐÃ HỦY ĐƠN HÀNG
 int FOOD_STATUS_IN_CHEF = 1; // CHỜ CHẾ BIẾN
 int FOOD_STATUS_FINISH = 2; // ĐÃ HOÀN THÀNH
 int FOOD_STATUS_CANCEL = 3; // ĐÃ HỦY
+int FOOD_STATUS_COOKING = 4; // ĐANG CHẾ BIẾN
 String FOOD_STATUS_IN_CHEFT_STRING = "CHỜ CHẾ BIẾN";
 String FOOD_STATUS_FINISH_STRING = "HOÀN THÀNH";
 String FOOD_STATUS_CANCEL_STRING = "ĐÃ HỦY";
+String FOOD_STATUS_COOKING_STRING = "ĐANG CHẾ BIẾN";
+
+
+//CHEF/BAR
+int CHEF_BAR_STATUS = 0; // BÌNH THƯỜNG
+int CHEF_BAR_STATUS_ACTIVE = 1; // CẦN CHẾ BIẾN
+int CHEF_BAR_STATUS_DEACTIVE = 2; // ĐÃ YÊU CẦU DỪNG CHẾ BIẾN
+
 //TABLE:
 int TABLE_STATUS_EMPTY = 1; // BÀN TRỐNG
 int TABLE_STATUS_SERVING = 2; // ĐANG PHỤC VỤ
@@ -51,6 +60,12 @@ int MAX_PERCENT = 1;
 //TABLE
 int MIN_SLOT_TABLE = 1;
 int MAX_SLOT_TABLE = 50;
+
+//TYPE
+const  int SUCCESS = 1;
+const  int ERROR = 2;
+const  int WARNING = 3;
+const  int INFO = 4;
 
 // text length
 const maxlengthName = 50;

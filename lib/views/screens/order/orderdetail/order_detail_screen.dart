@@ -41,7 +41,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   void initState() {
     super.initState();
     //kiểm tra có bất kỳ món nào còn "CHỜ CHẾ BIẾN"
-    isAnyFoodInChef = Utils.isAnyFoodInChef(widget.order.order_details);
+    isAnyFoodCooking = Utils.isAnyFoodCooking(widget.order.order_details);
     fetchData = orderController.getOrderDetailById(widget.order);
     _refreshOrderDetailArray();
     orderController.getTotalAmountById(widget.order);
@@ -68,7 +68,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
     print("========================Refeshed(========================");
   }
 
-  bool isAnyFoodInChef = false;
+  bool isAnyFoodCooking = false;
   int selectedIndex = 0;
   bool isChecked = false;
   bool hasChanges = false;
@@ -134,10 +134,10 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
       orderDetailOriginArray = orderDetails;
 
       //kiểm tra có bất kỳ món nào còn "CHỜ CHẾ BIẾN"
-      isAnyFoodInChef = Utils.isAnyFoodInChef(orderDetailOriginArray);
-      print('Error getting all order detailsisAnyFoodInChef: $isAnyFoodInChef');
+      isAnyFoodCooking = Utils.isAnyFoodCooking(orderDetailOriginArray);
+      print('Error getting all order detailsisAnyFoodCooking: $isAnyFoodCooking');
       print(
-          'Error getting all order detailsisAnyFoodInChef: ${orderController.orderDetail.order_details}');
+          'Error getting all order detailsisAnyFoodCooking: ${orderController.orderDetail.order_details}');
     } catch (e) {
       print('Error getting all order details: $e');
     }
@@ -149,7 +149,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
       orderDetailOriginArray = orderController.orderDetail.order_details;
       print(orderDetailOriginArray[i].quantity);
     }
-    isAnyFoodInChef = Utils.isAnyFoodInChef(orderDetailOriginArray);
+    isAnyFoodCooking = Utils.isAnyFoodCooking(orderDetailOriginArray);
   }
 
   @override
@@ -282,7 +282,12 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                       .orderDetail
                                                       .order_details[index]
                                                       .food_status !=
-                                                  FOOD_STATUS_FINISH)
+                                                  FOOD_STATUS_FINISH &&
+                                              orderController
+                                                      .orderDetail
+                                                      .order_details[index]
+                                                      .food_status !=
+                                                  FOOD_STATUS_COOKING)
                                           ? Slidable(
                                               key: const ValueKey(0),
                                               endActionPane: ActionPane(
@@ -656,7 +661,108 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                     ),
                                                   ),
                                                 )
-                                              : Slidable(
+                                              : orderController
+                                                      .orderDetail
+                                                      .order_details[index]
+                                                      .food_status ==
+                                                  FOOD_STATUS_COOKING
+                                              ? Slidable(
+                                                  key: const ValueKey(0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          secondColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: ListTile(
+                                                      tileColor:
+                                                          secondColor,
+                                                      selectedColor:
+                                                          primaryColor,
+                                                      leading: orderController
+                                                                  .orderDetail
+                                                                  .order_details[
+                                                                      index]
+                                                                  .food !=
+                                                              null
+                                                          ? ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                              child:
+                                                                  Image.network(
+                                                                orderController
+                                                                    .orderDetail
+                                                                    .order_details[
+                                                                        index]
+                                                                    .food!
+                                                                    .image,
+                                                                width: 50,
+                                                                height: 50,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            )
+                                                          : ClipRRect(
+                                                              child:
+                                                                  Image.asset(
+                                                                "assets/images/lykem.jpg",
+                                                                width: 50,
+                                                                height: 50,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                      title: Text(
+                                                          orderController
+                                                              .orderDetail
+                                                              .order_details[
+                                                                  index]
+                                                              .food!
+                                                              .name,
+                                                          style:
+                                                              textStyleFoodNameBold16),
+                                                      subtitle: Text(
+                                                        FOOD_STATUS_COOKING_STRING,
+                                                        style: textStyleCooking,
+                                                      ),
+                                                      trailing: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                            Utils.formatCurrency(
+                                                                orderController
+                                                                    .orderDetail
+                                                                    .order_details[
+                                                                        index]
+                                                                    .price),
+                                                            style:
+                                                                textStylePriceBlackRegular16),
+                                                        SizedBox(
+                                                          width: 100,
+                                                          child: Row(
+                                                            children: [
+                                                              const Text(
+                                                                  "Số lượng: ",
+                                                                  style:
+                                                                      textStylePriceBlackRegular16),
+                                                              Text(
+                                                                  "${orderController.orderDetail.order_details[index].quantity}",
+                                                                  style:
+                                                                      textStyleCooking),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    ),
+                                                  ),
+                                                ): Slidable(
                                                   key: const ValueKey(0),
                                                   child: Container(
                                                     decoration: BoxDecoration(
@@ -860,16 +966,20 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      isAnyFoodInChef
+                      isAnyFoodCooking
                           ? GestureDetector(
                               onTap: () async {
                                 final result = await showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return const MyDialogMessage(
-                                      title: 'BẾP/BAR',
+                                    return MyDialogMessage(
+                                      title: 'YÊU CẦU DỪNG CHẾ BIẾN',
                                       discription:
-                                          'Bạn muốn gửi đơn hàng này tới Bếp/Bar',
+                                          'Bạn muốn dừng chế biến để tiến hành thanh toán?',
+                                      func: orderController.updateFoodStatus(
+                                          orderController.orderDetail,
+                                          FOOD_STATUS_COOKING,
+                                          FOOD_STATUS_FINISH),
                                     );
                                   },
                                 );
@@ -878,7 +988,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                     Utils.showStylishDialog(
                                         context,
                                         'BẾP/BAR',
-                                        'Gửi Bếp/Bar thành công!',
+                                        'Yêu cầu dừng chế biến thành công!',
                                         StylishDialogType.SUCCESS);
                                   });
                                 }
@@ -909,7 +1019,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                           ),
                                         ),
                                         const Text(
-                                          "Gửi BẾP/BAR",
+                                          "Hoàn tất món",
                                           style: textStyleWhiteBold20,
                                         ),
                                       ],
@@ -1075,7 +1185,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                       ]),
                                 ),
                               ),
-                              isAnyFoodInChef
+                              isAnyFoodCooking
                                   ? InkWell(
                                       onTap: () => {
                                         Utils.showStylishDialog(

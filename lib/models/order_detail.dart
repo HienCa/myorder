@@ -8,6 +8,7 @@ class OrderDetail {
   double price;
   int quantity;
   int food_status;
+  int chef_bar_status;
   String food_id;
   String category_id;
   int category_code;
@@ -19,6 +20,7 @@ class OrderDetail {
       required this.price,
       required this.quantity,
       required this.food_status,
+      required this.chef_bar_status,
       required this.food_id,
       required this.category_id,
       required this.category_code,
@@ -34,6 +36,7 @@ class OrderDetail {
         category_id = other.category_id,
         food = other.food,
         is_gift = other.is_gift,
+        chef_bar_status = other.chef_bar_status,
         category_code = other.category_code;
 
   Map<String, dynamic> toJson() => {
@@ -41,6 +44,7 @@ class OrderDetail {
         "price": price,
         "quantity": quantity,
         "food_status": food_status,
+        "chef_bar_status": chef_bar_status,
         "food_id": food_id,
         "category_id": category_id,
         "category_code": category_code,
@@ -55,6 +59,7 @@ class OrderDetail {
       price: snapshot['price'],
       quantity: snapshot['quantity'],
       food_status: snapshot['food_status'],
+      chef_bar_status: snapshot['chef_bar_status'],
       food_id: snapshot['food_id'],
       category_id: snapshot['category_id'],
       category_code: snapshot['category_code'],

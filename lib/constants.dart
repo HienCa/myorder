@@ -227,13 +227,16 @@ const textStyleSecondBold = TextStyle(
     color: tableemptyColor, fontSize: 16, fontWeight: FontWeight.bold);
 
 const textStyleSeccess =
-    TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold);
+    TextStyle(color: colorSuccess, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStyleMaking = TextStyle(
     color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStyleCancel = TextStyle(
-    color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
+    color: colorCancel, fontSize: 14, fontWeight: FontWeight.bold);
+
+const textStyleCooking = TextStyle(
+    color: colorWarning, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStylePlaceholder = TextStyle(
     color: tableemptyColor, fontSize: 14, fontWeight: FontWeight.bold);

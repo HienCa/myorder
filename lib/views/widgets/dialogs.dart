@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/textfields/text_field_number.dart';
@@ -99,7 +100,12 @@ void showCustomAlertDialogConfirm(BuildContext context, String title,
                 ),
               ),
               InkWell(
-                onTap: () async => {await func(), Navigator.pop(context)},
+                onTap: () async => {
+                  await func(),
+                  Utils.showToast('Thêm món thành công!', TypeToast.SUCCESS,
+                      toastGravity: ToastGravity.CENTER),
+                  Navigator.pop(context)
+                },
                 child: Expanded(
                   child: Container(
                     height: 50,
@@ -150,7 +156,8 @@ void showCustomAlertDialogConfirmOrder(
                 placeholder: 'Nhập số lượng...',
                 isReadOnly: false,
                 min: 1,
-                max: max, isRequire: true,
+                max: max,
+                isRequire: true,
               )
             ],
           ),
@@ -176,7 +183,21 @@ void showCustomAlertDialogConfirmOrder(
                 ),
               ),
               InkWell(
-                onTap: () async => {await func(), Navigator.pop(context)},
+                onTap: () async => {
+                  if ((int.tryParse(textEditController.text) ?? 0) > 0)
+                    {
+                      await func(),
+                      Utils.showToast('Đặt bàn thành công!', TypeToast.SUCCESS,
+                          toastGravity: ToastGravity.CENTER),
+                      Navigator.pop(context)
+                    }
+                  else
+                    {
+                      Utils.showToast(
+                          'Vui lòng nhập số lượng khách!', TypeToast.ERROR,
+                          toastGravity: ToastGravity.CENTER)
+                    },
+                },
                 child: Expanded(
                   child: Container(
                     height: 50,

@@ -37,7 +37,6 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
   CategoryController categoryController = Get.put(CategoryController());
   OrderController orderController = Get.put(OrderController());
 
-
   String keySearch = "";
   @override
   void initState() {
@@ -308,7 +307,8 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                   subtitle: const SizedBox(
                                     child: Row(
                                       children: [
-                                        Icon(Icons.card_giftcard, color: Color(0xFFFFA41B)),
+                                        Icon(Icons.card_giftcard,
+                                            color: Color(0xFFFFA41B)),
                                         marginRight10,
                                         Expanded(
                                           child: Text(
@@ -432,7 +432,9 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                   quantity: foodOrder.quantity!,
                                   food_status: FOOD_STATUS_IN_CHEF,
                                   food_id: foodOrder.food_id,
-                                  is_gift: false, category_id: '', category_code: foodOrder.category_code,
+                                  is_gift: false,
+                                  category_id: '',
+                                  category_code: foodOrder.category_code, chef_bar_status: CHEF_BAR_STATUS,
                                 );
 
                                 orderDetailList.add(orderDetail);
@@ -456,9 +458,10 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                       colorInformation,
                                       () async {
                                         // order theo table_id
-                                        
+
                                         orderController.createOrder(
                                             widget.table.table_id,
+                                            widget.table.name,
                                             orderDetailList,
                                             widget.isGift,
                                             context);
@@ -473,14 +476,19 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                         // order theo table_id
                                         orderController.createOrder(
                                             widget.table.table_id,
+                                            widget.table.name,
                                             orderDetailList,
                                             widget.isGift,
                                             context);
                                       },
                                     );
                             } else {
-                              orderController.createOrder(widget.table.table_id,
-                                  orderDetailList, widget.isGift, context);
+                              orderController.createOrder(
+                                  widget.table.table_id,
+                                  widget.table.name,
+                                  orderDetailList,
+                                  widget.isGift,
+                                  context);
                             }
                           },
                           child: Container(

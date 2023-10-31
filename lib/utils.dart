@@ -12,12 +12,15 @@ import 'package:myorder/models/food_order.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 import 'package:uuid/uuid.dart';
+
 enum TypeToast {
   SUCCESS,
   ERROR,
   WARNING,
   INFO,
+  NORMAL,
 }
+
 //Các phương phức hay dùng
 class Utils {
   static bool isShowingFlushbar = false;
@@ -185,9 +188,9 @@ class Utils {
     return false;
   }
 
-  static bool isAnyFoodInChef(List<OrderDetail> foods) {
+  static bool isAnyFoodCooking(List<OrderDetail> foods) {
     for (var food in foods) {
-      if (food.food_status == FOOD_STATUS_IN_CHEF) {
+      if (food.food_status == FOOD_STATUS_COOKING) {
         return true;
       }
     }
@@ -442,11 +445,12 @@ class Utils {
 
   //END=================================DIALOG==================================
   //BEGIN===============================TOAST===================================
-  
+
   static void showToast(String message, TypeToast typeToast,
       {ToastGravity toastGravity = ToastGravity.BOTTOM,
       Toast toast = Toast.LENGTH_LONG}) {
     Color backgroundColor = secondColor;
+    Color textColor = secondColor;
     switch (typeToast) {
       case TypeToast.SUCCESS:
         backgroundColor = colorSuccess;
@@ -460,6 +464,10 @@ class Utils {
       case TypeToast.INFO:
         backgroundColor = colorInformation;
         break;
+      case TypeToast.NORMAL:
+        backgroundColor = colorInformation;
+        textColor = labelBlackColor;
+        break;
       default:
         backgroundColor = secondColor;
         break;
@@ -470,7 +478,7 @@ class Utils {
         gravity: toastGravity,
         timeInSecForIosWeb: 1,
         backgroundColor: backgroundColor,
-        textColor: Colors.white,
+        textColor: textColor,
         fontSize: 16.0);
   }
   //END=================================TOAST===================================
