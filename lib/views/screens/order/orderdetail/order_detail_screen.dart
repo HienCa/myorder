@@ -885,7 +885,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               },
                               child: Container(
                                   height: 50,
-                                  width: 150,
+                                  width: 170,
                                   padding: const EdgeInsets.all(10),
                                   margin: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
@@ -910,7 +910,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                         ),
                                         const Text(
                                           "Gửi BẾP/BAR",
-                                          style: textStyleWhiteBold16,
+                                          style: textStyleWhiteBold20,
                                         ),
                                       ],
                                     ),
