@@ -57,9 +57,11 @@ class _MyDialogMessageState extends State<MyDialogMessage> {
                     ),
                     marginTop20,
                     ListTile(
-                      title: Text(
-                        widget.discription.toUpperCase(),
-                        style: textStyleBlackRegular,
+                      title: Center(
+                        child: Text(
+                          widget.discription,
+                          style: textStyleBlackRegular,
+                        ),
                       ),
                     ),
                     marginTop20,

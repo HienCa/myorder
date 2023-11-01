@@ -177,6 +177,31 @@ class Utils {
     return formattedNumber;
   }
 
+  static bool isCheckedAll(List<OrderDetail> foods) {
+    for (var food in foods) {
+      print(food.food!.name);
+      print(food.isSelected);
+
+      if (food.isSelected == false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static void checkAll(List<OrderDetail> foods) {
+    for (var food in foods) {
+      food.isSelected = true;
+    }
+  }
+
+  static void unCheckAll(List<OrderDetail> foods) {
+    for (var food in foods) {
+      food.isSelected = false;
+      print(food.food!.name);
+    }
+  }
+
   static bool isAnyFoodSelected(List<FoodOrder> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {

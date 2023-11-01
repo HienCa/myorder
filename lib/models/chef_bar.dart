@@ -6,7 +6,7 @@ class ChefBar {
   String chef_bar_id;
   String table_name;
   Timestamp create_at;
-
+  // bool isSelected = false;
   ChefBar({
     required this.chef_bar_id,
     required this.table_name,

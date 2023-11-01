@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
+import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/views/screens/managements/chef_bar/chef_screen.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
@@ -21,6 +22,7 @@ class _ManagementChefBarOtherPageState
   ChefBarOtherController chefBarOtherController =
       Get.put(ChefBarOtherController());
   var keySearch = "";
+  List<OrderDetail> orderDetailArray = [];
   @override
   void initState() {
     super.initState();
@@ -144,7 +146,8 @@ class _ManagementChefBarOtherPageState
                                                   ManagementChefDetailPagePage(
                                                     chefBar:
                                                         chefBarOtherController
-                                                            .chefs[i],
+                                                            .chefs[i]
+                                                            ,
                                                   )))
                                     },
                                     child: Container(
@@ -223,7 +226,8 @@ class _ManagementChefBarOtherPageState
                                                   ManagementChefDetailPagePage(
                                                     chefBar:
                                                         chefBarOtherController
-                                                            .bars[i],
+                                                            .bars[i]
+                                                            ,
                                                   )))
                                     },
                                     child: Container(
@@ -303,7 +307,8 @@ class _ManagementChefBarOtherPageState
                                                   ManagementChefDetailPagePage(
                                                     chefBar:
                                                         chefBarOtherController
-                                                            .others[i],
+                                                            .others[i]
+                                                          ,
                                                   )))
                                     },
                                     child: Container(

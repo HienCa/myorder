@@ -118,7 +118,6 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                                   MaterialPageRoute(
                                       builder: (context) => FoodDetailPage(
                                           food: foodController.foods[index])));
-                              print('ssssssssssssssssssssssssssssssss$result');
                               if (result == 'success') {
                                 Utils.showStylishDialog(
                                     context,
