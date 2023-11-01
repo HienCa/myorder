@@ -822,10 +822,14 @@ class OrderController extends GetxController {
 
           //Thông báo cho bếp rằng khách yêu cầu dừng chế biến
           //Hiện tại chỉ có món ăn cần chế biến
-          if (orderDetail.category_code == CATEGORY_FOOD) {
-            //MÓN ĂN
-            orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
-          }
+          // if (orderDetail.category_code == CATEGORY_FOOD) {
+          //   //MÓN ĂN
+          //   orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
+          // }else if (orderDetail.category_code == CATEGORY_OTHER) {
+          //   //MÓN KHÁC
+          //   orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
+          // }
+          orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
 
           await firestore
               .collection('orders')
@@ -842,6 +846,7 @@ class OrderController extends GetxController {
         await firestore.collection('tables').doc(table_id).update({
           "status": TABLE_STATUS_SERVING, // đang phục vụ
         });
+
 
         //GỬI BẾP BAR
         sendToChefBar(id, table_name, orderDetailList);
@@ -1432,10 +1437,10 @@ class OrderController extends GetxController {
     try {
       if (order_id != "") {
         for (OrderDetail item in orderDetails) {
-          if (item.food_status == FOOD_STATUS_IN_CHEF) {
+          // if (item.food_status == FOOD_STATUS_IN_CHEF) {
             ChefBar chefBarItem = ChefBar(
               chef_bar_id: order_id,
-              table_name: table_name,
+              table_name: table_name, create_at: Timestamp.now(),
             );
 
             //Thông tin food
@@ -1491,7 +1496,7 @@ class OrderController extends GetxController {
                 }
               }
             }
-          }
+          // }
         }
       }
     } catch (e) {

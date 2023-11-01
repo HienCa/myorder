@@ -261,7 +261,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                     foodController
                                                             .foodsToOrder[index]
                                                             .image ??
-                                                        "assets/images/lykem.jpg",
+                                                        defaultFoodImageString,
                                                     width: 50,
                                                     height: 50,
                                                     fit: BoxFit.cover,
@@ -270,12 +270,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                               : ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(5),
-                                                  child: Image.asset(
-                                                    "assets/images/lykem.jpg",
-                                                    width: 50,
-                                                    height: 50,
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                                  child: defaultFoodImage
                                                 ),
                                         ],
                                       ),

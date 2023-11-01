@@ -232,11 +232,11 @@ const textStyleSeccess =
 const textStyleMaking = TextStyle(
     color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
 
-const textStyleCancel = TextStyle(
-    color: colorCancel, fontSize: 14, fontWeight: FontWeight.bold);
+const textStyleCancel =
+    TextStyle(color: colorCancel, fontSize: 14, fontWeight: FontWeight.bold);
 
-const textStyleCooking = TextStyle(
-    color: colorWarning, fontSize: 14, fontWeight: FontWeight.bold);
+const textStyleCooking =
+    TextStyle(color: colorWarning, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStylePlaceholder = TextStyle(
     color: tableemptyColor, fontSize: 14, fontWeight: FontWeight.bold);
@@ -313,11 +313,12 @@ var alertImageError = Image.asset("assets/images/alert/3.0x/icon_error.png");
 var alertImageInfo = Image.asset("assets/images/alert/3.0x/icon_info.png");
 
 var defaultFoodImage = Image.asset(
-  "assets/images/lykem.jpg",
+  "assets/images/logofunnyfood.jpg",
   width: 50,
   height: 50,
   fit: BoxFit.cover,
 );
+const defaultFoodImageString = "assets/images/logofunnyfood.jpg";
 
 //TABLE
 var tableImageServing =

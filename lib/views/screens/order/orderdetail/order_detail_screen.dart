@@ -368,8 +368,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                             .orderDetail
                                                             .order_details[
                                                                 index]
-                                                            .food !=
-                                                        null
+                                                            .food!.image !=
+                                                        ''
                                                     ? ClipRRect(
                                                         borderRadius:
                                                             BorderRadius
