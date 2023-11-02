@@ -36,9 +36,33 @@ class _MergeTablePageState extends State<MergeTablePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Gộp bàn vào ${widget.order.table!.name}",
-              style: textStyleAppBar20),
-          backgroundColor: secondColor,
+          leading: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: const Icon(
+              Icons.arrow_back_ios,
+              color: secondColor,
+            ),
+          ),
+          title: Center(
+              child: Text(
+            "Gộp Bàn Vào ${widget.order.table!.name}",
+            style: const TextStyle(color: secondColor),
+          )),
+          actions: [
+            Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: const Padding(
+                padding: EdgeInsets.all(10),
+                child: Icon(
+                  Icons.add_circle_outline,
+                  color: transparentColor,
+                ),
+              ),
+            ),
+          ],
+          backgroundColor: primaryColor,
         ),
         body: Obx(() {
           return SingleChildScrollView(

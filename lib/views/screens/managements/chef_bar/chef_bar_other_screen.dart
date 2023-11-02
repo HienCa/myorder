@@ -6,7 +6,9 @@ import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/views/screens/managements/chef_bar/bar_screen.dart';
 import 'package:myorder/views/screens/managements/chef_bar/chef_screen.dart';
+import 'package:myorder/views/screens/managements/chef_bar/other_screen.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
 class ManagementChefBarOtherPage extends StatefulWidget {
@@ -22,7 +24,11 @@ class _ManagementChefBarOtherPageState
   ChefBarOtherController chefBarOtherController =
       Get.put(ChefBarOtherController());
   var keySearch = "";
+  // var countChef = 0;
+  // var countBar = 0;
+  // var countOther = 0;
   List<OrderDetail> orderDetailArray = [];
+
   @override
   void initState() {
     super.initState();
@@ -47,8 +53,8 @@ class _ManagementChefBarOtherPageState
                 color: secondColor,
               ),
             ),
-            bottom: const TabBar(
-              indicator: BoxDecoration(
+            bottom: TabBar(
+              indicator: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
                     color: backgroundColor,
@@ -58,13 +64,13 @@ class _ManagementChefBarOtherPageState
               ),
               tabs: [
                 Tab(
-                  text: "KHU BẾP",
+                  text: "KHU BẾP (${chefBarOtherController.chefs.length})",
                 ),
                 Tab(
-                  text: "QUẦY BAR",
+                  text: "QUẦY BAR (${chefBarOtherController.bars.length})",
                 ),
                 Tab(
-                  text: "KHÁC",
+                  text: "KHÁC (${chefBarOtherController.others.length})",
                 ),
               ],
             ),
@@ -136,34 +142,59 @@ class _ManagementChefBarOtherPageState
                                 minSpacing: 10,
                                 children: List.generate(
                                     chefBarOtherController.chefs.length,
-                                    (index) => index).map((i) {
-                                  return InkWell(
-                                    onTap: () => {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ManagementChefDetailPagePage(
-                                                    chefBar:
-                                                        chefBarOtherController
-                                                            .chefs[i]
-                                                            ,
-                                                  )))
-                                    },
-                                    child: Container(
-                                      height: 100,
-                                      alignment: const Alignment(0, 0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: activeColor),
-                                      child: Text(
-                                          chefBarOtherController
-                                              .chefs[i].table_name,
-                                          style: textStyleWhiteBold20),
-                                    ),
-                                  );
-                                }).toList()),
+                                    (index) => index).map(
+                                  (i) {
+                                    return InkWell(
+                                      onTap: () => {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ManagementChefDetailPage(
+                                                      chefBar:
+                                                          chefBarOtherController
+                                                              .chefs[i],
+                                                    )))
+                                      },
+                                      child: Stack(children: [
+                                        Container(
+                                          height: 100,
+                                          alignment: const Alignment(0, 0),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: activeColor),
+                                          child: Text(
+                                              chefBarOtherController
+                                                  .chefs[i].table_name,
+                                              style: textStyleWhiteBold30),
+                                        ),
+                                        Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(10),
+                                                    bottomLeft:
+                                                        Radius.circular(10),
+                                                  ),
+                                                  color: colorCancel),
+                                              height: 30,
+                                              width: 40,
+                                              child: Center(
+                                                child: Text(
+                                                    "${chefBarOtherController.chefs[i].quantity}",
+                                                    style:
+                                                        textStyleWhiteBold20),
+                                              ),
+                                            ))
+                                      ]),
+                                    );
+                                  },
+                                ).toList()),
                           ),
                         ],
                       )),
@@ -223,25 +254,45 @@ class _ManagementChefBarOtherPageState
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ManagementChefDetailPagePage(
+                                                  ManagementBarDetailPage(
                                                     chefBar:
                                                         chefBarOtherController
-                                                            .bars[i]
-                                                            ,
+                                                            .bars[i],
                                                   )))
                                     },
-                                    child: Container(
-                                      height: 100,
-                                      alignment: const Alignment(0, 0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: activeColor),
-                                      child: Text(
-                                          chefBarOtherController
-                                              .bars[i].table_name,
-                                          style: textStyleWhiteBold20),
-                                    ),
+                                    child: Stack(children: [
+                                      Container(
+                                        height: 100,
+                                        alignment: const Alignment(0, 0),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: activeColor),
+                                        child: Text(
+                                            chefBarOtherController
+                                                .bars[i].table_name,
+                                            style: textStyleWhiteBold30),
+                                      ),
+                                      Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(10),
+                                                  bottomLeft:
+                                                      Radius.circular(10),
+                                                ),
+                                                color: colorCancel),
+                                            height: 30,
+                                            width: 40,
+                                            child: Center(
+                                              child: Text(
+                                                  "${chefBarOtherController.bars[i].quantity}",
+                                                  style: textStyleWhiteBold20),
+                                            ),
+                                          ))
+                                    ]),
                                   );
                                 }).toList()),
                           ),
@@ -304,25 +355,45 @@ class _ManagementChefBarOtherPageState
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ManagementChefDetailPagePage(
+                                                  ManagementOtherDetailPage(
                                                     chefBar:
                                                         chefBarOtherController
-                                                            .others[i]
-                                                          ,
+                                                            .others[i],
                                                   )))
                                     },
-                                    child: Container(
-                                      height: 100,
-                                      alignment: const Alignment(0, 0),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: activeColor),
-                                      child: Text(
-                                          chefBarOtherController
-                                              .others[i].table_name,
-                                          style: textStyleWhiteBold20),
-                                    ),
+                                    child: Stack(children: [
+                                      Container(
+                                        height: 100,
+                                        alignment: const Alignment(0, 0),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: activeColor),
+                                        child: Text(
+                                            chefBarOtherController
+                                                .others[i].table_name,
+                                            style: textStyleWhiteBold30),
+                                      ),
+                                      Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(10),
+                                                  bottomLeft:
+                                                      Radius.circular(10),
+                                                ),
+                                                color: colorCancel),
+                                            height: 30,
+                                            width: 40,
+                                            child: Center(
+                                              child: Text(
+                                                  "${chefBarOtherController.others[i].quantity}",
+                                                  style: textStyleWhiteBold20),
+                                            ),
+                                          ))
+                                    ]),
                                   );
                                 }).toList()),
                           ),

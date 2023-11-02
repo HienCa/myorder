@@ -8,29 +8,31 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_all_status_food_dialog.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_confirm.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
-class ManagementChefDetailPagePage extends StatefulWidget {
+class ManagementChefDetailPage extends StatefulWidget {
   final ChefBar chefBar;
-  const ManagementChefDetailPagePage({super.key, required this.chefBar});
+  const ManagementChefDetailPage({super.key, required this.chefBar});
 
   @override
-  State<ManagementChefDetailPagePage> createState() =>
-      _ManagementChefPagePageState();
+  State<ManagementChefDetailPage> createState() =>
+      _ManagementChefPageState();
 }
 
-class _ManagementChefPagePageState extends State<ManagementChefDetailPagePage> {
+class _ManagementChefPageState extends State<ManagementChefDetailPage> {
   ChefBarOtherController chefBarOtherController =
       Get.put(ChefBarOtherController());
   bool isCheckAll = false;
   @override
   void initState() {
     super.initState();
-    chefBarOtherController.getCheftByOrder(widget.chefBar.chef_bar_id, '');
+    chefBarOtherController.getChefByOrder(widget.chefBar.chef_bar_id, '');
     Utils.unCheckAll(chefBarOtherController.orderDetailOfChef.order_details);
-    isCheckAll = Utils.isCheckedAll(
-        chefBarOtherController.orderDetailOfChef.order_details);
+
+    // isCheckAll = Utils.isCheckedAll(
+    //     chefBarOtherController.orderDetailOfChef.order_details);
   }
 
   @override
@@ -49,7 +51,7 @@ class _ManagementChefPagePageState extends State<ManagementChefDetailPagePage> {
         ),
         title: Center(
             child: Text(
-          "BẾP - BÀN ${widget.chefBar.table_name}",
+          "KHU BẾP - BÀN ${widget.chefBar.table_name}",
           style: const TextStyle(color: secondColor),
         )),
         actions: [
@@ -83,7 +85,7 @@ class _ManagementChefPagePageState extends State<ManagementChefDetailPagePage> {
                 border: Border.all(width: 1, color: borderColorPrimary)),
             child: TextField(
               onChanged: (value) {
-                chefBarOtherController.getCheftByOrder(
+                chefBarOtherController.getChefByOrder(
                     widget.chefBar.chef_bar_id, value);
               },
               style: const TextStyle(color: borderColorPrimary),
@@ -132,43 +134,45 @@ class _ManagementChefPagePageState extends State<ManagementChefDetailPagePage> {
                         activeColor: primaryColor,
                       ),
                     ),
-                    const Text("ALL", style: textStyleLabel20),
+                    const Text("TẤT CẢ", style: textStyleLabel16),
                   ],
                 ),
               ),
             ),
-            trailing: isCheckAll
+            trailing: Utils.isAnySelected(
+                    chefBarOtherController.orderDetailOfChef.order_details)
                 ? InkWell(
                     onTap: () async {
                       final result = await showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return const MyDialogMessage(
-                              title: 'XÁC NHẬN CHẾ BIẾN',
-                              discription: 'Bạn muốn chế biến tất cả?');
+                          return ChangeAllStatusFoodConfirmDialog(
+                              chefBarId: widget.chefBar.chef_bar_id,
+                              orderDetailList: chefBarOtherController
+                                  .orderDetailOfChef.order_details);
                         },
                       );
-                      if (result != null) {
+                      if (result == 'success') {
                         setState(() {
                           Utils.showStylishDialog(
                               context,
                               'THÀNH CÔNG',
-                              'Đã xác nhận chế biến món.',
+                              'Cập nhật trạng thái món thành công.',
                               StylishDialogType.SUCCESS);
                         });
                       }
                     },
                     child: Container(
                         height: 40,
-                        width: 150,
+                        width: 170,
                         decoration: BoxDecoration(
-                          color: colorSuccess,
+                          color: colorWarning,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            "CHẾ BIẾN",
-                            style: textStyleWhiteBold20,
+                            "ĐỔI TRẠNG THÁI (${Utils.counterOrderDetailSelected(chefBarOtherController.orderDetailOfChef.order_details)})",
+                            style: textStyleWhiteBold16,
                           ),
                         )),
                   )
@@ -294,14 +298,21 @@ class _ManagementChefPagePageState extends State<ManagementChefDetailPagePage> {
                                       .order_details[index].food!.name,
                                   style: textStyleFoodNameBold16),
                             ),
-                            subtitle: Text(
-                              "$FOOD_STATUS_IN_CHEFT_STRING x ${chefBarOtherController.orderDetailOfChef.order_details[index].quantity}",
-                              style: textStyleMaking,
-                            ),
+                            subtitle: chefBarOtherController.orderDetailOfChef
+                                        .order_details[index].food_status ==
+                                    FOOD_STATUS_IN_CHEF
+                                ? Text(
+                                    "$FOOD_STATUS_IN_CHEF_STRING x ${chefBarOtherController.orderDetailOfChef.order_details[index].quantity}",
+                                    style: textStyleMaking,
+                                  )
+                                : Text(
+                                    "$FOOD_STATUS_COOKING_STRING x ${chefBarOtherController.orderDetailOfChef.order_details[index].quantity}",
+                                    style: textStyleCooking,
+                                  ),
                             trailing: chefBarOtherController.orderDetailOfChef
                                     .order_details[index].isSelected
                                 ? SizedBox(
-                                    width: 80,
+                                    width: 30,
                                     child: Row(
                                       children: [
                                         InkWell(
@@ -311,9 +322,9 @@ class _ManagementChefPagePageState extends State<ManagementChefDetailPagePage> {
                                               builder: (BuildContext context) {
                                                 return const MyDialogMessage(
                                                     title:
-                                                        'XÁC NHẬN KHÔNG CHẾ BIẾN',
+                                                        'KHÔNG CHẾ BIẾN',
                                                     discription:
-                                                        'Không chế biến món này?');
+                                                        'Bạn chắc chắn không muốnchế biến món này?');
                                               },
                                             );
                                             if (result != null) {
@@ -341,43 +352,50 @@ class _ManagementChefPagePageState extends State<ManagementChefDetailPagePage> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 20),
-                                        InkWell(
-                                          onTap: () async {
-                                            final result = await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const MyDialogMessage(
-                                                    title: 'XÁC NHẬN CHẾ BIẾN',
-                                                    discription:
-                                                        'Bạn muốn chế biến món này?');
-                                              },
-                                            );
-                                            if (result != null) {
-                                              setState(() {
-                                                Utils.showStylishDialog(
-                                                    context,
-                                                    'THÀNH CÔNG',
-                                                    'Đã xác nhận chế biến món này.',
-                                                    StylishDialogType.SUCCESS);
-                                              });
-                                            }
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: colorSuccess,
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            height: 30,
-                                            width: 30,
-                                            child: const Align(
-                                              alignment: Alignment.center,
-                                              child: Icon(Icons.check,
-                                                  color: secondColor),
-                                            ),
-                                          ),
-                                        ),
+                                        // const SizedBox(width: 20),
+                                        // InkWell(
+                                        //   onTap: () async {
+                                        //     final result = await showDialog(
+                                        //       context: context,
+                                        //       builder: (BuildContext context) {
+                                        //         return const MyDialogMessage(
+                                        //             title: 'XÁC NHẬN CHẾ BIẾN',
+                                        //             discription:
+                                        //                 'Bạn muốn chế biến món này?');
+                                        //       },
+                                        //     );
+                                        //     setState(() {
+                                        //       Utils.unCheckAll(
+                                        //           chefBarOtherController
+                                        //               .orderDetailOfChef
+                                        //               .order_details);
+                                        //       isCheckAll = false;
+                                        //     });
+                                        //     if (result != null) {
+                                        //       setState(() {
+                                        //         Utils.showStylishDialog(
+                                        //             context,
+                                        //             'THÀNH CÔNG',
+                                        //             'Đã xác nhận chế biến món này.',
+                                        //             StylishDialogType.SUCCESS);
+                                        //       });
+                                        //     }
+                                        //   },
+                                        //   child: Container(
+                                        //     decoration: BoxDecoration(
+                                        //       color: colorSuccess,
+                                        //       borderRadius:
+                                        //           BorderRadius.circular(5),
+                                        //     ),
+                                        //     height: 30,
+                                        //     width: 30,
+                                        //     child: const Align(
+                                        //       alignment: Alignment.center,
+                                        //       child: Icon(Icons.check,
+                                        //           color: secondColor),
+                                        //     ),
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   )

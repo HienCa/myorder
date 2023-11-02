@@ -270,7 +270,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                                 widget.bill.order_details[index].food_status ==
                                         FOOD_STATUS_IN_CHEF
                                     ? Text(
-                                        FOOD_STATUS_IN_CHEFT_STRING,
+                                        FOOD_STATUS_IN_CHEF_STRING,
                                         style: textStyleMaking,
                                       )
                                     : widget.bill.order_details[index]

@@ -212,6 +212,16 @@ class Utils {
     // Không có đối tượng nào được chọn
     return false;
   }
+  static bool isAnySelected(List<dynamic> foods) {
+    for (var food in foods) {
+      if (food.isSelected == true) {
+        // Có ít nhất một đối tượng đã được chọn
+        return true;
+      }
+    }
+    // Không có đối tượng nào được chọn
+    return false;
+  }
 
   static bool isAnyFoodCooking(List<OrderDetail> foods) {
     for (var food in foods) {
@@ -264,29 +274,7 @@ class Utils {
     // Không có sự thay đổi
     return false;
   }
-  // static bool isAnyOrderDetailChange(
-  //     List<OrderDetail> orderDetailsOrigin, List<OrderDetail> orderDetails) {
-  //   if (orderDetailsOrigin.length != orderDetails.length) {
-  //     // Nếu số lượng phần tử không giống nhau, có thay đổi
-  //     return true;
-  //   }
-
-  //   // Sắp xếp cả hai danh sách theo order_detail_id để so sánh từng cặp phần tử
-  //   orderDetailsOrigin
-  //       .sort((a, b) => a.order_detail_id.compareTo(b.order_detail_id));
-  //   orderDetails.sort((a, b) => a.order_detail_id.compareTo(b.order_detail_id));
-
-  //   for (int i = 0; i < orderDetailsOrigin.length; i++) {
-  //     if (orderDetailsOrigin[i].quantity != orderDetails[i].quantity) {
-  //       // Nếu order_detail_id hoặc quantity có sự khác biệt, có thay đổi
-  //       return true;
-  //     }
-  //   }
-
-  //   // Không có sự thay đổi
-  //   return false;
-  // }
-
+  
   static bool isAnyFoodSelected2(List<OrderDetail> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {

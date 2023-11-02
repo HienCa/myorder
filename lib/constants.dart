@@ -176,6 +176,9 @@ const textStyleTemporaryPriceActive14 = TextStyle(
 const textStyleWhiteBold20 =
     TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
 
+const textStyleWhiteBold30 =
+    TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold);
+
 const textStylePriceBold16 =
     TextStyle(color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold);
 
@@ -233,7 +236,7 @@ const textStyleMaking = TextStyle(
     color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStyleCancel =
-    TextStyle(color: colorCancel, fontSize: 14, fontWeight: FontWeight.bold);
+    TextStyle(color: colorCancel, fontSize: 16, fontWeight: FontWeight.bold);
 
 const textStyleCooking =
     TextStyle(color: colorWarning, fontSize: 14, fontWeight: FontWeight.bold);

@@ -1,25 +1,25 @@
 // ignore_for_file: non_constant_identifier_names, avoid_print, prefer_interpolation_to_compose_strings
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
+import 'package:myorder/models/order_detail.dart';
 
-class MyDialogMessage extends StatefulWidget {
-  final String title;
-  final String discription;
-  final String? note;
-  final VoidCallback? func;
-  const MyDialogMessage({
-    Key? key,
-    required this.title,
-    required this.discription,
-    this.func, this.note,
+class ChangeOneStatusFoodConfirmDialog extends StatefulWidget {
+  final String chefBarId;
+  final List<OrderDetail> orderDetailList;
+  const ChangeOneStatusFoodConfirmDialog({
+    Key? key, required this.chefBarId, required this.orderDetailList,
   }) : super(key: key);
 
   @override
-  State<MyDialogMessage> createState() => _MyDialogMessageState();
+  State<ChangeOneStatusFoodConfirmDialog> createState() => _ChangeOneStatusFoodConfirmDialogState();
 }
 
-class _MyDialogMessageState extends State<MyDialogMessage> {
+class _ChangeOneStatusFoodConfirmDialogState extends State<ChangeOneStatusFoodConfirmDialog> {
+  ChefBarOtherController chefBarOtherController =
+      Get.put(ChefBarOtherController());
   @override
   void dispose() {
     super.dispose();
@@ -50,23 +50,23 @@ class _MyDialogMessageState extends State<MyDialogMessage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
+                    const Center(
                       child: Text(
-                        widget.title.toUpperCase(),
+                        'TRẠNG THÁI MÓN',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
-                    ListTile(
+                    const ListTile(
                       title: Center(
                         child: Text(
-                          widget.discription,
+                          'Bạn muốn cập nhật các món đã chọn?',
                           style: textStyleBlackRegular,
                         ),
                       ),
                       subtitle: Center(
                         child: Text(
-                          widget.note ?? '',
+                          "\n\nCHỜ CHẾ BIẾN  ->  ĐANG CHẾ BIẾN.\nĐANG CHẾ BIẾN  ->  HOÀN THÀNH.\n",
                           style: textStyleBlackRegular,
                         ),
                       ),
@@ -97,7 +97,8 @@ class _MyDialogMessageState extends State<MyDialogMessage> {
                           ),
                           InkWell(
                             onTap: () => {
-                              widget.func,
+                              chefBarOtherController.updateFoodStatus(
+                                  widget.chefBarId, widget.orderDetailList),
                               Navigator.pop(context, 'success')
                             },
                             child: Container(
