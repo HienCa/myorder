@@ -118,7 +118,7 @@ class _ChangeCancelFoodConfirmDialogState
                           ),
                           InkWell(
                             onTap: () => {
-                              chefBarOtherController.updateFoodStatus(
+                              chefBarOtherController.updateFoodStatusCancel(
                                   widget.chefBarId, widget.orderDetailList),
                               Navigator.pop(context, 'success')
                             },

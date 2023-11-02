@@ -592,6 +592,7 @@ class ChefBarOtherController extends GetxController {
                   .doc(item.order_detail_id)
                   .update({
                 "food_status": FOOD_STATUS_CANCEL,
+                "chef_bar_status": CHEF_BAR_STATUS_DEACTIVE,
               });
 
               print(

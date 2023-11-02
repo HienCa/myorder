@@ -197,8 +197,6 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                 child: Text('Error: ${snapshot.error}'),
               );
             } else {
-              // List<String> data = snapshot.data as List<String>;
-              print("snapshot.data${snapshot.data}");
               // Hiển thị nhiều widget khi dữ liệu đã sẵn sàng
               return Column(
                 children: [
@@ -827,117 +825,21 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                                       .price),
                                                                   style:
                                                                       textStylePriceBlackRegular16),
-                                                              // SizedBox(
-                                                              //   width: 100,
-                                                              //   child: Row(
-                                                              //     children: [
-                                                              //       const Text("Số lượng: ",
-                                                              //           style:
-                                                              //               textStylePriceBlackRegular16),
-                                                              //       Text(
-                                                              //           "${orderController.orderDetail.order_details[index].quantity}",
-                                                              //           style:
-                                                              //               textStyleCancel),
-                                                              //     ],
-                                                              //   ),
-                                                              // ),
                                                               SizedBox(
                                                                 width: 100,
                                                                 child: Row(
                                                                   children: [
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        // if (foodController
-                                                                        //         .foodsToOrder[index]
-                                                                        //         .quantity! >
-                                                                        //     1) {
-                                                                        //   setState(() {
-                                                                        //     foodController
-                                                                        //             .foodsToOrder[index]
-                                                                        //             .quantity =
-                                                                        //         foodController
-                                                                        //                 .foodsToOrder[
-                                                                        //                     index]
-                                                                        //                 .quantity! -
-                                                                        //             1;
-                                                                        //   });
-                                                                        // }
-                                                                      },
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              iconColor,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(5),
-                                                                        ),
-                                                                        height:
-                                                                            30,
-                                                                        width:
-                                                                            30,
-                                                                        child:
-                                                                            const Align(
-                                                                          alignment:
-                                                                              Alignment.center,
-                                                                          child: Icon(
-                                                                              Icons.remove,
-                                                                              color: Colors.white),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            5),
+                                                                    const Text(
+                                                                        "Số lượng: ",
+                                                                        style:
+                                                                            textStylePriceBlackRegular16),
                                                                     Text(
                                                                         "${orderController.orderDetail.order_details[index].quantity}",
                                                                         style:
-                                                                            textStyleMaking),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            5),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        setState(
-                                                                            () {
-                                                                          // foodController
-                                                                          //         .foodsToOrder[index]
-                                                                          //         .quantity =
-                                                                          //     foodController
-                                                                          //             .foodsToOrder[
-                                                                          //                 index]
-                                                                          //             .quantity! +
-                                                                          //         1;
-                                                                        });
-                                                                      },
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              iconColor,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(5),
-                                                                        ),
-                                                                        height:
-                                                                            30,
-                                                                        width:
-                                                                            30,
-                                                                        child:
-                                                                            const Align(
-                                                                          alignment:
-                                                                              Alignment.center,
-                                                                          child: Icon(
-                                                                              Icons.add,
-                                                                              color: Colors.white),
-                                                                        ),
-                                                                      ),
-                                                                    ),
+                                                                            textStyleCancel),
                                                                   ],
                                                                 ),
-                                                              )
+                                                              ),
                                                             ],
                                                           ),
                                                         ),

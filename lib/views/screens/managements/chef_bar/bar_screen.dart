@@ -10,7 +10,6 @@ import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_all_status_food_dialog.dart';
 import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_cancel_food_dialog.dart';
-import 'package:myorder/views/widgets/dialogs/dialog_confirm.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementBarDetailPage extends StatefulWidget {
@@ -260,204 +259,109 @@ class _ManagementBarDetailPagePageState extends State<ManagementBarDetailPage> {
                       .orderDetailOfBar.order_details.length,
                   itemBuilder: (context, index) {
                     return Container(
-                        margin: const EdgeInsets.only(
-                            left: 0, right: 0, top: 0, bottom: 5),
-                        decoration: chefBarOtherController.orderDetailOfBar
-                                    .order_details[index].isSelected ==
-                                true
-                            ? BoxDecoration(
-                                color: const Color(0xFF40BAD5).withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    spreadRadius: 2,
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                              )
-                            : const BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 0.1, color: borderColor)),
-                              ),
-                        child: ListTile(
-                            selectedColor: primaryColor,
-                            leading: Theme(
-                              data: ThemeData(
-                                  unselectedWidgetColor: primaryColor),
-                              child: SizedBox(
-                                width: 100,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Checkbox(
-                                      value: chefBarOtherController
-                                          .orderDetailOfBar
-                                          .order_details[index]
-                                          .isSelected,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          setState(() {
+                      margin: const EdgeInsets.only(
+                          left: 0, right: 0, top: 0, bottom: 5),
+                      decoration: chefBarOtherController.orderDetailOfBar
+                                  .order_details[index].isSelected ==
+                              true
+                          ? BoxDecoration(
+                              color: const Color(0xFF40BAD5).withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            )
+                          : const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 0.1, color: borderColor)),
+                            ),
+                      child: ListTile(
+                        selectedColor: primaryColor,
+                        leading: Theme(
+                          data: ThemeData(unselectedWidgetColor: primaryColor),
+                          child: SizedBox(
+                            width: 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Checkbox(
+                                  value: chefBarOtherController.orderDetailOfBar
+                                      .order_details[index].isSelected,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      setState(() {
+                                        chefBarOtherController
+                                            .orderDetailOfBar
+                                            .order_details[index]
+                                            .isSelected = value ?? false;
+
+                                        isCheckAll = Utils.isCheckedAll(
                                             chefBarOtherController
                                                 .orderDetailOfBar
-                                                .order_details[index]
-                                                .isSelected = value ?? false;
+                                                .order_details);
 
-                                            isCheckAll = Utils.isCheckedAll(
-                                                chefBarOtherController
-                                                    .orderDetailOfBar
-                                                    .order_details);
-
-                                            print(
-                                                "isChecked - $value: ${chefBarOtherController.orderDetailOfBar.order_details[index].food!.name}");
-                                          });
-                                        });
-                                      },
-                                      activeColor: primaryColor,
-                                    ),
-                                    chefBarOtherController
-                                                .orderDetailOfBar
-                                                .order_details[index]
-                                                .food!
-                                                .image !=
-                                            ''
-                                        ? ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            child: Image.network(
-                                              chefBarOtherController
-                                                  .orderDetailOfBar
-                                                  .order_details[index]
-                                                  .food!
-                                                  .image,
-                                              width: 50,
-                                              height: 50,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          )
-                                        : ClipRRect(
-                                            child:
-                                                defaultFoodImage, // ảnh trong constants
-                                          ),
-                                  ],
+                                        print(
+                                            "isChecked - $value: ${chefBarOtherController.orderDetailOfBar.order_details[index].food!.name}");
+                                      });
+                                    });
+                                  },
+                                  activeColor: primaryColor,
                                 ),
-                              ),
-                            ),
-                            title: Marquee(
-                              direction: Axis.horizontal,
-                              textDirection: TextDirection.ltr,
-                              animationDuration: const Duration(seconds: 1),
-                              backDuration: const Duration(milliseconds: 4000),
-                              pauseDuration: const Duration(milliseconds: 1000),
-                              directionMarguee: DirectionMarguee.TwoDirection,
-                              child: Text(
-                                  chefBarOtherController.orderDetailOfBar
-                                      .order_details[index].food!.name,
-                                  style: textStyleFoodNameBold16),
-                            ),
-                            subtitle: chefBarOtherController.orderDetailOfBar
-                                        .order_details[index].food_status ==
-                                    FOOD_STATUS_IN_CHEF
-                                ? Text(
-                                    "$FOOD_STATUS_IN_CHEF_STRING x ${chefBarOtherController.orderDetailOfBar.order_details[index].quantity}",
-                                    style: textStyleMaking,
-                                  )
-                                : Text(
-                                    "$FOOD_STATUS_COOKING_STRING x ${chefBarOtherController.orderDetailOfBar.order_details[index].quantity}",
-                                    style: textStyleCooking,
-                                  ),
-                            trailing: chefBarOtherController.orderDetailOfBar
-                                    .order_details[index].isSelected
-                                ? SizedBox(
-                                    width: 30,
-                                    child: Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () async {
-                                            final result = await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const MyDialogMessage(
-                                                    title: 'KHÔNG CHẾ BIẾN',
-                                                    discription:
-                                                        'Bạn chắc chắn không muốnchế biến món này?');
-                                              },
-                                            );
-                                            if (result != null) {
-                                              setState(() {
-                                                Utils.showStylishDialog(
-                                                    context,
-                                                    'THÀNH CÔNG',
-                                                    'Đã xác nhận không chế biến món này.',
-                                                    StylishDialogType.SUCCESS);
-                                              });
-                                            }
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: colorCancel,
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            height: 30,
-                                            width: 30,
-                                            child: const Align(
-                                              alignment: Alignment.center,
-                                              child: Icon(Icons.close,
-                                                  color: secondColor),
-                                            ),
-                                          ),
+                                chefBarOtherController.orderDetailOfBar
+                                            .order_details[index].food!.image !=
+                                        ''
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.network(
+                                          chefBarOtherController
+                                              .orderDetailOfBar
+                                              .order_details[index]
+                                              .food!
+                                              .image,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
                                         ),
-                                        // const SizedBox(width: 20),
-                                        // InkWell(
-                                        //   onTap: () async {
-                                        //     final result = await showDialog(
-                                        //       context: context,
-                                        //       builder: (BuildContext context) {
-                                        //         return const MyDialogMessage(
-                                        //             title: 'XÁC NHẬN CHẾ BIẾN',
-                                        //             discription:
-                                        //                 'Bạn muốn chế biến món này?');
-                                        //       },
-                                        //     );
-                                        //     setState(() {
-                                        //       Utils.unCheckAll(
-                                        //           chefBarOtherController
-                                        //               .orderDetailOfBar
-                                        //               .order_details);
-                                        //       isCheckAll = false;
-                                        //     });
-                                        //     if (result != null) {
-                                        //       setState(() {
-                                        //         Utils.showStylishDialog(
-                                        //             context,
-                                        //             'THÀNH CÔNG',
-                                        //             'Đã xác nhận chế biến món này.',
-                                        //             StylishDialogType.SUCCESS);
-                                        //       });
-                                        //     }
-                                        //   },
-                                        //   child: Container(
-                                        //     decoration: BoxDecoration(
-                                        //       color: colorSuccess,
-                                        //       borderRadius:
-                                        //           BorderRadius.circular(5),
-                                        //     ),
-                                        //     height: 30,
-                                        //     width: 30,
-                                        //     child: const Align(
-                                        //       alignment: Alignment.center,
-                                        //       child: Icon(Icons.check,
-                                        //           color: secondColor),
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                      ],
-                                    ),
-                                  )
-                                : const SizedBox()));
+                                      )
+                                    : ClipRRect(
+                                        child:
+                                            defaultFoodImage, // ảnh trong constants
+                                      ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        title: Marquee(
+                          direction: Axis.horizontal,
+                          textDirection: TextDirection.ltr,
+                          animationDuration: const Duration(seconds: 1),
+                          backDuration: const Duration(milliseconds: 4000),
+                          pauseDuration: const Duration(milliseconds: 1000),
+                          directionMarguee: DirectionMarguee.TwoDirection,
+                          child: Text(
+                              chefBarOtherController.orderDetailOfBar
+                                  .order_details[index].food!.name,
+                              style: textStyleFoodNameBold16),
+                        ),
+                        subtitle: chefBarOtherController.orderDetailOfBar
+                                    .order_details[index].food_status ==
+                                FOOD_STATUS_IN_CHEF
+                            ? Text(
+                                "$FOOD_STATUS_IN_CHEF_STRING x ${chefBarOtherController.orderDetailOfBar.order_details[index].quantity}",
+                                style: textStyleMaking,
+                              )
+                            : Text(
+                                "$FOOD_STATUS_COOKING_STRING x ${chefBarOtherController.orderDetailOfBar.order_details[index].quantity}",
+                                style: textStyleCooking,
+                              ),
+                      ),
+                    );
                   },
                 );
               }),

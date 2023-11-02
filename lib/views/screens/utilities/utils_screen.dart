@@ -111,7 +111,7 @@ class UtilsPage extends StatelessWidget {
                         },
                         child: const ListTile(
                           leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("CHEF/BAR",
+                          title: Text("BẾP/BAR",
                               style: textStyleBlackRegular),
                           trailing: Icon(Icons.arrow_forward_ios_outlined,
                               color: iconColor),
