@@ -16,7 +16,8 @@ class Food {
   int category_code;
   String unit_id;
   int temporary_percent;
-
+  bool isSelected = false;
+  
   Food({
     required this.food_id,
     required this.name,

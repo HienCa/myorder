@@ -212,6 +212,15 @@ class Utils {
     // Không có đối tượng nào được chọn
     return false;
   }
+
+  static bool isSelected(dynamic item) {
+    print(item.isSelected);
+      if (item.isSelected == true) {
+        return true;
+      }
+    return false;
+  }
+
   static bool isAnySelected(List<dynamic> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {
@@ -260,6 +269,7 @@ class Utils {
     }
     return count;
   }
+
   //Đếm số lượng orderDetail muốn thay đổi
   static int counterCancelStatusOrderDetailSelected(List<OrderDetail> foods) {
     int count = 0;
@@ -284,7 +294,7 @@ class Utils {
     // Không có sự thay đổi
     return false;
   }
-  
+
   static bool isAnyFoodSelected2(List<OrderDetail> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {

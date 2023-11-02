@@ -7,6 +7,7 @@ import 'package:myorder/views/screens/managements/chef_bar/chef_bar_other_screen
 import 'package:myorder/views/screens/managements/discounts/discounts_screen.dart';
 import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
 import 'package:myorder/views/screens/managements/foods/foods_screen.dart';
+import 'package:myorder/views/screens/managements/test/tests_screen.dart';
 import 'package:myorder/views/screens/managements/units/units_screen.dart';
 import 'package:myorder/views/screens/managements/vats/vats_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
@@ -101,6 +102,23 @@ class UtilsPage extends StatelessWidget {
                   decoration: const BoxDecoration(color: backgroundColor),
                   child: Column(
                     children: [
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManagementTestsPage()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.ad_units, color: iconColor),
+                          title: Text("TEST",
+                              style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
+                      ),
+                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
