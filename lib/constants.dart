@@ -236,10 +236,20 @@ const textStyleMaking = TextStyle(
     color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStyleCancel =
-    TextStyle(color: colorCancel, fontSize: 16, fontWeight: FontWeight.bold);
+    TextStyle(color: colorCancel, fontSize: 14, fontWeight: FontWeight.bold);
 
 const textStyleCooking =
     TextStyle(color: colorWarning, fontSize: 14, fontWeight: FontWeight.bold);
+
+
+const textStyleSeccessDialog =
+    TextStyle(color: colorSuccess, fontSize: 16, fontWeight: FontWeight.bold);
+
+const textStyleCancelDialog =
+    TextStyle(color: colorCancel, fontSize: 16, fontWeight: FontWeight.bold);
+
+const textStyleCookingDialog =
+    TextStyle(color: colorWarning, fontSize: 16, fontWeight: FontWeight.bold);
 
 const textStylePlaceholder = TextStyle(
     color: tableemptyColor, fontSize: 14, fontWeight: FontWeight.bold);

@@ -30,7 +30,6 @@ class ChefBarOtherController extends GetxController {
               print(element);
             }
             print("CÓ ${retValue.length} TRONG BẾP");
-
             return retValue;
           },
         ),
@@ -465,6 +464,10 @@ class ChefBarOtherController extends GetxController {
       if (order_id != '') {
         print(
             "=================CẬP NHẬT TRẠNG THÁI MÓN=======================");
+        print(
+            "=================$FOOD_STATUS_IN_CHEF_STRING -> $FOOD_STATUS_COOKING_STRING=======================");
+        print(
+            "=================$FOOD_STATUS_COOKING_STRING -> $FOOD_STATUS_FINISH_STRING=======================");
         //Cập nhật trạng thái món ăn theo foodStatus
 
         for (OrderDetail item in orderDetailList) {
@@ -481,7 +484,7 @@ class ChefBarOtherController extends GetxController {
               });
 
               print(
-                  "${item.food!.name}: ${item.food_status} -> $FOOD_STATUS_COOKING: FOOD_STATUS_COOKING");
+                  "${item.food!.name}: ${item.food_status}:FOOD_STATUS_IN_CHEF -> $FOOD_STATUS_COOKING: FOOD_STATUS_COOKING");
             } else if (item.food_status == FOOD_STATUS_COOKING) {
               //ĐANG CHẾ BIẾN -> HOÀN THÀNH
               await firestore
@@ -495,7 +498,104 @@ class ChefBarOtherController extends GetxController {
               });
 
               print(
-                  "${item.food!.name}: ${item.food_status} -> $FOOD_STATUS_FINISH:FOOD_STATUS_FINISH\n chef_bar_status: CHEF_BAR_STATUS_DEACTIVE");
+                  "${item.food!.name}: ${item.food_status}:FOOD_STATUS_COOKING -> $FOOD_STATUS_FINISH:FOOD_STATUS_FINISH\n chef_bar_status: CHEF_BAR_STATUS_DEACTIVE");
+            }
+            update();
+          }
+        }
+
+        //Cập nhật số lượng món còn trong bếp - bar - khác - thông báo
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+            .collection('orders')
+            .doc(order_id)
+            .collection('orderDetails')
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          List<OrderDetail> orderDetailsChef = [];
+          List<OrderDetail> orderDetailsBar = [];
+          List<OrderDetail> orderDetailsOther = [];
+
+          for (var element in querySnapshot.docs) {
+            OrderDetail orderDetail =
+                OrderDetail.fromSnap(element); // map đơn hàng chi tiết
+            //Chỉ đếm món ăn còn trong bếp
+            if (orderDetail.category_code == CATEGORY_FOOD &&
+                (orderDetail.food_status == FOOD_STATUS_IN_CHEF ||
+                    orderDetail.food_status == FOOD_STATUS_COOKING)) {
+              //BẾP
+              orderDetailsChef.add(orderDetail);
+            } else if (orderDetail.category_code == CATEGORY_DRINK &&
+                (orderDetail.food_status == FOOD_STATUS_IN_CHEF ||
+                    orderDetail.food_status == FOOD_STATUS_COOKING)) {
+              //BAR
+              orderDetailsBar.add(orderDetail);
+            } else if (orderDetail.category_code == CATEGORY_OTHER &&
+                (orderDetail.food_status == FOOD_STATUS_IN_CHEF ||
+                    orderDetail.food_status == FOOD_STATUS_COOKING)) {
+              //KHÁC
+              orderDetailsOther.add(orderDetail);
+            }
+          }
+          //Cập nhật thông tin quantity trong bep bar khác theo don hang order_id
+          //Neu khong con mon nao thi xoa
+          if (orderDetailsChef.isNotEmpty) {
+            await firestore.collection("chefs").doc(order_id).update({
+              "quantity": orderDetailsChef.length,
+            });
+          } else {
+            await firestore.collection("chefs").doc(order_id).delete();
+          }
+
+          if (orderDetailsBar.isNotEmpty) {
+            await firestore.collection("bars").doc(order_id).update({
+              "quantity": orderDetailsBar.length,
+            });
+          } else {
+            await firestore.collection("bars").doc(order_id).delete();
+          }
+
+          if (orderDetailsOther.isNotEmpty) {
+            await firestore.collection("others").doc(order_id).update({
+              "quantity": orderDetailsOther.length,
+            });
+          } else {
+            await firestore.collection("others").doc(order_id).delete();
+          }
+          update();
+        }
+      }
+    } catch (e) {
+      Utils.showToast('Cập nhật trạng thái món thất bại!', TypeToast.ERROR);
+    }
+  }
+
+  //CẬP NHẬT HỦY TRẠNG THÁI MÓN
+  updateFoodStatusCancel(
+      String order_id, List<OrderDetail> orderDetailList) async {
+    try {
+      if (order_id != '') {
+        print(
+            "=================CẬP NHẬT TRẠNG THÁI MÓN=======================");
+        print(
+            "=================$FOOD_STATUS_IN_CHEF_STRING -> $FOOD_STATUS_CANCEL_STRING=======================");
+        //Cập nhật trạng thái món ăn theo foodStatus
+
+        for (OrderDetail item in orderDetailList) {
+          if (item.isSelected) {
+            if (item.food_status == FOOD_STATUS_IN_CHEF) {
+              //CHỜ CHẾ BIẾN -> ĐANG CHẾ BIẾN
+              await firestore
+                  .collection('orders')
+                  .doc(order_id)
+                  .collection('orderDetails')
+                  .doc(item.order_detail_id)
+                  .update({
+                "food_status": FOOD_STATUS_CANCEL,
+              });
+
+              print(
+                  "${item.food!.name}: ${item.food_status}:FOOD_STATUS_IN_CHEF -> $FOOD_STATUS_CANCEL: FOOD_STATUS_CANCEL");
             }
             update();
           }

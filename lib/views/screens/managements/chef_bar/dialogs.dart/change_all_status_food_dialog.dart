@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
 import 'package:myorder/models/order_detail.dart';
@@ -57,17 +58,49 @@ class _ChangeAllStatusFoodConfirmDialogState extends State<ChangeAllStatusFoodCo
                       ),
                     ),
                     marginTop20,
-                    const ListTile(
-                      title: Center(
+                     ListTile(
+                      title: const Center(
                         child: Text(
                           'Bạn muốn cập nhật các món đã chọn?',
                           style: textStyleBlackRegular,
                         ),
                       ),
                       subtitle: Center(
-                        child: Text(
-                          "\n\nCHỜ CHẾ BIẾN  ->  ĐANG CHẾ BIẾN.\nĐANG CHẾ BIẾN  ->  HOÀN THÀNH.\n",
-                          style: textStyleBlackRegular,
+                        child: Column(
+                          children: [
+                            marginTop10,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "$FOOD_STATUS_IN_CHEF_STRING.",
+                                  style: textStyleCancelDialog,
+                                ),
+                                const Icon(Icons.arrow_right_alt,color: iconColor,),
+                                Text(
+                                  "$FOOD_STATUS_COOKING_STRING.",
+                                  style: textStyleCookingDialog,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "$FOOD_STATUS_COOKING_STRING.",
+                                  style: textStyleCookingDialog,
+                                ),
+                                const Icon(Icons.arrow_right_alt,color: iconColor,),
+                                Text(
+                                  "$FOOD_STATUS_FINISH_STRING.",
+                                  style: textStyleSeccessDialog,
+                                ),
+                              ],
+                            ),
+                            
+                          ],
                         ),
                       ),
                     ),

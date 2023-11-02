@@ -260,6 +260,16 @@ class Utils {
     }
     return count;
   }
+  //Đếm số lượng orderDetail muốn thay đổi
+  static int counterCancelStatusOrderDetailSelected(List<OrderDetail> foods) {
+    int count = 0;
+    for (var food in foods) {
+      if (food.isSelected == true && food.food_status == FOOD_STATUS_IN_CHEF) {
+        count++;
+      }
+    }
+    return count;
+  }
 
   static bool isQuantityChanged(
       List<OrderDetail> orderDetailsOrigin, OrderDetail orderDetails) {

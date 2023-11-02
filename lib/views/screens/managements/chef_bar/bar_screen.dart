@@ -9,6 +9,7 @@ import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dar
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_all_status_food_dialog.dart';
+import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_cancel_food_dialog.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_confirm.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
@@ -107,11 +108,11 @@ class _ManagementBarDetailPagePageState extends State<ManagementBarDetailPage> {
             leading: Theme(
               data: ThemeData(unselectedWidgetColor: primaryColor),
               child: SizedBox(
-                width: 200,
+                width: 360,
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 50,
+                      width: 47,
                       child: Checkbox(
                         value: isCheckAll,
                         onChanged: (bool? value) {
@@ -135,48 +136,106 @@ class _ManagementBarDetailPagePageState extends State<ManagementBarDetailPage> {
                       ),
                     ),
                     const Text("TẤT CẢ", style: textStyleLabel16),
+                    Utils.isAnySelected(chefBarOtherController
+                            .orderDetailOfBar.order_details)
+                        ? Expanded(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                marginRight20,
+                                InkWell(
+                                  onTap: () async {
+                                    final result = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return ChangeAllStatusFoodConfirmDialog(
+                                            chefBarId:
+                                                widget.chefBar.chef_bar_id,
+                                            orderDetailList:
+                                                chefBarOtherController
+                                                    .orderDetailOfBar
+                                                    .order_details);
+                                      },
+                                    );
+                                    if (result == 'success') {
+                                      setState(() {
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÀNH CÔNG',
+                                            'Cập nhật trạng thái món thành công.',
+                                            StylishDialogType.SUCCESS);
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                      height: 40,
+                                      width: 140,
+                                      decoration: BoxDecoration(
+                                        color: colorWarning,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "TRẠNG THÁI (${Utils.counterOrderDetailSelected(chefBarOtherController.orderDetailOfBar.order_details)})",
+                                          style: textStyleWhiteBold16,
+                                        ),
+                                      )),
+                                ),
+                                marginRight10,
+                                InkWell(
+                                  onTap: () async {
+                                    if (Utils
+                                            .counterCancelStatusOrderDetailSelected(
+                                                chefBarOtherController
+                                                    .orderDetailOfBar
+                                                    .order_details) >
+                                        0) {
+                                      final result = await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ChangeCancelFoodConfirmDialog(
+                                            chefBarId:
+                                                widget.chefBar.chef_bar_id,
+                                            orderDetailList:
+                                                chefBarOtherController
+                                                    .orderDetailOfBar
+                                                    .order_details,
+                                          );
+                                        },
+                                      );
+                                      if (result != null) {
+                                        setState(() {
+                                          Utils.showStylishDialog(
+                                              context,
+                                              'THÀNH CÔNG',
+                                              'Đã xác nhận không thực hiện món này.',
+                                              StylishDialogType.SUCCESS);
+                                        });
+                                      }
+                                    }
+                                  },
+                                  child: Container(
+                                      height: 40,
+                                      width: 90,
+                                      decoration: BoxDecoration(
+                                        color: colorCancel,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "HỦY (${Utils.counterCancelStatusOrderDetailSelected(chefBarOtherController.orderDetailOfBar.order_details)})",
+                                          style: textStyleWhiteBold16,
+                                        ),
+                                      )),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox(),
                   ],
                 ),
               ),
             ),
-            trailing: Utils.isAnySelected(
-                    chefBarOtherController.orderDetailOfBar.order_details)
-                ? InkWell(
-                    onTap: () async {
-                      final result = await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return ChangeAllStatusFoodConfirmDialog(
-                              chefBarId: widget.chefBar.chef_bar_id,
-                              orderDetailList: chefBarOtherController
-                                  .orderDetailOfBar.order_details);
-                        },
-                      );
-                      if (result == 'success') {
-                        setState(() {
-                          Utils.showStylishDialog(
-                              context,
-                              'THÀNH CÔNG',
-                              'Cập nhật trạng thái món thành công.',
-                              StylishDialogType.SUCCESS);
-                        });
-                      }
-                    },
-                    child: Container(
-                        height: 40,
-                        width: 170,
-                        decoration: BoxDecoration(
-                          color: colorWarning,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "ĐỔI TRẠNG THÁI (${Utils.counterOrderDetailSelected(chefBarOtherController.orderDetailOfBar.order_details)})",
-                            style: textStyleWhiteBold16,
-                          ),
-                        )),
-                  )
-                : const SizedBox(),
           ),
           Expanded(
             child: Container(
@@ -321,8 +380,7 @@ class _ManagementBarDetailPagePageState extends State<ManagementBarDetailPage> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return const MyDialogMessage(
-                                                    title:
-                                                        'KHÔNG CHẾ BIẾN',
+                                                    title: 'KHÔNG CHẾ BIẾN',
                                                     discription:
                                                         'Bạn chắc chắn không muốnchế biến món này?');
                                               },

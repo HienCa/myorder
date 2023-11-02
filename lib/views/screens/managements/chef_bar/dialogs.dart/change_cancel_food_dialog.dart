@@ -2,22 +2,27 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
 import 'package:myorder/models/order_detail.dart';
 
-class ChangeOneStatusFoodConfirmDialog extends StatefulWidget {
+class ChangeCancelFoodConfirmDialog extends StatefulWidget {
   final String chefBarId;
   final List<OrderDetail> orderDetailList;
-  const ChangeOneStatusFoodConfirmDialog({
-    Key? key, required this.chefBarId, required this.orderDetailList,
+  const ChangeCancelFoodConfirmDialog({
+    Key? key,
+    required this.chefBarId,
+    required this.orderDetailList,
   }) : super(key: key);
 
   @override
-  State<ChangeOneStatusFoodConfirmDialog> createState() => _ChangeOneStatusFoodConfirmDialogState();
+  State<ChangeCancelFoodConfirmDialog> createState() =>
+      _ChangeCancelFoodConfirmDialogState();
 }
 
-class _ChangeOneStatusFoodConfirmDialogState extends State<ChangeOneStatusFoodConfirmDialog> {
+class _ChangeCancelFoodConfirmDialogState
+    extends State<ChangeCancelFoodConfirmDialog> {
   ChefBarOtherController chefBarOtherController =
       Get.put(ChefBarOtherController());
   @override
@@ -52,22 +57,38 @@ class _ChangeOneStatusFoodConfirmDialogState extends State<ChangeOneStatusFoodCo
                   children: [
                     const Center(
                       child: Text(
-                        'TRẠNG THÁI MÓN',
+                        'TRẠNG THÁI HỦY MÓN',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
-                    const ListTile(
-                      title: Center(
+                    ListTile(
+                      title: const Center(
                         child: Text(
-                          'Bạn muốn cập nhật các món đã chọn?',
+                          'Bạn muốn hủy các món đã chọn?',
                           style: textStyleBlackRegular,
                         ),
                       ),
                       subtitle: Center(
-                        child: Text(
-                          "\n\nCHỜ CHẾ BIẾN  ->  ĐANG CHẾ BIẾN.\nĐANG CHẾ BIẾN  ->  HOÀN THÀNH.\n",
-                          style: textStyleBlackRegular,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "$FOOD_STATUS_IN_CHEF_STRING.",
+                              style: textStyleCancelDialog,
+                            ),
+                            marginRight10,
+                            const Icon(
+                              Icons.arrow_right_alt,
+                              color: iconColor,
+                            ),
+                            marginRight10,
+                            Text(
+                              "$FOOD_STATUS_CANCEL_STRING.",
+                              style: textStyleCancelDialog,
+                            ),
+                          ],
                         ),
                       ),
                     ),
