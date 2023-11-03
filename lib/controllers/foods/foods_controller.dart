@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/food.dart' as model;
+import 'package:myorder/models/food_combo.dart';
 import 'package:myorder/models/food_order.dart';
 import 'package:myorder/utils.dart';
 
@@ -134,6 +135,58 @@ class FoodController extends GetxController {
       }));
     }
   }
+
+  final Rx<List<FoodCombo>> _foodCombos = Rx<List<FoodCombo>>([]);
+List<FoodCombo> get foodCombos => _foodCombos.value;
+
+getFoodCombos(String keySearch) async {
+  if (keySearch.isEmpty) {
+    _foodCombos.bindStream(
+      firestore.collection('foodCombos').snapshots().map(
+        (QuerySnapshot query) {
+          List<FoodCombo> retValue = [];
+          for (var element in query.docs) {
+            if (element.exists) {
+              retValue.add(FoodCombo.fromSnap(element));
+              print(element);
+            }
+          }
+          if (retValue.isNotEmpty) {
+            for (var item in retValue[0].listFood) {
+              print(item.name);
+              print(item.price);
+              print(item.food_id);
+              print(item.unit_id);
+              print(item.category_code);
+              print(item.category_id);
+            }
+          }
+          return retValue;
+        },
+      ),
+    );
+  } else {
+    _foodCombos.bindStream(firestore
+      .collection('foodCombos')
+      .orderBy('name')
+      .snapshots()
+      .map((QuerySnapshot query) {
+        List<FoodCombo> retVal = [];
+        for (var elem in query.docs) {
+          if (elem.exists) {
+            String name = elem['name'].toLowerCase();
+            String search = keySearch.toLowerCase().trim();
+            if (name.contains(search)) {
+              retVal.add(FoodCombo.fromSnap(elem));
+            }
+          }
+        }
+        return retVal;
+      }),
+    );
+  }
+}
+
 
   //goi mon
   final Rx<List<FoodOrder>> _foodsToOrder = Rx<List<FoodOrder>>([]);
@@ -303,7 +356,8 @@ class FoodController extends GetxController {
       String category_id,
       String unit_id,
       String? vat_id,
-      int temporary_percent, int category_code) async {
+      int temporary_percent,
+      int category_code) async {
     try {
       if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
         String downloadUrl = "";
@@ -327,7 +381,8 @@ class FoodController extends GetxController {
             unit_id: unit_id,
             vat_id: vat_id,
             temporary_percent: temporary_percent,
-            active: 1, category_code: category_code,
+            active: 1,
+            category_code: category_code,
           );
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
@@ -346,7 +401,8 @@ class FoodController extends GetxController {
             unit_id: unit_id,
             vat_id: vat_id,
             temporary_percent: temporary_percent,
-            active: 1, category_code: 0,
+            active: 1,
+            category_code: 0,
           );
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
@@ -360,6 +416,106 @@ class FoodController extends GetxController {
         //   backgroundColor: backgroundSuccessColor,
         //   colorText: Colors.white,
         // );
+      } else {
+        Get.snackbar(
+          'Error!',
+          'Thêm món thất bại!',
+          backgroundColor: backgroundFailureColor,
+          colorText: Colors.white,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+        'Error!',
+        e.message ?? 'Có lỗi xãy ra.',
+      );
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error!',
+        e.toString(),
+      );
+    }
+  }
+
+  void createFoodHasCombo(
+      String name,
+      File? image,
+      String price,
+      String? price_with_temporary,
+      DateTime? temporary_price_from_date,
+      DateTime? temporary_price_to_date,
+      String category_id,
+      String unit_id,
+      String? vat_id,
+      int temporary_percent,
+      int category_code,
+      List<FoodCombo> listCombo) async {
+    try {
+      if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
+        for (FoodCombo item in listCombo) {
+          print("Combo item: ${item.name}");
+        }
+
+        String downloadUrl = "";
+        if (image != null) {
+          downloadUrl = await _uploadToStorage(image);
+        }
+
+        String id = Utils.generateUUID();
+        if (price_with_temporary != "") {
+          print("MÓN ĂN CÓ GIÁ THỜI VỤ");
+
+          FoodCombo food = FoodCombo(
+            food_id: id,
+            name: name,
+            image: downloadUrl,
+            price: double.tryParse(price) ?? 0.0,
+            price_with_temporary:
+                double.tryParse((price_with_temporary ?? '0')),
+            temporary_price_from_date:
+                Timestamp.fromDate(temporary_price_from_date!),
+            temporary_price_to_date:
+                Timestamp.fromDate(temporary_price_to_date!),
+            category_id: category_id,
+            unit_id: unit_id,
+            vat_id: vat_id,
+            temporary_percent: temporary_percent,
+            active: 1,
+            category_code: category_code,
+            listFood: listCombo,
+          );
+          CollectionReference foodsCollection =
+              FirebaseFirestore.instance.collection('foodCombos');
+
+          await foodsCollection.doc(id).set(food.toJson());
+        } else {
+          print("MÓN ĂN KHÔNG CÓ GIÁ THỜI VỤ");
+
+          FoodCombo food = FoodCombo(
+            food_id: id,
+            name: name,
+            image: downloadUrl,
+            price: double.tryParse(price) ?? 0.0,
+            price_with_temporary:
+                double.tryParse((price_with_temporary ?? '0')),
+            // temporary_price_from_date:
+            //     Timestamp.fromDate(temporary_price_from_date!),
+            // temporary_price_to_date:
+            //     Timestamp.fromDate(temporary_price_to_date!),
+            category_id: category_id,
+            unit_id: unit_id,
+            vat_id: vat_id,
+            temporary_percent: temporary_percent,
+            active: 1,
+            category_code: category_code,
+            listFood: listCombo,
+          );
+          CollectionReference foodsCollection =
+              FirebaseFirestore.instance.collection('foodCombos');
+
+          await foodsCollection.doc(id).set(food.toJson());
+        }
       } else {
         Get.snackbar(
           'Error!',

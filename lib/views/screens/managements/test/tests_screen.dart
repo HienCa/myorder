@@ -7,7 +7,8 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/test/add_test_screen.dart';
+import 'package:myorder/views/screens/managements/test/add_food_test_screen.dart';
+import 'package:myorder/views/screens/managements/test/detail_food_test_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementTestsPage extends StatefulWidget {
@@ -21,7 +22,7 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
   @override
   void initState() {
     super.initState();
-    foodController.getfoods("");
+    foodController.getFoodCombos("");
   }
 
   @override
@@ -48,7 +49,7 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
                       final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AddTestPage()));
+                              builder: (context) => const AddFoodComboPage()));
                       if (result == 'success') {
                         Utils.showStylishDialog(
                             context,
@@ -84,7 +85,7 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
                       border: Border.all(width: 1, color: borderColorPrimary)),
                   child: TextField(
                     onChanged: (value) {
-                      foodController.getfoods(value);
+                      foodController.getFoodCombos(value);
                     },
                     style: const TextStyle(color: borderColorPrimary),
                     decoration: const InputDecoration(
@@ -105,26 +106,25 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
                   height: MediaQuery.of(context).size.height * 0.87,
                   child: Obx(() {
                     return ListView.builder(
-                        itemCount: foodController.foods.length,
+                        itemCount: foodController.foodCombos.length,
                         itemBuilder: (context, index) {
-                          final vat = foodController.foods[index];
+                          final food = foodController.foodCombos[index];
                           String string;
                           return InkWell(
-                            // onTap: () async {
-                            //   final result = await Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //           builder: (context) => VatDetailPage(
-                            //                 vatId: vat.vat_id,
-                            //               )));
-                            //   if (result == 'success') {
-                            //     Utils.showStylishDialog(
-                            //         context,
-                            //         'THÀNH CÔNG!',
-                            //         'Cập nhật vat thành công!',
-                            //         StylishDialogType.SUCCESS);
-                            //   }
-                            // },
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DetailFoodComboPage(
+                                          food: foodController.foodCombos[index])));
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật thông tin món thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
                             child: Card(
                               child: ListTile(
                                 leading: const Icon(Icons.ac_unit),
@@ -142,7 +142,7 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
                                       directionMarguee:
                                           DirectionMarguee.TwoDirection,
                                       child: Text(
-                                        vat.name,
+                                        food.name,
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),
@@ -150,10 +150,10 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
                                 ),
                                 subtitle: RichText(
                                   text: TextSpan(
-                                    text: vat.active == ACTIVE
+                                    text: food.active == ACTIVE
                                         ? "Đang hoạt động"
                                         : "Ngừng hoạt động",
-                                    style: vat.active == ACTIVE
+                                    style: food.active == ACTIVE
                                         ? const TextStyle(color: Colors.green)
                                         : const TextStyle(
                                             color: Colors
@@ -179,7 +179,7 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
                                   //     },
                                   //   )
                                   // },
-                                  child: vat.active == ACTIVE
+                                  child: food.active == ACTIVE
                                       ? const Icon(
                                           Icons.key,
                                           size: 25,

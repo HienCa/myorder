@@ -8,6 +8,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/food.dart';
+import 'package:myorder/models/food_combo.dart';
 import 'package:myorder/models/food_order.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -214,11 +216,56 @@ class Utils {
   }
 
   static bool isSelected(dynamic item) {
-    print(item.isSelected);
-      if (item.isSelected == true) {
-        return true;
-      }
+    print('Name:${item.name} - ${item.isSelected}');
+    if (item.isSelected == true) {
+      return true;
+    }
     return false;
+  }
+
+  static List<dynamic> filterSelected(List<dynamic> list) {
+    List<dynamic> fliteredList = [];
+    for (var item in list) {
+      if (item.isSelected == true) {
+        fliteredList.add(item);
+      }
+    }
+    return fliteredList;
+  }
+
+  static List<FoodCombo> filterFoodComboSelected(List<FoodCombo> list) {
+    List<FoodCombo> fliteredList = [];
+    for (var item in list) {
+      if (item.isSelected == true) {
+        FoodCombo foodCombo = FoodCombo(
+            food_id: item.food_id,
+            name: item.name,
+            category_code: item.category_code,
+            price: item.price,
+            active: item.active,
+            category_id: item.category_id,
+            unit_id: item.unit_id,
+            temporary_percent: item.temporary_percent,
+            temporary_price_from_date:
+                item.temporary_price_from_date,
+            temporary_price_to_date:
+                item.temporary_price_to_date,
+            listFood: []);
+        fliteredList.add(foodCombo);
+      }
+    }
+    return fliteredList;
+  }
+
+  //Đếm số lượng food muốn thay đổi
+  static int counterSelected(List<dynamic> list) {
+    int count = 0;
+    for (var item in list) {
+      if (item.isSelected == true) {
+        count++;
+      }
+    }
+    return count;
   }
 
   static bool isAnySelected(List<dynamic> foods) {
