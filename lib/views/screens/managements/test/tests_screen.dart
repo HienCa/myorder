@@ -143,6 +143,7 @@ class _ManagementTestsPageState extends State<ManagementTestsPage> {
                                           DirectionMarguee.TwoDirection,
                                       child: Text(
                                         food.name,
+                                        // food.listFood[index].name,
                                         style: textStyleNameBlackRegular,
                                       ),
                                     ),

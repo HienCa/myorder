@@ -233,6 +233,16 @@ class Utils {
     return fliteredList;
   }
 
+  static List<String> filterFoodIdsSelected(List<Food> list) {
+    List<String> listFoodIds = [];
+    for (var item in list) {
+      if (item.isSelected == true) {
+        listFoodIds.add(item.food_id);
+      }
+    }
+    return listFoodIds;
+  }
+
   static List<FoodCombo> filterFoodComboSelected(List<FoodCombo> list) {
     List<FoodCombo> fliteredList = [];
     for (var item in list) {
@@ -246,10 +256,8 @@ class Utils {
             category_id: item.category_id,
             unit_id: item.unit_id,
             temporary_percent: item.temporary_percent,
-            temporary_price_from_date:
-                item.temporary_price_from_date,
-            temporary_price_to_date:
-                item.temporary_price_to_date,
+            temporary_price_from_date: item.temporary_price_from_date,
+            temporary_price_to_date: item.temporary_price_to_date,
             listFood: []);
         fliteredList.add(foodCombo);
       }

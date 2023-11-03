@@ -76,6 +76,27 @@ class FoodController extends GetxController {
           String vat_id = foodData['vat_id'] ?? "";
           int temporary_percent = foodData['temporary_percent'];
           int active = foodData['active'];
+          List<String> food_combo_ids = foodData['food_combo_ids'] ?? [];
+
+          // Lấy thông tin món combo
+          List<model.Food> listFoodComboDetail = [];
+          for (String item in food_combo_ids) {
+            var foodSnapshot =
+                await firestore.collection("orders").doc(item).get();
+
+            if (!foodSnapshot.exists) {
+              Get.snackbar(
+                'Không tìm thấy!',
+                'Không tìm thấy thông tin food.',
+                backgroundColor: backgroundFailureColor,
+                colorText: Colors.white,
+              );
+              return;
+            }
+
+            model.Food food = model.Food.fromSnap(foodSnapshot);
+            listFoodComboDetail.add(food);
+          }
 
           return model.Food(
             food_id: food_id,
@@ -92,6 +113,8 @@ class FoodController extends GetxController {
             vat_id: vat_id,
             temporary_percent: temporary_percent,
             active: active, category_code: category_code,
+            food_combo_ids: food_combo_ids,
+            food_combo_details: listFoodComboDetail,
           );
         }
       }
@@ -106,12 +129,30 @@ class FoodController extends GetxController {
   getfoods(String keySearch) async {
     if (keySearch.isEmpty) {
       _foods.bindStream(
-        firestore.collection('foods').snapshots().map(
-          (QuerySnapshot query) {
+        firestore.collection('foods').snapshots().asyncMap(
+          (QuerySnapshot query) async {
             List<model.Food> retValue = [];
             for (var element in query.docs) {
-              retValue.add(model.Food.fromSnap(element));
-              print(element);
+              model.Food food = model.Food.fromSnap(element);
+
+              List<model.Food> listFoodComboDetail = [];
+              if (food.food_combo_ids.isNotEmpty) {
+                // Lấy thông tin món combo
+                print("===============COMBO CỦA ${food.name}===========");
+
+                for (String item in food.food_combo_ids) {
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
+
+                  model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                  print(food.name);
+                  listFoodComboDetail.add(food);
+                }
+              }
+
+              food.food_combo_details = listFoodComboDetail;
+              retValue.add(food);
             }
             return retValue;
           },
@@ -122,13 +163,32 @@ class FoodController extends GetxController {
           .collection('foods')
           .orderBy('name')
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<model.Food> retVal = [];
         for (var elem in query.docs) {
           String name = elem['name'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
-            retVal.add(model.Food.fromSnap(elem));
+            model.Food food = model.Food.fromSnap(elem);
+
+            List<model.Food> listFoodComboDetail = [];
+            if (food.food_combo_ids.isNotEmpty) {
+              // Lấy thông tin món combo
+              print("===============COMBO CỦA ${food.name}===========");
+
+              for (String item in food.food_combo_ids) {
+                var foodSnapshot =
+                    await firestore.collection("foods").doc(item).get();
+
+                model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                print(food.name);
+                listFoodComboDetail.add(food);
+              }
+            }
+
+            food.food_combo_details = listFoodComboDetail;
+            retVal.add(food);
           }
         }
         return retVal;
@@ -137,56 +197,56 @@ class FoodController extends GetxController {
   }
 
   final Rx<List<FoodCombo>> _foodCombos = Rx<List<FoodCombo>>([]);
-List<FoodCombo> get foodCombos => _foodCombos.value;
+  List<FoodCombo> get foodCombos => _foodCombos.value;
 
-getFoodCombos(String keySearch) async {
-  if (keySearch.isEmpty) {
-    _foodCombos.bindStream(
-      firestore.collection('foodCombos').snapshots().map(
-        (QuerySnapshot query) {
-          List<FoodCombo> retValue = [];
-          for (var element in query.docs) {
-            if (element.exists) {
-              retValue.add(FoodCombo.fromSnap(element));
-              print(element);
+  getFoodCombos(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _foodCombos.bindStream(
+        firestore.collection('foodCombos').snapshots().map(
+          (QuerySnapshot query) {
+            List<FoodCombo> retValue = [];
+            for (var element in query.docs) {
+              if (element.exists) {
+                retValue.add(FoodCombo.fromSnap(element));
+                print(element);
+              }
+            }
+            // if (retValue.isNotEmpty) {
+            //   for (var item in retValue[0].listFood) {
+            //     print(item.name);
+            //     print(item.price);
+            //     print(item.food_id);
+            //     print(item.unit_id);
+            //     print(item.category_code);
+            //     print(item.category_id);
+            //   }
+            // }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _foodCombos.bindStream(
+        firestore
+            .collection('foodCombos')
+            .orderBy('name')
+            .snapshots()
+            .map((QuerySnapshot query) {
+          List<FoodCombo> retVal = [];
+          for (var elem in query.docs) {
+            if (elem.exists) {
+              String name = elem['name'].toLowerCase();
+              String search = keySearch.toLowerCase().trim();
+              if (name.contains(search)) {
+                retVal.add(FoodCombo.fromSnap(elem));
+              }
             }
           }
-          if (retValue.isNotEmpty) {
-            for (var item in retValue[0].listFood) {
-              print(item.name);
-              print(item.price);
-              print(item.food_id);
-              print(item.unit_id);
-              print(item.category_code);
-              print(item.category_id);
-            }
-          }
-          return retValue;
-        },
-      ),
-    );
-  } else {
-    _foodCombos.bindStream(firestore
-      .collection('foodCombos')
-      .orderBy('name')
-      .snapshots()
-      .map((QuerySnapshot query) {
-        List<FoodCombo> retVal = [];
-        for (var elem in query.docs) {
-          if (elem.exists) {
-            String name = elem['name'].toLowerCase();
-            String search = keySearch.toLowerCase().trim();
-            if (name.contains(search)) {
-              retVal.add(FoodCombo.fromSnap(elem));
-            }
-          }
-        }
-        return retVal;
-      }),
-    );
+          return retVal;
+        }),
+      );
+    }
   }
-}
-
 
   //goi mon
   final Rx<List<FoodOrder>> _foodsToOrder = Rx<List<FoodOrder>>([]);
@@ -357,7 +417,8 @@ getFoodCombos(String keySearch) async {
       String unit_id,
       String? vat_id,
       int temporary_percent,
-      int category_code) async {
+      int category_code,
+      List<String> food_combo_ids) async {
     try {
       if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
         String downloadUrl = "";
@@ -383,6 +444,8 @@ getFoodCombos(String keySearch) async {
             temporary_percent: temporary_percent,
             active: 1,
             category_code: category_code,
+            food_combo_ids: [],
+            food_combo_details: [],
           );
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
@@ -403,6 +466,8 @@ getFoodCombos(String keySearch) async {
             temporary_percent: temporary_percent,
             active: 1,
             category_code: 0,
+            food_combo_ids: food_combo_ids,
+            food_combo_details: [],
           );
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
