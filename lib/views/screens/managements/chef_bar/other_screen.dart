@@ -330,7 +330,7 @@ class _ManagementOtherDetailPageState extends State<ManagementOtherDetailPage> {
                                                 .orderDetailOfOther
                                                 .order_details[index]
                                                 .food!
-                                                .image,
+                                                .image!,
                                             width: 50,
                                             height: 50,
                                             fit: BoxFit.cover,

@@ -284,7 +284,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
   @override
   void initState() {
     super.initState();
-
     getCategories().then((categories) {
       setState(() {
         categoryOptions = categories;
@@ -832,26 +831,22 @@ class _AddFoodPageState extends State<AddFoodPage> {
                               onChanged: (bool? value) {
                                 setState(() {
                                   isCheckCombo = value!;
-                                  if (isCheckCombo == false) {
-                                    Utils.refeshSelected(
-                                        foodController.foods);
-                                  }
                                 });
                               },
                               activeColor: primaryColor,
                             ),
                           ),
-                          title:
-                              Utils.counterSelected(foodController.foods) >
-                                      0
-                                  ? Text(
-                                      "Món Combo (${Utils.counterSelected(foodController.foods)})",
-                                      style: textStylePriceBold16,
-                                    )
-                                  : const Text(
-                                      "Món Combo",
-                                      style: textStylePriceBold16,
-                                    ),
+                          title: (Utils.counterSelected(foodController.foods) >
+                                      0 &&
+                                  isCheckCombo)
+                              ? Text(
+                                  "Món Combo (${Utils.counterSelected(foodController.foods)})",
+                                  style: textStylePriceBold16,
+                                )
+                              : const Text(
+                                  "Món Combo",
+                                  style: textStylePriceBold16,
+                                ),
                         ),
 
                         //DANH SÁCH FOOD
@@ -911,9 +906,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                               children: [
                                                 Text(
                                                   Utils.filterSelected(
-                                                              foodController
-                                                                  .foods)[
-                                                          index]
+                                                          foodController
+                                                              .foods)[index]
                                                       .name,
                                                   style: const TextStyle(
                                                       color: primaryColor,
@@ -936,8 +930,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                       height: 300,
                                       child: ListView.builder(
                                         scrollDirection: Axis.vertical,
-                                        itemCount:
-                                            foodController.foods.length,
+                                        itemCount: foodController.foods.length,
                                         itemBuilder: (context, index) =>
                                             GestureDetector(
                                           onTap: () {
@@ -970,8 +963,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         FontWeight.normal),
                                               ),
                                             ),
-                                            Utils.isSelected(foodController
-                                                    .foods[index])
+                                            Utils.isSelected(
+                                                    foodController.foods[index])
                                                 ? Positioned(
                                                     top: 0,
                                                     right: 10,
@@ -1583,6 +1576,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
+                                    if (isCheckCombo == false)
+                                      {
+                                        Utils.refeshSelected(
+                                            foodController.foods)
+                                      },
                                     listCombo = Utils.filterFoodIdsSelected(
                                         foodController.foods),
                                     priceController.text =
@@ -1601,6 +1599,21 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                             'THÔNG BÁO',
                                             'Tên món phải từ $minlength2 đến $maxlength255 ký tự.',
                                             StylishDialogType.ERROR)
+                                      }
+                                    else if (!Utils
+                                        .isValidRangeTextEditController(
+                                            priceController,
+                                            MIN_PRICE,
+                                            MAX_PRICE))
+                                      {
+                                        priceController.text =
+                                            Utils.convertTextFieldPrice(
+                                                priceController.text),
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Số tiền phải từ ${Utils.convertTextFieldPrice('$MIN_PRICE')} đến ${Utils.convertTextFieldPrice('$MAX_PRICE')}',
+                                            StylishDialogType.ERROR),
                                       }
                                     else if (textCategoryIdController.text ==
                                         "")

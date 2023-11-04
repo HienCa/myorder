@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print, use_build_context_synchronously, unused_local_variable
+// ignore_for_file: non_constant_identifier_names, avoid_print, use_build_context_synchronously, unused_local_variable, library_prefixes
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Correct import for Firestore
@@ -8,9 +8,9 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/bill.dart';
-import 'package:myorder/models/food_order_detail.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/table.dart' as table;
+import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 
@@ -198,22 +198,23 @@ class BillController extends GetxController {
                 if (foodCollection.exists) {
                   final foodData = foodCollection.data();
                   if (foodData != null && foodData is Map<String, dynamic>) {
-                    String food_name = foodData['name'] ?? '';
-                    String category_id = foodData['category_id'] ?? '';
-                    String image = foodData['image'] ?? '';
+                    // String food_name = foodData['name'] ?? '';
+                    // String category_id = foodData['category_id'] ?? '';
+                    // String image = foodData['image'] ?? '';
 
-                    orderDetail.food = FoodOrderDetail(
-                        food_id: orderDetail.food_id,
-                        name: food_name,
-                        image: image, category_id: category_id);
-                    print(food_name);
+                    // orderDetail.food = FoodOrderDetail(
+                    //     food_id: orderDetail.food_id,
+                    //     name: food_name,
+                    //     image: image,
+                    //     category_id: category_id);
+                    // print(food_name);
+                     modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                    orderDetail.food = food;
                   }
                 }
                 orderDetails.add(orderDetail);
               }
               bill.order_details = orderDetails;
-
-              
 
               // lấy tên bàn, tên bàn đã gộp
               DocumentSnapshot tableCollection = await firestore
@@ -426,22 +427,24 @@ class BillController extends GetxController {
                   if (foodCollection.exists) {
                     final foodData = foodCollection.data();
                     if (foodData != null && foodData is Map<String, dynamic>) {
-                      String food_name = foodData['name'] ?? '';
-                      String image = foodData['image'] ?? '';
-                    String category_id = foodData['category_id'] ?? '';
+                      // String food_name = foodData['name'] ?? '';
+                      // String image = foodData['image'] ?? '';
+                      // String category_id = foodData['category_id'] ?? '';
 
-                      orderDetail.food = FoodOrderDetail(
-                          food_id: orderDetail.food_id,
-                          name: food_name,
-                          image: image, category_id: category_id);
-                      print(food_name);
+                      // orderDetail.food = FoodOrderDetail(
+                      //     food_id: orderDetail.food_id,
+                      //     name: food_name,
+                      //     image: image,
+                      //     category_id: category_id);
+                      // print(food_name);
+
+                      modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                    orderDetail.food = food;
                     }
                   }
                   orderDetails.add(orderDetail);
                 }
                 bill.order_details = orderDetails;
-
-                
 
                 retValue.add(bill);
               }
@@ -455,7 +458,7 @@ class BillController extends GetxController {
 
   // tao hóa đơn
 
-  void createBill(model.Order order,String order_code, double? vat_amount,
+  void createBill(model.Order order, String order_code, double? vat_amount,
       double? discount_amount, BuildContext context) async {
     try {
       String id = Utils.generateUUID();
@@ -468,11 +471,12 @@ class BillController extends GetxController {
       Bill bill = Bill(
           bill_id: id,
           order_id: order.order_id,
-          total_amount: order.total_amount ,
+          total_amount: order.total_amount,
           total_estimate_amount: 0.0,
           vat_amount: vat_amount ?? 0,
           discount_amount: discount_amount ?? 0,
-          payment_at: now, order_code: order_code);
+          payment_at: now,
+          order_code: order_code);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ
@@ -498,7 +502,7 @@ class BillController extends GetxController {
       await firestore.collection('tables').doc(order.table_id).update({
         "status": TABLE_STATUS_EMPTY, // đã thanh toán
       });
-      
+
       //Cập nhật trạng thái các bàn đã gộp -> trống
       for (var i = 0; i < order.table_merge_ids.length; i++) {
         await firestore

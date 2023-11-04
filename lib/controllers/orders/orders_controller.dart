@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print, use_build_context_synchronously, unused_local_variable
+// ignore_for_file: non_constant_identifier_names, avoid_print, use_build_context_synchronously, unused_local_variable, library_prefixes
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Correct import for Firestore
@@ -8,9 +8,9 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/chef_bar.dart';
-import 'package:myorder/models/food_order_detail.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/table.dart' as table;
+import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 
@@ -71,16 +71,17 @@ class OrderController extends GetxController {
                 if (foodCollection.exists) {
                   final foodData = foodCollection.data();
                   if (foodData != null && foodData is Map<String, dynamic>) {
-                    String food_name = foodData['name'] ?? '';
-                    String image = foodData['image'] ?? '';
-                    String category_id = foodData['category_id'] ?? '';
-
-                    orderDetail.food = FoodOrderDetail(
-                        food_id: orderDetail.food_id,
-                        name: food_name,
-                        image: image,
-                        category_id: category_id);
-                    print(food_name);
+                    // String food_name = foodData['name'] ?? '';
+                    // String image = foodData['image'] ?? '';
+                    // String category_id = foodData['category_id'] ?? '';
+                    // orderDetail.food = FoodOrderDetail(
+                    //     food_id: orderDetail.food_id,
+                    //     name: food_name,
+                    //     image: image,
+                    //     category_id: category_id);
+                    modelFood.Food food =
+                        modelFood.Food.fromSnap(foodCollection);
+                    orderDetail.food = food;
                   }
                 }
                 orderDetails.add(orderDetail);
@@ -172,16 +173,19 @@ class OrderController extends GetxController {
                 if (foodCollection.exists) {
                   final foodData = foodCollection.data();
                   if (foodData != null && foodData is Map<String, dynamic>) {
-                    String food_name = foodData['name'] ?? '';
-                    String image = foodData['image'] ?? '';
-                    String category_id = foodData['category_id'] ?? '';
+                    // String food_name = foodData['name'] ?? '';
+                    // String image = foodData['image'] ?? '';
+                    // String category_id = foodData['category_id'] ?? '';
 
-                    orderDetail.food = FoodOrderDetail(
-                        food_id: orderDetail.food_id,
-                        name: food_name,
-                        image: image,
-                        category_id: category_id);
-                    print(food_name);
+                    // orderDetail.food = FoodOrderDetail(
+                    //     food_id: orderDetail.food_id,
+                    //     name: food_name,
+                    //     image: image,
+                    //     category_id: category_id);
+                    // print(food_name);
+                    modelFood.Food food =
+                        modelFood.Food.fromSnap(foodCollection);
+                    orderDetail.food = food;
                   }
                 }
                 orderDetails.add(orderDetail);
@@ -277,16 +281,18 @@ class OrderController extends GetxController {
               if (foodCollection.exists) {
                 final foodData = foodCollection.data();
                 if (foodData != null && foodData is Map<String, dynamic>) {
-                  String food_name = foodData['name'] ?? '';
-                  String image = foodData['image'] ?? '';
-                  String category_id = foodData['category_id'] ?? '';
+                  // String food_name = foodData['name'] ?? '';
+                  // String image = foodData['image'] ?? '';
+                  // String category_id = foodData['category_id'] ?? '';
 
-                  orderDetail.food = FoodOrderDetail(
-                      food_id: orderDetail.food_id,
-                      name: food_name,
-                      image: image,
-                      category_id: category_id);
-                  print(food_name);
+                  // orderDetail.food = FoodOrderDetail(
+                  //     food_id: orderDetail.food_id,
+                  //     name: food_name,
+                  //     image: image,
+                  //     category_id: category_id);
+                  // print(food_name);
+                  modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                  orderDetail.food = food;
                 }
               }
               orderDetails.add(orderDetail);
@@ -378,16 +384,18 @@ class OrderController extends GetxController {
               if (foodCollection.exists) {
                 final foodData = foodCollection.data();
                 if (foodData != null && foodData is Map<String, dynamic>) {
-                  String food_name = foodData['name'] ?? '';
-                  String image = foodData['image'] ?? '';
-                  String category_id = foodData['category_id'] ?? '';
+                  // String food_name = foodData['name'] ?? '';
+                  // String image = foodData['image'] ?? '';
+                  // String category_id = foodData['category_id'] ?? '';
 
-                  orderDetail.food = FoodOrderDetail(
-                      food_id: orderDetail.food_id,
-                      name: food_name,
-                      image: image,
-                      category_id: category_id);
-                  print(food_name);
+                  // orderDetail.food = FoodOrderDetail(
+                  //     food_id: orderDetail.food_id,
+                  //     name: food_name,
+                  //     image: image,
+                  //     category_id: category_id);
+                  // print(food_name);
+                  modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                  orderDetail.food = food;
                 }
               }
 
@@ -533,16 +541,35 @@ class OrderController extends GetxController {
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                String food_name = foodData['name'] ?? '';
-                String image = foodData['image'] ?? '';
-                String category_id = foodData['category_id'] ?? '';
+                // String food_name = foodData['name'] ?? '';
+                // String image = foodData['image'] ?? '';
+                // String category_id = foodData['category_id'] ?? '';
 
-                retValue.order_details[i].food = FoodOrderDetail(
-                    food_id: orderDetails[i].food_id,
-                    name: food_name,
-                    image: image,
-                    category_id: category_id);
-                print(food_name);
+                // retValue.order_details[i].food = FoodOrderDetail(
+                //     food_id: orderDetails[i].food_id,
+                //     name: food_name,
+                //     image: image,
+                //     category_id: category_id);
+                // print(food_name);
+                modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                retValue.order_details[i].food = food;
+                print("IMAGE===============${retValue.order_details[i].food!.image}");
+                List<modelFood.Food> listFoodComboDetail = [];
+                if (food.food_combo_ids.isNotEmpty) {
+                  // Lấy thông tin món combo
+                  print("===============COMBO CỦA ${food.name}===========");
+
+                  for (String item in food.food_combo_ids) {
+                    var foodSnapshot =
+                        await firestore.collection("foods").doc(item).get();
+
+                    modelFood.Food food = modelFood.Food.fromSnap(foodSnapshot);
+
+                    print(food.name);
+                    listFoodComboDetail.add(food);
+                  }
+                }
+                retValue.order_details[i].listCombo = listFoodComboDetail;
               }
             }
           }
@@ -677,16 +704,19 @@ class OrderController extends GetxController {
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                String food_name = foodData['name'] ?? '';
-                String image = foodData['image'] ?? '';
-                String category_id = foodData['category_id'] ?? '';
+                // String food_name = foodData['name'] ?? '';
+                // String image = foodData['image'] ?? '';
+                // String category_id = foodData['category_id'] ?? '';
 
-                retValue.order_details[i].food = FoodOrderDetail(
-                    food_id: orderDetails[i].food_id,
-                    name: food_name,
-                    image: image,
-                    category_id: category_id);
-                print(food_name);
+                // retValue.order_details[i].food = FoodOrderDetail(
+                //     food_id: orderDetails[i].food_id,
+                //     name: food_name,
+                //     image: image,
+                //     category_id: category_id);
+                // print(food_name);
+
+                modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                retValue.order_details[i].food = food;
               }
             }
           }
@@ -1429,7 +1459,7 @@ class OrderController extends GetxController {
             .doc(order_id)
             .collection('orderDetails')
             .get();
-        if (querySnapshot.docs.isNotEmpty ) {
+        if (querySnapshot.docs.isNotEmpty) {
           List<OrderDetail> orderDetailsChef = [];
           List<OrderDetail> orderDetailsBar = [];
           List<OrderDetail> orderDetailsOther = [];

@@ -1,12 +1,12 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print
+// ignore_for_file: non_constant_identifier_names, avoid_print, library_prefixes
 
 import 'package:cloud_firestore/cloud_firestore.dart'; // Correct import for Firestore
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/chef_bar.dart';
-import 'package:myorder/models/food_order_detail.dart';
 import 'package:myorder/models/order.dart' as model;
+import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 
@@ -219,16 +219,19 @@ class ChefBarOtherController extends GetxController {
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                String food_name = foodData['name'] ?? '';
-                String image = foodData['image'] ?? '';
-                String category_id = foodData['category_id'] ?? '';
+                // String food_name = foodData['name'] ?? '';
+                // String image = foodData['image'] ?? '';
+                // String category_id = foodData['category_id'] ?? '';
 
-                retValue.order_details[i].food = FoodOrderDetail(
-                    food_id: orderDetails[i].food_id,
-                    name: food_name,
-                    image: image,
-                    category_id: category_id);
-                print(food_name);
+                // retValue.order_details[i].food = FoodOrderDetail(
+                //     food_id: orderDetails[i].food_id,
+                //     name: food_name,
+                //     image: image,
+                //     category_id: category_id);
+                // print(food_name);
+
+                modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                retValue.order_details[i].food = food;
               }
             }
           }
@@ -326,16 +329,18 @@ class ChefBarOtherController extends GetxController {
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                String food_name = foodData['name'] ?? '';
-                String image = foodData['image'] ?? '';
-                String category_id = foodData['category_id'] ?? '';
+                // String food_name = foodData['name'] ?? '';
+                // String image = foodData['image'] ?? '';
+                // String category_id = foodData['category_id'] ?? '';
 
-                retValue.order_details[i].food = FoodOrderDetail(
-                    food_id: orderDetails[i].food_id,
-                    name: food_name,
-                    image: image,
-                    category_id: category_id);
-                print(food_name);
+                // retValue.order_details[i].food = FoodOrderDetail(
+                //     food_id: orderDetails[i].food_id,
+                //     name: food_name,
+                //     image: image,
+                //     category_id: category_id);
+                // print(food_name);
+                modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                retValue.order_details[i].food = food;
               }
             }
           }
@@ -431,16 +436,18 @@ class ChefBarOtherController extends GetxController {
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                String food_name = foodData['name'] ?? '';
-                String image = foodData['image'] ?? '';
-                String category_id = foodData['category_id'] ?? '';
+                // String food_name = foodData['name'] ?? '';
+                // String image = foodData['image'] ?? '';
+                // String category_id = foodData['category_id'] ?? '';
 
-                retValue.order_details[i].food = FoodOrderDetail(
-                    food_id: orderDetails[i].food_id,
-                    name: food_name,
-                    image: image,
-                    category_id: category_id);
-                print(food_name);
+                // retValue.order_details[i].food = FoodOrderDetail(
+                //     food_id: orderDetails[i].food_id,
+                //     name: food_name,
+                //     image: image,
+                //     category_id: category_id);
+                // print(food_name);
+                modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                retValue.order_details[i].food = food;
               }
             }
           }

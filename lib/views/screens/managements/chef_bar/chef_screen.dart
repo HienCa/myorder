@@ -324,7 +324,7 @@ class _ManagementChefPageState extends State<ManagementChefDetailPage> {
                                               .orderDetailOfChef
                                               .order_details[index]
                                               .food!
-                                              .image,
+                                              .image!,
                                           width: 50,
                                           height: 50,
                                           fit: BoxFit.cover,

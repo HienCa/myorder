@@ -311,7 +311,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                                 .orderDetail
                                                 .order_details[index]
                                                 .food!
-                                                .image,
+                                                .image!,
                                             width: 50,
                                             height: 50,
                                             fit: BoxFit.cover,

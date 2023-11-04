@@ -12,6 +12,7 @@ class MyTextFieldPrice extends StatefulWidget {
   final bool isRequire;
   final int max;
   final int min;
+  final double? defaultValue;
 
   const MyTextFieldPrice(
       {super.key,
@@ -20,7 +21,8 @@ class MyTextFieldPrice extends StatefulWidget {
       required this.placeholder,
       required this.min,
       required this.max,
-      required this.isRequire});
+      required this.isRequire,
+       this.defaultValue});
 
   @override
   State<MyTextFieldPrice> createState() => _MyTextFieldPriceState();
@@ -29,7 +31,15 @@ class MyTextFieldPrice extends StatefulWidget {
 class _MyTextFieldPriceState extends State<MyTextFieldPrice> {
   @override
   void initState() {
-    widget.textEditingController.text = Utils.convertTextFieldPrice('${widget.min}');
+    // widget.textEditingController.text =
+    //     Utils.convertTextFieldPrice('${widget.min}');
+    if ((widget.defaultValue ?? 0) > 0) {
+      widget.textEditingController.text =
+          Utils.formatCurrency(widget.defaultValue);
+    } else {
+      widget.textEditingController.text = Utils.convertTextFieldPrice('0');
+    }
+
     super.initState();
   }
 
@@ -87,11 +97,14 @@ class _MyTextFieldPriceState extends State<MyTextFieldPrice> {
                               MAX_PRICE) {
                             widget.textEditingController.text = '$MAX_PRICE';
                           }
-                          if ((int.tryParse(widget.textEditingController.text
-                                      .replaceAll(r',', '')) ??
-                                  0) <
-                              MIN_PRICE) {
-                            widget.textEditingController.text = '$MIN_PRICE';
+                          // if ((int.tryParse(widget.textEditingController.text
+                          //             .replaceAll(r',', '')) ??
+                          //         0) <
+                          //     MIN_PRICE) {
+                          //   widget.textEditingController.text = '$MIN_PRICE';
+                          // }
+                          if (widget.textEditingController.text.isEmpty) {
+                            widget.textEditingController.text = '0';
                           }
                           widget.textEditingController.text =
                               Utils.convertTextFieldPrice(widget

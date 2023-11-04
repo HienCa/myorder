@@ -255,7 +255,18 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     super.initState();
 
     //Hiển thị combo có sẵn của món ăn
+
     refeshFoodSelected();
+    print("ppppppppppppppppppppppp");
+
+    for (var i = 0; i < foodController.foods.length; i++) {
+      if (foodController.foods[i].isSelected) {
+        print(foodController.foods[i].name);
+      }
+    }
+    //thiết lập view combo
+    isCheckCombo = widget.food.food_combo_ids.isNotEmpty ? true : false;
+
     //vat
     if (widget.food.vat_id != "") {
       isCheckVAT = true;
@@ -485,16 +496,20 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   }
 
   void refeshFoodSelected() {
-    for (var i = 0; i < foodController.foods.length; i++) {
-      for (var j = 0; j < widget.food.food_combo_ids.length; j++) {
+    print("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+    for (var j = 0; j < widget.food.food_combo_ids.length; j++) {
+      for (var i = 0; i < foodController.foods.length; i++) {
         if (foodController.foods[i].food_id == widget.food.food_combo_ids[j]) {
           foodController.foods[i].isSelected = true;
+          print(widget.food.food_combo_details[j].name);
         } else {
           foodController.foods[i].isSelected = false;
         }
       }
     }
   }
+
+  List<String> listCombo = [];
 
   @override
   Widget build(BuildContext context) {
@@ -625,7 +640,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             placeholder: 'Nhập giá món',
                             min: MIN_PRICE,
                             max: MAX_PERCENT,
-                            isRequire: true),
+                            isRequire: true,
+                            defaultValue: widget.food.price),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
                           height: 50,
@@ -907,15 +923,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               onChanged: (bool? value) {
                                 setState(() {
                                   isCheckCombo = value!;
-                                  if (isCheckCombo == false) {
-                                    Utils.refeshSelected(foodController.foods);
-                                  }
                                 });
                               },
                               activeColor: primaryColor,
                             ),
                           ),
-                          title: Utils.counterSelected(foodController.foods) > 0
+                          title: (Utils.counterSelected(foodController.foods) >
+                                      0 &&
+                                  isCheckCombo)
                               ? Text(
                                   "Món Combo (${Utils.counterSelected(foodController.foods)})",
                                   style: textStylePriceBold16,
@@ -1376,14 +1391,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                       : null,
                                               errorStyle: textStyleErrorInput),
                                           onChanged: (value) => {
-                                                if (value.isNotEmpty &&
-                                                    value.startsWith('0'))
-                                                  {
-                                                    temporaryWithPriceController
-                                                            .text =
-                                                        value.substring(
-                                                            1), // Loại bỏ ký tự đầu tiên (số 0)
-                                                  },
+                                                // if (value.isNotEmpty &&
+                                                //     value.startsWith('0'))
+                                                //   {
+                                                //     temporaryWithPriceController
+                                                //             .text =
+                                                //         value.substring(
+                                                //             1), // Loại bỏ ký tự đầu tiên (số 0)
+                                                //   },
                                                 if (int.tryParse(
                                                         temporaryWithPriceController
                                                             .text)! <=
@@ -1663,6 +1678,23 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
+                                    if ((int.tryParse(priceController.text
+                                                .replaceAll(r',', '')) ??
+                                            0) <
+                                        MIN_PRICE)
+                                      {
+                                        Utils.showErrorFlushbar(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Đơn giá ít nhất là 1,000')
+                                      },
+                                    if (isCheckCombo == false)
+                                      {
+                                        Utils.refeshSelected(
+                                            foodController.foods)
+                                      },
+                                    listCombo = Utils.filterFoodIdsSelected(
+                                        foodController.foods),
                                     print("Thông tin trước cập nhật"),
                                     print(nameController.text),
                                     print(priceController.text),
@@ -1690,6 +1722,21 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                             'THÔNG BÁO',
                                             'Tên món phải từ $minlength2 đến $maxlength255 ký tự.',
                                             StylishDialogType.ERROR)
+                                      }
+                                    else if (!Utils
+                                        .isValidRangeTextEditController(
+                                            priceController,
+                                            MIN_PRICE,
+                                            MAX_PRICE))
+                                      {
+                                        priceController.text =
+                                            Utils.convertTextFieldPrice(
+                                                priceController.text),
+                                        Utils.showStylishDialog(
+                                            context,
+                                            'THÔNG BÁO',
+                                            'Số tiền phải từ ${Utils.convertTextFieldPrice('$MIN_PRICE')} đến ${Utils.convertTextFieldPrice('$MAX_PRICE')}',
+                                            StylishDialogType.ERROR),
                                       }
                                     else if (textCategoryIdController.text ==
                                         "")
@@ -1797,7 +1844,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
-                                                            0),
+                                                            0,
+                                                        listCombo),
                                                     Utils.myPopSuccess(context)
                                                   }
                                               }
@@ -1832,7 +1880,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0),
+                                                        0,
+                                                    listCombo),
                                                 Utils.myPopSuccess(context)
                                               }
                                             else if (isCheckVAT &&
@@ -1862,7 +1911,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0),
+                                                        0,
+                                                    listCombo),
                                                 Utils.myPopSuccess(context)
                                               }
                                           },

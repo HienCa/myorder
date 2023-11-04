@@ -139,6 +139,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
+                            
                             discountPriceController.text =
                                 discountPriceController.text
                                     .replaceAll(r',', '');
@@ -165,7 +166,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                                   'Tên vat phải từ $minlength2 đến $maxlength50 ký tự.',
                                   StylishDialogType.ERROR);
                             } else if (!Utils.isValidRangeTextEditController(
-                                discountPriceController, 1000, 10000000)) {
+                                discountPriceController, MIN_PRICE, MAX_PRICE)) {
                               discountPriceController.text =
                                   Utils.convertTextFieldPrice(
                                       discountPriceController.text);

@@ -331,6 +331,12 @@ var defaultFoodImage = Image.asset(
   height: 50,
   fit: BoxFit.cover,
 );
+var defaultFoodImage40 = Image.asset(
+  "assets/images/logofunnyfood.jpg",
+  width: 40,
+  height: 40,
+  fit: BoxFit.cover,
+);
 const defaultFoodImageString = "assets/images/logofunnyfood.jpg";
 
 //TABLE

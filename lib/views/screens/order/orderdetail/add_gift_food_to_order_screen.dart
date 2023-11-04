@@ -217,187 +217,343 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                               // Chiều cao của ListTile thay đổi
                               child: InkWell(
                                 onTap: () => {setState(() {})},
-                                child: ListTile(
-                                  selectedColor: primaryColor,
-                                  leading: Theme(
-                                    data: ThemeData(
-                                        unselectedWidgetColor: primaryColor),
-                                    child: SizedBox(
-                                      width: 100,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Checkbox(
-                                            value: foodController
-                                                    .foodsToOrder[index]
-                                                    .isSelected ??
-                                                false,
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                foodController
-                                                    .foodsToOrder[index]
-                                                    .isSelected = value;
-                                                //kiem tra xem co bat ky mon nao da duoc chon khong
-                                                isAddFood =
-                                                    Utils.isAnyFoodSelected(
-                                                        foodController
-                                                            .foodsToOrder);
-                                                print(
-                                                    "isChecked - $value: ${foodController.foodsToOrder[index].name}");
-                                              });
-                                            },
-                                            activeColor: primaryColor,
-                                          ),
-                                          foodController.foodsToOrder[index]
-                                                      .image !=
-                                                  ""
-                                              ? ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  child: Image.network(
-                                                    foodController
-                                                            .foodsToOrder[index]
-                                                            .image ??
-                                                        defaultFoodImageString,
-                                                    width: 50,
-                                                    height: 50,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                )
-                                              : ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  child: defaultFoodImage,
-                                                ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  title: Marquee(
-                                      direction: Axis.horizontal,
-                                      textDirection: TextDirection.ltr,
-                                      animationDuration:
-                                          const Duration(seconds: 1),
-                                      backDuration:
-                                          const Duration(milliseconds: 4000),
-                                      pauseDuration:
-                                          const Duration(milliseconds: 1000),
-                                      directionMarguee:
-                                          DirectionMarguee.TwoDirection,
-                                      child: RichText(
-                                          text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                              text: foodController
-                                                  .foodsToOrder[index].name,
-                                              style: foodController
-                                                          .foodsToOrder[index]
-                                                          .isSelected ==
-                                                      true
-                                                  ? textStyleWhiteRegular16
-                                                  : textStyleFoodNameBold16),
-                                        ],
-                                      ))),
-                                  subtitle: const SizedBox(
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.card_giftcard,
-                                            color: Color(0xFFFFA41B)),
-                                        marginRight10,
-                                        Expanded(
-                                          child: Text(
-                                            "món tặng",
-                                            style: textStyleFreePrice16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  trailing: foodController
-                                              .foodsToOrder[index].isSelected ==
-                                          true
-                                      ? SizedBox(
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      selectedColor: primaryColor,
+                                      leading: Theme(
+                                        data: ThemeData(
+                                            unselectedWidgetColor:
+                                                primaryColor),
+                                        child: SizedBox(
                                           width: 100,
                                           child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                             children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  if (foodController
-                                                          .foodsToOrder[index]
-                                                          .quantity! >
-                                                      1) {
-                                                    setState(() {
-                                                      foodController
-                                                              .foodsToOrder[index]
-                                                              .quantity =
+                                              Checkbox(
+                                                value: foodController
+                                                        .foodsToOrder[index]
+                                                        .isSelected ??
+                                                    false,
+                                                onChanged: (bool? value) {
+                                                  setState(() {
+                                                    foodController
+                                                        .foodsToOrder[index]
+                                                        .isSelected = value;
+                                                    //kiem tra xem co bat ky mon nao da duoc chon khong
+                                                    isAddFood =
+                                                        Utils.isAnyFoodSelected(
+                                                            foodController
+                                                                .foodsToOrder);
+                                                    print(
+                                                        "isChecked - $value: ${foodController.foodsToOrder[index].name}");
+                                                  });
+                                                },
+                                                activeColor: primaryColor,
+                                              ),
+                                              foodController.foodsToOrder[index]
+                                                          .image !=
+                                                      ""
+                                                  ? ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      child: Image.network(
+                                                        foodController
+                                                                .foodsToOrder[
+                                                                    index]
+                                                                .image ??
+                                                            defaultFoodImageString,
+                                                        width: 50,
+                                                        height: 50,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    )
+                                                  : ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      child: defaultFoodImage,
+                                                    ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      title: Marquee(
+                                          direction: Axis.horizontal,
+                                          textDirection: TextDirection.ltr,
+                                          animationDuration:
+                                              const Duration(seconds: 1),
+                                          backDuration: const Duration(
+                                              milliseconds: 4000),
+                                          pauseDuration: const Duration(
+                                              milliseconds: 1000),
+                                          directionMarguee:
+                                              DirectionMarguee.TwoDirection,
+                                          child: RichText(
+                                              text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                  text: foodController
+                                                      .foodsToOrder[index].name,
+                                                  style: foodController
+                                                              .foodsToOrder[
+                                                                  index]
+                                                              .isSelected ==
+                                                          true
+                                                      ? textStyleWhiteRegular16
+                                                      : textStyleFoodNameBold16),
+                                            ],
+                                          ))),
+                                      subtitle: const SizedBox(
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.card_giftcard,
+                                                color: Color(0xFFFFA41B)),
+                                            marginRight10,
+                                            Expanded(
+                                              child: Text(
+                                                "món tặng",
+                                                style: textStyleFreePrice16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      trailing: foodController
+                                                  .foodsToOrder[index]
+                                                  .isSelected ==
+                                              true
+                                          ? SizedBox(
+                                              width: 100,
+                                              child: Row(
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (foodController
+                                                              .foodsToOrder[
+                                                                  index]
+                                                              .quantity! >
+                                                          1) {
+                                                        setState(() {
                                                           foodController
                                                                   .foodsToOrder[
                                                                       index]
-                                                                  .quantity! -
-                                                              1;
-                                                    });
-                                                  }
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: iconColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
+                                                                  .quantity =
+                                                              foodController
+                                                                      .foodsToOrder[
+                                                                          index]
+                                                                      .quantity! -
+                                                                  1;
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: iconColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                      ),
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: const Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Icon(
+                                                            Icons.remove,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  height: 30,
-                                                  width: 30,
-                                                  child: const Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(Icons.remove,
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                  foodController
-                                                      .foodsToOrder[index]
-                                                      .quantity!
-                                                      .toString(),
-                                                  style: textStyleWhiteBold16),
-                                              const SizedBox(width: 5),
-                                              InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    foodController
-                                                            .foodsToOrder[index]
-                                                            .quantity =
+                                                  const SizedBox(width: 5),
+                                                  Text(
+                                                      foodController
+                                                          .foodsToOrder[index]
+                                                          .quantity!
+                                                          .toString(),
+                                                      style:
+                                                          textStyleWhiteBold16),
+                                                  const SizedBox(width: 5),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
                                                         foodController
+                                                            .foodsToOrder[index]
+                                                            .quantity = foodController
                                                                 .foodsToOrder[
                                                                     index]
                                                                 .quantity! +
                                                             1;
-                                                  });
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: iconColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: iconColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                      ),
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: const Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Icon(Icons.add,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  height: 30,
-                                                  width: 30,
-                                                  child: const Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(Icons.add,
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        )
-                                      : const SizedBox(
-                                          // width: 40,
-                                          ),
+                                            )
+                                          : const SizedBox(
+                                              // width: 40,
+                                              ),
+                                    ),
+                                    //Danh sách món combo
+                                    foodController.foodsToOrder[index]
+                                                .isSelected ==
+                                            true
+                                        ? AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 70),
+                                              height: foodController
+                                                      .foodsToOrder[index]
+                                                      .food_combo_details
+                                                      .length *
+                                                  62,
+                                              child: ListView.builder(
+                                                scrollDirection: Axis.vertical,
+                                                itemCount: foodController
+                                                    .foodsToOrder[index]
+                                                    .food_combo_details
+                                                    .length,
+                                                itemBuilder: (context, index) {
+                                                  return Container(
+                                                    margin: const EdgeInsets
+                                                        .all(
+                                                        4), // Khoảng cách dưới dạng đệm
+
+                                                    decoration: foodController
+                                                                .foodsToOrder[
+                                                                    index]
+                                                                .isSelected ==
+                                                            true
+                                                        ? BoxDecoration(
+                                                            color: const Color(
+                                                                    0xFF40BAD5)
+                                                                .withOpacity(
+                                                                    0.5),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.2),
+                                                                spreadRadius: 2,
+                                                                blurRadius: 10,
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, 3),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : const BoxDecoration(
+                                                            border: Border(
+                                                                bottom: BorderSide(
+                                                                    width: 0.1,
+                                                                    color:
+                                                                        borderColor)),
+                                                          ),
+                                                    child: GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {});
+                                                        },
+                                                        child:
+                                                            AnimatedContainer(
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      300),
+                                                          curve:
+                                                              Curves.easeInOut,
+                                                          // Chiều cao của ListTile thay đổi
+                                                          child: InkWell(
+                                                            onTap: () => {
+                                                              setState(() {})
+                                                            },
+                                                            child: Column(
+                                                              children: [
+                                                                ListTile(
+                                                                  selectedColor:
+                                                                      primaryColor,
+                                                                  leading:
+                                                                      Theme(
+                                                                    data: ThemeData(
+                                                                        unselectedWidgetColor:
+                                                                            primaryColor),
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width: 40,
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          foodController.foodsToOrder[index].image != ""
+                                                                              ? ClipRRect(
+                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                  child: Image.network(
+                                                                                    foodController.foodsToOrder[index].image ?? defaultFoodImageString,
+                                                                                    width: 40,
+                                                                                    height: 40,
+                                                                                    fit: BoxFit.cover,
+                                                                                  ),
+                                                                                )
+                                                                              : ClipRRect(borderRadius: BorderRadius.circular(5), child: defaultFoodImage40),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  title: Marquee(
+                                                                      direction: Axis.horizontal,
+                                                                      textDirection: TextDirection.ltr,
+                                                                      animationDuration: const Duration(seconds: 1),
+                                                                      backDuration: const Duration(milliseconds: 4000),
+                                                                      pauseDuration: const Duration(milliseconds: 1000),
+                                                                      directionMarguee: DirectionMarguee.TwoDirection,
+                                                                      child: RichText(
+                                                                          text: TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                              text: foodController.foodsToOrder[index].name,
+                                                                              style: foodController.foodsToOrder[index].isSelected == true ? textStyleWhiteRegular16 : textStyleFoodNameBold16),
+                                                                        ],
+                                                                      ))),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox()
+                                  ],
                                 ),
                               ),
                             )),
@@ -429,7 +585,8 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                   food_id: foodOrder.food_id,
                                   is_gift: false,
                                   category_id: '',
-                                  category_code: foodOrder.category_code, chef_bar_status: CHEF_BAR_STATUS,
+                                  category_code: foodOrder.category_code,
+                                  chef_bar_status: CHEF_BAR_STATUS,
                                 );
 
                                 orderDetailList.add(orderDetail);

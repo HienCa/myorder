@@ -253,7 +253,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                                         borderRadius: BorderRadius.circular(5),
                                         child: Image.network(
                                           widget.bill.order_details[index].food!
-                                              .image,
+                                              .image!,
                                           width: 50,
                                           height: 50,
                                           fit: BoxFit.cover,

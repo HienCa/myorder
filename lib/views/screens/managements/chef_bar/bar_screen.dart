@@ -323,7 +323,7 @@ class _ManagementBarDetailPagePageState extends State<ManagementBarDetailPage> {
                                               .orderDetailOfBar
                                               .order_details[index]
                                               .food!
-                                              .image,
+                                              .image!,
                                           width: 50,
                                           height: 50,
                                           fit: BoxFit.cover,

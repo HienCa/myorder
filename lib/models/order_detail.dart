@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:myorder/models/food_order_detail.dart';
+import 'package:myorder/models/food.dart';
 
 class OrderDetail {
   String order_detail_id;
@@ -12,9 +12,10 @@ class OrderDetail {
   String food_id;
   String category_id;
   int category_code;
-  FoodOrderDetail? food;
+  Food? food;
   bool is_gift = false;
   bool isSelected = false;
+  List<Food> listCombo = [];
   OrderDetail(
       {required this.order_detail_id,
       required this.price,

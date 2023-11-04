@@ -1,9 +1,10 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myorder/models/food.dart';
 
 class FoodOrder {
-  String food_id ="";
+  String food_id = "";
   String name = "";
   String? image = "";
   double price = 0;
@@ -18,6 +19,9 @@ class FoodOrder {
   int temporary_percent = 0;
   bool? isSelected = false;
   int? quantity = 1;
+  List food_combo_ids = [];
+  List<dynamic> food_combo_details = [];
+  List<Food> listCombo = [];//món combo
 
   FoodOrder({
     required this.food_id,
@@ -35,6 +39,8 @@ class FoodOrder {
     required this.temporary_percent,
     this.isSelected,
     this.quantity,
+    required this.food_combo_ids,
+    required this.food_combo_details,
   });
   FoodOrder.empty()
       : food_id = '',
@@ -51,7 +57,9 @@ class FoodOrder {
         unit_id = '',
         temporary_percent = 0,
         isSelected = false,
-        quantity = 0;
+        quantity = 0,
+        food_combo_ids = [],
+        food_combo_details = [];
 
   Map<String, dynamic> toJson() => {
         "food_id": food_id,
@@ -67,6 +75,8 @@ class FoodOrder {
         "category_code": category_code,
         "unit_id": unit_id,
         "temporary_percent": temporary_percent,
+        "food_combo_ids": food_combo_ids,
+        "food_combo_details": food_combo_details,
       };
 
   static FoodOrder fromSnap(DocumentSnapshot snap) {
@@ -85,6 +95,8 @@ class FoodOrder {
       category_code: snapshot['category_code'],
       unit_id: snapshot['unit_id'],
       temporary_percent: snapshot['temporary_percent'],
+      food_combo_ids: snapshot['food_combo_ids'],
+      food_combo_details: snapshot['food_combo_details'] ?? [],
     );
   }
 }

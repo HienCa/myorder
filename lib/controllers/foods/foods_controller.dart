@@ -261,8 +261,8 @@ class FoodController extends GetxController {
             .collection('foods')
             .where("active", isEqualTo: ACTIVE)
             .snapshots()
-            .map(
-          (QuerySnapshot query) {
+            .asyncMap(
+          (QuerySnapshot query) async {
             List<FoodOrder> retValue = [];
             for (var element in query.docs) {
               FoodOrder food = FoodOrder.fromSnap(element);
@@ -282,6 +282,25 @@ class FoodController extends GetxController {
 
               food.isSelected = false;
               food.quantity = 1;
+
+              List<model.Food> listFoodComboDetail = [];
+              if (food.food_combo_ids.isNotEmpty) {
+                // Lấy thông tin món combo
+                print("===============COMBO CỦA ${food.name}===========");
+
+                for (String item in food.food_combo_ids) {
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
+
+                  model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                  print(food.name);
+                  listFoodComboDetail.add(food);
+                }
+              }
+
+              food.food_combo_details = listFoodComboDetail;
+
               retValue.add(food);
             }
             Utils.showDataJson(query);
@@ -298,16 +317,35 @@ class FoodController extends GetxController {
             .collection('foods')
             .where('category_id', isEqualTo: categoryIdSelected)
             .snapshots()
-            .map(
-          (QuerySnapshot query) {
+            .asyncMap(
+          (QuerySnapshot query) async {
             List<FoodOrder> retValue = [];
             for (var element in query.docs) {
               FoodOrder food = FoodOrder.fromSnap(element);
               food.isSelected = false;
               food.quantity = 1;
+
+              List<model.Food> listFoodComboDetail = [];
+              if (food.food_combo_ids.isNotEmpty) {
+                // Lấy thông tin món combo
+                print("===============COMBO CỦA ${food.name}===========");
+
+                for (String item in food.food_combo_ids) {
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
+
+                  model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                  print(food.name);
+                  listFoodComboDetail.add(food);
+                }
+              }
+
+              food.food_combo_details = listFoodComboDetail;
               retValue.add(food);
             }
             Utils.showDataJson(query);
+
             return retValue;
           },
         ),
@@ -323,7 +361,7 @@ class FoodController extends GetxController {
           .where('category_id', isEqualTo: categoryIdSelected)
           .orderBy('name')
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<FoodOrder> retValue = [];
         for (var element in query.docs) {
           FoodOrder food = FoodOrder.fromSnap(element);
@@ -332,6 +370,23 @@ class FoodController extends GetxController {
           String name = element['name'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
+            List<model.Food> listFoodComboDetail = [];
+            if (food.food_combo_ids.isNotEmpty) {
+              // Lấy thông tin món combo
+              print("===============COMBO CỦA ${food.name}===========");
+
+              for (String item in food.food_combo_ids) {
+                var foodSnapshot =
+                    await firestore.collection("foods").doc(item).get();
+
+                model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                print(food.name);
+                listFoodComboDetail.add(food);
+              }
+            }
+
+            food.food_combo_details = listFoodComboDetail;
             retValue.add(food);
           }
         }
@@ -346,7 +401,7 @@ class FoodController extends GetxController {
           .collection('foods')
           .where("active", isEqualTo: ACTIVE)
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<FoodOrder> retValue = [];
         for (var element in query.docs) {
           FoodOrder food = FoodOrder.fromSnap(element);
@@ -355,6 +410,23 @@ class FoodController extends GetxController {
           String name = element['name'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
+            List<model.Food> listFoodComboDetail = [];
+            if (food.food_combo_ids.isNotEmpty) {
+              // Lấy thông tin món combo
+              print("===============COMBO CỦA ${food.name}===========");
+
+              for (String item in food.food_combo_ids) {
+                var foodSnapshot =
+                    await firestore.collection("foods").doc(item).get();
+
+                model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                print(food.name);
+                listFoodComboDetail.add(food);
+              }
+            }
+
+            food.food_combo_details = listFoodComboDetail;
             retValue.add(food);
           }
         }
@@ -615,7 +687,8 @@ class FoodController extends GetxController {
       String category_id,
       String unit_id,
       String vat_id,
-      int temporary_percent) async {
+      int temporary_percent,
+      List<String> food_combo_ids) async {
     // var doc = await firestore.collection('foods').doc(Food_id).get();
     String downloadUrl = "";
     try {
@@ -635,38 +708,50 @@ class FoodController extends GetxController {
         downloadUrl = await _uploadToStorage(newImage);
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
         await firestore.collection('foods').doc(food_id).update({
-          "food_id": food_id.trim(),
-          "name": name.trim(),
-          "image": downloadUrl,
-          "price": double.tryParse(price) ?? 0.0,
-          "vat_id": vat_id.trim(),
-          "price_with_temporary": double.tryParse(price_with_temporary!) ?? 0.0,
-          "temporary_price_from_date": temporary_price_from_date,
-          "temporary_price_to_date": temporary_price_to_date,
+          "food_combo_ids": [],
+        }).then((value) async {
+          await firestore.collection('foods').doc(food_id).update({
+            "food_id": food_id.trim(),
+            "name": name.trim(),
+            "image": downloadUrl,
+            "price": double.tryParse(price) ?? 0.0,
+            "vat_id": vat_id.trim(),
+            "price_with_temporary":
+                double.tryParse(price_with_temporary!) ?? 0.0,
+            "temporary_price_from_date": temporary_price_from_date,
+            "temporary_price_to_date": temporary_price_to_date,
 
-          // "active": active,
-          "category_id": category_id.trim(),
-          "unit_id": unit_id.trim(),
-          "temporary_percent": temporary_percent,
+            // "active": active,
+            "category_id": category_id.trim(),
+            "unit_id": unit_id.trim(),
+            "temporary_percent": temporary_percent,
+            "food_combo_ids": FieldValue.arrayUnion(food_combo_ids),
+          });
         });
       } else {
         print("NO Image Selected");
 
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
         await firestore.collection('foods').doc(food_id).update({
-          "food_id": food_id.trim(),
-          "name": name.trim(),
-          "image": image,
-          "price": double.tryParse(price) ?? 0.0,
-          "vat_id": vat_id.trim(),
-          "price_with_temporary": double.tryParse(price_with_temporary!) ?? 0.0,
-          "temporary_price_from_date": temporary_price_from_date,
-          "temporary_price_to_date": temporary_price_to_date,
+          "food_combo_ids": [],
+        }).then((value) async {
+          await firestore.collection('foods').doc(food_id).update({
+            "food_id": food_id.trim(),
+            "name": name.trim(),
+            "image": image,
+            "price": double.tryParse(price) ?? 0.0,
+            "vat_id": vat_id.trim(),
+            "price_with_temporary":
+                double.tryParse(price_with_temporary!) ?? 0.0,
+            "temporary_price_from_date": temporary_price_from_date,
+            "temporary_price_to_date": temporary_price_to_date,
 
-          // "active": active,
-          "category_id": category_id.trim(),
-          "unit_id": unit_id.trim(),
-          "temporary_percent": temporary_percent,
+            // "active": active,
+            "category_id": category_id.trim(),
+            "unit_id": unit_id.trim(),
+            "temporary_percent": temporary_percent,
+            "food_combo_ids": FieldValue.arrayUnion(food_combo_ids),
+          });
         });
       }
       // Get.snackbar(
