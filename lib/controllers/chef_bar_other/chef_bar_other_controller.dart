@@ -141,6 +141,43 @@ class ChefBarOtherController extends GetxController {
     }
   }
 
+  //Count Chef
+  final Rx<int> _countCheft = Rx<int>(0);
+  int get countCheft => _countCheft.value;
+  void getCountChef() {
+    FirebaseFirestore.instance
+        .collection('chefs')
+        .snapshots()
+        .listen((QuerySnapshot query) {
+      final int count = query.size;
+      _countCheft.value = count;
+    });
+  }
+  //Count Bar
+  final Rx<int> _countBar = Rx<int>(0);
+  int get countBar => _countBar.value;
+  void getCountBar() {
+    FirebaseFirestore.instance
+        .collection('bars')
+        .snapshots()
+        .listen((QuerySnapshot query) {
+      final int count = query.size;
+      _countBar.value = count;
+    });
+  }
+  //Count Other
+  final Rx<int> _countOther = Rx<int>(0);
+  int get countOther => _countOther.value;
+  void getCountOther() {
+    FirebaseFirestore.instance
+        .collection('others')
+        .snapshots()
+        .listen((QuerySnapshot query) {
+      final int count = query.size;
+      _countOther.value = count;
+    });
+  }
+
   //lấy 1 order
   final Rx<model.Order> _orderDetailOfChef = Rx<model.Order>(model.Order(
       order_id: '',

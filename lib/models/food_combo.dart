@@ -111,7 +111,7 @@ class FoodCombo {
       category_code: snapshot['category_code'],
       unit_id: snapshot['unit_id'],
       temporary_percent: snapshot['temporary_percent'],
-      listFood: [],
+      listFood: listFood,
     );
   }
 }

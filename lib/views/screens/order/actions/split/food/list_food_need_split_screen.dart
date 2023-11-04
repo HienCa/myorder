@@ -130,9 +130,12 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                             // Chiều cao của ListTile thay đổi
                             child: InkWell(
                               onTap: () => {setState(() {})},
-                              child: widget.order.order_details[index]
-                                          .food_status !=
-                                      FOOD_STATUS_CANCEL
+                              child: (widget.order.order_details[index]
+                                              .food_status !=
+                                          FOOD_STATUS_CANCEL &&
+                                      widget.order.order_details[index]
+                                              .food_status !=
+                                          FOOD_STATUS_COOKING)
                                   ? Column(
                                       children: [
                                         ListTile(

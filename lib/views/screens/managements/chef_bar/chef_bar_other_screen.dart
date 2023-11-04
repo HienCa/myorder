@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_print
 
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
@@ -32,6 +32,11 @@ class _ManagementChefBarOtherPageState
   @override
   void initState() {
     super.initState();
+
+    chefBarOtherController.getCountChef();
+    chefBarOtherController.getCountBar();
+    chefBarOtherController.getCountOther();
+
     chefBarOtherController.getChefs(keySearch);
     chefBarOtherController.getBars(keySearch);
     chefBarOtherController.getOthers(keySearch);
@@ -63,15 +68,24 @@ class _ManagementChefBarOtherPageState
                 ),
               ),
               tabs: [
-                Tab(
-                  text: "KHU BẾP (${chefBarOtherController.chefs.length})",
-                ),
-                Tab(
-                  text: "QUẦY BAR (${chefBarOtherController.bars.length})",
-                ),
-                Tab(
-                  text: "KHÁC (${chefBarOtherController.others.length})",
-                ),
+                Tab(child: Obx(() {
+                  return Text(
+                    'KHU BẾP ${chefBarOtherController.countCheft}',
+                    style: textStyleWhiteBold16,
+                  );
+                })),
+                Tab(child: Obx(() {
+                  return Text(
+                    'QUẦY BAR ${chefBarOtherController.countBar}',
+                    style: textStyleWhiteBold16,
+                  );
+                })),
+                Tab(child: Obx(() {
+                  return Text(
+                    'KHÁC ${chefBarOtherController.countOther}',
+                    style: textStyleWhiteBold16,
+                  );
+                })),
               ],
             ),
             title: const Center(

@@ -51,6 +51,7 @@ class ManagementTablePage extends StatelessWidget {
                                 color: textWhiteColor,
                                 fontWeight: FontWeight.bold),
                           ),
+                          
                         ],
                       ),
                     ));

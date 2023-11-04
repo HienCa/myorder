@@ -302,6 +302,7 @@ class _ManagementAreaTablePageState extends State<ManagementAreaTablePage> {
                                                   color: textWhiteColor,
                                                   fontWeight: FontWeight.bold),
                                             ),
+                                            
                                           ],
                                         ),
                                       ));

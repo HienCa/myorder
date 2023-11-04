@@ -66,7 +66,8 @@ class _TableItemState extends State<TableItem> {
                     MaterialPageRoute(
                         builder: (context) => AddFoodToOrderPage(
                               table: tables[i],
-                              booking: true, isGift: false,
+                              booking: true,
+                              isGift: false,
                             )),
                   );
                 } else {
@@ -91,14 +92,7 @@ class _TableItemState extends State<TableItem> {
                   alignment: Alignment.center,
                   children: [
                     tables[i].status == TABLE_STATUS_EMPTY
-                        ? ClipOval(
-                            child: Image.asset(
-                              "assets/images/icon-table-simple-empty.jpg",
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          )
+                        ? ClipOval(child: tableImageEmpty)
                         : const SizedBox(),
                     tables[i].status == TABLE_STATUS_SERVING
                         ? ClipOval(
@@ -128,6 +122,28 @@ class _TableItemState extends State<TableItem> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    Positioned(
+                        top: 0,
+                        right: 5,
+                        
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: colorWarning,
+                            borderRadius: BorderRadius.all(Radius.circular(25))
+                          ),
+                          height: 35,
+                          width: 35,
+                          child: Center(
+                            child: Text(
+                              "${tables[i].total_slot}",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: secondColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ))
                   ],
                 ),
               ),
