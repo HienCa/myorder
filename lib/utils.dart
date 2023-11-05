@@ -25,6 +25,17 @@ enum TypeToast {
 
 //Các phương phức hay dùng
 class Utils {
+  //Lọc món theo category_code
+  static List<Food> filterCategoryFood(List<Food> list, int categoryCode) {
+    List<Food> filteredList = [];
+    for (Food food in list) {
+      if (food.category_code == categoryCode) {
+        filteredList.add(food);
+      }
+    }
+    return filteredList;
+  }
+
   static bool isShowingFlushbar = false;
 
   //Show Message
@@ -289,7 +300,8 @@ class Utils {
 
   static bool isAnyFoodCooking(List<OrderDetail> foods) {
     for (var food in foods) {
-      if (food.food_status == FOOD_STATUS_COOKING || food.food_status == FOOD_STATUS_IN_CHEF) {
+      if (food.food_status == FOOD_STATUS_COOKING ||
+          food.food_status == FOOD_STATUS_IN_CHEF) {
         return true;
       }
     }

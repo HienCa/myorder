@@ -266,7 +266,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     }
     //thiết lập view combo
     isCheckCombo = widget.food.food_combo_ids.isNotEmpty ? true : false;
-
+    textCategoryCodeController.text = '${widget.food.category_code}';
     //vat
     if (widget.food.vat_id != "") {
       isCheckVAT = true;
@@ -382,6 +382,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   final TextEditingController textSearchVatController = TextEditingController();
   final TextEditingController textCategoryIdController =
       TextEditingController();
+  final TextEditingController textCategoryCodeController =
+      TextEditingController();
   final TextEditingController textUnitIdController = TextEditingController();
   final TextEditingController textVatIdController = TextEditingController();
 
@@ -496,7 +498,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   }
 
   void refeshFoodSelected() {
-    print("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
     for (var j = 0; j < widget.food.food_combo_ids.length; j++) {
       for (var i = 0; i < foodController.foods.length; i++) {
         if (foodController.foods[i].food_id == widget.food.food_combo_ids[j]) {
@@ -693,6 +694,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                 textCategoryIdController.text =
                                                     selectedCategoryValue!
                                                         .category_id;
+
+                                                textCategoryCodeController
+                                                        .text =
+                                                    '${selectedCategoryValue!.category_code}';
                                               } else {
                                                 isErrorTextCategoryId = true;
                                               }
@@ -921,9 +926,20 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             child: Checkbox(
                               value: isCheckCombo,
                               onChanged: (bool? value) {
-                                setState(() {
-                                  isCheckCombo = value!;
-                                });
+                                print(
+                                    'category_code: ${textCategoryCodeController.text}');
+                                if ((int.tryParse(
+                                            textCategoryCodeController.text) ??
+                                        0) !=
+                                    0) {
+                                  setState(() {
+                                    isCheckCombo = value!;
+                                  });
+                                } else {
+                                  setState(() {
+                                    isCheckCombo = false;
+                                  });
+                                }
                               },
                               activeColor: primaryColor,
                             ),
@@ -964,52 +980,67 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                 foodController.foods)
                                             .length,
                                         itemBuilder: (context, index) =>
-                                            GestureDetector(
-                                          onTap: () => {
-                                            setState(() {
-                                              unSelectedFood(
-                                                  foodController.foods[index]);
-                                            })
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            margin: EdgeInsets.only(
-                                              left: kDefaultPadding,
-                                              right: index ==
-                                                      Utils.filterSelected(
-                                                                  foodController
-                                                                      .foods)
-                                                              .length -
-                                                          1
-                                                  ? kDefaultPadding
-                                                  : 0,
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            decoration: BoxDecoration(
-                                                color: textWhiteColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                border: Border.all(
-                                                    width: 5,
-                                                    color: borderColorPrimary)),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  Utils.filterSelected(
-                                                          foodController
-                                                              .foods)[index]
-                                                      .name,
-                                                  style: const TextStyle(
-                                                      color: primaryColor,
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                ),
-                                                iconClose
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                                        // print(textCategoryCodeController
+                                        //                         .text);
+                                            foodController.foods[index]
+                                                        .category_code ==
+                                                    (int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        widget.food.category_code)
+                                                ? GestureDetector(
+                                                    onTap: () => {
+                                                      setState(() {
+                                                        unSelectedFood(
+                                                            foodController
+                                                                .foods[index]);
+                                                      })
+                                                    },
+                                                    child: Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      margin: EdgeInsets.only(
+                                                        left: kDefaultPadding,
+                                                        right: index ==
+                                                                Utils.filterSelected(
+                                                                            foodController.foods)
+                                                                        .length -
+                                                                    1
+                                                            ? kDefaultPadding
+                                                            : 0,
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10),
+                                                      decoration: BoxDecoration(
+                                                          color: textWhiteColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                          border: Border.all(
+                                                              width: 5,
+                                                              color:
+                                                                  borderColorPrimary)),
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            Utils.filterSelected(
+                                                                    foodController
+                                                                        .foods)[index]
+                                                                .name,
+                                                            style: const TextStyle(
+                                                                color:
+                                                                    primaryColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal),
+                                                          ),
+                                                          iconClose
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                : const SizedBox(),
                                       ),
                                     ),
                                     Container(
@@ -1844,7 +1875,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
-                                                            0,
+                                                            int.tryParse(
+                                                                textCategoryCodeController
+                                                                    .text) ??
+                                                            CATEGORY_FOOD,
                                                         listCombo),
                                                     Utils.myPopSuccess(context)
                                                   }
@@ -1880,7 +1914,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0,
+                                                        int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD,
                                                     listCombo),
                                                 Utils.myPopSuccess(context)
                                               }
@@ -1911,7 +1948,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        0,
+                                                        int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD,
                                                     listCombo),
                                                 Utils.myPopSuccess(context)
                                               }

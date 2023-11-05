@@ -280,137 +280,288 @@ class _ManagementChefPageState extends State<ManagementChefDetailPage> {
                                   bottom: BorderSide(
                                       width: 0.1, color: borderColor)),
                             ),
-                      child: ListTile(
-                        selectedColor: primaryColor,
-                        leading: Theme(
-                          data: ThemeData(unselectedWidgetColor: primaryColor),
-                          child: SizedBox(
-                            width: 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Checkbox(
-                                  value: chefBarOtherController
-                                      .orderDetailOfChef
-                                      .order_details[index]
-                                      .isSelected,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      setState(() {
-                                        chefBarOtherController
-                                            .orderDetailOfChef
-                                            .order_details[index]
-                                            .isSelected = value ?? false;
-
-                                        isCheckAll = Utils.isCheckedAll(
+                      child: Column(
+                        children: [
+                          ListTile(
+                            selectedColor: primaryColor,
+                            leading: Theme(
+                              data: ThemeData(
+                                  unselectedWidgetColor: primaryColor),
+                              child: SizedBox(
+                                width: 100,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Checkbox(
+                                      value: chefBarOtherController
+                                          .orderDetailOfChef
+                                          .order_details[index]
+                                          .isSelected,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          setState(() {
                                             chefBarOtherController
                                                 .orderDetailOfChef
-                                                .order_details);
+                                                .order_details[index]
+                                                .isSelected = value ?? false;
 
-                                        print(
-                                            "isChecked - $value: ${chefBarOtherController.orderDetailOfChef.order_details[index].food!.name}");
-                                      });
-                                    });
-                                  },
-                                  activeColor: primaryColor,
+                                            isCheckAll = Utils.isCheckedAll(
+                                                chefBarOtherController
+                                                    .orderDetailOfChef
+                                                    .order_details);
+
+                                            print(
+                                                "isChecked - $value: ${chefBarOtherController.orderDetailOfChef.order_details[index].food!.name}");
+                                          });
+                                        });
+                                      },
+                                      activeColor: primaryColor,
+                                    ),
+                                    chefBarOtherController
+                                                .orderDetailOfChef
+                                                .order_details[index]
+                                                .food!
+                                                .image !=
+                                            ''
+                                        ? ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            child: Image.network(
+                                              chefBarOtherController
+                                                  .orderDetailOfChef
+                                                  .order_details[index]
+                                                  .food!
+                                                  .image!,
+                                              width: 50,
+                                              height: 50,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        : ClipRRect(
+                                            child:
+                                                defaultFoodImage, // ảnh trong constants
+                                          ),
+                                  ],
                                 ),
-                                chefBarOtherController.orderDetailOfChef
-                                            .order_details[index].food!.image !=
-                                        ''
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: Image.network(
-                                          chefBarOtherController
-                                              .orderDetailOfChef
-                                              .order_details[index]
-                                              .food!
-                                              .image!,
-                                          width: 50,
-                                          height: 50,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : ClipRRect(
-                                        child:
-                                            defaultFoodImage, // ảnh trong constants
-                                      ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        title: Marquee(
-                          direction: Axis.horizontal,
-                          textDirection: TextDirection.ltr,
-                          animationDuration: const Duration(seconds: 1),
-                          backDuration: const Duration(milliseconds: 4000),
-                          pauseDuration: const Duration(milliseconds: 1000),
-                          directionMarguee: DirectionMarguee.TwoDirection,
-                          child: Text(
-                              chefBarOtherController.orderDetailOfChef
-                                  .order_details[index].food!.name,
-                              style: textStyleFoodNameBold16),
-                        ),
-                        subtitle: chefBarOtherController.orderDetailOfChef
-                                    .order_details[index].food_status ==
-                                FOOD_STATUS_IN_CHEF
-                            ? Text(
-                                "$FOOD_STATUS_IN_CHEF_STRING x ${chefBarOtherController.orderDetailOfChef.order_details[index].quantity}",
-                                style: textStyleMaking,
-                              )
-                            : Text(
-                                "$FOOD_STATUS_COOKING_STRING x ${chefBarOtherController.orderDetailOfChef.order_details[index].quantity}",
-                                style: textStyleCooking,
                               ),
-                        // trailing: chefBarOtherController.orderDetailOfChef
-                        //         .order_details[index].isSelected
-                        //     ? SizedBox(
-                        //         width: 30,
-                        //         child: Row(
-                        //           children: [
-                        //             InkWell(
-                        //               onTap: () async {
-                        //                 final result = await showDialog(
-                        //                   context: context,
-                        //                   builder: (BuildContext context) {
-                        //                     return ChangeCancelFoodConfirmDialog(
-                        //                       chefBarId: widget
-                        //                           .chefBar.chef_bar_id,
-                        //                       orderDetailList:
-                        //                           chefBarOtherController
-                        //                               .orderDetailOfChef
-                        //                               .order_details,
-                        //                     );
-                        //                   },
-                        //                 );
-                        //                 if (result != null) {
-                        //                   setState(() {
-                        //                     Utils.showStylishDialog(
-                        //                         context,
-                        //                         'THÀNH CÔNG',
-                        //                         'Đã xác nhận không chế biến món này.',
-                        //                         StylishDialogType.SUCCESS);
-                        //                   });
-                        //                 }
-                        //               },
-                        //               child: Container(
-                        //                 decoration: BoxDecoration(
-                        //                   color: colorCancel,
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(5),
-                        //                 ),
-                        //                 height: 30,
-                        //                 width: 30,
-                        //                 child: const Align(
-                        //                   alignment: Alignment.center,
-                        //                   child: Icon(Icons.close,
-                        //                       color: secondColor),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ],
-                        //         ),
-                        //       )
-                        //     : const SizedBox()
+                            ),
+                            title: Marquee(
+                              direction: Axis.horizontal,
+                              textDirection: TextDirection.ltr,
+                              animationDuration: const Duration(seconds: 1),
+                              backDuration: const Duration(milliseconds: 4000),
+                              pauseDuration: const Duration(milliseconds: 1000),
+                              directionMarguee: DirectionMarguee.TwoDirection,
+                              child: Text(
+                                  chefBarOtherController.orderDetailOfChef
+                                      .order_details[index].food!.name,
+                                  style: textStyleFoodNameBold16),
+                            ),
+                            subtitle: chefBarOtherController.orderDetailOfChef
+                                        .order_details[index].food_status ==
+                                    FOOD_STATUS_IN_CHEF
+                                ? Text(
+                                    "$FOOD_STATUS_IN_CHEF_STRING x ${chefBarOtherController.orderDetailOfChef.order_details[index].quantity}",
+                                    style: textStyleMaking,
+                                  )
+                                : Text(
+                                    "$FOOD_STATUS_COOKING_STRING x ${chefBarOtherController.orderDetailOfChef.order_details[index].quantity}",
+                                    style: textStyleCooking,
+                                  ),
+                            // trailing: chefBarOtherController.orderDetailOfChef
+                            //         .order_details[index].isSelected
+                            //     ? SizedBox(
+                            //         width: 30,
+                            //         child: Row(
+                            //           children: [
+                            //             InkWell(
+                            //               onTap: () async {
+                            //                 final result = await showDialog(
+                            //                   context: context,
+                            //                   builder: (BuildContext context) {
+                            //                     return ChangeCancelFoodConfirmDialog(
+                            //                       chefBarId: widget
+                            //                           .chefBar.chef_bar_id,
+                            //                       orderDetailList:
+                            //                           chefBarOtherController
+                            //                               .orderDetailOfChef
+                            //                               .order_details,
+                            //                     );
+                            //                   },
+                            //                 );
+                            //                 if (result != null) {
+                            //                   setState(() {
+                            //                     Utils.showStylishDialog(
+                            //                         context,
+                            //                         'THÀNH CÔNG',
+                            //                         'Đã xác nhận không chế biến món này.',
+                            //                         StylishDialogType.SUCCESS);
+                            //                   });
+                            //                 }
+                            //               },
+                            //               child: Container(
+                            //                 decoration: BoxDecoration(
+                            //                   color: colorCancel,
+                            //                   borderRadius:
+                            //                       BorderRadius.circular(5),
+                            //                 ),
+                            //                 height: 30,
+                            //                 width: 30,
+                            //                 child: const Align(
+                            //                   alignment: Alignment.center,
+                            //                   child: Icon(Icons.close,
+                            //                       color: secondColor),
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //           ],
+                            //         ),
+                            //       )
+                            //     : const SizedBox()
+                          ),
+                          //Danh sách Combo
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            child: Container(
+                              margin: const EdgeInsets.only(left: 70),
+                              height: chefBarOtherController.orderDetailOfChef
+                                      .order_details[index].listCombo.length *
+                                  62,
+                              child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                itemCount: chefBarOtherController
+                                    .orderDetailOfChef
+                                    .order_details[index]
+                                    .listCombo
+                                    .length,
+                                itemBuilder: (context, indexCombo) {
+                                  return Container(
+                                    margin: const EdgeInsets.all(
+                                        4), // Khoảng cách dưới dạng đệm
+
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              width: 0.1, color: borderColor)),
+                                    ),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {});
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                          // Chiều cao của ListTile thay đổi
+                                          child: InkWell(
+                                            onTap: () => {setState(() {})},
+                                            child: Column(
+                                              children: [
+                                                ListTile(
+                                                  selectedColor: primaryColor,
+                                                  leading: Theme(
+                                                    data: ThemeData(
+                                                        unselectedWidgetColor:
+                                                            primaryColor),
+                                                    child: SizedBox(
+                                                      width: 40,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          chefBarOtherController
+                                                                      .orderDetailOfChef
+                                                                      .order_details[
+                                                                          index]
+                                                                      .listCombo[
+                                                                          indexCombo]
+                                                                      .image !=
+                                                                  ""
+                                                              ? ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                  child: Image
+                                                                      .network(
+                                                                    chefBarOtherController
+                                                                            .orderDetailOfChef
+                                                                            .order_details[index]
+                                                                            .listCombo[indexCombo]
+                                                                            .image ??
+                                                                        defaultFoodImageString,
+                                                                    width: 40,
+                                                                    height: 40,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  ),
+                                                                )
+                                                              : ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                  child:
+                                                                      defaultFoodImage40),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  title: Marquee(
+                                                      direction:
+                                                          Axis.horizontal,
+                                                      textDirection: TextDirection
+                                                          .ltr,
+                                                      animationDuration:
+                                                          const Duration(
+                                                              seconds: 1),
+                                                      backDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  4000),
+                                                      pauseDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  1000),
+                                                      directionMarguee:
+                                                          DirectionMarguee
+                                                              .TwoDirection,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                              text: chefBarOtherController
+                                                                  .orderDetailOfChef
+                                                                  .order_details[
+                                                                      index]
+                                                                  .listCombo[
+                                                                      indexCombo]
+                                                                  .name,
+                                                              style: chefBarOtherController
+                                                                          .orderDetailOfChef
+                                                                          .order_details[
+                                                                              index]
+                                                                          .listCombo[
+                                                                              indexCombo]
+                                                                          .isSelected ==
+                                                                      true
+                                                                  ? textStyleWhiteRegular16
+                                                                  : textStyleFoodNameBold16),
+                                                        ],
+                                                      ))),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                  );
+                                },
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     );
                   },

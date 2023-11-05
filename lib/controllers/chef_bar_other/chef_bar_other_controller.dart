@@ -269,6 +269,22 @@ class ChefBarOtherController extends GetxController {
 
                 modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                 retValue.order_details[i].food = food;
+                List<modelFood.Food> listFoodComboDetail = [];
+                if (food.food_combo_ids.isNotEmpty) {
+                  // Lấy thông tin món combo
+                  print("===============COMBO CỦA ${food.name}===========");
+
+                  for (String item in food.food_combo_ids) {
+                    var foodSnapshot =
+                        await firestore.collection("foods").doc(item).get();
+
+                    modelFood.Food food = modelFood.Food.fromSnap(foodSnapshot);
+
+                    print(food.name);
+                    listFoodComboDetail.add(food);
+                  }
+                }
+                retValue.order_details[i].listCombo = listFoodComboDetail;
               }
             }
           }

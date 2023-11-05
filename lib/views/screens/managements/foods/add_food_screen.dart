@@ -829,9 +829,18 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             child: Checkbox(
                               value: isCheckCombo,
                               onChanged: (bool? value) {
-                                setState(() {
-                                  isCheckCombo = value!;
-                                });
+                                if ((int.tryParse(
+                                            textCategoryCodeController.text) ??
+                                        0) !=
+                                    0) {
+                                  setState(() {
+                                    isCheckCombo = value!;
+                                  });
+                                } else {
+                                  setState(() {
+                                    isCheckCombo = false;
+                                  });
+                                }
                               },
                               activeColor: primaryColor,
                             ),
@@ -932,53 +941,73 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                         scrollDirection: Axis.vertical,
                                         itemCount: foodController.foods.length,
                                         itemBuilder: (context, index) =>
-                                            GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              toggleSelectedFood(
-                                                  foodController.foods[index]);
-                                            });
-                                          },
-                                          child: Stack(children: [
-                                            Container(
-                                              height: 50,
-                                              alignment: Alignment.center,
-                                              margin: const EdgeInsets.only(
-                                                bottom: 5,
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10),
-                                              decoration: BoxDecoration(
-                                                color: secondColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Text(
-                                                foodController
-                                                    .foods[index].name,
-                                                style: const TextStyle(
-                                                    color: primaryColor,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ),
-                                            Utils.isSelected(
-                                                    foodController.foods[index])
-                                                ? Positioned(
-                                                    top: 0,
-                                                    right: 10,
-                                                    child: Container(
-                                                      color: Colors.transparent,
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: ClipRRect(
-                                                        child: checkImageGreen,
+                                            foodController.foods[index]
+                                                        .category_code ==
+                                                    (int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        0)
+                                                ? GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        toggleSelectedFood(
+                                                            foodController
+                                                                .foods[index]);
+                                                      });
+                                                    },
+                                                    child: Stack(children: [
+                                                      Container(
+                                                        height: 50,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        margin: const EdgeInsets
+                                                            .only(
+                                                          bottom: 5,
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: secondColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: Text(
+                                                          foodController
+                                                              .foods[index]
+                                                              .name,
+                                                          style: const TextStyle(
+                                                              color:
+                                                                  primaryColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal),
+                                                        ),
                                                       ),
-                                                    ))
-                                                : const SizedBox()
-                                          ]),
-                                        ),
+                                                      Utils.isSelected(
+                                                              foodController
+                                                                  .foods[index])
+                                                          ? Positioned(
+                                                              top: 0,
+                                                              right: 10,
+                                                              child: Container(
+                                                                color: Colors
+                                                                    .transparent,
+                                                                height: 30,
+                                                                width: 30,
+                                                                child:
+                                                                    ClipRRect(
+                                                                  child:
+                                                                      checkImageGreen,
+                                                                ),
+                                                              ))
+                                                          : const SizedBox()
+                                                    ]),
+                                                  )
+                                                : const SizedBox(),
                                       ),
                                     ),
                                   ],
