@@ -11,6 +11,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/models/order.dart' as model1;
 import 'package:myorder/models/table.dart' as model2;
 import 'package:myorder/views/screens/order/actions/split/food/dialog_confirm_split_food.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ListFoodNeedSplitPage extends StatefulWidget {
   final model1.Order order;
@@ -261,6 +262,13 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                                                                           .quantity -
                                                                       1;
                                                             });
+                                                          }else {
+                                                            Utils.showStylishDialog(
+                                                                context,
+                                                                'THÔNG BÁO',
+                                                                'Số lượng cần tách tối thiểu là 1.',
+                                                                StylishDialogType
+                                                                    .INFO);
                                                           }
                                                         },
                                                         child: Container(
@@ -310,6 +318,13 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                                                                             index]
                                                                         .quantity +
                                                                     1);
+                                                          } else {
+                                                            Utils.showStylishDialog(
+                                                                context,
+                                                                'THÔNG BÁO',
+                                                                'Món ăn đã đạt số lượng tối đa.',
+                                                                StylishDialogType
+                                                                    .INFO);
                                                           }
 
                                                           for (OrderDetail orderDetail
