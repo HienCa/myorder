@@ -303,8 +303,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: ListTile(
                                   selectedColor: primaryColor,
                                   leading: orderController.orderDetail
-                                              .order_details[index].food !=
-                                          null
+                                              .order_details[index].food!.image !=
+                                          ''
                                       ? ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(5),

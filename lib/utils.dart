@@ -289,7 +289,7 @@ class Utils {
 
   static bool isAnyFoodCooking(List<OrderDetail> foods) {
     for (var food in foods) {
-      if (food.food_status == FOOD_STATUS_COOKING) {
+      if (food.food_status == FOOD_STATUS_COOKING || food.food_status == FOOD_STATUS_IN_CHEF) {
         return true;
       }
     }

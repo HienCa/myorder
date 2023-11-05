@@ -79,7 +79,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
   void decreaseQuantity(OrderDetail orderDetail) {
     print("Muốn giảm");
     for (int i = 0; i < orderDetailOriginArray.length; i++) {
-      if (orderDetailOriginArray[i].food_id == orderDetail.food_id) {
+      if (orderDetailOriginArray[i].order_detail_id == orderDetail.order_detail_id) {
         if (orderDetail.quantity > 1) {
           orderDetail.quantity = orderDetail.quantity - 1;
         }
@@ -103,7 +103,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
 
   void increaseQuantity(OrderDetail orderDetail) {
     for (int i = 0; i < orderDetailOriginArray.length; i++) {
-      if (orderDetailOriginArray[i].food_id == orderDetail.food_id) {
+      if (orderDetailOriginArray[i].order_detail_id == orderDetail.order_detail_id) {
         orderDetail.quantity = orderDetail.quantity + 1;
 
         //nếu thay đổi về số lượng thì isSelected = true
@@ -1370,7 +1370,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                         Utils.showStylishDialog(
                                             context,
                                             'THÔNG BÁO',
-                                            'Có một số món chưa được gửi Bếp/Bar. Vui lòng gửi bếp trước khi tiến hành thanh toán',
+                                            'Có một số món chưa được gửi Bếp/Bar. Vui lòng gửi bếp trước khi tiến hành thanh toán.',
                                             StylishDialogType.INFO)
                                       },
                                       child: Container(
