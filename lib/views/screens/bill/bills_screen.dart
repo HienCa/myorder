@@ -261,39 +261,53 @@ class _BillPageState extends State<BillPage> {
                                                     ),
                                                     color: backgroundBillColor,
                                                   ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Center(
-                                                            child: Text(
-                                                                billController
-                                                                    .bills[
-                                                                        index]
-                                                                    .order!
-                                                                    .table!
-                                                                    .name,
-                                                                style:
-                                                                    textStyleBillSuccessBold20)),
-                                                      ),
-                                                      Expanded(
-                                                        child: Center(
-                                                            child: Text(
-                                                                billController
-                                                                        .bills[
-                                                                            index]
-                                                                        .order!
-                                                                        .table_merge_names
-                                                                        .isNotEmpty
-                                                                    ? "(${billController.bills[index].order!.table_merge_names.join(', ')})"
-                                                                    : "",
-                                                                style:
-                                                                    textStyleBillTableMergeName16)),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                  child: billController
+                                                          .bills[index]
+                                                          .order!
+                                                          .table_merge_ids
+                                                          .isNotEmpty
+                                                      ? Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Expanded(
+                                                              child: Center(
+                                                                  child: Text(
+                                                                      billController
+                                                                          .bills[
+                                                                              index]
+                                                                          .order!
+                                                                          .table!
+                                                                          .name,
+                                                                      style:
+                                                                          textStyleBillSuccessBold20)),
+                                                            ),
+                                                            Expanded(
+                                                              child: Center(
+                                                                  child: Text(
+                                                                      billController
+                                                                              .bills[
+                                                                                  index]
+                                                                              .order!
+                                                                              .table_merge_names
+                                                                              .isNotEmpty
+                                                                          ? "(${billController.bills[index].order!.table_merge_names.join(', ')})"
+                                                                          : "",
+                                                                      style:
+                                                                          textStyleBillTableMergeName16)),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Center(
+                                                          child: Text(
+                                                              billController
+                                                                  .bills[index]
+                                                                  .order!
+                                                                  .table!
+                                                                  .name,
+                                                              style:
+                                                                  textStyleBillSuccessBold20)),
                                                 ),
                                               ),
                                             ],
@@ -373,7 +387,7 @@ class _BillPageState extends State<BillPage> {
                                                   height: 26,
                                                   child: Row(children: [
                                                     const Icon(
-                                                        Icons.abc_outlined,
+                                                        Icons.info_outline_rounded,
                                                         color: iconColor),
                                                     marginRight10,
                                                     Text(
@@ -453,7 +467,64 @@ class _BillPageState extends State<BillPage> {
                       },
                     );
                   }),
-                )
+                ),
+                marginTop10,
+                Container(
+                  height: 60,
+                  padding: const EdgeInsets.all(
+                    8,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: backgroundBillColor,
+                    // borderRadius: BorderRadius.only(
+                    //   topLeft: Radius.circular(22),
+                    //   topRight: Radius.circular(22),
+                    // ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Doanh thu tạm tính",
+                            style: textStyleWhiteBold16,
+                          ),
+                          Obx(() {
+                            return Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                Utils.formatCurrency(Utils.getSumTotalAmount(
+                                    billController.bills)),
+                                style: textStyleWhiteBold16,
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text(
+                            "Tổng hóa đơn",
+                            style: textStyleWhiteBold16,
+                          ),
+                          Obx(() {
+                            return Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                "${billController.bills.length}",
+                                style: textStyleWhiteBold16,
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

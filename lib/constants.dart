@@ -152,6 +152,8 @@ const textStyleTrailingCostRegular16 =
 const textStyleTrailingProfitRegular16 =
     TextStyle(fontSize: 16, color: Colors.orangeAccent);
 
+const textStyleWhiteBold14 =
+    TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold);
 const textStyleWhiteRegular16 =
     TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400);
 const textStyleWhiteBold16 =

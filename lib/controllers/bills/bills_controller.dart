@@ -476,7 +476,7 @@ class BillController extends GetxController {
           vat_amount: vat_amount ?? 0,
           discount_amount: discount_amount ?? 0,
           payment_at: now,
-          order_code: order_code);
+          order_code: order_code, total_slot: order.total_slot);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ

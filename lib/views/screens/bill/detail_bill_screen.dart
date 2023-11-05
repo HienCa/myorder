@@ -120,25 +120,25 @@ class _BillDetailPageState extends State<BillDetailPage> {
                     )
                   ],
                 ),
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.groups,
                       color: labelBlackColor,
                     ),
-                    SizedBox(width: 10),
-                    Text(
+                    const SizedBox(width: 10),
+                    const Text(
                       "Số khách",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 20),
-                    Text(
+                    const SizedBox(width: 20),
+                    const Text(
                       ":",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Text(
-                      "5",
+                      "${widget.bill.total_slot}",
                       style: textStyleBlackRegular,
                     )
                   ],

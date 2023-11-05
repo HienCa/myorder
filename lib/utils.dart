@@ -314,6 +314,15 @@ class Utils {
     }
   }
 
+  //Tính tổng tiền theo total_amount
+  static double getSumTotalAmount(List<dynamic> list) {
+    double total = 0;
+    for (var item in list) {
+      total += item.total_amount;
+    }
+    return total;
+  }
+
   //Đếm số lượng orderDetail muốn thay đổi
   static int counterOrderDetailSelected(List<OrderDetail> foods) {
     int count = 0;

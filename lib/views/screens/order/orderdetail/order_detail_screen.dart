@@ -18,10 +18,10 @@ import 'package:myorder/views/screens/order/actions/split/food/choose_target_tab
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_gift_food_to_order_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/dialog_confirm_update_quantity.dart';
+import 'package:myorder/views/screens/order/orderdetail/dialogs/dialog_confirm_finish_foos.dart';
 
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
-import 'package:myorder/views/widgets/dialogs/dialog_confirm.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class OrderdetailPage extends StatefulWidget {
@@ -1157,14 +1157,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                 final result = await showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return MyDialogMessage(
-                                      title: 'YÊU CẦU DỪNG CHẾ BIẾN',
-                                      discription:
-                                          'Bạn muốn dừng chế biến để tiến hành thanh toán?',
-                                      func: orderController.updateFoodStatus(
-                                          orderController.orderDetail,
-                                          FOOD_STATUS_COOKING,
-                                          FOOD_STATUS_FINISH),
+                                    return CustomDialogFinishFoods(
+                                      order: orderController.orderDetail,
                                     );
                                   },
                                 );

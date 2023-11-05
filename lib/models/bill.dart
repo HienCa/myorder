@@ -10,6 +10,7 @@ class Bill {
   String order_code;
   model.Order? order = model.Order.empty();
   List<OrderDetail> order_details = [];
+  int total_slot;
   double total_amount;
   double total_estimate_amount;
   double vat_amount;
@@ -19,6 +20,7 @@ class Bill {
     required this.bill_id,
     required this.order_id,
     required this.order_code,
+    required this.total_slot,
     required this.total_amount,
     required this.total_estimate_amount,
     required this.vat_amount,
@@ -30,6 +32,7 @@ class Bill {
       : bill_id = '',
         order_id = '',
         order_code = '',
+        total_slot = 1,
         order = null,
         total_amount = 0.0,
         total_estimate_amount = 0.0,
@@ -37,10 +40,10 @@ class Bill {
         discount_amount = 0.0,
         payment_at = Timestamp.now();
 
-
   Map<String, dynamic> toJson() => {
         "bill_id": bill_id,
         "order_id": order_id,
+        "total_slot": total_slot,
         "order_code": order_code,
         "total_amount": total_amount,
         "total_estimate_amount": total_estimate_amount,
@@ -55,6 +58,7 @@ class Bill {
     return Bill(
       bill_id: snapshot['bill_id'],
       order_id: snapshot['order_id'],
+      total_slot: snapshot['total_slot'],
       order_code: snapshot['order_code'],
       total_amount: snapshot['total_amount'],
       total_estimate_amount: snapshot['total_estimate_amount'],

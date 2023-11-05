@@ -15,6 +15,7 @@ import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class PaymentPage extends StatefulWidget {
   final Order order;
@@ -135,7 +136,8 @@ class _PaymentPageState extends State<PaymentPage> {
                   )),
                   Center(
                       child: Text(
-                          Utils.formatCurrency(getTotalAmount(widget.order)),
+                          Utils.formatCurrency(
+                              orderController.order.total_amount),
                           style: textStylePriceBold20))
                 ],
               ),
@@ -438,24 +440,32 @@ class _PaymentPageState extends State<PaymentPage> {
                             child: Checkbox(
                               value: isCheckedGTGT,
                               onChanged: (bool? value) {
-                                setState(() {
-                                  isCheckedGTGT = value!;
-                                  print(isCheckedGTGT);
-                                  // asp thue
-                                  if (isCheckedGTGT) {
-                                    orderController.applyVat(
-                                        context,
-                                        orderController.order,
-                                        orderController
-                                            .orderDetail.order_details);
-                                  } else {
-                                    orderController.cancelVat(
-                                        context,
-                                        orderController.order,
-                                        orderController
-                                            .orderDetail.order_details);
-                                  }
-                                });
+                                if (orderController.order.total_amount > 0) {
+                                  setState(() {
+                                    isCheckedGTGT = value!;
+                                    print(isCheckedGTGT);
+                                    // asp thue
+                                    if (isCheckedGTGT) {
+                                      orderController.applyVat(
+                                          context,
+                                          orderController.order,
+                                          orderController
+                                              .orderDetail.order_details);
+                                    } else {
+                                      orderController.cancelVat(
+                                          context,
+                                          orderController.order,
+                                          orderController
+                                              .orderDetail.order_details);
+                                    }
+                                  });
+                                } else {
+                                  Utils.showStylishDialog(
+                                      context,
+                                      'THÔNG BÁO',
+                                      'Hóa đơn này chưa đủ điều kiện áp dụng VAT.',
+                                      StylishDialogType.INFO);
+                                }
                               },
                               activeColor: primaryColor,
                             ),
@@ -502,28 +512,36 @@ class _PaymentPageState extends State<PaymentPage> {
                             child: Checkbox(
                               value: isCheckedDecrease,
                               onChanged: (bool? value) {
-                                setState(() {
-                                  isCheckedDecrease = value!;
-                                  //Hủy DISCOUNT khi nhấn uncheck checkbox
-                                  if (isCheckedDecrease == false) {
-                                    orderController.cancelDiscount(
-                                        context,
-                                        orderController.order,
-                                        orderController
-                                            .orderDetail.order_details);
-                                  }
-                                  // bật popup
-                                  if (isCheckedDecrease) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomDialogDecreasePrice(
-                                          order: orderController.order,
-                                        );
-                                      },
-                                    );
-                                  }
-                                });
+                                if (orderController.order.total_amount > 0) {
+                                  setState(() {
+                                    isCheckedDecrease = value!;
+                                    //Hủy DISCOUNT khi nhấn uncheck checkbox
+                                    if (isCheckedDecrease == false) {
+                                      orderController.cancelDiscount(
+                                          context,
+                                          orderController.order,
+                                          orderController
+                                              .orderDetail.order_details);
+                                    }
+                                    // bật popup
+                                    if (isCheckedDecrease) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomDialogDecreasePrice(
+                                            order: orderController.order,
+                                          );
+                                        },
+                                      );
+                                    }
+                                  });
+                                } else {
+                                  Utils.showStylishDialog(
+                                      context,
+                                      'THÔNG BÁO',
+                                      'Hóa đơn này hiện tại không thể áp dụng giảm giá.',
+                                      StylishDialogType.INFO);
+                                }
                               },
                               activeColor: primaryColor,
                             ),

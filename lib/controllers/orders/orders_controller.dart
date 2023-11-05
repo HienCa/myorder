@@ -553,7 +553,8 @@ class OrderController extends GetxController {
                 // print(food_name);
                 modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                 retValue.order_details[i].food = food;
-                print("IMAGE===============${retValue.order_details[i].food!.image}");
+                print(
+                    "IMAGE===============${retValue.order_details[i].food!.image}");
                 List<modelFood.Food> listFoodComboDetail = [];
                 if (food.food_combo_ids.isNotEmpty) {
                   // Lấy thông tin món combo
@@ -968,6 +969,10 @@ class OrderController extends GetxController {
     try {
       if (order.order_id != "" && orderDetail.order_detail_id != "") {
         // cho order detail (món ăn) về trạng thái hủy
+        double newTotalAmount = order.total_amount - orderDetail.price;
+        if (newTotalAmount <= 0) {
+          newTotalAmount = 0;
+        }
         await firestore
             .collection('orders')
             .doc(order.order_id)
@@ -977,7 +982,7 @@ class OrderController extends GetxController {
           "food_status": FOOD_STATUS_CANCEL,
         }).then((_) async {
           await firestore.collection('orders').doc(order.order_id).update({
-            "total_amount": order.total_amount - orderDetail.price,
+            "total_amount": newTotalAmount,
           });
         });
 
@@ -1664,39 +1669,43 @@ class OrderController extends GetxController {
   }
 
   //CẬP NHẬT TRẠNG THÁI MÓN
-  updateFoodStatus(model.Order order, int fromStatus, int toStatus) async {
+  updateFoodStatus(model.Order order) async {
     try {
       if (order.order_id != '') {
         //Cập nhật trạng thái món ăn theo foodStatus
         for (OrderDetail item in order.order_details) {
-          if (item.food_status == fromStatus) {
+          if (item.food_status == FOOD_STATUS_IN_CHEF ||
+              item.food_status == FOOD_STATUS_COOKING) {
+            print("=====================ĐÃ HOÀN TẤT MÓN=====================");
             await firestore
                 .collection('orders')
                 .doc(order.order_id)
-                .collection('orderdetails')
+                .collection('orderDetails')
                 .doc(item.order_detail_id)
                 .update({
-              "food_status": toStatus,
+              "food_status": FOOD_STATUS_FINISH,
               "chef_bar_status": CHEF_BAR_STATUS_DEACTIVE,
             });
 
-            // //Thông báo cho bếp rằng khách yêu cầu dừng chế biến
-            // if (item.category_code == CATEGORY_FOOD) {
-            //   //MÓN ĂN
-            //   await firestore.collection('chefs').doc(order.order_id).update({
-            //     "chef_bar_status": CHEF_BAR_STATUS_DEACTIVE,
-            //   });
-            // } else if (item.category_code == CATEGORY_DRINK) {
-            //   //NƯỚC
-            //   await firestore.collection('chefs').doc(order.order_id).update({
-            //     "chef_bar_status": CHEF_BAR_STATUS_DEACTIVE,
-            //   });
-            // } else if (item.category_code == CATEGORY_OTHER) {
-            //   //KHÁC
-            //   await firestore.collection('chefs').doc(order.order_id).update({
-            //     "chef_bar_status": CHEF_BAR_STATUS_DEACTIVE,
-            //   });
-            // }
+            //Cập nhật số lượng món còn trong bếp - bar - khác - thông báo
+            QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                .collection('orders')
+                .doc(order.order_id)
+                .collection('orderDetails')
+                .get();
+
+            if (querySnapshot.docs.isNotEmpty) {
+              //Khi "Hoàn tất món thì tất cả món trong bếp đã hoàn thành không cần chế biến nữa"
+              //Neu khong con mon nao thi xoa
+
+              await firestore.collection("chefs").doc(order.order_id).delete();
+
+              await firestore.collection("bars").doc(order.order_id).delete();
+
+              await firestore.collection("others").doc(order.order_id).delete();
+
+              update();
+            }
           }
         }
 

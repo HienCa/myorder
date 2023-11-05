@@ -32,11 +32,6 @@ class _ManagementChefBarOtherPageState
   @override
   void initState() {
     super.initState();
-
-    chefBarOtherController.getCountChef();
-    chefBarOtherController.getCountBar();
-    chefBarOtherController.getCountOther();
-
     chefBarOtherController.getChefs(keySearch);
     chefBarOtherController.getBars(keySearch);
     chefBarOtherController.getOthers(keySearch);
@@ -69,22 +64,37 @@ class _ManagementChefBarOtherPageState
               ),
               tabs: [
                 Tab(child: Obx(() {
-                  return Text(
-                    'KHU BẾP ${chefBarOtherController.countCheft}',
-                    style: textStyleWhiteBold16,
-                  );
+                  return chefBarOtherController.chefs.isNotEmpty
+                      ? Text(
+                          'KHU BẾP (${chefBarOtherController.chefs.length})',
+                          style: textStyleWhiteBold14,
+                        )
+                      : const Text(
+                          'KHU BẾP',
+                          style: textStyleWhiteBold14,
+                        );
                 })),
                 Tab(child: Obx(() {
-                  return Text(
-                    'QUẦY BAR ${chefBarOtherController.countBar}',
-                    style: textStyleWhiteBold16,
-                  );
+                  return chefBarOtherController.bars.isNotEmpty
+                      ? Text(
+                          'QUẦY BAR (${chefBarOtherController.bars.length})',
+                          style: textStyleWhiteBold14,
+                        )
+                      : const Text(
+                          'QUẦY BAR',
+                          style: textStyleWhiteBold14,
+                        );
                 })),
                 Tab(child: Obx(() {
-                  return Text(
-                    'KHÁC ${chefBarOtherController.countOther}',
-                    style: textStyleWhiteBold16,
-                  );
+                  return chefBarOtherController.others.isNotEmpty
+                      ? Text(
+                          'KHÁC (${chefBarOtherController.others.length})',
+                          style: textStyleWhiteBold14,
+                        )
+                      : const Text(
+                          'KHÁC',
+                          style: textStyleWhiteBold14,
+                        );
                 })),
               ],
             ),
