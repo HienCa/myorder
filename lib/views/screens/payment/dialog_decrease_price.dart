@@ -13,6 +13,7 @@ import 'package:myorder/views/widgets/headers/header_icon.dart';
 import 'package:myorder/views/widgets/textfields/text_field_number.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/views/widgets/textfields/text_field_price_calculator.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class CustomDialogDecreasePrice extends StatefulWidget {
   final model.Order order;
@@ -180,7 +181,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                     ? GestureDetector(
                         onTap: () async {
                           print(
-                              'Giá trị hien tai là: ${priceTextEditController.text}');
+                              'Giá trị hiện tại là: ${priceTextEditController.text}');
                           String? result = await showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -199,10 +200,14 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                             priceTextEditController.text = "0";
                           }
                         },
-                        child: MyTextFieldChoosePrice(
-                          textController: priceTextEditController,
-                          label: 'Số tiền muốn giảm',
-                          placeholder: 'Chọn số tiền', isRequire: true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: MyTextFieldChoosePrice(
+                            textController: priceTextEditController,
+                            label: 'Số tiền muốn giảm',
+                            placeholder: 'Chọn số tiền',
+                            isRequire: true,
+                          ),
                         ),
                       )
                     : const SizedBox()),
@@ -232,12 +237,18 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                 duration:
                     const Duration(milliseconds: 500), // Độ dài của animation
                 child: isCheckedPercent
-                    ? MyTextFieldNumber(
-                        textController: percentTextEditController,
-                        label: 'Phần trăm (%) muốn giảm',
-                        placeholder: 'Nhập %',
-                        isReadOnly: !isCheckedPercent, min: 1, max: 100, isRequire: true,
-                      )
+                    ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: MyTextFieldNumber(
+                          textController: percentTextEditController,
+                          label: 'Phần trăm (%) muốn giảm',
+                          placeholder: 'Nhập %',
+                          isReadOnly: !isCheckedPercent,
+                          min: 1,
+                          max: 100,
+                          isRequire: true,
+                        ),
+                    )
                     : const SizedBox()),
             marginTop20,
             MyButton(
@@ -257,12 +268,14 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                       int.tryParse(percentTextEditController.text) ?? 0,
                     );
 
-                    // Utils.showSuccessFlushbar(
-                    //     context, '', 'Áp dụng giảm giá thành công!');
                   } else {
                     // thông báo lớn hơn 0
-                    Utils.showWarningFlushbar(context, '',
-                        'Vui lòng nhập phần trăm ít nhất là $MIN_PERCENT.');
+
+                    Utils.showStylishDialog(
+                        context,
+                        'THÔNG BÁO',
+                        'Vui lòng nhập phần trăm ít nhất là $MIN_PERCENT.',
+                        StylishDialogType.INFO);
                   }
                 } else {
                   // giảm theo giá tiền
@@ -280,8 +293,11 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                   } else {
                     // thông báo lớn hơn 1000
 
-                    Utils.showWarningFlushbar(context, '',
-                        "Vui lòng nhập giá tiền ít nhất là $MIN_PRICE.");
+                    Utils.showStylishDialog(
+                        context,
+                        'THÔNG BÁO',
+                        "Vui lòng nhập giá tiền ít nhất là $MIN_PRICE.",
+                        StylishDialogType.INFO);
                   }
                 }
               },

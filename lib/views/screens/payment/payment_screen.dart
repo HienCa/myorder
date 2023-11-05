@@ -134,11 +134,13 @@ class _PaymentPageState extends State<PaymentPage> {
                     "TỔNG TẠM TÍNH",
                     style: textStyleGrayBold,
                   )),
-                  Center(
-                      child: Text(
-                          Utils.formatCurrency(
-                              orderController.order.total_amount),
-                          style: textStylePriceBold20))
+                  Obx(() {
+                    return Center(
+                        child: Text(
+                            Utils.formatCurrency(
+                                orderController.order.total_amount),
+                            style: textStylePriceBold20));
+                  })
                 ],
               ),
             ),
@@ -170,25 +172,25 @@ class _PaymentPageState extends State<PaymentPage> {
                     )
                   ],
                 ),
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.groups,
                       color: labelBlackColor,
                     ),
-                    SizedBox(width: 10),
-                    Text(
+                    const SizedBox(width: 10),
+                    const Text(
                       "Số khách",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 20),
-                    Text(
+                    const SizedBox(width: 20),
+                    const Text(
                       ":",
                       style: textStyleFoodNameBold16,
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Text(
-                      "5",
+                      "#${widget.order.total_slot}",
                       style: textStyleBlackRegular,
                     )
                   ],
@@ -302,8 +304,11 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ),
                                 child: ListTile(
                                   selectedColor: primaryColor,
-                                  leading: orderController.orderDetail
-                                              .order_details[index].food!.image !=
+                                  leading: orderController
+                                              .orderDetail
+                                              .order_details[index]
+                                              .food!
+                                              .image !=
                                           ''
                                       ? ClipRRect(
                                           borderRadius:

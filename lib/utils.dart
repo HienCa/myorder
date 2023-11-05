@@ -36,6 +36,21 @@ class Utils {
     return filteredList;
   }
 
+  //Số phần tử cần render khi thuộc food_caterogy
+  static double getHeightRecommentFoodCombo(List<Food> list, int categoryCode) {
+    double count = 0;
+    for (Food food in list) {
+      if (food.category_code == categoryCode) {
+        count++;
+      }
+    }
+    count = count * 60;
+    if (count > 200) {
+      return 200;
+    }
+    return count;
+  }
+
   static bool isShowingFlushbar = false;
 
   //Show Message

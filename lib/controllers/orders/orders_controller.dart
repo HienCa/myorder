@@ -1762,12 +1762,12 @@ class OrderController extends GetxController {
           "total_vat_amount": vat_price,
           "is_vat": ACTIVE,
         }).then((_) async {
-          Utils.showSuccessFlushbar(context, '', 'Áp dụng thành công!');
+          Utils.showToast('Áp dụng VAT thành công!', TypeToast.SUCCESS);
         });
         update();
       }
     } catch (e) {
-      Utils.showErrorFlushbar(context, '', 'Áp dụng thất bại!');
+      Utils.showToast('Áp dụng VAT thất bại!', TypeToast.ERROR);
     }
   }
 
@@ -1794,12 +1794,12 @@ class OrderController extends GetxController {
           "total_vat_amount": 0.0,
           "is_vat": DEACTIVE,
         }).then((_) async {
-          Utils.showSuccessFlushbar(context, '', 'Áp dụng thành công!');
+          Utils.showToast('Hủy VAT thành công!', TypeToast.SUCCESS);
         });
         update();
       }
     } catch (e) {
-      Utils.showErrorFlushbar(context, '', 'Áp dụng thất bại!');
+      Utils.showToast('Hủy VAT thành công!', TypeToast.ERROR);
     }
   }
 
@@ -1889,18 +1889,13 @@ class OrderController extends GetxController {
             "is_discount": ACTIVE,
           }).then((_) async {
             Utils.myPop(context);
-            Get.snackbar(
-              'THÀNH CÔNG!',
-              'Giảm giá thành công!',
-              backgroundColor: backgroundSuccessColor,
-              colorText: Colors.white,
-            );
+            Utils.showToast('Áp dụng giảm giá thành công!', TypeToast.SUCCESS);
           });
           update();
         }
       }
     } catch (e) {
-      Utils.showErrorFlushbar(context, '', 'Áp dụng giảm giá thất bại!');
+      Utils.showToast('Áp dụng giảm giá thất bại!', TypeToast.ERROR);
     }
   }
 
@@ -1922,13 +1917,13 @@ class OrderController extends GetxController {
           "total_discount_amount": 0.0,
           "total_amount": totalAmount + order.total_vat_amount,
           "is_discount": DEACTIVE,
-        }).then(
-            (_) => {Utils.showSuccessFlushbar(context, '', 'Hủy thành công!')});
+        }).then((_) =>
+            {Utils.showToast('Hủy giảm giá thành công!', TypeToast.SUCCESS)});
 
         update();
       }
     } catch (e) {
-      Utils.showErrorFlushbar(context, '', 'Hủy thất bại!');
+      Utils.showToast('Hủy giảm giá thành công!', TypeToast.ERROR);
     }
   }
 
