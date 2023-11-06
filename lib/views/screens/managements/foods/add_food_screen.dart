@@ -13,6 +13,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
+import 'package:myorder/controllers/foods/additon_foods_controller.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
@@ -63,6 +64,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
   bool isOnlyReadTemporaryWithPercent = true;
 
   FoodController foodController = Get.put(FoodController());
+  AdditionFoodController additionFoodController =
+      Get.put(AdditionFoodController());
   late Food food;
 
   final TextEditingController nameController = TextEditingController();
@@ -86,6 +89,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
   bool isCheckIncrease = true;
   bool isCheckDecrease = false;
   bool isCheckCombo = false;
+  bool isCheckAddition = false;
 
   String temporaryPriceFromDate = "";
   String temporaryPriceToDate = "";
@@ -432,6 +436,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
   }
 
   List<String> listCombo = [];
+  List<String> listAdditionFood = [];
 
   @override
   Widget build(BuildContext context) {
@@ -886,7 +891,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                       margin: const EdgeInsets.symmetric(
                                           vertical: kDefaultPadding / 2),
                                       height: 50,
-                                      child: Utils.getHeightRecommentFoodCombo(
+                                      child: Utils.getHeightRecommentFoodSelected(
                                                   foodController.foods,
                                                   (int.tryParse(
                                                           textCategoryCodeController
@@ -964,12 +969,13 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                       padding: const EdgeInsets.all(10),
-                                      height: Utils.getHeightRecommentFoodCombo(
-                                          foodController.foods,
-                                          (int.tryParse(
-                                                  textCategoryCodeController
-                                                      .text) ??
-                                              0)),
+                                      height:
+                                          Utils.getHeightRecommentFoodSelected(
+                                              foodController.foods,
+                                              (int.tryParse(
+                                                      textCategoryCodeController
+                                                          .text) ??
+                                                  0)),
                                       child: ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         itemCount: foodController.foods.length,
@@ -1047,9 +1053,188 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 )
                               : const SizedBox(),
                         ),
-                        const SizedBox(
-                          height: 10,
+                        ListTile(
+                          leading: Theme(
+                            data:
+                                ThemeData(unselectedWidgetColor: primaryColor),
+                            child: Checkbox(
+                              value: isCheckAddition,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isCheckAddition = value!;
+                                });
+                              },
+                              activeColor: primaryColor,
+                            ),
+                          ),
+                          title: (Utils.counterSelected(
+                                          additionFoodController.foods) >
+                                      0 &&
+                                  isCheckAddition)
+                              ? Text(
+                                  "Món bán kèm (${Utils.counterSelected(additionFoodController.foods)})",
+                                  style: textStylePriceBold16,
+                                )
+                              : const Text(
+                                  "Món bán kèm",
+                                  style: textStylePriceBold16,
+                                ),
                         ),
+                        //DANH SÁCH BÁN KÈM
+                        AnimatedOpacity(
+                          opacity: isCheckAddition
+                              ? 1.0
+                              : 0.0, // 1.0 là hiện, 0.0 là ẩn
+                          duration: const Duration(
+                              milliseconds: 500), // Độ dài của animation
+                          child: isCheckAddition
+                              ? Column(
+                                  children: [
+                                    Container(
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: kDefaultPadding / 2),
+                                        height: 50,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: Utils.filterSelected(
+                                                  additionFoodController.foods)
+                                              .length,
+                                          itemBuilder: (context, index) =>
+                                              GestureDetector(
+                                            onTap: () => {
+                                              setState(() {
+                                                unSelectedFood(
+                                                    additionFoodController
+                                                        .foods[index]);
+                                              })
+                                            },
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              margin: EdgeInsets.only(
+                                                left: kDefaultPadding,
+                                                right: index ==
+                                                        Utils.filterSelected(
+                                                                    additionFoodController
+                                                                        .foods)
+                                                                .length -
+                                                            1
+                                                    ? kDefaultPadding
+                                                    : 0,
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                  color: textWhiteColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  border: Border.all(
+                                                      width: 5,
+                                                      color:
+                                                          borderColorPrimary)),
+                                              child: Utils.isAnySelected(
+                                                additionFoodController.foods,
+                                              )
+                                                  ? Row(
+                                                      children: [
+                                                        Text(
+                                                          Utils.filterSelected(
+                                                                  additionFoodController
+                                                                      .foods)[index]
+                                                              .name,
+                                                          style: const TextStyle(
+                                                              color:
+                                                                  primaryColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal),
+                                                        ),
+                                                        iconClose
+                                                      ],
+                                                    )
+                                                  : const Center(
+                                                      child: Text(
+                                                        "Vui lòng chọn món bán kèm.",
+                                                        style:
+                                                            textStyleWhiteBold16,
+                                                      ),
+                                                    ),
+                                            ),
+                                          ),
+                                        )),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      padding: const EdgeInsets.all(10),
+                                      height: Utils.getHeightRecommentAdditionFoodSelected(additionFoodController.foods),
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        itemCount:
+                                            additionFoodController.foods.length,
+                                        itemBuilder: (context, index) =>
+                                            GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              toggleSelectedFood(
+                                                  additionFoodController
+                                                      .foods[index]);
+                                            });
+                                          },
+                                          child: Stack(children: [
+                                            Container(
+                                              height: 50,
+                                              alignment: Alignment.center,
+                                              margin: const EdgeInsets.only(
+                                                bottom: 5,
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: secondColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Text(
+                                                additionFoodController
+                                                    .foods[index].name,
+                                                style: const TextStyle(
+                                                    color: primaryColor,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                            Utils.isSelected(
+                                                    additionFoodController
+                                                        .foods[index])
+                                                ? Positioned(
+                                                    top: 0,
+                                                    right: 10,
+                                                    child: Container(
+                                                      color: Colors.transparent,
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: ClipRRect(
+                                                        child: checkImageGreen,
+                                                      ),
+                                                    ))
+                                                : const SizedBox()
+                                          ]),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox(),
+                        ),
+
                         ListTile(
                           leading: Theme(
                             data:
@@ -1638,13 +1823,26 @@ class _AddFoodPageState extends State<AddFoodPage> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () => {
+                                    //Tích chọn vào checkbox Món combo thì mới có món combo
                                     if (isCheckCombo == false)
+                                      {listCombo = []}
+                                    else
                                       {
-                                        Utils.refeshSelected(
-                                            foodController.foods)
+                                        listCombo = Utils.filterFoodIdsSelected(
+                                            foodController.foods),
                                       },
-                                    listCombo = Utils.filterFoodIdsSelected(
-                                        foodController.foods),
+
+                                    //Tích chọn vào checkbox Món bán kèm thì mới có món bán kèm
+                                    if (isCheckAddition == false)
+                                      {listAdditionFood = []}
+                                    else
+                                      {
+                                        listAdditionFood =
+                                            Utils.filterFoodIdsSelected(
+                                                foodController.foods),
+                                      },
+
+                                    //Format tiền tệ
                                     priceController.text =
                                         Utils.formatCurrencytoDouble(
                                             priceController.text),
@@ -1735,7 +1933,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                             textCategoryCodeController
                                                                 .text) ??
                                                         CATEGORY_FOOD,
-                                                    listCombo),
+                                                    listCombo,
+                                                    listAdditionFood),
                                                 Utils.myPopSuccess(context)
                                               }
                                             else if (isFromDateTimeSelected &&
@@ -1798,7 +1997,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                             textCategoryCodeController
                                                                 .text) ??
                                                         CATEGORY_FOOD,
-                                                    listCombo),
+                                                    listCombo,
+                                                    listAdditionFood),
                                                 Utils.myPopSuccess(context)
                                               }
                                           }
@@ -1826,7 +2026,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                             textCategoryCodeController
                                                                 .text) ??
                                                         CATEGORY_FOOD,
-                                                    listCombo),
+                                                    listCombo,
+                                                    listAdditionFood),
                                                 Utils.myPopSuccess(context)
                                               }
                                             else
@@ -1852,7 +2053,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                             textCategoryCodeController
                                                                 .text) ??
                                                         CATEGORY_FOOD,
-                                                    listCombo),
+                                                    listCombo,
+                                                    listAdditionFood),
                                                 Utils.myPopSuccess(context)
                                               }
                                           },

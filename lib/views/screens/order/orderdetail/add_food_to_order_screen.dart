@@ -684,7 +684,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                   is_gift: false,
                                   category_id: '',
                                   category_code: foodOrder.category_code,
-                                  chef_bar_status: CHEF_BAR_STATUS,
+                                  chef_bar_status: CHEF_BAR_STATUS, is_addition: false,
                                 );
 
                                 orderDetailList.add(orderDetail);

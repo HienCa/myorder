@@ -14,6 +14,7 @@ class OrderDetail {
   int category_code;
   Food? food;
   bool is_gift = false;
+  bool is_addition = false;
   bool isSelected = false;
   List<Food> listCombo = [];
   OrderDetail(
@@ -26,6 +27,7 @@ class OrderDetail {
       required this.category_id,
       required this.category_code,
       required this.is_gift,
+      required this.is_addition,
       this.food});
 
   OrderDetail.copy(OrderDetail other)
@@ -36,6 +38,7 @@ class OrderDetail {
         food_id = other.food_id,
         category_id = other.category_id,
         food = other.food,
+        is_addition = other.is_addition,
         is_gift = other.is_gift,
         chef_bar_status = other.chef_bar_status,
         category_code = other.category_code;
@@ -50,6 +53,7 @@ class OrderDetail {
         "category_id": category_id,
         "category_code": category_code,
         "is_gift": is_gift,
+        "is_addition": is_addition,
       };
 
   static OrderDetail fromSnap(DocumentSnapshot snap) {
@@ -65,6 +69,7 @@ class OrderDetail {
       category_id: snapshot['category_id'],
       category_code: snapshot['category_code'],
       is_gift: snapshot['is_gift'],
+      is_addition: snapshot['is_addition'],
     );
   }
 }

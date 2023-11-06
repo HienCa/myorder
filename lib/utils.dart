@@ -37,7 +37,8 @@ class Utils {
   }
 
   //Số phần tử cần render khi thuộc food_caterogy
-  static double getHeightRecommentFoodCombo(List<Food> list, int categoryCode) {
+  static double getHeightRecommentFoodSelected(
+      List<Food> list, int categoryCode) {
     double count = 0;
     for (Food food in list) {
       if (food.category_code == categoryCode) {
@@ -45,6 +46,18 @@ class Utils {
       }
     }
     count = count * 60;
+    if (count > 200) {
+      return 200;
+    }
+    return count;
+  }
+
+  //Số phần tử cần render khi thuộc food_caterogy
+  static double getHeightRecommentAdditionFoodSelected(
+      List<Food> list) {
+    double count = 0;
+
+    count = list.length * 60;
     if (count > 200) {
       return 200;
     }
