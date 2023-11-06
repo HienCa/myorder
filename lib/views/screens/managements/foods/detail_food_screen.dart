@@ -661,8 +661,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                       'Danh mục:',
                                       style: textStyleInput,
                                     ),
-                                    const SizedBox(
-                                      width: 10,
+                                    marginRight10,
+                                    const Text(
+                                      '(*)',
+                                      style: textStyleErrorInput,
                                     ),
                                     Expanded(
                                       child: DropdownButtonHideUnderline(
@@ -801,11 +803,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                 child: Row(
                                   children: [
                                     const Text(
-                                      'Đơn vị:       ',
+                                      'Đơn vị:',
                                       style: textStyleInput,
                                     ),
-                                    const SizedBox(
-                                      width: 10,
+                                    marginRight10,
+                                    const Text(
+                                      '(*)',
+                                      style: textStyleErrorInput,
                                     ),
                                     Expanded(
                                       child: DropdownButtonHideUnderline(

@@ -12,7 +12,7 @@ import 'package:myorder/views/widgets/dialogs/dialog_choose_price.dart';
 import 'package:myorder/views/widgets/headers/header_icon.dart';
 import 'package:myorder/views/widgets/textfields/text_field_number.dart';
 import 'package:myorder/models/order.dart' as model;
-import 'package:myorder/views/widgets/textfields/text_field_price_calculator.dart';
+import 'package:myorder/views/widgets/textfields/text_field_price.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class CustomDialogDecreasePrice extends StatefulWidget {
@@ -200,15 +200,19 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                             priceTextEditController.text = "0";
                           }
                         },
+                        // child: Padding(
+                        //   padding: const EdgeInsets.all(8.0),
+                        //   child: MyTextFieldChoosePrice(
+                        //     textController: priceTextEditController,
+                        //     label: 'Số tiền muốn giảm',
+                        //     placeholder: 'Chọn số tiền',
+                        //     isRequire: true,
+                        //   ),
+                        // ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: MyTextFieldChoosePrice(
-                            textController: priceTextEditController,
-                            label: 'Số tiền muốn giảm',
-                            placeholder: 'Chọn số tiền',
-                            isRequire: true,
-                          ),
-                        ),
+                          child: MyTextFieldPrice(textEditingController: priceTextEditController, label: 'Số tiền muốn giảm', placeholder: 'Nhập số tiền', min: MIN_PRICE, max: MAX_PRICE, isRequire: true),
+                        )
                       )
                     : const SizedBox()),
             Row(crossAxisAlignment: CrossAxisAlignment.center, children: [

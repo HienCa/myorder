@@ -1839,7 +1839,7 @@ class OrderController extends GetxController {
           print("discount_price = total $total");
         }
 
-        //tính phần trăm sẽ giảm theo loại cần giảm
+         //tính phần trăm sẽ giảm theo loại cần giảm
         double discount_percent_amount = (total * discount_percent) / 100;
         print("discount_percent_amount: $discount_percent_amount");
 

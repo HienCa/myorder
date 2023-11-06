@@ -64,7 +64,7 @@ class _CommentScreenState extends State<CommentScreen> {
                     onTap: () => {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ProfilePage(uid: uid),
+                              builder: (context) => ProfilePage(employeeId: uid),
                             ),
                           ),
                         },
@@ -159,7 +159,7 @@ class _CommentScreenState extends State<CommentScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        ProfilePage(uid: comment.uid))),
+                                        ProfilePage(employeeId: comment.uid))),
                             child: CircleAvatar(
                               backgroundColor: Colors.black,
                               backgroundImage:
@@ -173,7 +173,7 @@ class _CommentScreenState extends State<CommentScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ProfilePage(uid: comment.uid))),
+                                            ProfilePage(employeeId: comment.uid))),
                                 child: Text(
                                   "${comment.username}  ",
                                   style: const TextStyle(

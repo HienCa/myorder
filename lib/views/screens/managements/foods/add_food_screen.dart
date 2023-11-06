@@ -559,9 +559,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                       'Danh mục:',
                                       style: textStyleInput,
                                     ),
-                                    const SizedBox(
-                                      width: 10,
+                                    marginRight10,
+                                    const Text(
+                                      '(*)',
+                                      style: textStyleErrorInput,
                                     ),
+                                    marginRight10,
                                     Expanded(
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton2<model.Category>(
@@ -698,11 +701,13 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 child: Row(
                                   children: [
                                     const Text(
-                                      'Đơn vị:       ',
+                                      'Đơn vị:',
                                       style: textStyleInput,
                                     ),
-                                    const SizedBox(
-                                      width: 10,
+                                    marginRight10,
+                                    const Text(
+                                      '(*)',
+                                      style: textStyleErrorInput,
                                     ),
                                     Expanded(
                                       child: DropdownButtonHideUnderline(
@@ -903,49 +908,47 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                   })
                                                 },
                                                 child: Container(
-                                                  alignment: Alignment.center,
-                                                  margin: EdgeInsets.only(
-                                                    left: kDefaultPadding,
-                                                    right: index ==
-                                                            Utils.filterSelected(
-                                                                        foodController
-                                                                            .foods)
-                                                                    .length -
-                                                                1
-                                                        ? kDefaultPadding
-                                                        : 0,
-                                                  ),
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10),
-                                                  decoration: BoxDecoration(
-                                                      color: textWhiteColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                      border: Border.all(
-                                                          width: 5,
-                                                          color:
-                                                              borderColorPrimary)),
-                                                  child:  Row(
-                                                          children: [
-                                                            Text(
+                                                    alignment: Alignment.center,
+                                                    margin: EdgeInsets.only(
+                                                      left: kDefaultPadding,
+                                                      right: index ==
                                                               Utils.filterSelected(
-                                                                      foodController
-                                                                          .foods)[index]
-                                                                  .name,
-                                                              style: const TextStyle(
-                                                                  color:
-                                                                      primaryColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal),
-                                                            ),
-                                                            iconClose
-                                                          ],
-                                                        )
-                                                      
-                                                ),
+                                                                          foodController
+                                                                              .foods)
+                                                                      .length -
+                                                                  1
+                                                          ? kDefaultPadding
+                                                          : 0,
+                                                    ),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: textWhiteColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        border: Border.all(
+                                                            width: 5,
+                                                            color:
+                                                                borderColorPrimary)),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          Utils.filterSelected(
+                                                                  foodController
+                                                                      .foods)[index]
+                                                              .name,
+                                                          style: const TextStyle(
+                                                              color:
+                                                                  primaryColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal),
+                                                        ),
+                                                        iconClose
+                                                      ],
+                                                    )),
                                               ),
                                             )
                                           : const Center(

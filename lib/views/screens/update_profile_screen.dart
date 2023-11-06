@@ -221,7 +221,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           profileController.profilePhoto),
                       Navigator.pop(context),
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ProfilePage(uid: widget.uid),
+                        builder: (context) => ProfilePage(employeeId: widget.uid),
                       )),
                     },
                     child: Container(

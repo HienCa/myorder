@@ -64,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       InkWell(
                         onTap: () => {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(uid: authController.user.uid,)))
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(employeeId: authController.user.uid,)))
                         },
                         child: const ListTile(
                           leading: Icon(Icons.person),
