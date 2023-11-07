@@ -531,26 +531,24 @@ class OrderController extends GetxController {
             orderDetails.add(orderDetail);
           }
           retValue.order_details = orderDetails;
-          // Tính tổng số tiền cho đơn hàng
+
           for (int i = 0; i < orderDetails.length; i++) {
-            // lấy thông tin của món ăn
+            // lấy thông tin của món
+            String collectionName = 'foods';
+            // lấy thông tin của món kèm
+            if (orderDetails[i].is_addition) {
+              collectionName = 'additionFoods';
+            } else {
+              // lấy thông tin của món ăn thường
+              collectionName = 'foods';
+            }
             DocumentSnapshot foodCollection = await firestore
-                .collection('foods')
+                .collection(collectionName)
                 .doc(orderDetails[i].food_id)
                 .get();
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                // String food_name = foodData['name'] ?? '';
-                // String image = foodData['image'] ?? '';
-                // String category_id = foodData['category_id'] ?? '';
-
-                // retValue.order_details[i].food = FoodOrderDetail(
-                //     food_id: orderDetails[i].food_id,
-                //     name: food_name,
-                //     image: image,
-                //     category_id: category_id);
-                // print(food_name);
                 modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                 retValue.order_details[i].food = food;
                 print(
@@ -1538,9 +1536,19 @@ class OrderController extends GetxController {
             quantity: 0,
           );
 
-          //Thông tin food
-          DocumentSnapshot foodCollection =
-              await firestore.collection('foods').doc(item.food_id).get();
+          // lấy thông tin của món
+          String collectionName = 'foods';
+          // lấy thông tin của món kèm
+          if (item.is_addition) {
+            collectionName = 'additionFoods';
+          } else {
+            // lấy thông tin của món ăn thường
+            collectionName = 'foods';
+          }
+          DocumentSnapshot foodCollection = await firestore
+              .collection(collectionName)
+              .doc(item.food_id)
+              .get();
           if (foodCollection.exists) {
             final employeeData = foodCollection.data();
             if (employeeData != null && employeeData is Map<String, dynamic>) {
@@ -1548,7 +1556,6 @@ class OrderController extends GetxController {
 
               if (category_code == CATEGORY_FOOD) {
                 //MÓN ĂN
-
                 CollectionReference chefCollection =
                     FirebaseFirestore.instance.collection('chefs');
 
@@ -1839,7 +1846,7 @@ class OrderController extends GetxController {
           print("discount_price = total $total");
         }
 
-         //tính phần trăm sẽ giảm theo loại cần giảm
+        //tính phần trăm sẽ giảm theo loại cần giảm
         double discount_percent_amount = (total * discount_percent) / 100;
         print("discount_percent_amount: $discount_percent_amount");
 

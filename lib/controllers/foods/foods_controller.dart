@@ -292,16 +292,6 @@ class FoodController extends GetxController {
               print(food.temporary_price_to_date);
               print("category_code: ${food.category_code}");
 
-              //lỗi temporary_price_from_date, temporary_price_to_date khi null
-              // fix tạm thời
-              if (food.temporary_price_from_date == null &&
-                  food.temporary_price_to_date == null) {
-                food.temporary_price_from_date =
-                    Timestamp.fromDate(DateTime(1900, 1, 1));
-                food.temporary_price_to_date =
-                    Timestamp.fromDate(DateTime(1900, 1, 1));
-              }
-
               food.isSelected = false;
               food.quantity = 1;
 
@@ -336,13 +326,7 @@ class FoodController extends GetxController {
                   FoodOrder additionFood = FoodOrder.fromSnap(foodSnapshot);
                   additionFood.isSelected = false;
                   additionFood.quantity = 1;
-                  print(
-                      "NAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMME");
-
-                  print(additionFood.temporary_price_to_date);
-                  print(additionFood.temporary_price_from_date);
-                  print(additionFood.price_with_temporary);
-
+                 
                   print(additionFood.name);
                   listAdditionFoodDetail.add(additionFood);
                 }
@@ -406,17 +390,7 @@ class FoodController extends GetxController {
                   FoodOrder additionFood = FoodOrder.fromSnap(foodSnapshot);
                   additionFood.isSelected = false;
                   additionFood.quantity = 1;
-                  // if (additionFood.temporary_price_to_date == null &&
-                  //     additionFood.temporary_price_from_date == null) {
-                  //   additionFood.temporary_price_to_date = Timestamp.now();
-                  //   additionFood.temporary_price_from_date = Timestamp.now();
-                  // }
-                  print(
-                      "NAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMME");
-
-                  print(additionFood.temporary_price_to_date);
-                  print(additionFood.temporary_price_from_date);
-                  print(additionFood.price_with_temporary);
+                 
                   print(additionFood.name);
                   listAdditionFoodDetail.add(additionFood);
                 }
@@ -516,48 +490,6 @@ class FoodController extends GetxController {
       }));
     }
   }
-  // getfoodsToOrder(String keySearch) async {
-  //   if (keySearch.isEmpty) {
-  //     _foodsToOrder.bindStream(
-  //       firestore
-  //           .collection('foods')
-  //           .where("active", isEqualTo: 1)
-  //           .snapshots()
-  //           .map(
-  //         (QuerySnapshot query) {
-  //           List<FoodOrder> retValue = [];
-  //           for (var element in query.docs) {
-  //             FoodOrder food = FoodOrder.fromSnap(element);
-  //             food.isSelected = false;
-  //             food.quantity = 1;
-  //             retValue.add(food);
-  //           }
-  //           Utils.showDataJson(query);
-  //           return retValue;
-  //         },
-  //       ),
-  //     );
-  //   } else {
-  //     _foodsToOrder.bindStream(firestore
-  //         .collection('foods')
-  //         .orderBy('name')
-  //         .snapshots()
-  //         .map((QuerySnapshot query) {
-  //       List<FoodOrder> retVal = [];
-  //       for (var elem in query.docs) {
-  //         String name = elem['name'].toLowerCase();
-  //         String search = keySearch.toLowerCase().trim();
-  //         if (name.contains(search)) {
-  //           FoodOrder food = FoodOrder.fromSnap(elem);
-  //           food.isSelected = false;
-  //           food.quantity = 1;
-  //           retVal.add(food);
-  //         }
-  //       }
-  //       return retVal;
-  //     }));
-  //   }
-  // }
 
   void createFood(
       String name,

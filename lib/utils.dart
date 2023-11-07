@@ -53,8 +53,7 @@ class Utils {
   }
 
   //Số phần tử cần render khi thuộc food_caterogy
-  static double getHeightRecommentAdditionFoodSelected(
-      List<Food> list) {
+  static double getHeightRecommentAdditionFoodSelected(List<Food> list) {
     double count = 0;
 
     count = list.length * 60;
@@ -191,12 +190,16 @@ class Utils {
 
   //datetime
   static bool isDateTimeInRange(
-      Timestamp startTimestamp, Timestamp endTimestamp) {
-    DateTime currentDateTime = DateTime.now();
-    DateTime startTime = startTimestamp.toDate();
-    DateTime endTime = endTimestamp.toDate();
-    return currentDateTime.isAfter(startTime) &&
-        currentDateTime.isBefore(endTime);
+      Timestamp? startTimestamp, Timestamp? endTimestamp) {
+    if (startTimestamp == null || endTimestamp == null) {
+      return false;
+    } else {
+      DateTime currentDateTime = DateTime.now();
+      DateTime startTime = startTimestamp.toDate();
+      DateTime endTime = endTimestamp.toDate();
+      return currentDateTime.isAfter(startTime) &&
+          currentDateTime.isBefore(endTime);
+    }
   }
 
   static String convertTimestampToFormatDateVN(Timestamp timestamp) {

@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
@@ -308,10 +307,10 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                               (Utils.isDateTimeInRange(
                                                       foodController
                                                           .foodsToOrder[index]
-                                                          .temporary_price_from_date!,
+                                                          .temporary_price_from_date,
                                                       foodController
                                                           .foodsToOrder[index]
-                                                          .temporary_price_to_date!)
+                                                          .temporary_price_to_date)
                                                   ? (foodController
                                                               .foodsToOrder[
                                                                   index]
@@ -344,10 +343,10 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                           ? (Utils.isDateTimeInRange(
                                                   foodController
                                                       .foodsToOrder[index]
-                                                      .temporary_price_from_date!,
+                                                      .temporary_price_from_date,
                                                   foodController
                                                       .foodsToOrder[index]
-                                                      .temporary_price_to_date!)
+                                                      .temporary_price_to_date)
                                               ? Row(
                                                   children: <Widget>[
                                                     Expanded(
@@ -607,7 +606,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                         children: [
                                                                           TextSpan(
                                                                               text: foodController.foodsToOrder[index].food_combo_details[indexCombo].name,
-                                                                              style: foodController.foodsToOrder[index].food_combo_details[indexCombo].isSelected == true ? textStyleWhiteRegular16 : textStyleFoodNameBold16),
+                                                                              style: textStyleWhiteRegular16),
                                                                         ],
                                                                       ))),
                                                                 ),
@@ -766,8 +765,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                         children: [
                                                                           TextSpan(
                                                                               text: foodController.foodsToOrder[index].addition_food_details[indexAddition].name,
-                                                                              style: foodController.foodsToOrder[index].addition_food_details[indexAddition].isSelected == true ? textStyleWhiteRegular16 : textStyleFoodNameBold16),
-                                                                          (Utils.isDateTimeInRange(foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_from_date ?? Timestamp.now(), foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_to_date ?? Timestamp.now())
+                                                                              style: textStyleWhiteRegular16),
+                                                                          (Utils.isDateTimeInRange(foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_from_date, foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_to_date)
                                                                               ? (foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary! > 0
                                                                                   ? const WidgetSpan(
                                                                                       child: Icon(
@@ -794,8 +793,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                               .price_with_temporary !=
                                                                           0
                                                                       ? (Utils.isDateTimeInRange(
-                                                                              foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_from_date!,
-                                                                              foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_to_date!)
+                                                                              foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_from_date,
+                                                                              foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_to_date)
                                                                           ? Row(
                                                                               children: <Widget>[
                                                                                 Expanded(
@@ -812,7 +811,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                                           children: <TextSpan>[
                                                                                             TextSpan(
                                                                                               text: "${Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price + foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary!)} / ",
-                                                                                              style: textStyleTemporaryPriceDeActive16,
+                                                                                              style: textStyleWhiteRegular16,
                                                                                             ),
                                                                                             TextSpan(
                                                                                               text: Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price),
@@ -826,9 +825,9 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                             )
                                                                           : Text(
                                                                               Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price),
-                                                                              style: textStyleTemporaryPriceDeActive16,
+                                                                              style: textStyleWhiteRegular16,
                                                                             ))
-                                                                      : Text(Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price), style: foodController.foodsToOrder[index].addition_food_details[indexAddition].isSelected == true ? textStyleWhiteBold16 : textStyleTemporaryPriceDeActive16),
+                                                                      : Text(Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price), style: textStyleWhiteRegular16),
                                                                   trailing: foodController
                                                                               .foodsToOrder[index]
                                                                               .addition_food_details[indexAddition]
@@ -919,7 +918,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                           onTap: () {
                             List<OrderDetail> orderDetailList =
                                 []; // danh sach cac mon khi order
-
+                            print(
+                                "================MÓN CẦN ORDER===================");
                             for (var foodOrder in foodController.foodsToOrder) {
                               if (foodOrder.isSelected == true) {
                                 //chi tiet don hang
@@ -927,8 +927,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 OrderDetail orderDetail = OrderDetail(
                                   order_detail_id: "",
                                   price: Utils.isDateTimeInRange(
-                                          foodOrder.temporary_price_from_date!,
-                                          foodOrder.temporary_price_to_date!)
+                                          foodOrder.temporary_price_from_date,
+                                          foodOrder.temporary_price_to_date)
                                       ? (foodOrder.price +
                                           foodOrder.price_with_temporary!)
                                       : foodOrder.price,
@@ -953,7 +953,47 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 print("Is Selected: ${foodOrder.isSelected}");
                                 print("--------------------------------");
                               }
+
+                              //Món bán kèm nếu chọn
+                              for (var additionFood
+                                  in foodOrder.addition_food_details) {
+                                if (additionFood.isSelected == true) {
+                                  //chi tiet don hang
+                                  //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                  OrderDetail orderDetail = OrderDetail(
+                                    order_detail_id: "",
+                                    price: Utils.isDateTimeInRange(
+                                            additionFood.temporary_price_from_date,
+                                            additionFood.temporary_price_to_date)
+                                        ? (additionFood.price +
+                                            additionFood.price_with_temporary!)
+                                        : additionFood.price,
+                                    quantity: additionFood.quantity!,
+                                    food_status: FOOD_STATUS_IN_CHEF,
+                                    food_id: additionFood.food_id,
+                                    is_gift: false,
+                                    category_id: '',
+                                    category_code: additionFood.category_code,
+                                    chef_bar_status: CHEF_BAR_STATUS,
+                                    is_addition: true,
+                                  );
+
+                                  orderDetailList.add(orderDetail);
+
+                                  //show thong tin console
+                                  print("--------------------------------");
+                                  print("ID: ${additionFood.food_id}");
+                                  print("Name: ${additionFood.name}");
+                                  print("Price: ${additionFood.price}");
+                                  print("Quantity: ${additionFood.quantity}");
+                                  print("Is Selected: ${additionFood.isSelected}");
+                                  print("--------------------------------");
+                                }
+                              }
                             }
+                            print(
+                                "================HẾT MÓN CẦN ORDER===================");
+
                             if (widget.booking) {
                               widget.table.status == TABLE_STATUS_EMPTY
                                   ? showCustomAlertDialogConfirmOrder(
