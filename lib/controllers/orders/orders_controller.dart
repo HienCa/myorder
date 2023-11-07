@@ -1550,9 +1550,9 @@ class OrderController extends GetxController {
               .doc(item.food_id)
               .get();
           if (foodCollection.exists) {
-            final employeeData = foodCollection.data();
-            if (employeeData != null && employeeData is Map<String, dynamic>) {
-              int category_code = employeeData['category_code'] ?? 0;
+            final foodData = foodCollection.data();
+            if (foodData != null && foodData is Map<String, dynamic>) {
+              int category_code = foodData['category_code'] ?? 0;
 
               if (category_code == CATEGORY_FOOD) {
                 //MÓN ĂN
@@ -1630,7 +1630,7 @@ class OrderController extends GetxController {
                 //KHÁC
 
                 CollectionReference otherChefBarCollection =
-                    FirebaseFirestore.instance.collection('otherChefBars');
+                    FirebaseFirestore.instance.collection('others');
                 DocumentSnapshot otherChefBarDocument =
                     await otherChefBarCollection.doc(order_id).get();
 
@@ -1671,7 +1671,7 @@ class OrderController extends GetxController {
         }
       }
     } catch (e) {
-      Utils.showToast('Gửi Bếp/Bar thất bại!', TypeToast.ERROR);
+      Utils.showToast('Gửi Bếp/Bar thất bại! + $e', TypeToast.ERROR);
     }
   }
 

@@ -248,25 +248,22 @@ class ChefBarOtherController extends GetxController {
           }
           retValue.order_details = orderDetails;
           for (int i = 0; i < orderDetails.length; i++) {
-            // lấy thông tin của món ăn
+            // lấy thông tin của món
+            String collectionName = 'foods';
+            // lấy thông tin của món kèm
+            if (orderDetails[i].is_addition) {
+              collectionName = 'additionFoods';
+            } else {
+              // lấy thông tin của món ăn thường
+              collectionName = 'foods';
+            }
             DocumentSnapshot foodCollection = await firestore
-                .collection('foods')
+                .collection(collectionName)
                 .doc(orderDetails[i].food_id)
                 .get();
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                // String food_name = foodData['name'] ?? '';
-                // String image = foodData['image'] ?? '';
-                // String category_id = foodData['category_id'] ?? '';
-
-                // retValue.order_details[i].food = FoodOrderDetail(
-                //     food_id: orderDetails[i].food_id,
-                //     name: food_name,
-                //     image: image,
-                //     category_id: category_id);
-                // print(food_name);
-
                 modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                 retValue.order_details[i].food = food;
                 List<modelFood.Food> listFoodComboDetail = [];
@@ -374,24 +371,22 @@ class ChefBarOtherController extends GetxController {
           }
           retValue.order_details = orderDetails;
           for (int i = 0; i < orderDetails.length; i++) {
-            // lấy thông tin của món ăn
+            // lấy thông tin của món
+            String collectionName = 'foods';
+            // lấy thông tin của món kèm
+            if (orderDetails[i].is_addition) {
+              collectionName = 'additionFoods';
+            } else {
+              // lấy thông tin của món ăn thường
+              collectionName = 'foods';
+            }
             DocumentSnapshot foodCollection = await firestore
-                .collection('foods')
+                .collection(collectionName)
                 .doc(orderDetails[i].food_id)
                 .get();
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                // String food_name = foodData['name'] ?? '';
-                // String image = foodData['image'] ?? '';
-                // String category_id = foodData['category_id'] ?? '';
-
-                // retValue.order_details[i].food = FoodOrderDetail(
-                //     food_id: orderDetails[i].food_id,
-                //     name: food_name,
-                //     image: image,
-                //     category_id: category_id);
-                // print(food_name);
                 modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                 retValue.order_details[i].food = food;
               }
@@ -481,24 +476,22 @@ class ChefBarOtherController extends GetxController {
           }
           retValue.order_details = orderDetails;
           for (int i = 0; i < orderDetails.length; i++) {
-            // lấy thông tin của món ăn
+            // lấy thông tin của món
+            String collectionName = 'foods';
+            // lấy thông tin của món kèm
+            if (orderDetails[i].is_addition) {
+              collectionName = 'additionFoods';
+            } else {
+              // lấy thông tin của món ăn thường
+              collectionName = 'foods';
+            }
             DocumentSnapshot foodCollection = await firestore
-                .collection('foods')
+                .collection(collectionName)
                 .doc(orderDetails[i].food_id)
                 .get();
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                // String food_name = foodData['name'] ?? '';
-                // String image = foodData['image'] ?? '';
-                // String category_id = foodData['category_id'] ?? '';
-
-                // retValue.order_details[i].food = FoodOrderDetail(
-                //     food_id: orderDetails[i].food_id,
-                //     name: food_name,
-                //     image: image,
-                //     category_id: category_id);
-                // print(food_name);
                 modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                 retValue.order_details[i].food = food;
               }

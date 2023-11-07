@@ -968,81 +968,187 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                                       .circular(
                                                                           10),
                                                             ),
-                                                            child: ListTile(
-                                                              tileColor:
-                                                                  secondColor,
-                                                              selectedColor:
-                                                                  primaryColor,
-                                                              leading: orderController
+                                                            child: Column(
+                                                              children: [
+                                                                ListTile(
+                                                                  tileColor:
+                                                                      secondColor,
+                                                                  selectedColor:
+                                                                      primaryColor,
+                                                                  leading: orderController
+                                                                              .orderDetail
+                                                                              .order_details[
+                                                                                  index]
+                                                                              .food!
+                                                                              .image !=
+                                                                          ''
+                                                                      ? ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(5),
+                                                                          child:
+                                                                              Image.network(
+                                                                            orderController.orderDetail.order_details[index].food!.image ??
+                                                                                defaultFoodImageString,
+                                                                            width:
+                                                                                50,
+                                                                            height:
+                                                                                50,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                        )
+                                                                      : ClipRRect(
+                                                                          child:
+                                                                              defaultFoodImage),
+                                                                  title: Text(
+                                                                      orderController
                                                                           .orderDetail
                                                                           .order_details[
                                                                               index]
                                                                           .food!
-                                                                          .image !=
-                                                                      ''
-                                                                  ? ClipRRect(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5),
-                                                                      child: Image
-                                                                          .network(
-                                                                        orderController.orderDetail.order_details[index].food!.image ??
-                                                                            defaultFoodImageString,
+                                                                          .name,
+                                                                      style:
+                                                                          textStyleFoodNameBold16),
+                                                                  subtitle:
+                                                                      Text(
+                                                                    FOOD_STATUS_COOKING_STRING,
+                                                                    style:
+                                                                        textStyleCooking,
+                                                                  ),
+                                                                  trailing:
+                                                                      Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Text(
+                                                                          Utils.formatCurrency(orderController
+                                                                              .orderDetail
+                                                                              .order_details[
+                                                                                  index]
+                                                                              .price),
+                                                                          style:
+                                                                              textStylePriceBlackRegular16),
+                                                                      SizedBox(
                                                                         width:
-                                                                            50,
-                                                                        height:
-                                                                            50,
-                                                                        fit: BoxFit
-                                                                            .cover,
+                                                                            100,
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            const Text("Số lượng: ",
+                                                                                style: textStylePriceBlackRegular16),
+                                                                            Text("${orderController.orderDetail.order_details[index].quantity}",
+                                                                                style: textStyleCooking),
+                                                                          ],
+                                                                        ),
                                                                       ),
-                                                                    )
-                                                                  : ClipRRect(
-                                                                      child:
-                                                                          defaultFoodImage),
-                                                              title: Text(
-                                                                  orderController
-                                                                      .orderDetail
-                                                                      .order_details[
-                                                                          index]
-                                                                      .food!
-                                                                      .name,
-                                                                  style:
-                                                                      textStyleFoodNameBold16),
-                                                              subtitle: Text(
-                                                                FOOD_STATUS_COOKING_STRING,
-                                                                style:
-                                                                    textStyleCooking,
-                                                              ),
-                                                              trailing: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(
-                                                                      Utils.formatCurrency(orderController
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                //Danh sách Combo Cooking
+                                                                AnimatedContainer(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                                  curve: Curves
+                                                                      .easeInOut,
+                                                                  child:
+                                                                      Container(
+                                                                    margin: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            70),
+                                                                    height: orderController
+                                                                            .orderDetail
+                                                                            .order_details[index]
+                                                                            .listCombo
+                                                                            .length *
+                                                                        62,
+                                                                    child: ListView
+                                                                        .builder(
+                                                                      scrollDirection:
+                                                                          Axis.vertical,
+                                                                      itemCount: orderController
                                                                           .orderDetail
                                                                           .order_details[
                                                                               index]
-                                                                          .price),
-                                                                      style:
-                                                                          textStylePriceBlackRegular16),
-                                                                  SizedBox(
-                                                                    width: 100,
-                                                                    child: Row(
-                                                                      children: [
-                                                                        const Text(
-                                                                            "Số lượng: ",
-                                                                            style:
-                                                                                textStylePriceBlackRegular16),
-                                                                        Text(
-                                                                            "${orderController.orderDetail.order_details[index].quantity}",
-                                                                            style:
-                                                                                textStyleCooking),
-                                                                      ],
+                                                                          .listCombo
+                                                                          .length,
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              indexCombo) {
+                                                                        return Container(
+                                                                          margin: const EdgeInsets
+                                                                              .all(
+                                                                              4), // Khoảng cách dưới dạng đệm
+
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            border:
+                                                                                Border(bottom: BorderSide(width: 0.1, color: borderColor)),
+                                                                          ),
+                                                                          child: GestureDetector(
+                                                                              onTap: () {
+                                                                                setState(() {});
+                                                                              },
+                                                                              child: AnimatedContainer(
+                                                                                duration: const Duration(milliseconds: 300),
+                                                                                curve: Curves.easeInOut,
+                                                                                // Chiều cao của ListTile thay đổi
+                                                                                child: InkWell(
+                                                                                  onTap: () => {
+                                                                                    setState(() {})
+                                                                                  },
+                                                                                  child: Column(
+                                                                                    children: [
+                                                                                      ListTile(
+                                                                                        selectedColor: primaryColor,
+                                                                                        leading: Theme(
+                                                                                          data: ThemeData(unselectedWidgetColor: primaryColor),
+                                                                                          child: SizedBox(
+                                                                                            width: 40,
+                                                                                            child: Row(
+                                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                                              children: [
+                                                                                                orderController.orderDetail.order_details[index].listCombo[indexCombo].image != ""
+                                                                                                    ? ClipRRect(
+                                                                                                        borderRadius: BorderRadius.circular(5),
+                                                                                                        child: Image.network(
+                                                                                                          orderController.orderDetail.order_details[index].listCombo[indexCombo].image ?? defaultFoodImageString,
+                                                                                                          width: 40,
+                                                                                                          height: 40,
+                                                                                                          fit: BoxFit.cover,
+                                                                                                        ),
+                                                                                                      )
+                                                                                                    : ClipRRect(borderRadius: BorderRadius.circular(5), child: defaultFoodImage40),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        title: Marquee(
+                                                                                            direction: Axis.horizontal,
+                                                                                            textDirection: TextDirection.ltr,
+                                                                                            animationDuration: const Duration(seconds: 1),
+                                                                                            backDuration: const Duration(milliseconds: 4000),
+                                                                                            pauseDuration: const Duration(milliseconds: 1000),
+                                                                                            directionMarguee: DirectionMarguee.TwoDirection,
+                                                                                            child: RichText(
+                                                                                                text: TextSpan(
+                                                                                              children: [
+                                                                                                TextSpan(text: orderController.orderDetail.order_details[index].listCombo[indexCombo].name, style: orderController.orderDetail.order_details[index].listCombo[indexCombo].isSelected == true ? textStyleWhiteRegular16 : textStyleFoodNameBold16),
+                                                                                              ],
+                                                                                            ))),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                                        );
+                                                                      },
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                )
+                                                              ],
                                                             ),
                                                           ),
                                                         )
@@ -1146,7 +1252,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                                           ],
                                                                         ),
                                                                 ),
-                                                                //Danh sách Combo
+                                                                //Danh sách Combo Cancel
                                                                 AnimatedContainer(
                                                                   duration: const Duration(
                                                                       milliseconds:
