@@ -90,6 +90,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   bool isCheckCombo = false;
   bool isCheckAddition = false;
 
+  double heightListCombo = 0;
+  double heightListAddition = 0;
+
   String temporaryPriceFromDate = "";
   String temporaryPriceToDate = "";
   DateTime? _selectedtemporaryPriceFromDate;
@@ -271,10 +274,15 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     //thiết lập view món combo
     isCheckCombo = widget.food.food_combo_ids.isNotEmpty ? true : false;
     textCategoryCodeController.text = '${widget.food.category_code}';
+    heightListCombo = Utils.getHeightRecommentFoodSelected(
+        foodController.foods,
+        (int.tryParse(textCategoryCodeController.text) ??
+            widget.food.category_code));
 
     //thiết lập view món bán kèm
     isCheckAddition = widget.food.addition_food_ids.isNotEmpty ? true : false;
-
+    heightListAddition = Utils.getHeightRecommentAdditionFoodSelected(
+        additionFoodController.foods);
     //vat
     if (widget.food.vat_id != "") {
       isCheckVAT = true;
@@ -991,6 +999,37 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                   "Món Combo",
                                   style: textStylePriceBold16,
                                 ),
+                          trailing: heightListCombo > 0
+                              ? InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      heightListCombo = 0;
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.arrow_drop_up_sharp,
+                                    color: iconColor,
+                                    size: 24,
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      heightListCombo =
+                                          Utils.getHeightRecommentFoodSelected(
+                                              foodController.foods,
+                                              (int.tryParse(
+                                                      textCategoryCodeController
+                                                          .text) ??
+                                                  widget.food.category_code));
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: iconColor,
+                                    size: 24,
+                                  ),
+                                ),
                         ),
                         //DANH SÁCH FOOD
                         AnimatedOpacity(
@@ -1091,13 +1130,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                               BorderRadius.circular(5),
                                         ),
                                         padding: const EdgeInsets.all(10),
-                                        height: Utils
-                                            .getHeightRecommentFoodSelected(
-                                                foodController.foods,
-                                                (int.tryParse(
-                                                        textCategoryCodeController
-                                                            .text) ??
-                                                    widget.food.category_code)),
+                                        height: heightListCombo,
                                         child: ListView.builder(
                                           scrollDirection: Axis.vertical,
                                           itemCount:
@@ -1208,6 +1241,33 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                   "Món bán kèm",
                                   style: textStylePriceBold16,
                                 ),
+                          trailing: heightListAddition > 0
+                              ? InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      heightListAddition = 0;
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.arrow_drop_up_sharp,
+                                    color: iconColor,
+                                    size: 24,
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      heightListAddition = Utils
+                                          .getHeightRecommentAdditionFoodSelected(
+                                              additionFoodController.foods);
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: iconColor,
+                                    size: 24,
+                                  ),
+                                ),
                         ),
                         //DANH SÁCH BÁN KÈM
                         AnimatedOpacity(
@@ -1302,9 +1362,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                       padding: const EdgeInsets.all(10),
-                                      height: Utils
-                                          .getHeightRecommentAdditionFoodSelected(
-                                              additionFoodController.foods),
+                                      height: heightListAddition,
                                       child: ListView.builder(
                                           scrollDirection: Axis.vertical,
                                           itemCount: additionFoodController
@@ -1849,7 +1907,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                   {
                                                     setState(() {
                                                       errorTextTemporaryPercent =
-                                                          "Phần trăm (%) phải lơn 1";
+                                                          "Phần trăm (%) phải lớn hơn 1.";
                                                       isErrorTextTemporaryPercent =
                                                           true;
                                                       if (int.tryParse(
@@ -1995,7 +2053,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                       {
                                         listAdditionFood =
                                             Utils.filterFoodIdsSelected(
-                                                foodController.foods),
+                                                additionFoodController.foods),
                                       },
 
                                     print("Thông tin trước cập nhật"),
@@ -2140,6 +2198,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
                                                         textCategoryIdController
                                                             .text,
+                                                        int.tryParse(
+                                                                textCategoryCodeController
+                                                                    .text) ??
+                                                            CATEGORY_FOOD,
                                                         textUnitIdController
                                                             .text,
                                                         textVatIdController
@@ -2147,10 +2209,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
-                                                            int.tryParse(
-                                                                textCategoryCodeController
-                                                                    .text) ??
-                                                            CATEGORY_FOOD,
+                                                            0,
                                                         listCombo,
                                                         listAdditionFood),
                                                     Utils.myPopSuccess(context)
@@ -2182,15 +2241,16 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
                                                     textCategoryIdController
                                                         .text,
+                                                    int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD,
                                                     textUnitIdController.text,
                                                     textVatIdController.text,
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        int.tryParse(
-                                                            textCategoryCodeController
-                                                                .text) ??
-                                                        CATEGORY_FOOD,
+                                                        0,
                                                     listCombo,
                                                     listAdditionFood),
                                                 Utils.myPopSuccess(context)
@@ -2217,15 +2277,16 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                     null, //thời gian kết thúc giá thời vụ
                                                     textCategoryIdController
                                                         .text,
+                                                    int.tryParse(
+                                                            textCategoryCodeController
+                                                                .text) ??
+                                                        CATEGORY_FOOD,
                                                     textUnitIdController.text,
                                                     "",
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
-                                                        int.tryParse(
-                                                            textCategoryCodeController
-                                                                .text) ??
-                                                        CATEGORY_FOOD,
+                                                        0,
                                                     listCombo,
                                                     listAdditionFood),
                                                 Utils.myPopSuccess(context)

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
@@ -517,19 +518,134 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                             curve: Curves.easeInOut,
                                             child: Container(
                                               margin: const EdgeInsets.only(
-                                                  left: 70),
+                                                  left: 78),
                                               height: foodController
                                                       .foodsToOrder[index]
                                                       .food_combo_details
                                                       .length *
-                                                  62,
+                                                  65,
                                               child: ListView.builder(
                                                 scrollDirection: Axis.vertical,
                                                 itemCount: foodController
                                                     .foodsToOrder[index]
                                                     .food_combo_details
                                                     .length,
-                                                itemBuilder: (context, index) {
+                                                itemBuilder:
+                                                    (context, indexCombo) {
+                                                  return Container(
+                                                    margin: const EdgeInsets
+                                                        .all(
+                                                        4), // Khoảng cách dưới dạng đệm
+
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      border: Border(
+                                                          bottom: BorderSide(
+                                                              width: 0.1,
+                                                              color:
+                                                                  borderColor)),
+                                                    ),
+                                                    child: GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {});
+                                                        },
+                                                        child:
+                                                            AnimatedContainer(
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      300),
+                                                          curve:
+                                                              Curves.easeInOut,
+                                                          // Chiều cao của ListTile thay đổi
+                                                          child: InkWell(
+                                                            onTap: () => {
+                                                              setState(() {})
+                                                            },
+                                                            child: Column(
+                                                              children: [
+                                                                ListTile(
+                                                                  selectedColor:
+                                                                      primaryColor,
+                                                                  leading:
+                                                                      Theme(
+                                                                    data: ThemeData(
+                                                                        unselectedWidgetColor:
+                                                                            primaryColor),
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width: 40,
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          foodController.foodsToOrder[index].food_combo_details[indexCombo].image != ""
+                                                                              ? ClipRRect(
+                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                  child: Image.network(
+                                                                                    foodController.foodsToOrder[index].food_combo_details[indexCombo].image ?? defaultFoodImageString,
+                                                                                    width: 40,
+                                                                                    height: 40,
+                                                                                    fit: BoxFit.cover,
+                                                                                  ),
+                                                                                )
+                                                                              : ClipRRect(borderRadius: BorderRadius.circular(5), child: defaultFoodImage40),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  title: Marquee(
+                                                                      direction: Axis.horizontal,
+                                                                      textDirection: TextDirection.ltr,
+                                                                      animationDuration: const Duration(seconds: 1),
+                                                                      backDuration: const Duration(milliseconds: 4000),
+                                                                      pauseDuration: const Duration(milliseconds: 1000),
+                                                                      directionMarguee: DirectionMarguee.TwoDirection,
+                                                                      child: RichText(
+                                                                          text: TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                              text: foodController.foodsToOrder[index].food_combo_details[indexCombo].name,
+                                                                              style: foodController.foodsToOrder[index].food_combo_details[indexCombo].isSelected == true ? textStyleWhiteRegular16 : textStyleFoodNameBold16),
+                                                                        ],
+                                                                      ))),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox(),
+
+                                    //Danh sách bán kèm
+                                    foodController.foodsToOrder[index]
+                                                .isSelected ==
+                                            true
+                                        ? AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 30),
+                                              height: foodController
+                                                      .foodsToOrder[index]
+                                                      .food_combo_details
+                                                      .length *
+                                                  80,
+                                              child: ListView.builder(
+                                                scrollDirection: Axis.vertical,
+                                                itemCount: foodController
+                                                    .foodsToOrder[index]
+                                                    .addition_food_details
+                                                    .length,
+                                                itemBuilder:
+                                                    (context, indexAddition) {
                                                   return Container(
                                                     margin: const EdgeInsets
                                                         .all(
@@ -538,6 +654,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                     decoration: foodController
                                                                 .foodsToOrder[
                                                                     index]
+                                                                .addition_food_details[
+                                                                    indexAddition]
                                                                 .isSelected ==
                                                             true
                                                         ? BoxDecoration(
@@ -591,25 +709,41 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                               children: [
                                                                 ListTile(
                                                                   selectedColor:
-                                                                      primaryColor,
+                                                                      secondColor,
                                                                   leading:
                                                                       Theme(
                                                                     data: ThemeData(
                                                                         unselectedWidgetColor:
-                                                                            primaryColor),
+                                                                            secondColor),
                                                                     child:
                                                                         SizedBox(
-                                                                      width: 40,
+                                                                      width:
+                                                                          100,
                                                                       child:
                                                                           Row(
                                                                         mainAxisAlignment:
                                                                             MainAxisAlignment.start,
                                                                         children: [
-                                                                          foodController.foodsToOrder[index].image != ""
+                                                                          Checkbox(
+                                                                            value:
+                                                                                foodController.foodsToOrder[index].addition_food_details[indexAddition].isSelected ?? false,
+                                                                            onChanged:
+                                                                                (bool? value) {
+                                                                              setState(() {
+                                                                                foodController.foodsToOrder[index].addition_food_details[indexAddition].isSelected = value;
+                                                                                //kiem tra xem co bat ky mon nao da duoc chon khong
+                                                                                isAddFood = Utils.isAnyFoodSelected(foodController.foodsToOrder);
+                                                                                print("isChecked - $value: ${foodController.foodsToOrder[index].addition_food_details[indexAddition].name}");
+                                                                              });
+                                                                            },
+                                                                            activeColor:
+                                                                                primaryColor,
+                                                                          ),
+                                                                          foodController.foodsToOrder[index].addition_food_details[indexAddition].image != ""
                                                                               ? ClipRRect(
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                   child: Image.network(
-                                                                                    foodController.foodsToOrder[index].image ?? defaultFoodImageString,
+                                                                                    foodController.foodsToOrder[index].addition_food_details[indexAddition].image ?? defaultFoodImageString,
                                                                                     width: 40,
                                                                                     height: 40,
                                                                                     fit: BoxFit.cover,
@@ -631,10 +765,130 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                           text: TextSpan(
                                                                         children: [
                                                                           TextSpan(
-                                                                              text: foodController.foodsToOrder[index].name,
-                                                                              style: foodController.foodsToOrder[index].isSelected == true ? textStyleWhiteRegular16 : textStyleFoodNameBold16),
+                                                                              text: foodController.foodsToOrder[index].addition_food_details[indexAddition].name,
+                                                                              style: foodController.foodsToOrder[index].addition_food_details[indexAddition].isSelected == true ? textStyleWhiteRegular16 : textStyleFoodNameBold16),
+                                                                          (Utils.isDateTimeInRange(foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_from_date ?? Timestamp.now(), foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_to_date ?? Timestamp.now())
+                                                                              ? (foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary! > 0
+                                                                                  ? const WidgetSpan(
+                                                                                      child: Icon(
+                                                                                        Icons.arrow_drop_up,
+                                                                                        size: 24.0,
+                                                                                        color: colorPriceIncrease,
+                                                                                      ),
+                                                                                    )
+                                                                                  : const WidgetSpan(
+                                                                                      child: Icon(
+                                                                                        Icons.arrow_drop_down,
+                                                                                        size: 24.0,
+                                                                                        color: colorPriceDecrease,
+                                                                                      ),
+                                                                                    ))
+                                                                              : const TextSpan()),
                                                                         ],
                                                                       ))),
+                                                                  subtitle: foodController
+                                                                              .foodsToOrder[
+                                                                                  index]
+                                                                              .addition_food_details[
+                                                                                  indexAddition]
+                                                                              .price_with_temporary !=
+                                                                          0
+                                                                      ? (Utils.isDateTimeInRange(
+                                                                              foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_from_date!,
+                                                                              foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_to_date!)
+                                                                          ? Row(
+                                                                              children: <Widget>[
+                                                                                Expanded(
+                                                                                  child: Marquee(
+                                                                                      direction: Axis.horizontal,
+                                                                                      textDirection: TextDirection.ltr,
+                                                                                      animationDuration: const Duration(seconds: 1),
+                                                                                      backDuration: const Duration(milliseconds: 4000),
+                                                                                      pauseDuration: const Duration(milliseconds: 1000),
+                                                                                      directionMarguee: DirectionMarguee.TwoDirection,
+                                                                                      child: RichText(
+                                                                                        text: TextSpan(
+                                                                                          style: DefaultTextStyle.of(context).style,
+                                                                                          children: <TextSpan>[
+                                                                                            TextSpan(
+                                                                                              text: "${Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price + foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary!)} / ",
+                                                                                              style: textStyleTemporaryPriceDeActive16,
+                                                                                            ),
+                                                                                            TextSpan(
+                                                                                              text: Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price),
+                                                                                              style: textStyleTemporaryPriceActive14,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      )),
+                                                                                ),
+                                                                              ],
+                                                                            )
+                                                                          : Text(
+                                                                              Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price),
+                                                                              style: textStyleTemporaryPriceDeActive16,
+                                                                            ))
+                                                                      : Text(Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price), style: foodController.foodsToOrder[index].addition_food_details[indexAddition].isSelected == true ? textStyleWhiteBold16 : textStyleTemporaryPriceDeActive16),
+                                                                  trailing: foodController
+                                                                              .foodsToOrder[index]
+                                                                              .addition_food_details[indexAddition]
+                                                                              .isSelected ==
+                                                                          true
+                                                                      ? SizedBox(
+                                                                          width:
+                                                                              100,
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              InkWell(
+                                                                                onTap: () {
+                                                                                  if (foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity! > 1) {
+                                                                                    setState(() {
+                                                                                      foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity = foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity! - 1;
+                                                                                    });
+                                                                                  }
+                                                                                },
+                                                                                child: Container(
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: iconColor,
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                  ),
+                                                                                  height: 30,
+                                                                                  width: 30,
+                                                                                  child: const Align(
+                                                                                    alignment: Alignment.center,
+                                                                                    child: Icon(Icons.remove, color: Colors.white),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(width: 5),
+                                                                              Text(foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity!.toString(), style: textStyleWhiteBold16),
+                                                                              const SizedBox(width: 5),
+                                                                              InkWell(
+                                                                                onTap: () {
+                                                                                  setState(() {
+                                                                                    foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity = foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity! + 1;
+                                                                                  });
+                                                                                },
+                                                                                child: Container(
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: iconColor,
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                  ),
+                                                                                  height: 30,
+                                                                                  width: 30,
+                                                                                  child: const Align(
+                                                                                    alignment: Alignment.center,
+                                                                                    child: Icon(Icons.add, color: Colors.white),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        )
+                                                                      : const SizedBox(
+                                                                          // width: 40,
+                                                                          ),
                                                                 ),
                                                               ],
                                                             ),
@@ -684,7 +938,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                   is_gift: false,
                                   category_id: '',
                                   category_code: foodOrder.category_code,
-                                  chef_bar_status: CHEF_BAR_STATUS, is_addition: false,
+                                  chef_bar_status: CHEF_BAR_STATUS,
+                                  is_addition: false,
                                 );
 
                                 orderDetailList.add(orderDetail);

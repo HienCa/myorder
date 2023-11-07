@@ -21,8 +21,11 @@ class FoodOrder {
   int? quantity = 1;
   List food_combo_ids = [];
   List<dynamic> food_combo_details = [];
-  List<Food> listCombo = [];//món combo
+  List<Food> listCombo = []; //món combo
 
+  List addition_food_ids = [];
+  List<dynamic> addition_food_details = [];
+  List<Food> listAddition = []; //món bán kèm
   FoodOrder({
     required this.food_id,
     required this.name,
@@ -41,6 +44,8 @@ class FoodOrder {
     this.quantity,
     required this.food_combo_ids,
     required this.food_combo_details,
+    required this.addition_food_ids,
+    required this.addition_food_details,
   });
   FoodOrder.empty()
       : food_id = '',
@@ -59,7 +64,9 @@ class FoodOrder {
         isSelected = false,
         quantity = 0,
         food_combo_ids = [],
-        food_combo_details = [];
+        food_combo_details = [],
+        addition_food_ids = [],
+        addition_food_details = [];
 
   Map<String, dynamic> toJson() => {
         "food_id": food_id,
@@ -77,6 +84,8 @@ class FoodOrder {
         "temporary_percent": temporary_percent,
         "food_combo_ids": food_combo_ids,
         "food_combo_details": food_combo_details,
+        "addition_food_ids": addition_food_ids,
+        "addition_food_details": addition_food_details,
       };
 
   static FoodOrder fromSnap(DocumentSnapshot snap) {
@@ -97,6 +106,8 @@ class FoodOrder {
       temporary_percent: snapshot['temporary_percent'],
       food_combo_ids: snapshot['food_combo_ids'],
       food_combo_details: snapshot['food_combo_details'] ?? [],
+      addition_food_ids: snapshot['addition_food_ids'],
+      addition_food_details: snapshot['addition_food_details'] ?? [],
     );
   }
 }

@@ -16,7 +16,6 @@ class UtilsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return SafeArea(
         child: SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -74,8 +73,7 @@ class UtilsPage extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: Text("Địa chỉ:", style: textStyleBlackRegular),
-                        title: Text(
-                            "số 05 / ấp 06 / Bình Mỹ / Củ Chi / TP.HCM",
+                        title: Text("2001 / Bình Mỹ / Củ Chi / TP.HCM",
                             style: textStyleBlackRegular),
                       ),
                     ],
@@ -101,7 +99,6 @@ class UtilsPage extends StatelessWidget {
                   decoration: const BoxDecoration(color: backgroundColor),
                   child: Column(
                     children: [
-                      
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -112,8 +109,7 @@ class UtilsPage extends StatelessWidget {
                         },
                         child: const ListTile(
                           leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("BẾP/BAR",
-                              style: textStyleBlackRegular),
+                          title: Text("BẾP/BAR", style: textStyleBlackRegular),
                           trailing: Icon(Icons.arrow_forward_ios_outlined,
                               color: iconColor),
                         ),
@@ -243,8 +239,7 @@ class UtilsPage extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const BillPage()))
+                                  builder: (context) => const BillPage()))
                         },
                         child: const ListTile(
                           leading: Icon(Icons.receipt_long, color: iconColor),

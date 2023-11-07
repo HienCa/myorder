@@ -518,7 +518,7 @@ class AdditionFoodController extends GetxController {
             vat_id: vat_id,
             temporary_percent: temporary_percent,
             active: 1,
-            category_code: 0,
+            category_code: category_code,
             food_combo_ids: food_combo_ids,
             food_combo_details: [], addition_food_ids: addition_food_ids, addition_food_details: [],
           );
@@ -666,6 +666,7 @@ class AdditionFoodController extends GetxController {
       DateTime? temporary_price_from_date,
       DateTime? temporary_price_to_date,
       String category_id,
+      int category_code,
       String unit_id,
       String vat_id,
       int temporary_percent,
@@ -705,6 +706,7 @@ class AdditionFoodController extends GetxController {
 
             // "active": active,
             "category_id": category_id.trim(),
+            "category_code": category_code,
             "unit_id": unit_id.trim(),
             "temporary_percent": temporary_percent,
             "food_combo_ids": FieldValue.arrayUnion(food_combo_ids),
@@ -734,6 +736,7 @@ class AdditionFoodController extends GetxController {
 
             // "active": active,
             "category_id": category_id.trim(),
+            "category_code": category_code,
             "unit_id": unit_id.trim(),
             "temporary_percent": temporary_percent,
             "food_combo_ids": FieldValue.arrayUnion(food_combo_ids),

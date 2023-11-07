@@ -379,7 +379,7 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                                                           .order_details[index]
                                                           .listCombo
                                                           .length *
-                                                      62,
+                                                      65,
                                                   child: ListView.builder(
                                                     scrollDirection:
                                                         Axis.vertical,

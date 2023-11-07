@@ -305,9 +305,9 @@ class FoodController extends GetxController {
               food.isSelected = false;
               food.quantity = 1;
 
+              // Lấy thông tin món combo
               List<model.Food> listFoodComboDetail = [];
               if (food.food_combo_ids.isNotEmpty) {
-                // Lấy thông tin món combo
                 print("===============COMBO CỦA ${food.name}===========");
 
                 for (String item in food.food_combo_ids) {
@@ -320,8 +320,35 @@ class FoodController extends GetxController {
                   listFoodComboDetail.add(food);
                 }
               }
-
               food.food_combo_details = listFoodComboDetail;
+
+              // Lấy thông tin món bán kèm
+              List<FoodOrder> listAdditionFoodDetail = [];
+              if (food.addition_food_ids.isNotEmpty) {
+                print("===============MÓN BÁN KÈM CỦA ${food.name}===========");
+
+                for (String item in food.addition_food_ids) {
+                  var foodSnapshot = await firestore
+                      .collection("additionFoods")
+                      .doc(item)
+                      .get();
+
+                  FoodOrder additionFood = FoodOrder.fromSnap(foodSnapshot);
+                  additionFood.isSelected = false;
+                  additionFood.quantity = 1;
+                  print(
+                      "NAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMME");
+
+                  print(additionFood.temporary_price_to_date);
+                  print(additionFood.temporary_price_from_date);
+                  print(additionFood.price_with_temporary);
+
+                  print(additionFood.name);
+                  listAdditionFoodDetail.add(additionFood);
+                }
+              }
+
+              food.addition_food_details = listAdditionFoodDetail;
 
               retValue.add(food);
             }
@@ -347,9 +374,9 @@ class FoodController extends GetxController {
               food.isSelected = false;
               food.quantity = 1;
 
+              // Lấy thông tin món combo
               List<model.Food> listFoodComboDetail = [];
               if (food.food_combo_ids.isNotEmpty) {
-                // Lấy thông tin món combo
                 print("===============COMBO CỦA ${food.name}===========");
 
                 for (String item in food.food_combo_ids) {
@@ -364,6 +391,38 @@ class FoodController extends GetxController {
               }
 
               food.food_combo_details = listFoodComboDetail;
+
+              // Lấy thông tin món bán kèm
+              List<FoodOrder> listAdditionFoodDetail = [];
+              if (food.addition_food_ids.isNotEmpty) {
+                print("===============MÓN BÁN KÈM CỦA ${food.name}===========");
+
+                for (String item in food.addition_food_ids) {
+                  var foodSnapshot = await firestore
+                      .collection("additionFoods")
+                      .doc(item)
+                      .get();
+
+                  FoodOrder additionFood = FoodOrder.fromSnap(foodSnapshot);
+                  additionFood.isSelected = false;
+                  additionFood.quantity = 1;
+                  // if (additionFood.temporary_price_to_date == null &&
+                  //     additionFood.temporary_price_from_date == null) {
+                  //   additionFood.temporary_price_to_date = Timestamp.now();
+                  //   additionFood.temporary_price_from_date = Timestamp.now();
+                  // }
+                  print(
+                      "NAMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMME");
+
+                  print(additionFood.temporary_price_to_date);
+                  print(additionFood.temporary_price_from_date);
+                  print(additionFood.price_with_temporary);
+                  print(additionFood.name);
+                  listAdditionFoodDetail.add(additionFood);
+                }
+              }
+
+              food.addition_food_details = listAdditionFoodDetail;
               retValue.add(food);
             }
             Utils.showDataJson(query);
@@ -563,7 +622,7 @@ class FoodController extends GetxController {
               vat_id: vat_id,
               temporary_percent: temporary_percent,
               active: 1,
-              category_code: 0,
+              category_code: category_code,
               food_combo_ids: food_combo_ids,
               food_combo_details: [],
               addition_food_ids: addition_food_ids,
@@ -712,6 +771,7 @@ class FoodController extends GetxController {
       DateTime? temporary_price_from_date,
       DateTime? temporary_price_to_date,
       String category_id,
+      int category_code,
       String unit_id,
       String vat_id,
       int temporary_percent,
@@ -752,6 +812,7 @@ class FoodController extends GetxController {
 
             // "active": active,
             "category_id": category_id.trim(),
+            "category_code": category_code,
             "unit_id": unit_id.trim(),
             "temporary_percent": temporary_percent,
             "food_combo_ids": FieldValue.arrayUnion(food_combo_ids),
@@ -765,7 +826,6 @@ class FoodController extends GetxController {
         await firestore.collection('foods').doc(food_id).update({
           "food_combo_ids": [],
           "addition_food_ids": [],
-
         }).then((value) async {
           await firestore.collection('foods').doc(food_id).update({
             "food_id": food_id.trim(),
@@ -780,6 +840,7 @@ class FoodController extends GetxController {
 
             // "active": active,
             "category_id": category_id.trim(),
+            "category_code": category_code,
             "unit_id": unit_id.trim(),
             "temporary_percent": temporary_percent,
             "food_combo_ids": FieldValue.arrayUnion(food_combo_ids),

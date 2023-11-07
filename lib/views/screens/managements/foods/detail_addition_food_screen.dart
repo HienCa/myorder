@@ -13,6 +13,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/foods/additon_foods_controller.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
+import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/controllers/vats/vats_controller.dart';
 import 'package:myorder/models/unit.dart';
@@ -62,6 +63,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
 
   bool isOnlyReadTemporaryWithPrice = false;
   bool isOnlyReadTemporaryWithPercent = true;
+  FoodController foodController = Get.put(FoodController());
 
   AdditionFoodController additionFoodController =
       Get.put(AdditionFoodController());
@@ -251,18 +253,24 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
     super.dispose();
   }
 
+  double heightListCombo = 0;
+
   @override
   void initState() {
     super.initState();
-
+//thiết lập view món combo
+    heightListCombo = Utils.getHeightRecommentFoodSelected(
+        foodController.foods,
+        (int.tryParse(textCategoryCodeController.text) ??
+            widget.food.category_code));
     //Hiển thị combo có sẵn của món ăn
 
     refeshFoodSelected();
     print("ppppppppppppppppppppppp");
 
-    for (var i = 0; i < additionFoodController.foods.length; i++) {
-      if (additionFoodController.foods[i].isSelected) {
-        print(additionFoodController.foods[i].name);
+    for (var i = 0; i < foodController.foods.length; i++) {
+      if (foodController.foods[i].isSelected) {
+        print(foodController.foods[i].name);
       }
     }
     //thiết lập view combo
@@ -499,12 +507,12 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
   }
 
   void refeshFoodSelected() {
-    for (var food in additionFoodController.foods) {
+    for (var food in foodController.foods) {
       food.isSelected = false;
     }
 
     for (var comboId in widget.food.food_combo_ids) {
-      for (var food in additionFoodController.foods) {
+      for (var food in foodController.foods) {
         if (food.food_id == comboId) {
           food.isSelected = true;
           print("Món ăn trong combo này:");
@@ -956,17 +964,47 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                               activeColor: primaryColor,
                             ),
                           ),
-                          title: (Utils.counterSelected(
-                                          additionFoodController.foods) >
+                          title: (Utils.counterSelected(foodController.foods) >
                                       0 &&
                                   isCheckCombo)
                               ? Text(
-                                  "Món Combo (${Utils.counterSelected(additionFoodController.foods)})",
+                                  "Món Combo (${Utils.counterSelected(foodController.foods)})",
                                   style: textStylePriceBold16,
                                 )
                               : const Text(
                                   "Món Combo",
                                   style: textStylePriceBold16,
+                                ),
+                          trailing: heightListCombo > 0
+                              ? InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      heightListCombo = 0;
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.arrow_drop_up_sharp,
+                                    color: iconColor,
+                                    size: 24,
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      heightListCombo =
+                                          Utils.getHeightRecommentFoodSelected(
+                                              foodController.foods,
+                                              (int.tryParse(
+                                                      textCategoryCodeController
+                                                          .text) ??
+                                                  widget.food.category_code));
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: iconColor,
+                                    size: 24,
+                                  ),
                                 ),
                         ),
                         //DANH SÁCH FOOD
@@ -988,7 +1026,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                           vertical: kDefaultPadding / 2),
                                       height: 50,
                                       child: Utils.getHeightRecommentFoodSelected(
-                                                  additionFoodController.foods,
+                                                  foodController.foods,
                                                   (int.tryParse(
                                                           textCategoryCodeController
                                                               .text) ??
@@ -997,15 +1035,14 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                           ? ListView.builder(
                                               scrollDirection: Axis.horizontal,
                                               itemCount: Utils.filterSelected(
-                                                      additionFoodController
-                                                          .foods)
+                                                      foodController.foods)
                                                   .length,
                                               itemBuilder: (context, index) =>
                                                   GestureDetector(
                                                     onTap: () => {
                                                       setState(() {
                                                         unSelectedFood(
-                                                            additionFoodController
+                                                            foodController
                                                                 .foods[index]);
                                                       })
                                                     },
@@ -1016,7 +1053,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                           left: kDefaultPadding,
                                                           right: index ==
                                                                   Utils.filterSelected(
-                                                                              additionFoodController.foods)
+                                                                              foodController.foods)
                                                                           .length -
                                                                       1
                                                               ? kDefaultPadding
@@ -1041,7 +1078,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                           children: [
                                                             Text(
                                                               Utils.filterSelected(
-                                                                      additionFoodController
+                                                                      foodController
                                                                           .foods)[index]
                                                                   .name,
                                                               style: const TextStyle(
@@ -1069,19 +1106,13 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                               BorderRadius.circular(5),
                                         ),
                                         padding: const EdgeInsets.all(10),
-                                        height: Utils.getHeightRecommentFoodSelected(
-                                            additionFoodController.foods,
-                                            (int.tryParse(
-                                                    textCategoryCodeController
-                                                        .text) ??
-                                                widget.food.category_code)),
+                                        height: heightListCombo,
                                         child: ListView.builder(
                                           scrollDirection: Axis.vertical,
-                                          itemCount: additionFoodController
-                                              .foods.length,
+                                          itemCount:
+                                              foodController.foods.length,
                                           itemBuilder: (context, index) =>
-                                              additionFoodController
-                                                          .foods[index]
+                                              foodController.foods[index]
                                                           .category_code ==
                                                       (int.tryParse(
                                                               textCategoryCodeController
@@ -1092,7 +1123,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                       onTap: () {
                                                         setState(() {
                                                           toggleSelectedFood(
-                                                              additionFoodController
+                                                              foodController
                                                                       .foods[
                                                                   index]);
                                                         });
@@ -1121,7 +1152,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                                         10),
                                                           ),
                                                           child: Text(
-                                                            additionFoodController
+                                                            foodController
                                                                 .foods[index]
                                                                 .name,
                                                             style: const TextStyle(
@@ -1133,7 +1164,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                           ),
                                                         ),
                                                         Utils.isSelected(
-                                                                additionFoodController
+                                                                foodController
                                                                         .foods[
                                                                     index])
                                                             ? Positioned(
@@ -1775,10 +1806,10 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                     if (isCheckCombo == false)
                                       {
                                         Utils.refeshSelected(
-                                            additionFoodController.foods)
+                                            foodController.foods)
                                       },
                                     listCombo = Utils.filterFoodIdsSelected(
-                                        additionFoodController.foods),
+                                        foodController.foods),
                                     print("Thông tin trước cập nhật"),
                                     print(nameController.text),
                                     print(priceController.text),
@@ -1923,6 +1954,10 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
 
                                                             textCategoryIdController
                                                                 .text,
+                                                            int.tryParse(
+                                                                    textCategoryCodeController
+                                                                        .text) ??
+                                                                CATEGORY_FOOD,
                                                             textUnitIdController
                                                                 .text,
                                                             textVatIdController
@@ -1930,11 +1965,9 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                             int.tryParse(
                                                                     temporaryWithPercentController
                                                                         .text) ??
-                                                                int.tryParse(
-                                                                    textCategoryCodeController
-                                                                        .text) ??
-                                                                CATEGORY_FOOD,
-                                                            listCombo, listAdditionFoodId),
+                                                                0,
+                                                            listCombo,
+                                                            listAdditionFoodId),
                                                     Utils.myPopSuccess(context)
                                                   }
                                               }
@@ -1965,6 +1998,10 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
 
                                                         textCategoryIdController
                                                             .text,
+                                                        int.tryParse(
+                                                                textCategoryCodeController
+                                                                    .text) ??
+                                                            CATEGORY_FOOD,
                                                         textUnitIdController
                                                             .text,
                                                         textVatIdController
@@ -1972,11 +2009,9 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
-                                                            int.tryParse(
-                                                                textCategoryCodeController
-                                                                    .text) ??
-                                                            CATEGORY_FOOD,
-                                                        listCombo, listAdditionFoodId),
+                                                            0,
+                                                        listCombo,
+                                                        listAdditionFoodId),
                                                 Utils.myPopSuccess(context)
                                               }
                                             else if (isCheckVAT &&
@@ -2002,17 +2037,19 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                         null, //thời gian kết thúc giá thời vụ
                                                         textCategoryIdController
                                                             .text,
+                                                        int.tryParse(
+                                                                textCategoryCodeController
+                                                                    .text) ??
+                                                            CATEGORY_FOOD,
                                                         textUnitIdController
                                                             .text,
                                                         "",
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
-                                                            int.tryParse(
-                                                                textCategoryCodeController
-                                                                    .text) ??
-                                                            CATEGORY_FOOD,
-                                                        listCombo, listAdditionFoodId),
+                                                            0,
+                                                        listCombo,
+                                                        listAdditionFoodId),
                                                 Utils.myPopSuccess(context)
                                               }
                                           },
