@@ -56,6 +56,9 @@ const colorPriceDecrease = Colors.redAccent;
 
 var primaryColorOpacity = const Color(0xFF40BAD5).withOpacity(0.2);
 var chooseColorOpacity = const Color(0xFF40BAD5);
+//Gray
+var grayColor200 = Colors.grey[200];
+var grayColor600 = Colors.grey[600];
 
 //color of order
 const tableservingColor = Color(0xFF40BAD5);
@@ -134,6 +137,12 @@ const textStylePrimary16 = TextStyle(fontSize: 16, color: primaryColor);
 const textStyleCancel16 = TextStyle(fontSize: 16, color: colorCancel);
 //SUCCESS
 const textStyleSuccess16 = TextStyle(fontSize: 16, color: colorSuccess);
+
+//LANDSCAPE
+const textStyleTabLandscapeActive =
+    TextStyle(color: primaryColor, fontSize: 10, fontWeight: FontWeight.bold);
+const textStyleTabLandscapeDeActive =
+    TextStyle(color: labelColor, fontSize: 10, fontWeight: FontWeight.bold);
 
 //
 const textStyleTitleGrayBold20 =
@@ -242,7 +251,6 @@ const textStyleCancel =
 
 const textStyleCooking =
     TextStyle(color: colorWarning, fontSize: 14, fontWeight: FontWeight.bold);
-
 
 const textStyleSeccessDialog =
     TextStyle(color: colorSuccess, fontSize: 16, fontWeight: FontWeight.bold);

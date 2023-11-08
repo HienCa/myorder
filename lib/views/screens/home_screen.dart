@@ -27,6 +27,74 @@ class _HomeScreenState extends State<HomeScreen> {
     // }
   }
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       bottomNavigationBar: BottomNavigationBar(
+//         onTap: (idx) {
+//           setState(() {
+//             pageIdx = idx;
+//             // if (idx != pageIdx) {
+//             //   setState(() {
+//             //     pageIdx = idx;
+//             //   });
+//             // } else {
+//             //   // If the same tab is tapped, pop to the root of that tab's navigator
+//             //   Navigator.popUntil(
+//             //     context,
+//             //     ModalRoute.withName(
+//             //         '/'), // Replace with the actual route name of FirstPage
+//             //   );
+//             // }
+//           });
+//         },
+//         type: BottomNavigationBarType.fixed,
+//         backgroundColor: backgroundColor,
+//         selectedItemColor: iconColorPrimary,
+//         unselectedItemColor: unselectedItemColor,
+//         currentIndex: pageIdx,
+//         items: [
+//           const BottomNavigationBarItem(
+//             icon: Icon(Icons.home, size: 30),
+//             label: 'Tổng quan',
+//           ),
+//           const BottomNavigationBarItem(
+//             icon: Icon(Icons.notes, size: 30),
+//             label: 'Đơn hàng',
+//           ),
+//           BottomNavigationBarItem(
+//             // icon: CustomIcon(),
+//             icon: IconButton(
+//               onPressed: () => {
+//                 // pickVideo(ImageSource.gallery, context)
+//               },
+//               icon: const CustomIcon(),
+//             ),
+//             label: '',
+//           ),
+//           const BottomNavigationBarItem(
+//             icon: Icon(Icons.table_bar_sharp, size: 30),
+//             label: 'Khu vực',
+//           ),
+//           const BottomNavigationBarItem(
+//             icon: Icon(Icons.person, size: 30),
+//             label: 'Tiện ích',
+//           ),
+//         ],
+//       ),
+//       body: Navigator(
+//         key: GlobalKey<NavigatorState>(),
+//         initialRoute: '/',
+//         onGenerateRoute: (settings) {
+//           return MaterialPageRoute(
+//             builder: (context) => pages[pageIdx],
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,18 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (idx) {
           setState(() {
             pageIdx = idx;
-            // if (idx != pageIdx) {
-            //   setState(() {
-            //     pageIdx = idx;
-            //   });
-            // } else {
-            //   // If the same tab is tapped, pop to the root of that tab's navigator
-            //   Navigator.popUntil(
-            //     context,
-            //     ModalRoute.withName(
-            //         '/'), // Replace with the actual route name of FirstPage
-            //   );
-            // }
           });
         },
         type: BottomNavigationBarType.fixed,
@@ -82,15 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Navigator(
-        key: GlobalKey<NavigatorState>(),
-        initialRoute: '/',
-        onGenerateRoute: (settings) {
-          return MaterialPageRoute(
-            builder: (context) => pages[pageIdx],
-          );
-        },
-      ),
+      body: pages[pageIdx],
     );
   }
 }

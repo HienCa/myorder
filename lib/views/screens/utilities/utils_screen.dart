@@ -4,6 +4,7 @@ import 'package:myorder/views/screens/bill/bills_screen.dart';
 import 'package:myorder/views/screens/managements/area_table/area_table_screen.dart';
 import 'package:myorder/views/screens/managements/categories/categories_screen.dart';
 import 'package:myorder/views/screens/managements/chef_bar/chef_bar_other_screen.dart';
+import 'package:myorder/views/screens/managements/dashboard/dashboard_screen.dart';
 import 'package:myorder/views/screens/managements/discounts/discounts_screen.dart';
 import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
 import 'package:myorder/views/screens/managements/foods/foods_screen.dart';
@@ -104,6 +105,21 @@ class UtilsPage extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
+                                  builder: (context) => const MyDashBoard()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.ad_units, color: iconColor),
+                          title:
+                              Text("DASH BOARD", style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                   builder: (context) =>
                                       const ManagementChefBarOtherPage()))
                         },
@@ -114,7 +130,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -131,7 +146,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -148,7 +162,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -165,7 +178,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -182,7 +194,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -199,7 +210,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -216,7 +226,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
@@ -233,7 +242,6 @@ class UtilsPage extends StatelessWidget {
                               color: iconColor),
                         ),
                       ),
-                      const Divider(),
                       InkWell(
                         onTap: () => {
                           Navigator.push(
