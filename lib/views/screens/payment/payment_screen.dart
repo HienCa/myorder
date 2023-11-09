@@ -573,6 +573,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                 }
                               },
                               activeColor: primaryColor,
+                              visualDensity: VisualDensity.compact,
                             ),
                           ),
                           title: SizedBox(
@@ -649,6 +650,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                 }
                               },
                               activeColor: primaryColor,
+                              visualDensity: VisualDensity.compact,
                             ),
                           ),
                           title: const SizedBox(

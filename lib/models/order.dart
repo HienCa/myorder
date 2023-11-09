@@ -20,6 +20,7 @@ class Order {
   String? discount_name;
   double total_vat_amount;
   double total_discount_amount;
+  double total_surcharge_amount;
   int order_status;
   String? note;
   Timestamp create_at;
@@ -40,6 +41,7 @@ class Order {
     required this.discount_reason,
     required this.total_slot,
     this.note,
+    required this.total_surcharge_amount,
     required this.create_at,
     this.payment_at,
     required this.active,
@@ -74,6 +76,7 @@ class Order {
         discount_percent = 0,
         total_vat_amount = 0,
         total_discount_amount = 0,
+        total_surcharge_amount = 0,
         order_status = 0,
         total_amount = 0,
         create_at = Timestamp.now(),
@@ -100,6 +103,7 @@ class Order {
         "total_amount": total_amount,
         "total_vat_amount": total_vat_amount,
         "total_discount_amount": total_discount_amount,
+        "total_surcharge_amount": total_surcharge_amount,
         "discount_amount_all": discount_amount_all,
         "discount_amount_drink": discount_amount_drink,
         "discount_amount_food": discount_amount_food,
@@ -129,6 +133,7 @@ class Order {
       is_discount: snapshot['is_discount'],
       total_vat_amount: snapshot['total_vat_amount'],
       total_discount_amount: snapshot['total_discount_amount'],
+      total_surcharge_amount: snapshot['total_surcharge_amount'],
       discount_amount_all: snapshot['discount_amount_all'],
       discount_amount_food: snapshot['discount_amount_food'],
       discount_amount_drink: snapshot['discount_amount_drink'],

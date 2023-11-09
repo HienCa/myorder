@@ -7,20 +7,20 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 
 import 'package:myorder/models/order.dart' as model;
 
-class CustomDialogUpdateQuantityTable extends StatefulWidget {
+class CustomDialogUpdateNewQuantityTable extends StatefulWidget {
   final model.Order order;
-  const CustomDialogUpdateQuantityTable({
+  const CustomDialogUpdateNewQuantityTable({
     Key? key,
     required this.order,
   }) : super(key: key);
 
   @override
-  State<CustomDialogUpdateQuantityTable> createState() =>
-      _CustomDialogUpdateQuantityTableState();
+  State<CustomDialogUpdateNewQuantityTable> createState() =>
+      _CustomDialogUpdateNewQuantityTableState();
 }
 
-class _CustomDialogUpdateQuantityTableState
-    extends State<CustomDialogUpdateQuantityTable> {
+class _CustomDialogUpdateNewQuantityTableState
+    extends State<CustomDialogUpdateNewQuantityTable> {
   @override
   void dispose() {
     super.dispose();
@@ -94,7 +94,7 @@ class _CustomDialogUpdateQuantityTableState
                           ),
                           InkWell(
                             onTap: () => {
-                              orderController.updateQuantity(
+                              orderController.updateNewQuantity(
                                   context,
                                   widget.order.order_id,
                                   orderController.orderDetail.order_details),

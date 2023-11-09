@@ -16,6 +16,8 @@ class OrderDetail {
   bool is_gift = false;
   bool is_addition = false;
   bool isSelected = false;
+  int new_quantity = 1;
+
   List<Food> listCombo = [];
   OrderDetail(
       {required this.order_detail_id,

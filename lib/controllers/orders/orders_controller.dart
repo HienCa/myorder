@@ -485,7 +485,7 @@ class OrderController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1));
+      total_slot: 1, total_surcharge_amount: 0));
 
   //lấy 1 order
 
@@ -520,7 +520,7 @@ class OrderController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1);
+              total_slot: 1, total_surcharge_amount: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -533,6 +533,9 @@ class OrderController extends GetxController {
           retValue.order_details = orderDetails;
 
           for (int i = 0; i < orderDetails.length; i++) {
+            //New quantity
+            orderDetails[i].new_quantity = orderDetails[i].quantity;
+
             // lấy thông tin của món
             String collectionName = 'foods';
             // lấy thông tin của món kèm
@@ -577,9 +580,14 @@ class OrderController extends GetxController {
           if (orderCollection.exists) {
             final orderData = orderCollection.data();
             if (orderData != null && orderData is Map<String, dynamic>) {
-              double total_amount = orderData['total_amount'] ?? 0;
-              retValue.total_amount = total_amount;
-              print(total_amount);
+              order = model.Order.fromSnap(
+                  orderCollection); 
+              retValue.total_amount = order.total_amount;
+              retValue.total_vat_amount = order.total_vat_amount;
+              retValue.total_discount_amount = order.total_discount_amount;
+              retValue.is_vat = order.is_vat;
+              retValue.is_discount = order.is_discount;
+              print(order.total_amount);
             }
           }
 
@@ -649,7 +657,7 @@ class OrderController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1));
+      total_slot: 1, total_surcharge_amount: 0));
 
   model.Order get orderDetailOrigin => _orderDetailOrigin.value;
   getOrderDetailOriginById(model.Order order) async {
@@ -682,7 +690,7 @@ class OrderController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1);
+              total_slot: 1, total_surcharge_amount: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -815,7 +823,7 @@ class OrderController extends GetxController {
           total_discount_amount: 0,
           discount_percent: 0,
           discount_amount_other: 0,
-          total_slot: 1,
+          total_slot: 1, total_surcharge_amount: 0,
         );
 
         if (slot! > 0) {
@@ -1352,7 +1360,7 @@ class OrderController extends GetxController {
             total_discount_amount: 0,
             discount_percent: 0,
             discount_amount_other: 0,
-            total_slot: 1,
+            total_slot: 1, total_surcharge_amount: 0,
           );
           // cập nhật lại tổng tiền cho order
 
@@ -1444,7 +1452,7 @@ class OrderController extends GetxController {
           print("Món: ${orderDetailNeedUpdate[i].food!.name}");
           print("SL: ${orderDetailNeedUpdate[i].quantity}");
           print("----------------------------------------");
-          // if (orderDetailNeedUpdate[i].isSelected) {
+
           await firestore
               .collection("orders")
               .doc(order_id)
@@ -1453,7 +1461,99 @@ class OrderController extends GetxController {
               .update({
             "quantity": orderDetailNeedUpdate[i].quantity,
           });
-          // }
+        }
+
+        //Cập nhật số lượng món còn trong bếp - bar - khác - thông báo
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+            .collection('orders')
+            .doc(order_id)
+            .collection('orderDetails')
+            .get();
+        if (querySnapshot.docs.isNotEmpty) {
+          List<OrderDetail> orderDetailsChef = [];
+          List<OrderDetail> orderDetailsBar = [];
+          List<OrderDetail> orderDetailsOther = [];
+
+          for (var element in querySnapshot.docs) {
+            OrderDetail orderDetail =
+                OrderDetail.fromSnap(element); // map đơn hàng chi tiết
+            //Chỉ đếm món ăn còn trong bếp
+            if (orderDetail.category_code == CATEGORY_FOOD &&
+                (orderDetail.food_status == FOOD_STATUS_IN_CHEF ||
+                    orderDetail.food_status == FOOD_STATUS_COOKING)) {
+              //BẾP
+              orderDetailsChef.add(orderDetail);
+            } else if (orderDetail.category_code == CATEGORY_DRINK &&
+                (orderDetail.food_status == FOOD_STATUS_IN_CHEF ||
+                    orderDetail.food_status == FOOD_STATUS_COOKING)) {
+              //BAR
+              orderDetailsBar.add(orderDetail);
+            } else if (orderDetail.category_code == CATEGORY_OTHER &&
+                (orderDetail.food_status == FOOD_STATUS_IN_CHEF ||
+                    orderDetail.food_status == FOOD_STATUS_COOKING)) {
+              //KHÁC
+              orderDetailsOther.add(orderDetail);
+            }
+          }
+          //Cập nhật thông tin quantity trong bep bar khác theo don hang order_id
+          //Neu khong con mon nao thi xoa
+          if (orderDetailsChef.isNotEmpty) {
+            await firestore.collection("chefs").doc(order_id).update({
+              "quantity": orderDetailsChef.length,
+            });
+          } else {
+            await firestore.collection("chefs").doc(order_id).delete();
+          }
+
+          if (orderDetailsBar.isNotEmpty) {
+            await firestore.collection("bars").doc(order_id).update({
+              "quantity": orderDetailsBar.length,
+            });
+          } else {
+            await firestore.collection("bars").doc(order_id).delete();
+          }
+
+          if (orderDetailsOther.isNotEmpty) {
+            await firestore.collection("others").doc(order_id).update({
+              "quantity": orderDetailsOther.length,
+            });
+          } else {
+            await firestore.collection("others").doc(order_id).delete();
+          }
+
+          update();
+        }
+      }
+    } catch (e) {
+      Utils.showErrorFlushbar(context, '', 'Cập nhật thất bại!');
+    }
+  }
+
+  //Cập nhật số lượng món cách mới
+  updateNewQuantity(
+    BuildContext context,
+    String order_id,
+    List<OrderDetail> orderDetailNeedUpdate,
+  ) async {
+    try {
+      print(
+          "===========================CẬP NHẬT SỐ LƯỢNG MÓN=========================");
+      if (orderDetailNeedUpdate.isNotEmpty) {
+        for (int i = 0; i < orderDetailNeedUpdate.length; i++) {
+          print("Món: ${orderDetailNeedUpdate[i].food!.name}");
+          print("SL: ${orderDetailNeedUpdate[i].quantity}");
+          print("----------------------------------------");
+
+          if (orderDetailNeedUpdate[i].isSelected) {
+            await firestore
+                .collection("orders")
+                .doc(order_id)
+                .collection("orderDetails")
+                .doc(orderDetailNeedUpdate[i].order_detail_id)
+                .update({
+              "quantity": orderDetailNeedUpdate[i].new_quantity,
+            });
+          }
         }
 
         //Cập nhật số lượng món còn trong bếp - bar - khác - thông báo
@@ -1762,7 +1862,12 @@ class OrderController extends GetxController {
 
         double vat_price = (total * VAT_PERCENT) / 100;
         totalAmount = order.total_amount + vat_price;
+        print("APPLY VAT");
 
+        print(order.order_id);
+        print(total);
+        print(vat_price);
+        print(totalAmount);
         // cập nhật lại tổng tiền cho order
         await firestore.collection('orders').doc(order.order_id).update({
           "total_amount": totalAmount,

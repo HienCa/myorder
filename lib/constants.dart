@@ -149,12 +149,19 @@ const textStyleTabLandscapeActive =
     TextStyle(color: primaryColor, fontSize: 10);
 const textStyleTabLandscapeDeActive =
     TextStyle(color: labelColor, fontSize: 10);
+
+
 //LANDSCAPE-label
 const textStyleTabLandscapeLabel = TextStyle(color: labelColor, fontSize: 10);
 const textStyleTabLandscapeLabel6 = TextStyle(color: labelColor, fontSize: 6);
 const textStyleTabLandscapeLabelBold =
     TextStyle(color: labelColor, fontSize: 10, fontWeight: FontWeight.bold);
-
+const textStylePrimaryLandscapeBold =
+    TextStyle(color: primaryColor, fontSize: 10, fontWeight: FontWeight.bold);
+const textStyleSecondLandscapeBold =
+    TextStyle(color: colorPrice, fontSize: 10, fontWeight: FontWeight.bold);
+    const textStyleSecondLandscape =
+    TextStyle(color: colorPrice, fontSize: 10, );
 //TRẠNG THÁI MÓN
 const textStyleSeccessLandscape =
     TextStyle(color: colorSuccess, fontSize: 8, fontWeight: FontWeight.bold);
@@ -164,6 +171,10 @@ const textStyleCancelLandscape =
 
 const textStyleCookingLandscape =
     TextStyle(color: colorWarning, fontSize: 8, fontWeight: FontWeight.bold);
+
+const textStylePriamryLandscape =
+    TextStyle(color: colorSuccess, fontSize: 8, fontWeight: FontWeight.bold);
+
 
 
 //

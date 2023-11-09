@@ -65,9 +65,11 @@ class _CustomDialogFinishFoodsState extends State<CustomDialogFinishFoods> {
                           style: textStyleBlackRegular,
                         ),
                       ),
-                      subtitle: Text(
-                        '\nLƯU Ý: Khi "Hoàn tất món" các món ăn sẽ được dừng chế biến. Khi đó khách hàng sẽ không nhận được tất cả các món đang được chế biến hoặc pha chế.',
-                        style: textStyleBlackRegular,
+                      subtitle: Center(
+                        child: Text(
+                          '\nLƯU Ý: Khi "Hoàn tất món" các món ăn sẽ được dừng chế biến. Khi đó khách hàng sẽ không nhận được tất cả các món đang được chế biến hoặc pha chế.',
+                          style: textStyleBlackRegular,
+                        ),
                       ),
                     ),
                     marginTop20,
