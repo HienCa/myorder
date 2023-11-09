@@ -12,7 +12,7 @@ void main() async {
   await Firebase.initializeApp().then((value) {
     Get.put(AuthController());
   });
-   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  //  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 

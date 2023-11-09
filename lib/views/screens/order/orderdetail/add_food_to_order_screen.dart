@@ -1031,7 +1031,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                             colorText: Colors.white,
                                           );
                                         }
-                                      },
+                                      },false
                                     )
                                   : showCustomAlertDialogConfirm(
                                       context,

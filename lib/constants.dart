@@ -59,6 +59,12 @@ var chooseColorOpacity = const Color(0xFF40BAD5);
 //Gray
 var grayColor200 = Colors.grey[200];
 var grayColor600 = Colors.grey[600];
+// Green
+const grayColor = Colors.grey;
+
+var greenColor100 = Colors.green[100];
+var greenColor200 = Colors.green[200];
+var greenColor600 = Colors.green[600];
 
 //color of order
 const tableservingColor = Color(0xFF40BAD5);
@@ -140,9 +146,25 @@ const textStyleSuccess16 = TextStyle(fontSize: 16, color: colorSuccess);
 
 //LANDSCAPE
 const textStyleTabLandscapeActive =
-    TextStyle(color: primaryColor, fontSize: 10, fontWeight: FontWeight.bold);
+    TextStyle(color: primaryColor, fontSize: 10);
 const textStyleTabLandscapeDeActive =
+    TextStyle(color: labelColor, fontSize: 10);
+//LANDSCAPE-label
+const textStyleTabLandscapeLabel = TextStyle(color: labelColor, fontSize: 10);
+const textStyleTabLandscapeLabel6 = TextStyle(color: labelColor, fontSize: 6);
+const textStyleTabLandscapeLabelBold =
     TextStyle(color: labelColor, fontSize: 10, fontWeight: FontWeight.bold);
+
+//TRẠNG THÁI MÓN
+const textStyleSeccessLandscape =
+    TextStyle(color: colorSuccess, fontSize: 8, fontWeight: FontWeight.bold);
+
+const textStyleCancelLandscape =
+    TextStyle(color: colorCancel, fontSize: 8, fontWeight: FontWeight.bold);
+
+const textStyleCookingLandscape =
+    TextStyle(color: colorWarning, fontSize: 8, fontWeight: FontWeight.bold);
+
 
 //
 const textStyleTitleGrayBold20 =
@@ -298,6 +320,7 @@ const marginTop10 = SizedBox(height: 10);
 const marginTop20 = SizedBox(height: 20);
 const marginTop30 = SizedBox(height: 30);
 const marginBottom30 = SizedBox(height: 30);
+const marginRight5 = SizedBox(width: 5);
 const marginRight10 = SizedBox(width: 10);
 const marginRight20 = SizedBox(width: 20);
 
@@ -339,6 +362,19 @@ var defaultFoodImage = Image.asset(
   "assets/images/logofunnyfood.jpg",
   width: 50,
   height: 50,
+  fit: BoxFit.cover,
+);
+
+var defaultFoodImage80 = Image.asset(
+  "assets/images/logofunnyfood.jpg",
+  width: 80,
+  height: 80,
+  fit: BoxFit.cover,
+);
+var defaultFoodImage30 = Image.asset(
+  "assets/images/logofunnyfood.jpg",
+  width: 30,
+  height: 30,
   fit: BoxFit.cover,
 );
 var defaultFoodImage40 = Image.asset(

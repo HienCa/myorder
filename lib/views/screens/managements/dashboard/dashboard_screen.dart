@@ -77,9 +77,8 @@ class _MyDashBoardState extends State<MyDashBoard> {
     width = MediaQuery.of(context).size.width;
     return DefaultTabController(
       length: 3,
-      child: RotatedBox(
-        quarterTurns: 1, // Xoay màn hình ngang
-        child: Scaffold(
+      child: 
+        Scaffold(
           body: Container(
             color: grayColor200,
             child: Row(
@@ -98,7 +97,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
                         color: secondColor,
                       ),
                       margin: const EdgeInsets.only(left: 5),
-                      height: height * 0.3,
+                      height: height * 0.5,
                       width: 50,
                       child: Column(
                         children: [
@@ -196,7 +195,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
                                     title: 'THOÁT MÀN HÌNH',
                                     discription:
                                         'Bạn có chắc chắn muốn rời khỏi màn hình này?',
-                                    isRotatedBox: true,
+                                    
                                   );
                                 },
                               );
@@ -241,7 +240,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
             ),
           ),
         ),
-      ),
+      
     );
   }
 }

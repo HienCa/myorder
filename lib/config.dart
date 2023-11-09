@@ -17,6 +17,7 @@ int EMPLOYEE = 2; // NHÂN VIÊN
 int ORDER_STATUS_SERVING = 1; // ĐANG PHỤC VỤ
 int ORDER_STATUS_PAID = 2; // ĐÃ THANH TÓAN
 int ORDER_STATUS_CANCEL = 3; // ĐÃ HỦY ĐƠN HÀNG
+int ORDER_STATUS_BOOKING = 3; // BOOKING
 
 //ORDER_DETAIL
 int FOOD_STATUS_IN_CHEF = 1; // CHỜ CHẾ BIẾN
@@ -49,6 +50,7 @@ int CATEGORY_ALL = 1; // giam gia tren bill
 int CATEGORY_FOOD = 2; // theo mon an
 int CATEGORY_DRINK = 3; // nuoc uong
 int CATEGORY_OTHER = 4; // khac
+int CATEGORY_GIFT = 4; // khac
 
 //CALCULATOR
 int MIN_PRICE = 1000;

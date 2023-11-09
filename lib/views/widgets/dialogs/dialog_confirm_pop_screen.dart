@@ -7,13 +7,11 @@ class MyDialogMessagePopScreen extends StatefulWidget {
   final String title;
   final String discription;
   final String? note;
-  final bool isRotatedBox;
   const MyDialogMessagePopScreen({
     Key? key,
     required this.title,
     required this.discription,
     this.note,
-    required this.isRotatedBox,
   }) : super(key: key);
 
   @override
@@ -40,98 +38,94 @@ class _MyDialogMessagePopScreenState extends State<MyDialogMessagePopScreen> {
       ),
       elevation: 5, // Độ nâng của bóng đổ
       backgroundColor: backgroundColor,
-      child: RotatedBox(
-        quarterTurns: widget.isRotatedBox ? 1 : 0, // Xoay màn hình ngang
-
-        child: Theme(
-          data: ThemeData(unselectedWidgetColor: primaryColor),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
+      child: Theme(
+        data: ThemeData(unselectedWidgetColor: primaryColor),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        widget.title.toUpperCase(),
+                        style: textStylePrimaryBold,
+                      ),
+                    ),
+                    marginTop20,
+                    ListTile(
+                      title: Center(
                         child: Text(
-                          widget.title.toUpperCase(),
-                          style: textStylePrimaryBold,
+                          widget.discription,
+                          style: textStyleBlackRegular,
                         ),
                       ),
-                      marginTop20,
-                      ListTile(
-                        title: Center(
-                          child: Text(
-                            widget.discription,
-                            style: textStyleBlackRegular,
-                          ),
-                        ),
-                        subtitle: Center(
-                          child: Text(
-                            widget.note ?? '',
-                            style: textStyleBlackRegular,
-                          ),
+                      subtitle: Center(
+                        child: Text(
+                          widget.note ?? '',
+                          style: textStyleBlackRegular,
                         ),
                       ),
-                      marginTop20,
-                      Align(
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              InkWell(
-                                onTap: () => {Navigator.pop(context)},
-                                child: Container(
-                                  height: 50,
-                                  width: 136,
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                    color: backgroundColorGray,
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'HỦY BỎ',
-                                      style: textStyleCancel,
-                                    ),
+                    ),
+                    marginTop20,
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            InkWell(
+                              onTap: () => {Navigator.pop(context)},
+                              child: Container(
+                                height: 50,
+                                width: 136,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: backgroundColorGray,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'HỦY BỎ',
+                                    style: textStyleCancel,
                                   ),
                                 ),
                               ),
-                              InkWell(
-                                onTap: () => {Navigator.pop(context, 'success')},
-                                child: Container(
-                                  height: 50,
-                                  width: 136,
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                    color: primaryColor,
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'XÁC NHẬN',
-                                      style: textStyleWhiteBold16,
-                                    ),
+                            ),
+                            InkWell(
+                              onTap: () => {Navigator.pop(context, 'success')},
+                              child: Container(
+                                height: 50,
+                                width: 136,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: primaryColor,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'XÁC NHẬN',
+                                    style: textStyleWhiteBold16,
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

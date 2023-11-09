@@ -266,7 +266,7 @@ class _OrderPageState extends State<OrderPage> {
                                                             '',
                                                             'Số lượng khách không hợp lệ!');
                                                       }
-                                                    },
+                                                    },false
                                                   )
                                                 },
                                                 child: Container(

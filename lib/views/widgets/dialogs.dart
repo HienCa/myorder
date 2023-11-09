@@ -135,86 +135,88 @@ void showCustomAlertDialogConfirmOrder(
     Color titleColor,
     TextEditingController textEditController,
     int max,
-    Future<dynamic> Function() func) {
+    Future<dynamic> Function() func, bool isRotatedBox) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: backgroundColor,
-        title: Center(
-            child: Text(
-          title,
-          style: TextStyle(color: titleColor),
-        )),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              // Text(subtitle, style: const TextStyle(color: Colors.black54)),
-              MyTextFieldNumber(
-                textController: textEditController,
-                label: 'Số khách (tối đa: $max)',
-                placeholder: 'Nhập số lượng...',
-                isReadOnly: false,
-                min: 1,
-                max: max,
-                isRequire: true,
-              )
-            ],
+     
+      return  AlertDialog(
+          backgroundColor: backgroundColor,
+          title: Center(
+              child: Text(
+            title,
+            style: TextStyle(color: titleColor),
+          )),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                // Text(subtitle, style: const TextStyle(color: Colors.black54)),
+                MyTextFieldNumber(
+                  textController: textEditController,
+                  label: 'Số khách (tối đa: $max)',
+                  placeholder: 'Nhập số lượng...',
+                  isReadOnly: false,
+                  min: 1,
+                  max: max,
+                  isRequire: true,
+                )
+              ],
+            ),
           ),
-        ),
-        actions: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () => {Utils.myPopResult(context, 'DEFAULT')},
-                child: Expanded(
-                  child: Container(
-                    height: 50,
-                    width: MediaQuery.of(context).size.width / 3,
-                    color: backgroundColorCancel,
-                    child: const Center(
-                      child: Text(
-                        'HỦY',
-                        style: buttonStyleCancel,
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                  onTap: () => {Utils.myPopResult(context, 'DEFAULT')},
+                  child: Expanded(
+                    child: Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width / 3,
+                      color: backgroundColorCancel,
+                      child: const Center(
+                        child: Text(
+                          'HỦY',
+                          style: buttonStyleCancel,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: () async => {
-                  if ((int.tryParse(textEditController.text) ?? 0) > 0)
-                    {
-                      await func(),
-                      Utils.showToast('Đặt bàn thành công!', TypeToast.SUCCESS,
-                          toastGravity: ToastGravity.CENTER),
-                      Navigator.pop(context)
-                    }
-                  else
-                    {
-                      Utils.showToast(
-                          'Vui lòng nhập số lượng khách!', TypeToast.ERROR,
-                          toastGravity: ToastGravity.CENTER)
-                    },
-                },
-                child: Expanded(
-                  child: Container(
-                    height: 50,
-                    width: MediaQuery.of(context).size.width / 3,
-                    color: primaryColor,
-                    child: const Center(
-                      child: Text(
-                        'XÁC NHẬN',
-                        style: buttonStyleConfirm,
+                InkWell(
+                  onTap: () async => {
+                    if ((int.tryParse(textEditController.text) ?? 0) > 0)
+                      {
+                        await func(),
+                        Utils.showToast('Đặt bàn thành công!', TypeToast.SUCCESS,
+                            toastGravity: ToastGravity.CENTER),
+                        Navigator.pop(context)
+                      }
+                    else
+                      {
+                        Utils.showToast(
+                            'Vui lòng nhập số lượng khách!', TypeToast.ERROR,
+                            toastGravity: ToastGravity.CENTER)
+                      },
+                  },
+                  child: Expanded(
+                    child: Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width / 3,
+                      color: primaryColor,
+                      child: const Center(
+                        child: Text(
+                          'XÁC NHẬN',
+                          style: buttonStyleConfirm,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
-        ],
+                )
+              ],
+            ),
+          ],
+        
       );
     },
   );

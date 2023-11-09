@@ -19,7 +19,8 @@ class MyTextFieldNumber extends StatefulWidget {
       required this.placeholder,
       required this.isReadOnly,
       required this.max,
-      required this.min, required this.isRequire});
+      required this.min,
+      required this.isRequire});
 
   @override
   State<MyTextFieldNumber> createState() => _MyTextFieldNumberState();
@@ -41,10 +42,12 @@ class _MyTextFieldNumberState extends State<MyTextFieldNumber> {
                 style: textStyleLabel16,
               ),
               marginRight10,
-              widget.isRequire ? const Text(
-                '(*)',
-                style: textStyleErrorInput,
-              ):const Text('')
+              widget.isRequire
+                  ? const Text(
+                      '(*)',
+                      style: textStyleErrorInput,
+                    )
+                  : const Text('')
             ],
           ),
         ),
