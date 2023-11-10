@@ -73,10 +73,12 @@ void showCustomAlertDialogConfirm(BuildContext context, String title,
           style: TextStyle(color: titleColor),
         )),
         content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text(subtitle, style: const TextStyle(color: Colors.black54)),
-            ],
+          child: Center(
+            child: ListBody(
+              children: <Widget>[
+                Text(subtitle, style: const TextStyle(color: Colors.black54)),
+              ],
+            ),
           ),
         ),
         actions: <Widget>[
@@ -102,8 +104,8 @@ void showCustomAlertDialogConfirm(BuildContext context, String title,
               InkWell(
                 onTap: () async => {
                   await func(),
-                  Utils.showToast('Thêm món thành công!', TypeToast.SUCCESS,
-                      toastGravity: ToastGravity.CENTER),
+                  // Utils.showToast('Thêm món thành công!', TypeToast.SUCCESS,
+                  //     toastGravity: ToastGravity.CENTER),
                   Navigator.pop(context)
                 },
                 child: Expanded(

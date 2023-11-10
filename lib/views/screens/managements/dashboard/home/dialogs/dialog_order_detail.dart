@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print, prefer_interpolation_to_compose_strings, constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, avoid_print, prefer_interpolation_to_compose_strings, constant_identifier_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,15 +7,18 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
+import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/order.dart';
+import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_confirm_update_new_quantity.dart';
 import 'package:myorder/views/screens/order/orderdetail/dialogs/dialog_confirm_finish_foos.dart';
 import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
@@ -35,6 +38,8 @@ class MyDialogOrderDetail extends StatefulWidget {
 class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
   OrderController orderController = Get.put(OrderController());
   FoodController foodController = Get.put(FoodController());
+  BillController billController = Get.put(BillController());
+
   String keySearch = "";
   int categoryCodeSelected = 0;
   @override
@@ -131,11 +136,11 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
             children: [
               Row(
                 children: [
+                  //GỌI MÓN - GỢI Ý
                   Expanded(
                     child: Column(
                       children: [
                         Container(
-                          // padding: EdgeInsets.all(4),
                           height: 40,
                           color: backgroundColor,
                           child: SingleChildScrollView(
@@ -269,6 +274,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                           ),
                         ),
                         marginTop5,
+                        //DANH SÁCH MÓN CẦN ORDER
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.62,
                           child: Container(
@@ -285,148 +291,344 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                     foodController.foodsToOrder.length,
                                     (index) {
                                   var food = foodController.foodsToOrder[index];
-                                  if (food.category_code ==
-                                      categoryCodeSelected) {
-                                    return Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: const BoxDecoration(
-                                        color: backgroundColor,
-                                        borderRadius: borderContainer8,
-                                      ),
-                                      margin: const EdgeInsets.only(top: 10),
-                                      child: Column(
-                                        children: [
-                                          //IMAGE
-                                          food.image != ""
-                                              ? ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  child: Image.network(
-                                                    food.image ??
-                                                        defaultFoodImageString,
-                                                    width: 80,
-                                                    height: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                )
-                                              : ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  child: defaultFoodImage80),
-                                          //NAME
-                                          Marquee(
-                                              direction: Axis.horizontal,
-                                              // textDirection: TextDirection.ltr,
-                                              animationDuration:
-                                                  const Duration(seconds: 1),
-                                              backDuration: const Duration(
-                                                  milliseconds: 4000),
-                                              pauseDuration: const Duration(
-                                                  milliseconds: 1000),
-                                              directionMarguee:
-                                                  DirectionMarguee.TwoDirection,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: food.name,
-                                                      style:
-                                                          textStyleTabLandscapeLabel),
-                                                  (Utils.isDateTimeInRange(
-                                                          food
-                                                              .temporary_price_from_date,
-                                                          food
-                                                              .temporary_price_to_date)
-                                                      ? (food.price_with_temporary! >
-                                                              0
-                                                          ? const WidgetSpan(
-                                                              child: Icon(
-                                                                Icons
-                                                                    .arrow_drop_up,
-                                                                size: 10,
-                                                                color:
-                                                                    colorPriceIncrease,
-                                                              ),
-                                                            )
-                                                          : const WidgetSpan(
-                                                              child: Icon(
-                                                                Icons
-                                                                    .arrow_drop_down,
-                                                                size: 10,
-                                                                color:
-                                                                    colorPriceDecrease,
-                                                              ),
-                                                            ))
-                                                      : const TextSpan()),
-                                                ],
-                                              ))),
-                                          food.price_with_temporary != 0
-                                              ? (Utils.isDateTimeInRange(
-                                                      food
-                                                          .temporary_price_from_date,
-                                                      food
-                                                          .temporary_price_to_date)
-                                                  ? Row(
-                                                      children: <Widget>[
-                                                        Expanded(
-                                                          child: Marquee(
-                                                              direction: Axis
-                                                                  .horizontal,
-                                                              // textDirection:
-                                                              //     TextDirection.ltr,
-                                                              animationDuration:
-                                                                  const Duration(
-                                                                      seconds:
-                                                                          1),
-                                                              backDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          4000),
-                                                              pauseDuration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          1000),
-                                                              directionMarguee:
-                                                                  DirectionMarguee
-                                                                      .TwoDirection,
-                                                              child: RichText(
-                                                                text: TextSpan(
-                                                                  style: DefaultTextStyle.of(
-                                                                          context)
-                                                                      .style,
-                                                                  children: <TextSpan>[
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "${Utils.formatCurrency(food.price + food.price_with_temporary!)} / ",
-                                                                      style:
-                                                                          textStyleTabLandscapeLabel,
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text: Utils
-                                                                          .formatCurrency(
-                                                                              food.price),
-                                                                      style:
-                                                                          textStyleTabLandscapeLabel,
-                                                                    ),
-                                                                  ],
+                                  if (categoryCodeSelected == CATEGORY_GIFT) {
+                                    return InkWell(
+                                      onTap: () => {
+                                        //Khi nhấn chọn thì sẽ thêm vào danh sách bên món ăn,
+                                        //Khi món đã được chọn rồi thì sẽ tăng số lượng
+                                        //Xóa món đã thêm bên giao diện order detail
+                                        setState(() {
+                                          if (food.isSelected == false) {
+                                            food.isSelected = true;
+                                          } else {
+                                            food.quantity =
+                                                (food.quantity ?? 1) + 1;
+                                          }
+                                          //Nếu ở tab
+                                          if (isGift == true) {
+                                            food.isGift = true;
+                                          } else {
+                                            food.isGift = false;
+                                          }
+
+                                          print(
+                                              "THÊM MÓN: ${food.name} - SL: ${food.quantity}");
+                                        })
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: const BoxDecoration(
+                                          color: backgroundColor,
+                                          borderRadius: borderContainer8,
+                                        ),
+                                        margin: const EdgeInsets.only(top: 10),
+                                        child: Column(
+                                          children: [
+                                            //IMAGE
+                                            food.image != ""
+                                                ? ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    child: Image.network(
+                                                      food.image ??
+                                                          defaultFoodImageString,
+                                                      width: 80,
+                                                      height: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  )
+                                                : ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    child: defaultFoodImage80),
+                                            //NAME
+                                            Marquee(
+                                                direction: Axis.horizontal,
+                                                // textDirection: TextDirection.ltr,
+                                                animationDuration:
+                                                    const Duration(seconds: 1),
+                                                backDuration: const Duration(
+                                                    milliseconds: 4000),
+                                                pauseDuration: const Duration(
+                                                    milliseconds: 1000),
+                                                directionMarguee:
+                                                    DirectionMarguee
+                                                        .TwoDirection,
+                                                child: RichText(
+                                                    text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                        text: food.name,
+                                                        style:
+                                                            textStyleTabLandscapeLabel),
+                                                    (Utils.isDateTimeInRange(
+                                                            food
+                                                                .temporary_price_from_date,
+                                                            food
+                                                                .temporary_price_to_date)
+                                                        ? (food.price_with_temporary! >
+                                                                0
+                                                            ? const WidgetSpan(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .arrow_drop_up,
+                                                                  size: 10,
+                                                                  color:
+                                                                      colorPriceIncrease,
                                                                 ),
-                                                              )),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : Text(
-                                                      Utils.formatCurrency(
-                                                          food.price),
-                                                      style:
-                                                          textStyleTabLandscapeLabel,
-                                                    ))
-                                              : Text(
-                                                  Utils.formatCurrency(
-                                                      food.price),
-                                                  style: food.isSelected == true
-                                                      ? textStyleWhiteBold16
-                                                      : textStyleTabLandscapeLabel),
-                                        ],
+                                                              )
+                                                            : const WidgetSpan(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .arrow_drop_down,
+                                                                  size: 10,
+                                                                  color:
+                                                                      colorPriceDecrease,
+                                                                ),
+                                                              ))
+                                                        : const TextSpan()),
+                                                  ],
+                                                ))),
+                                            food.price_with_temporary != 0
+                                                ? (Utils.isDateTimeInRange(
+                                                        food
+                                                            .temporary_price_from_date,
+                                                        food
+                                                            .temporary_price_to_date)
+                                                    ? Row(
+                                                        children: <Widget>[
+                                                          Expanded(
+                                                            child: Marquee(
+                                                                direction: Axis
+                                                                    .horizontal,
+                                                                // textDirection:
+                                                                //     TextDirection.ltr,
+                                                                animationDuration:
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            1),
+                                                                backDuration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            4000),
+                                                                pauseDuration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            1000),
+                                                                directionMarguee:
+                                                                    DirectionMarguee
+                                                                        .TwoDirection,
+                                                                child: RichText(
+                                                                  text:
+                                                                      TextSpan(
+                                                                    style: DefaultTextStyle.of(
+                                                                            context)
+                                                                        .style,
+                                                                    children: <TextSpan>[
+                                                                      TextSpan(
+                                                                        text:
+                                                                            "${Utils.formatCurrency(food.price + food.price_with_temporary!)} / ",
+                                                                        style:
+                                                                            textStyleTabLandscapeLabel,
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: Utils.formatCurrency(
+                                                                            food.price),
+                                                                        style:
+                                                                            textStyleLandscapeTemporaryPriceActive,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Text(
+                                                        Utils.formatCurrency(
+                                                            food.price),
+                                                        style:
+                                                            textStyleTabLandscapeLabel,
+                                                      ))
+                                                : Text(
+                                                    Utils.formatCurrency(
+                                                        food.price),
+                                                    style:
+                                                        textStyleTabLandscapeLabel),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  } else if (food.category_code ==
+                                          categoryCodeSelected &&
+                                      categoryCodeSelected != CATEGORY_GIFT) {
+                                    return InkWell(
+                                      onTap: () => {
+                                        //Khi nhấn chọn thì sẽ thêm vào danh sách bên món ăn,
+                                        //Khi món đã được chọn rồi thì sẽ tăng số lượng
+                                        //Xóa món đã thêm bên giao diện order detail
+                                        setState(() {
+                                          if (food.isSelected == false) {
+                                            food.isSelected = true;
+                                          } else {
+                                            food.quantity =
+                                                (food.quantity ?? 1) + 1;
+                                          }
+                                          //Nếu ở tab
+                                          if (isGift == true) {
+                                            food.isGift = true;
+                                          } else {
+                                            food.isGift = false;
+                                          }
+
+                                          print(
+                                              "THÊM MÓN: ${food.name} - SL: ${food.quantity}");
+                                        })
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: const BoxDecoration(
+                                          color: backgroundColor,
+                                          borderRadius: borderContainer8,
+                                        ),
+                                        margin: const EdgeInsets.only(top: 10),
+                                        child: Column(
+                                          children: [
+                                            //IMAGE
+                                            food.image != ""
+                                                ? ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    child: Image.network(
+                                                      food.image ??
+                                                          defaultFoodImageString,
+                                                      width: 80,
+                                                      height: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  )
+                                                : ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    child: defaultFoodImage80),
+                                            //NAME
+                                            Marquee(
+                                                direction: Axis.horizontal,
+                                                // textDirection: TextDirection.ltr,
+                                                animationDuration:
+                                                    const Duration(seconds: 1),
+                                                backDuration: const Duration(
+                                                    milliseconds: 4000),
+                                                pauseDuration: const Duration(
+                                                    milliseconds: 1000),
+                                                directionMarguee:
+                                                    DirectionMarguee
+                                                        .TwoDirection,
+                                                child: RichText(
+                                                    text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                        text: food.name,
+                                                        style:
+                                                            textStyleTabLandscapeLabel),
+                                                    (Utils.isDateTimeInRange(
+                                                            food
+                                                                .temporary_price_from_date,
+                                                            food
+                                                                .temporary_price_to_date)
+                                                        ? (food.price_with_temporary! >
+                                                                0
+                                                            ? const WidgetSpan(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .arrow_drop_up,
+                                                                  size: 10,
+                                                                  color:
+                                                                      colorPriceIncrease,
+                                                                ),
+                                                              )
+                                                            : const WidgetSpan(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .arrow_drop_down,
+                                                                  size: 10,
+                                                                  color:
+                                                                      colorPriceDecrease,
+                                                                ),
+                                                              ))
+                                                        : const TextSpan()),
+                                                  ],
+                                                ))),
+                                            food.price_with_temporary != 0
+                                                ? (Utils.isDateTimeInRange(
+                                                        food
+                                                            .temporary_price_from_date,
+                                                        food
+                                                            .temporary_price_to_date)
+                                                    ? Row(
+                                                        children: <Widget>[
+                                                          Expanded(
+                                                            child: Marquee(
+                                                                direction: Axis
+                                                                    .horizontal,
+                                                                // textDirection:
+                                                                //     TextDirection.ltr,
+                                                                animationDuration:
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            1),
+                                                                backDuration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            4000),
+                                                                pauseDuration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            1000),
+                                                                directionMarguee:
+                                                                    DirectionMarguee
+                                                                        .TwoDirection,
+                                                                child: RichText(
+                                                                  text:
+                                                                      TextSpan(
+                                                                    style: DefaultTextStyle.of(
+                                                                            context)
+                                                                        .style,
+                                                                    children: <TextSpan>[
+                                                                      TextSpan(
+                                                                        text:
+                                                                            "${Utils.formatCurrency(food.price + food.price_with_temporary!)} / ",
+                                                                        style:
+                                                                            textStyleTabLandscapeLabel,
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: Utils.formatCurrency(
+                                                                            food.price),
+                                                                        style:
+                                                                            textStyleLandscapeTemporaryPriceActive,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Text(
+                                                        Utils.formatCurrency(
+                                                            food.price),
+                                                        style:
+                                                            textStyleTabLandscapeLabel,
+                                                      ))
+                                                : Text(
+                                                    Utils.formatCurrency(
+                                                        food.price),
+                                                    style:
+                                                        textStyleTabLandscapeLabel),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   } else {
@@ -452,7 +654,6 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                             ),
                             padding: const EdgeInsets.only(
                               left: 5,
-                              right: 5,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -475,10 +676,9 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                   ),
                                   const Spacer(),
                                   InkWell(
-                                    onTap: () => {Utils.myPop(context)},
-                                    child: const FaIcon(FontAwesomeIcons.xmark,
-                                        color: iconColor, size: 16),
-                                  ),
+                                      onTap: () => {Utils.myPop(context)},
+                                      child: const MyCloseIcon(
+                                          heightWidth: 30, sizeIcon: 16)),
                                   const SizedBox(width: 4),
                                 ]),
                           ),
@@ -579,364 +779,611 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Obx(() {
-                                return ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    itemCount: orderController
-                                        .orderDetail.order_details.length,
-                                    itemBuilder: (context, index) {
-                                      var orderDetail = orderController
-                                          .orderDetail.order_details[index];
+                                print("SỐ MÓN MUỐN THÊM");
+                                print(Utils.counterSelected(
+                                    foodController.foods));
+                                //Nếu không order thêm
+                                return (Utils.counterSelected(
+                                            foodController.foodsToOrder) ==
+                                        0)
+                                    ? ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        itemCount: orderController
+                                            .orderDetail.order_details.length,
+                                        itemBuilder: (context, index) {
+                                          var orderDetail = orderController
+                                              .orderDetail.order_details[index];
 
-                                      return SizedBox(
-                                        height: 50,
-                                        child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              //Thông tin món ăn
-                                              SizedBox(
-                                                height: 50,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.43,
-                                                child: Row(
-                                                  children: [
-                                                    //Hình ảnh - Tên món ăn
-                                                    SizedBox(
-                                                      height: 50,
-                                                      width: 150,
-                                                      child: Row(
-                                                        children: [
-                                                          //Hình ảnh
-                                                          orderDetail.food!
-                                                                      .image !=
-                                                                  ""
-                                                              ? ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                  child: Image
-                                                                      .network(
-                                                                    orderDetail
-                                                                            .food!
-                                                                            .image ??
-                                                                        defaultFoodImageString,
-                                                                    width: 30,
-                                                                    height: 30,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                )
-                                                              : ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                  child:
-                                                                      defaultFoodImage30),
-                                                          marginRight5,
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
+                                          return SizedBox(
+                                            height: 50,
+                                            child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  //Thông tin món ăn
+                                                  SizedBox(
+                                                    height: 50,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.43,
+                                                    child: Row(
+                                                      children: [
+                                                        //Hình ảnh - Tên món ăn
+                                                        SizedBox(
+                                                          height: 50,
+                                                          width: 150,
+                                                          child: Row(
                                                             children: [
-                                                              //TÊN MÓN
-
-                                                              Marquee(
-                                                                  direction: Axis
-                                                                      .horizontal,
-                                                                  textDirection:
-                                                                      TextDirection
-                                                                          .ltr,
-                                                                  animationDuration:
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                  backDuration:
-                                                                      const Duration(
-                                                                          milliseconds:
-                                                                              4000),
-                                                                  pauseDuration:
-                                                                      const Duration(
-                                                                          milliseconds:
-                                                                              1000),
-                                                                  directionMarguee:
-                                                                      DirectionMarguee
-                                                                          .TwoDirection,
-                                                                  child: RichText(
-                                                                      text: TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                          text: orderDetail
-                                                                              .food!
-                                                                              .name,
-                                                                          style:
-                                                                              textStyleTabLandscapeLabel),
-                                                                    ],
-                                                                  ))),
-
-                                                              marginTop5,
-
-                                                              //GIÁ TIỀN
-                                                              orderDetail.is_gift ==
-                                                                      false
-                                                                  ? Text(
-                                                                      Utils.formatCurrency(
-                                                                          orderDetail
-                                                                              .price),
-                                                                      style:
-                                                                          textStyleTabLandscapeLabel)
-                                                                  : const Icon(
-                                                                      Icons
-                                                                          .card_giftcard,
-                                                                      color:
-                                                                          colorWarning,
-                                                                      size: 10,
-                                                                    ),
-                                                              marginTop5,
-                                                              //TRẠNG THÍA MÓN
-                                                              //TRONG BẾP
-                                                              orderDetail.food_status ==
-                                                                      FOOD_STATUS_IN_CHEF
-                                                                  ? Text(
-                                                                      FOOD_STATUS_IN_CHEF_STRING,
-                                                                      style:
-                                                                          textStyleCancelLandscape)
-                                                                  : const SizedBox(),
-                                                              //ĐANG CHẾ BIẾN
-                                                              orderDetail.food_status ==
-                                                                      FOOD_STATUS_COOKING
-                                                                  ? Text(
-                                                                      FOOD_STATUS_COOKING_STRING,
-                                                                      style:
-                                                                          textStyleCookingLandscape)
-                                                                  : const SizedBox(),
-                                                              //HOÀN THÀNH
-                                                              orderDetail.food_status ==
-                                                                      FOOD_STATUS_FINISH
-                                                                  ? Text(
-                                                                      FOOD_STATUS_FINISH_STRING,
-                                                                      style:
-                                                                          textStyleSeccessLandscape)
-                                                                  : const SizedBox(),
-                                                              //ĐÃ HỦY
-                                                              orderDetail.food_status ==
-                                                                      FOOD_STATUS_CANCEL
-                                                                  ? Text(
-                                                                      FOOD_STATUS_CANCEL_STRING,
-                                                                      style:
-                                                                          textStyleCancelLandscape)
-                                                                  : const SizedBox()
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    const Spacer(),
-
-                                                    //SỐ LƯỢNG - QUANTITY
-                                                    (orderDetail.food_status ==
-                                                            FOOD_STATUS_IN_CHEF)
-                                                        ? SizedBox(
-                                                            child: Row(
-                                                              children: [
-                                                                InkWell(
-                                                                  onTap: () {
-                                                                    if (orderDetail
-                                                                            .new_quantity >
-                                                                        1) {
-                                                                      setState(
-                                                                          () {
-                                                                        orderDetail
-                                                                            .new_quantity = orderDetail
-                                                                                .new_quantity -
-                                                                            1;
-
-                                                                        if (orderDetail.quantity !=
-                                                                            orderDetail.new_quantity) {
-                                                                          orderDetail.isSelected =
-                                                                              true;
-                                                                        } else {
-                                                                          orderDetail.isSelected =
-                                                                              false;
-                                                                        }
-                                                                      });
-                                                                    }
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color:
-                                                                          iconColor,
+                                                              //Hình ảnh
+                                                              orderDetail.food!
+                                                                          .image !=
+                                                                      ""
+                                                                  ? ClipRRect(
                                                                       borderRadius:
                                                                           BorderRadius.circular(
                                                                               5),
-                                                                    ),
-                                                                    height: 25,
-                                                                    width: 25,
-                                                                    child:
-                                                                        const Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .center,
-                                                                      child: Icon(
+                                                                      child: Image
+                                                                          .network(
+                                                                        orderDetail.food!.image ??
+                                                                            defaultFoodImageString,
+                                                                        width:
+                                                                            30,
+                                                                        height:
+                                                                            30,
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
+                                                                    )
+                                                                  : ClipRRect(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5),
+                                                                      child:
+                                                                          defaultFoodImage30),
+                                                              marginRight5,
+                                                              Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  //TÊN MÓN
+
+                                                                  Marquee(
+                                                                      direction:
+                                                                          Axis
+                                                                              .horizontal,
+                                                                      textDirection:
+                                                                          TextDirection
+                                                                              .ltr,
+                                                                      animationDuration: const Duration(
+                                                                          seconds:
+                                                                              1),
+                                                                      backDuration: const Duration(
+                                                                          milliseconds:
+                                                                              4000),
+                                                                      pauseDuration: const Duration(
+                                                                          milliseconds:
+                                                                              1000),
+                                                                      directionMarguee:
+                                                                          DirectionMarguee
+                                                                              .TwoDirection,
+                                                                      child: RichText(
+                                                                          text: TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                              text: orderDetail.food!.name,
+                                                                              style: textStyleTabLandscapeLabel),
+                                                                        ],
+                                                                      ))),
+
+                                                                  marginTop5,
+
+                                                                  //GIÁ TIỀN
+                                                                  orderDetail.is_gift ==
+                                                                          false
+                                                                      ? Text(
+                                                                          Utils.formatCurrency(orderDetail
+                                                                              .price),
+                                                                          style:
+                                                                              textStyleTabLandscapeLabel)
+                                                                      : const Icon(
                                                                           Icons
-                                                                              .remove,
+                                                                              .card_giftcard,
                                                                           color:
-                                                                              Colors.white),
+                                                                              colorWarning,
+                                                                          size:
+                                                                              10,
+                                                                        ),
+                                                                  marginTop5,
+                                                                  //TRẠNG THÍA MÓN
+                                                                  //TRONG BẾP
+                                                                  orderDetail.food_status ==
+                                                                          FOOD_STATUS_IN_CHEF
+                                                                      ? Text(
+                                                                          FOOD_STATUS_IN_CHEF_STRING,
+                                                                          style:
+                                                                              textStyleCancelLandscape)
+                                                                      : const SizedBox(),
+                                                                  //ĐANG CHẾ BIẾN
+                                                                  orderDetail.food_status ==
+                                                                          FOOD_STATUS_COOKING
+                                                                      ? Text(
+                                                                          FOOD_STATUS_COOKING_STRING,
+                                                                          style:
+                                                                              textStyleCookingLandscape)
+                                                                      : const SizedBox(),
+                                                                  //HOÀN THÀNH
+                                                                  orderDetail.food_status ==
+                                                                          FOOD_STATUS_FINISH
+                                                                      ? Text(
+                                                                          FOOD_STATUS_FINISH_STRING,
+                                                                          style:
+                                                                              textStyleSeccessLandscape)
+                                                                      : const SizedBox(),
+                                                                  //ĐÃ HỦY
+                                                                  orderDetail.food_status ==
+                                                                          FOOD_STATUS_CANCEL
+                                                                      ? Text(
+                                                                          FOOD_STATUS_CANCEL_STRING,
+                                                                          style:
+                                                                              textStyleCancelLandscape)
+                                                                      : const SizedBox()
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const Spacer(),
+
+                                                        //SỐ LƯỢNG - QUANTITY
+                                                        (orderDetail.food_status ==
+                                                                FOOD_STATUS_IN_CHEF)
+                                                            ? SizedBox(
+                                                                child: Row(
+                                                                  children: [
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        if (orderDetail.new_quantity >
+                                                                            1) {
+                                                                          setState(
+                                                                              () {
+                                                                            orderDetail.new_quantity =
+                                                                                orderDetail.new_quantity - 1;
+
+                                                                            if (orderDetail.quantity !=
+                                                                                orderDetail.new_quantity) {
+                                                                              orderDetail.isSelected = true;
+                                                                            } else {
+                                                                              orderDetail.isSelected = false;
+                                                                            }
+                                                                          });
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              iconColor,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(5),
+                                                                        ),
+                                                                        height:
+                                                                            25,
+                                                                        width:
+                                                                            25,
+                                                                        child:
+                                                                            const Align(
+                                                                          alignment:
+                                                                              Alignment.center,
+                                                                          child: Icon(
+                                                                              Icons.remove,
+                                                                              color: Colors.white),
+                                                                        ),
+                                                                      ),
                                                                     ),
-                                                                  ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            5),
+                                                                    orderDetail.quantity ==
+                                                                            orderDetail
+                                                                                .new_quantity
+                                                                        ? Text(
+                                                                            orderDetail.quantity
+                                                                                .toString(),
+                                                                            style:
+                                                                                textStyleTabLandscapeLabel)
+                                                                        : Text(
+                                                                            orderDetail.new_quantity
+                                                                                .toString(),
+                                                                            style:
+                                                                                textStyleTabLandscapeLabel),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            5),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          orderDetail.new_quantity =
+                                                                              orderDetail.new_quantity + 1;
+
+                                                                          if (orderDetail.quantity !=
+                                                                              orderDetail.new_quantity) {
+                                                                            orderDetail.isSelected =
+                                                                                true;
+                                                                          } else {
+                                                                            orderDetail.isSelected =
+                                                                                false;
+                                                                          }
+                                                                        });
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              iconColor,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(5),
+                                                                        ),
+                                                                        height:
+                                                                            25,
+                                                                        width:
+                                                                            25,
+                                                                        child:
+                                                                            const Align(
+                                                                          alignment:
+                                                                              Alignment.center,
+                                                                          child: Icon(
+                                                                              Icons.add,
+                                                                              color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                                const SizedBox(
-                                                                    width: 5),
-                                                                orderDetail.quantity ==
-                                                                        orderDetail
-                                                                            .new_quantity
-                                                                    ? Text(
-                                                                        orderDetail
+                                                              )
+                                                            : Text(
+                                                                orderDetail
+                                                                    .quantity
+                                                                    .toString(),
+                                                                style:
+                                                                    textStyleTabLandscapeLabel),
+                                                        const Spacer(),
+                                                        //TỔNG TIỀN
+                                                        SizedBox(
+                                                          width: orderDetail
+                                                                      .food_status ==
+                                                                  FOOD_STATUS_IN_CHEF
+                                                              ? 80
+                                                              : 40,
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const Spacer(),
+                                                              Text(
+                                                                  Utils.formatCurrency(orderDetail
+                                                                          .price *
+                                                                      (Utils.counterSelected(orderController.orderDetail.order_details) > 0
+                                                                          ? orderDetail
+                                                                              .new_quantity
+                                                                          : orderDetail
+                                                                              .quantity)),
+                                                                  style: orderDetail
+                                                                              .food_status !=
+                                                                          FOOD_STATUS_IN_CHEF
+                                                                      ? textStyleSeccessLandscape
+                                                                      : textStyleTabLandscapeLabel),
+                                                              orderDetail.food_status ==
+                                                                      FOOD_STATUS_IN_CHEF
+                                                                  ? const Spacer()
+                                                                  : const SizedBox(),
+                                                              orderDetail.food_status ==
+                                                                      FOOD_STATUS_IN_CHEF
+                                                                  ? InkWell(
+                                                                      onTap:
+                                                                          () =>
+                                                                              {
+                                                                        //Hủy món
+                                                                        showCustomAlertDialogConfirm(
+                                                                          context,
+                                                                          "YÊU CẦU HỦY MÓN",
+                                                                          "Có chắc chắn muốn hủy món \"${orderDetail.food!.name}\" ?",
+                                                                          colorWarning,
+                                                                          () async {
+                                                                            orderController.cancelFoodByOrder(
+                                                                                context,
+                                                                                widget.order,
+                                                                                orderDetail);
+                                                                          },
+                                                                        ),
+                                                                      },
+                                                                      child: const FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .xmark,
+                                                                          color:
+                                                                              colorCancel,
+                                                                          size:
+                                                                              16),
+                                                                    )
+                                                                  : const SizedBox(),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                ]),
+                                          );
+                                        })
+                                    :
+                                    //MÓN ĂN CẦN THÊM - THÊM MÓN
+                                    ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        itemCount:
+                                            foodController.foodsToOrder.length,
+                                        itemBuilder: (context, index) {
+                                          return foodController
+                                                      .foodsToOrder[index]
+                                                      .isSelected ==
+                                                  true
+                                              ? SizedBox(
+                                                  height: 50,
+                                                  child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        //Thông tin món ăn
+                                                        SizedBox(
+                                                          height: 50,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.43,
+                                                          child: Row(
+                                                            children: [
+                                                              //Hình ảnh - Tên món ăn
+                                                              SizedBox(
+                                                                height: 50,
+                                                                width: 150,
+                                                                child: Row(
+                                                                  children: [
+                                                                    //Hình ảnh
+                                                                    foodController.foodsToOrder[index].image !=
+                                                                            ""
+                                                                        ? ClipRRect(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(5),
+                                                                            child:
+                                                                                Image.network(
+                                                                              foodController.foodsToOrder[index].image ?? defaultFoodImageString,
+                                                                              width: 30,
+                                                                              height: 30,
+                                                                              fit: BoxFit.cover,
+                                                                            ),
+                                                                          )
+                                                                        : ClipRRect(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(5),
+                                                                            child: defaultFoodImage30),
+                                                                    marginRight5,
+                                                                    Column(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        //TÊN MÓN
+
+                                                                        Marquee(
+                                                                            direction:
+                                                                                Axis.horizontal,
+                                                                            textDirection: TextDirection.ltr,
+                                                                            animationDuration: const Duration(seconds: 1),
+                                                                            backDuration: const Duration(milliseconds: 4000),
+                                                                            pauseDuration: const Duration(milliseconds: 1000),
+                                                                            directionMarguee: DirectionMarguee.TwoDirection,
+                                                                            child: RichText(
+                                                                                text: TextSpan(
+                                                                              children: [
+                                                                                TextSpan(text: foodController.foodsToOrder[index].name, style: textStyleTabLandscapeLabel),
+                                                                              ],
+                                                                            ))),
+
+                                                                        marginTop5,
+
+                                                                        //GIÁ TIỀN
+                                                                        foodController.foodsToOrder[index].isGift ==
+                                                                                false
+                                                                            ? Text(Utils.formatCurrency(foodController.foodsToOrder[index].price),
+                                                                                style: textStyleTabLandscapeLabel)
+                                                                            : const Icon(
+                                                                                Icons.card_giftcard,
+                                                                                color: colorWarning,
+                                                                                size: 10,
+                                                                              ),
+                                                                        marginTop5,
+                                                                        //TRẠNG THÁI MÓN
+                                                                        const Text(
+                                                                            'CHƯA LƯU',
+                                                                            style:
+                                                                                textStyleCancelLandscape)
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const Spacer(),
+
+                                                              //SỐ LƯỢNG - QUANTITY
+                                                              SizedBox(
+                                                                child: Row(
+                                                                  children: [
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        if ((foodController.foodsToOrder[index].quantity ??
+                                                                                0) >
+                                                                            1) {
+                                                                          setState(
+                                                                              () {
+                                                                            foodController.foodsToOrder[index].quantity =
+                                                                                (foodController.foodsToOrder[index].quantity ?? 0) - 1;
+                                                                          });
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              iconColor,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(5),
+                                                                        ),
+                                                                        height:
+                                                                            25,
+                                                                        width:
+                                                                            25,
+                                                                        child:
+                                                                            const Align(
+                                                                          alignment:
+                                                                              Alignment.center,
+                                                                          child: Icon(
+                                                                              Icons.remove,
+                                                                              color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            5),
+                                                                    Text(
+                                                                        foodController
+                                                                            .foodsToOrder[
+                                                                                index]
                                                                             .quantity
                                                                             .toString(),
                                                                         style:
-                                                                            textStyleTabLandscapeLabel)
-                                                                    : Text(
-                                                                        orderDetail
-                                                                            .new_quantity
-                                                                            .toString(),
+                                                                            textStyleTabLandscapeLabel),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            5),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          foodController
+                                                                              .foodsToOrder[index]
+                                                                              .quantity = (foodController.foodsToOrder[index].quantity ?? 0) + 1;
+                                                                        });
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              iconColor,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(5),
+                                                                        ),
+                                                                        height:
+                                                                            25,
+                                                                        width:
+                                                                            25,
+                                                                        child:
+                                                                            const Align(
+                                                                          alignment:
+                                                                              Alignment.center,
+                                                                          child: Icon(
+                                                                              Icons.add,
+                                                                              color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+
+                                                              const Spacer(),
+                                                              //TỔNG TIỀN
+                                                              SizedBox(
+                                                                width: 80,
+                                                                child: Row(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    const Spacer(),
+                                                                    Text(
+                                                                        Utils.formatCurrency(foodController.foodsToOrder[index].price *
+                                                                            (foodController.foodsToOrder[index].quantity ??
+                                                                                0)),
                                                                         style:
                                                                             textStyleTabLandscapeLabel),
-                                                                const SizedBox(
-                                                                    width: 5),
-                                                                InkWell(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      orderDetail
-                                                                              .new_quantity =
-                                                                          orderDetail.new_quantity +
-                                                                              1;
-
-                                                                      if (orderDetail
-                                                                              .quantity !=
-                                                                          orderDetail
-                                                                              .new_quantity) {
-                                                                        orderDetail.isSelected =
-                                                                            true;
-                                                                      } else {
-                                                                        orderDetail.isSelected =
-                                                                            false;
-                                                                      }
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color:
-                                                                          iconColor,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5),
-                                                                    ),
-                                                                    height: 25,
-                                                                    width: 25,
-                                                                    child:
-                                                                        const Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .center,
-                                                                      child: Icon(
-                                                                          Icons
-                                                                              .add,
-                                                                          color:
-                                                                              Colors.white),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        : Text(
-                                                            orderDetail.quantity
-                                                                .toString(),
-                                                            style:
-                                                                textStyleTabLandscapeLabel),
-                                                    const Spacer(),
-                                                    //TỔNG TIỀN
-                                                    SizedBox(
-                                                      width: orderDetail
-                                                                  .food_status ==
-                                                              FOOD_STATUS_IN_CHEF
-                                                          ? 60
-                                                          : 40,
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          const Spacer(),
-                                                          Text(
-                                                              Utils.formatCurrency(orderDetail
-                                                                      .price *
-                                                                  (Utils.counterSelected(orderController
-                                                                              .orderDetail
-                                                                              .order_details) >
-                                                                          0
-                                                                      ? orderDetail
-                                                                          .new_quantity
-                                                                      : orderDetail
-                                                                          .quantity)),
-                                                              style: orderDetail
-                                                                          .food_status !=
-                                                                      FOOD_STATUS_IN_CHEF
-                                                                  ? textStyleSeccessLandscape
-                                                                  : textStyleTabLandscapeLabel),
-                                                          orderDetail.food_status ==
-                                                                  FOOD_STATUS_IN_CHEF
-                                                              ? const Spacer()
-                                                              : const SizedBox(),
-                                                          orderDetail.food_status ==
-                                                                  FOOD_STATUS_IN_CHEF
-                                                              ? InkWell(
-                                                                  onTap: () => {
-                                                                    //Hủy món
-                                                                    showCustomAlertDialogConfirm(
-                                                                      context,
-                                                                      "YÊU CẦU HỦY MÓN",
-                                                                      "Có chắc chắn muốn hủy món \"${orderDetail.food!.name}\" ?",
-                                                                      colorWarning,
-                                                                      () async {
-                                                                        orderController.cancelFoodByOrder(
-                                                                            context,
-                                                                            widget.order,
-                                                                            orderDetail);
+                                                                    const Spacer(),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () =>
+                                                                              {
+                                                                        //Hủy món gọi thêm
+                                                                        showCustomAlertDialogConfirm(
+                                                                          context,
+                                                                          "YÊU CẦU HỦY GỌI MÓN",
+                                                                          "Bạn không muốn gọi món \"${foodController.foodsToOrder[index].name}\" ?",
+                                                                          colorWarning,
+                                                                          () async {
+                                                                            setState(() {
+                                                                              foodController.foodsToOrder[index].isSelected = false;
+                                                                            });
+                                                                          },
+                                                                        ),
                                                                       },
-                                                                    ),
-                                                                  },
-                                                                  child: const FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .xmark,
-                                                                      color:
-                                                                          colorCancel,
-                                                                      size: 16),
-                                                                )
-                                                              : const SizedBox(),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            ]),
-                                      );
-                                    });
+                                                                      child: const FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .xmark,
+                                                                          color:
+                                                                              colorCancel,
+                                                                          size:
+                                                                              16),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ]),
+                                                )
+                                              : const SizedBox();
+                                        });
                               })),
                         ),
                         marginTop5,
@@ -1290,53 +1737,195 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                               fontSize: 10,
                             )),
                       ),
-                      InkWell(
-                        onTap: () async {
-                          final result = await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomDialogUpdateNewQuantityTable(
-                                order: widget.order,
-                              );
-                            },
-                          );
-                          if (result == 'success') {
-                            setState(() {
-                              Utils.refeshSelected(
-                                  orderController.orderDetail.order_details);
+                      Utils.counterSelected(foodController.foodsToOrder) == 0
+                          ?
+                          //LƯU CHỈNH SỬA SỐ LƯỢNG MÓN TRONG ĐƠN HÀNG ĐÃ ĐƯỢC ORDER
+                          InkWell(
+                              onTap: () async {
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialogUpdateNewQuantityTable(
+                                      order: widget.order,
+                                    );
+                                  },
+                                );
+                                if (result == 'success') {
+                                  setState(() {
+                                    Utils.refeshSelected(orderController
+                                        .orderDetail.order_details);
 
-                              Utils.showStylishDialog(
+                                    Utils.showStylishDialog(
+                                        context,
+                                        'THÀNH CÔNG',
+                                        'Số lượng món đã được cập nhật!',
+                                        StylishDialogType.SUCCESS);
+                                  });
+                                }
+                              },
+                              child: CustomButtonIcon(
+                                  label: Utils.counterSelected(orderController
+                                              .orderDetail.order_details) >
+                                          0
+                                      ? 'LƯU (${Utils.counterSelected(orderController.orderDetail.order_details)})'
+                                      : 'LƯU',
+                                  height: 40,
+                                  icon: FontAwesomeIcons.check,
+                                  iconColor: secondColor,
+                                  backgroundColor: Utils.counterSelected(
+                                              orderController
+                                                  .orderDetail.order_details) >
+                                          0
+                                      ? colorSuccess
+                                      : grayColor,
+                                  textStyle: const TextStyle(
+                                    color: secondColor,
+                                    fontSize: 10,
+                                  )),
+                            )
+                          :
+                          //LƯU THÊM MÓN MỚI
+                          InkWell(
+                              onTap: () {
+                                List<OrderDetail> orderDetailList =
+                                    []; // danh sach cac mon khi order
+                                print(
+                                    "================MÓN CẦN ORDER===================");
+                                bool isGift = false;
+                                for (var foodOrder
+                                    in foodController.foodsToOrder) {
+                                  if (foodOrder.isSelected == true) {
+                                    //chi tiet don hang
+                                    //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                    OrderDetail orderDetail = OrderDetail(
+                                      order_detail_id: "",
+                                      price: Utils.isDateTimeInRange(
+                                              foodOrder
+                                                  .temporary_price_from_date,
+                                              foodOrder.temporary_price_to_date)
+                                          ? (foodOrder.price +
+                                              foodOrder.price_with_temporary!)
+                                          : foodOrder.price,
+                                      quantity: foodOrder.quantity!,
+                                      food_status: FOOD_STATUS_IN_CHEF,
+                                      food_id: foodOrder.food_id,
+                                      is_gift: (foodOrder.isGift ?? false),
+                                      category_id: '',
+                                      category_code: foodOrder.category_code,
+                                      chef_bar_status: CHEF_BAR_STATUS,
+                                      is_addition: false,
+                                    );
+                                    //MÓN TẶNG
+                                    if (orderDetail.is_gift == true) {
+                                      orderDetail.price = 0;
+                                      isGift = true;
+                                    }
+
+                                    orderDetailList.add(orderDetail);
+
+                                    //show thong tin console
+                                    print("--------------------------------");
+                                    print("ID: ${foodOrder.food_id}");
+                                    print("Name: ${foodOrder.name}");
+                                    print("Price: ${foodOrder.price}");
+                                    print("Quantity: ${foodOrder.quantity}");
+                                    print(
+                                        "Is Selected: ${foodOrder.isSelected}");
+                                    print("--------------------------------");
+                                  }
+
+                                  //Món bán kèm nếu chọn
+                                  for (var additionFood
+                                      in foodOrder.addition_food_details) {
+                                    if (additionFood.isSelected == true) {
+                                      //chi tiet don hang
+                                      //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                      OrderDetail orderDetail = OrderDetail(
+                                        order_detail_id: "",
+                                        price: Utils.isDateTimeInRange(
+                                                additionFood
+                                                    .temporary_price_from_date,
+                                                additionFood
+                                                    .temporary_price_to_date)
+                                            ? (additionFood.price +
+                                                additionFood
+                                                    .price_with_temporary!)
+                                            : additionFood.price,
+                                        quantity: additionFood.quantity!,
+                                        food_status: FOOD_STATUS_IN_CHEF,
+                                        food_id: additionFood.food_id,
+                                        is_gift: false,
+                                        category_id: '',
+                                        category_code:
+                                            additionFood.category_code,
+                                        chef_bar_status: CHEF_BAR_STATUS,
+                                        is_addition: true,
+                                      );
+
+                                      orderDetailList.add(orderDetail);
+
+                                      //show thong tin console
+                                      print("--------------------------------");
+                                      print("ID: ${additionFood.food_id}");
+                                      print("Name: ${additionFood.name}");
+                                      print("Price: ${additionFood.price}");
+                                      print(
+                                          "Quantity: ${additionFood.quantity}");
+                                      print(
+                                          "Is Selected: ${additionFood.isSelected}");
+                                      print("--------------------------------");
+                                    }
+                                  }
+                                }
+                                print(
+                                    "================HẾT MÓN CẦN ORDER===================");
+
+                                showCustomAlertDialogConfirm(
                                   context,
-                                  'THÀNH CÔNG',
-                                  'Số lượng món đã được cập nhật!',
-                                  StylishDialogType.SUCCESS);
-                            });
-                          }
-                        },
-                        child: CustomButtonIcon(
-                            label: Utils.counterSelected(orderController
-                                        .orderDetail.order_details) >
-                                    0
-                                ? 'LƯU (${Utils.counterSelected(orderController.orderDetail.order_details)})'
-                                : 'LƯU',
-                            height: 40,
-                            icon: FontAwesomeIcons.check,
-                            iconColor: secondColor,
-                            backgroundColor: Utils.counterSelected(
+                                  "GỌI THÊM MÓN",
+                                  "Bạn bạn muốn gọi thêm món cho bàn ${widget.order.table!.name} ?",
+                                  colorInformation,
+                                  () async {
+                                    // order theo table_id
+                                    //false: món tặng sẽ được set price = 0 trước;
+                                    orderController.createOrder(
                                         orderController
-                                            .orderDetail.order_details) >
-                                    0
-                                ? colorSuccess
-                                : grayColor,
-                            textStyle: const TextStyle(
-                              color: secondColor,
-                              fontSize: 10,
-                            )),
-                      ),
+                                            .orderDetail.table!.table_id,
+                                        orderController.orderDetail.table!.name,
+                                        orderDetailList,
+                                        isGift,
+                                        context,
+                                        orderController.order.total_slot);
+                                  },
+                                );
+                              },
+                              child: CustomButtonIcon(
+                                  label: Utils.counterSelected(
+                                              foodController.foodsToOrder) >
+                                          0
+                                      ? 'THÊM MÓN (${Utils.counterSelected(foodController.foodsToOrder)})'
+                                      : 'THÊM MÓN',
+                                  height: 40,
+                                  icon: FontAwesomeIcons.check,
+                                  iconColor: secondColor,
+                                  backgroundColor: Utils.counterSelected(
+                                              foodController.foodsToOrder) >
+                                          0
+                                      ? colorSuccess
+                                      : grayColor,
+                                  textStyle: const TextStyle(
+                                    color: secondColor,
+                                    fontSize: 10,
+                                  )),
+                            ),
                       InkWell(
                         onTap: () async {
+                          //Món phải ở trạng thái chờ cooking và không ở tình trạng đang gọi thêm món
                           if (Utils.isAnyFoodCooking(
-                              orderController.orderDetail.order_details)) {
+                                  orderController.orderDetail.order_details) &&
+                              (Utils.counterSelected(
+                                      foodController.foodsToOrder) ==
+                                  0)) {
                             final result = await showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -1361,10 +1950,13 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                             height: 40,
                             icon: FontAwesomeIcons.paperPlane,
                             iconColor: secondColor,
-                            backgroundColor: Utils.isAnyFoodCooking(
-                                        orderController
-                                            .orderDetail.order_details) ==
-                                    true
+                            backgroundColor: (Utils.isAnyFoodCooking(
+                                            orderController
+                                                .orderDetail.order_details) ==
+                                        true &&
+                                    Utils.counterSelected(
+                                            foodController.foodsToOrder) ==
+                                        0)
                                 ? colorWarning
                                 : grayColor,
                             textStyle: const TextStyle(
@@ -1373,7 +1965,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                             )),
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           if (Utils.isAnyFoodCooking(
                               orderController.orderDetail.order_details)) {
                             Utils.showStylishDialog(
@@ -1381,7 +1973,92 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                 'THÔNG BÁO',
                                 'Có một số món chưa được gửi Bếp/Bar. Vui lòng gửi bếp trước khi tiến hành thanh toán.',
                                 StylishDialogType.INFO);
-                          } else {}
+                          } else {
+                            final result = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: backgroundColor,
+                                  title: const Center(
+                                      child: Text(
+                                    "YÊU CẦU THANH TOÁN",
+                                    style: TextStyle(color: colorInformation),
+                                  )),
+                                  content: const SingleChildScrollView(
+                                    child: ListBody(
+                                      children: <Widget>[
+                                        Center(
+                                          child: Text(
+                                              "Bạn có chắc chắn muốn hoàn tất hóa đơn này?",
+                                              style: TextStyle(
+                                                  color: Colors.black54)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        InkWell(
+                                          onTap: () => {Utils.myPop(context)},
+                                          child: Expanded(
+                                            child: Container(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  3,
+                                              color: backgroundColorCancel,
+                                              child: const Center(
+                                                child: Text(
+                                                  'HỦY',
+                                                  style: buttonStyleCancel,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        InkWell(
+                                          onTap: () async => {
+                                            billController.createBill(
+                                                orderController.orderDetail,
+                                                widget.order.order_code,
+                                                orderController
+                                                    .order.total_vat_amount,
+                                                orderController.order
+                                                    .total_discount_amount,
+                                                context),
+                                            Utils.myPopSuccess(context)
+                                          },
+                                          child: Expanded(
+                                            child: Container(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  3,
+                                              color: primaryColor,
+                                              child: const Center(
+                                                child: Text(
+                                                  'XÁC NHẬN',
+                                                  style: buttonStyleConfirm,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            if (result == 'success') {
+                              Utils.myPopSuccess(context);
+                            }
+                          }
                         },
                         child: const CustomButtonIcon(
                             label: 'THANH TOÁN',

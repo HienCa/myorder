@@ -162,6 +162,13 @@ const textStyleSecondLandscapeBold =
     TextStyle(color: colorPrice, fontSize: 10, fontWeight: FontWeight.bold);
     const textStyleSecondLandscape =
     TextStyle(color: colorPrice, fontSize: 10, );
+
+const textStyleLandscapeTemporaryPriceActive = TextStyle(
+  color: Colors.redAccent, fontSize: 10, fontWeight: FontWeight.normal,
+  decoration: TextDecoration.lineThrough, // Thêm gạch ngang
+  decorationColor: Colors.red, // Màu của gạch ngang
+  decorationThickness: 2,
+);
 //TRẠNG THÁI MÓN
 const textStyleSeccessLandscape =
     TextStyle(color: colorSuccess, fontSize: 8, fontWeight: FontWeight.bold);

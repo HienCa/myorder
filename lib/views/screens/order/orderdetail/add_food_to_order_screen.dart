@@ -50,6 +50,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: InkWell(
           onTap: () {

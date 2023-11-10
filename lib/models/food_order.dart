@@ -18,6 +18,7 @@ class FoodOrder {
   String unit_id = "";
   int temporary_percent = 0;
   bool? isSelected = false;
+  bool? isGift = false;
   int? quantity = 1;
   List food_combo_ids = [];
   List<dynamic> food_combo_details = [];
