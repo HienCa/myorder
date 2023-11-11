@@ -37,7 +37,7 @@ class Order {
   //booking
   String customer_name = '';
   String customer_phone = '';
-  Timestamp customer_time_booking;
+  Timestamp? customer_time_booking;
   double deposit_amount = 0;
   Order({
     required this.order_id,

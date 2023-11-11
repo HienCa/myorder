@@ -60,7 +60,30 @@ class _TableItemState extends State<TableItem> {
           children: List.generate(tables.length, (index) => index).map((i) {
             return InkWell(
               onTap: () {
+                //MERGE
                 if (tables[i].status != TABLE_STATUS_MERGED) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AddFoodToOrderPage(
+                              table: tables[i],
+                              booking: true,
+                              isGift: false,
+                            )),
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomDialogCancelMergeTable(
+                        targetTable: tables[i],
+                      );
+                    },
+                  );
+                }
+
+                //BOOKING
+                if (tables[i].status != TABLE_STATUS_BOOKING) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -125,12 +148,11 @@ class _TableItemState extends State<TableItem> {
                     Positioned(
                         top: 0,
                         right: 5,
-                        
                         child: Container(
                           decoration: const BoxDecoration(
-                            color: colorWarning,
-                            borderRadius: BorderRadius.all(Radius.circular(25))
-                          ),
+                              color: colorWarning,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25))),
                           height: 35,
                           width: 35,
                           child: Center(

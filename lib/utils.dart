@@ -30,6 +30,56 @@ class Utils {
     return MediaQuery.of(context).orientation == Orientation.landscape;
   }
 
+  //TIME BOOKING
+  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+  static bool isNearBookingTime(Timestamp? timeBooking) {
+    if (timeBooking != null) {
+      // Lấy thời gian hiện tại
+      final currentTime = Timestamp.now().toDate();
+
+      // Lấy thời gian đặt hàng dưới dạng DateTime
+      final bookingDateTime = timeBooking.toDate();
+
+      // Đặt thời gian cảnh báo trước (ví dụ: 30 phút)
+      const alertThreshold = Duration(minutes: 30);
+
+      // Đặt thời gian kiểm tra sau đặt hàng (ví dụ: 1 giờ)
+      const checkTimeAfterBooking = Duration(hours: 1);
+
+      // Tính thời gian 30 phút trước thời gian đặt hàng
+      final startTime = bookingDateTime.subtract(alertThreshold);
+
+      // Tính thời gian 1 giờ sau thời gian đặt hàng
+      final endTime = bookingDateTime.add(checkTimeAfterBooking);
+
+      // Kiểm tra xem thời gian hiện tại có nằm trong khoảng từ startTime đến endTime không
+      return currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+    }
+    return false;
+  }
+
+  //KIỂM TRA SAU GIỜ BOOKING 1H
+  static bool isAfterOneHourFromBookingTime(Timestamp? timeBooking) {
+    if (timeBooking != null) {
+// Lấy thời gian hiện tại
+      final currentTime = Timestamp.now().toDate();
+
+      // Lấy thời gian đặt hàng dưới dạng DateTime
+      final bookingDateTime = timeBooking.toDate();
+
+      // Đặt thời gian kiểm tra sau đặt hàng (ví dụ: 1 giờ)
+      const checkTimeAfterBooking = Duration(hours: 1);
+
+      // Tính thời gian 1 giờ sau thời gian đặt hàng
+      final endTime = bookingDateTime.add(checkTimeAfterBooking);
+
+      // Kiểm tra xem thời gian hiện tại có nằm sau 1 giờ kể từ thời gian đặt hàng không
+      return currentTime.isAfter(endTime);
+    } else {
+      return false;
+    }
+  }
+
   //Lọc món theo category_code
   static List<Food> filterCategoryFood(List<Food> list, int categoryCode) {
     List<Food> filteredList = [];

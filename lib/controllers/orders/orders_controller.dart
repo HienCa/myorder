@@ -13,9 +13,37 @@ import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
-import 'package:stylish_dialog/stylish_dialog.dart';
 
 class OrderController extends GetxController {
+  //BOOKING
+  /* 
+    ************* TẠO ĐƠN HÀNG BOOKING
+    - Khi booking thì chỉ ghi nhận đơn hàng.
+    - Không cập nhật trạng thái bàn sang BOOKING -> bàn vẫn ở trạng thái EMPTY và có thể nhận khách
+    - Trạng thái đơn hàng (active) booking là ACTIVE
+    - Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_BOOKING
+    -Chưa gửi bếp/bar
+
+    ************* LẤY THÔNG TIN ĐƠN HÀNG
+  Kiểm tra đơn hàng BOOKING (có customer_time_booking), 
+    1. Nếu trước thời gian booking 30p và sau 1h thì:
+     Kiểm tra bàn đã được booking có EMPTY không?
+      - Nếu có thì sẽ cập nhật trạng thái:
+          TABLE: EMPTY -> BOOKING
+
+      - Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+
+      ->>>> Nếu khách đã tới -> xác nhận đơn hàng -> cần phục vụ
+          TABLE: BOOKING -> SERVING
+          Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_SERVING
+          GỬI BẾP BAR NẾU CÓ ORDER TỪ TRƯỚC
+
+    2. Nếu sau thời gian booking 1h thì:
+      - Cập nhật hủy phục vụ đơn hàng booking này (active) là DEACTIVE
+      - Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_CANCEL
+      - Trường hợp khách đến sau 1 giờ thì chọn bàn phục vụ bình thường, không cần booking -> quá giờ quy định.
+  */
+
   //don hang
   final Rx<List<model.Order>> _orders = Rx<List<model.Order>>([]);
   List<model.Order> get orders => _orders.value;
@@ -28,7 +56,7 @@ class OrderController extends GetxController {
         firestore
             .collection('orders')
             .where("active", isEqualTo: ACTIVE)
-            .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+            // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -72,14 +100,6 @@ class OrderController extends GetxController {
                 if (foodCollection.exists) {
                   final foodData = foodCollection.data();
                   if (foodData != null && foodData is Map<String, dynamic>) {
-                    // String food_name = foodData['name'] ?? '';
-                    // String image = foodData['image'] ?? '';
-                    // String category_id = foodData['category_id'] ?? '';
-                    // orderDetail.food = FoodOrderDetail(
-                    //     food_id: orderDetail.food_id,
-                    //     name: food_name,
-                    //     image: image,
-                    //     category_id: category_id);
                     modelFood.Food food =
                         modelFood.Food.fromSnap(foodCollection);
                     orderDetail.food = food;
@@ -113,6 +133,34 @@ class OrderController extends GetxController {
                       active: active,
                       area_id: area_id);
                 }
+
+                //CHECK BOOKING
+
+                if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                  if (order.table!.status == TABLE_STATUS_EMPTY) {
+                    // cập nhật trạng thái don hang empty -> serving
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_BOOKING, // đang booking
+                    });
+                  }
+                } else if (Utils.isAfterOneHourFromBookingTime(
+                    order.customer_time_booking)) {
+                  //KIỂM TRA SAU GIỜ BOOKING 1H
+                  await firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "active": DEACTIVE, // đang booking
+                    "order_status": ORDER_STATUS_CANCEL, // đang booking
+                  });
+                  // cập nhật trạng thái don hang empty -> serving
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_EMPTY, // đang booking
+                  });
+                }
               }
 
               retValue.add(order);
@@ -130,7 +178,7 @@ class OrderController extends GetxController {
             .collection('orders')
             .where('employee_id', isEqualTo: employeeIdSelected)
             .where("active", isEqualTo: ACTIVE)
-            .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+            // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -174,16 +222,6 @@ class OrderController extends GetxController {
                 if (foodCollection.exists) {
                   final foodData = foodCollection.data();
                   if (foodData != null && foodData is Map<String, dynamic>) {
-                    // String food_name = foodData['name'] ?? '';
-                    // String image = foodData['image'] ?? '';
-                    // String category_id = foodData['category_id'] ?? '';
-
-                    // orderDetail.food = FoodOrderDetail(
-                    //     food_id: orderDetail.food_id,
-                    //     name: food_name,
-                    //     image: image,
-                    //     category_id: category_id);
-                    // print(food_name);
                     modelFood.Food food =
                         modelFood.Food.fromSnap(foodCollection);
                     orderDetail.food = food;
@@ -217,6 +255,34 @@ class OrderController extends GetxController {
                       area_id: area_id);
                   print(name);
                 }
+
+                //CHECK BOOKING
+
+                if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                  if (order.table!.status == TABLE_STATUS_EMPTY) {
+                    // cập nhật trạng thái don hang empty -> serving
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_BOOKING, // đang booking
+                    });
+                  }
+                } else if (Utils.isAfterOneHourFromBookingTime(
+                    order.customer_time_booking)) {
+                  //KIỂM TRA SAU GIỜ BOOKING 1H
+                  await firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "active": DEACTIVE, // đang booking
+                    "order_status": ORDER_STATUS_CANCEL, // đang booking
+                  });
+                  // cập nhật trạng thái don hang empty -> serving
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_EMPTY, // đang booking
+                  });
+                }
               }
               retValue.add(order);
             }
@@ -234,7 +300,7 @@ class OrderController extends GetxController {
           .collection('orders')
           .where('employee_id', isEqualTo: employeeIdSelected)
           .where("active", isEqualTo: ACTIVE)
-          .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+          // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<model.Order> retVal = [];
@@ -282,16 +348,6 @@ class OrderController extends GetxController {
               if (foodCollection.exists) {
                 final foodData = foodCollection.data();
                 if (foodData != null && foodData is Map<String, dynamic>) {
-                  // String food_name = foodData['name'] ?? '';
-                  // String image = foodData['image'] ?? '';
-                  // String category_id = foodData['category_id'] ?? '';
-
-                  // orderDetail.food = FoodOrderDetail(
-                  //     food_id: orderDetail.food_id,
-                  //     name: food_name,
-                  //     image: image,
-                  //     category_id: category_id);
-                  // print(food_name);
                   modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                   orderDetail.food = food;
                 }
@@ -324,6 +380,34 @@ class OrderController extends GetxController {
                     area_id: area_id);
                 print(name);
               }
+
+              //CHECK BOOKING
+
+              if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                if (order.table!.status == TABLE_STATUS_EMPTY) {
+                  // cập nhật trạng thái don hang empty -> serving
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_BOOKING, // đang booking
+                  });
+                }
+              } else if (Utils.isAfterOneHourFromBookingTime(
+                  order.customer_time_booking)) {
+                //KIỂM TRA SAU GIỜ BOOKING 1H
+                await firestore
+                    .collection('orders')
+                    .doc(order.order_id)
+                    .update({
+                  "active": DEACTIVE, // đang booking
+                  "order_status": ORDER_STATUS_CANCEL, // đang booking
+                });
+                // cập nhật trạng thái don hang empty -> serving
+                await firestore.collection('tables').doc(table_id).update({
+                  "status": TABLE_STATUS_EMPTY, // đang booking
+                });
+              }
             }
 
             retVal.add(order);
@@ -337,7 +421,7 @@ class OrderController extends GetxController {
       _orders.bindStream(firestore
           .collection('orders')
           .where("active", isEqualTo: ACTIVE)
-          .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+          // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
           .orderBy('name')
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
@@ -385,16 +469,6 @@ class OrderController extends GetxController {
               if (foodCollection.exists) {
                 final foodData = foodCollection.data();
                 if (foodData != null && foodData is Map<String, dynamic>) {
-                  // String food_name = foodData['name'] ?? '';
-                  // String image = foodData['image'] ?? '';
-                  // String category_id = foodData['category_id'] ?? '';
-
-                  // orderDetail.food = FoodOrderDetail(
-                  //     food_id: orderDetail.food_id,
-                  //     name: food_name,
-                  //     image: image,
-                  //     category_id: category_id);
-                  // print(food_name);
                   modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                   orderDetail.food = food;
                 }
@@ -427,6 +501,34 @@ class OrderController extends GetxController {
                     active: active,
                     area_id: area_id);
                 print(name);
+              }
+
+              //CHECK BOOKING
+
+              if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                if (order.table!.status == TABLE_STATUS_EMPTY) {
+                  // cập nhật trạng thái don hang empty -> serving
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_BOOKING, // đang booking
+                  });
+                }
+              } else if (Utils.isAfterOneHourFromBookingTime(
+                  order.customer_time_booking)) {
+                //KIỂM TRA SAU GIỜ BOOKING 1H
+                await firestore
+                    .collection('orders')
+                    .doc(order.order_id)
+                    .update({
+                  "active": DEACTIVE, // đang booking
+                  "order_status": ORDER_STATUS_CANCEL, // đang booking
+                });
+                // cập nhật trạng thái don hang empty -> serving
+                await firestore.collection('tables').doc(table_id).update({
+                  "status": TABLE_STATUS_EMPTY, // đang booking
+                });
               }
             }
             retVal.add(order);
@@ -490,7 +592,8 @@ class OrderController extends GetxController {
       total_surcharge_amount: 0,
       customer_name: '',
       customer_phone: '',
-      customer_time_booking: Timestamp.now(), deposit_amount: 0));
+      customer_time_booking: Timestamp.now(),
+      deposit_amount: 0));
 
   //lấy 1 order
 
@@ -529,7 +632,8 @@ class OrderController extends GetxController {
               total_surcharge_amount: 0,
               customer_name: '',
               customer_phone: '',
-              customer_time_booking: Timestamp.now(), deposit_amount: 0);
+              customer_time_booking: Timestamp.now(),
+              deposit_amount: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -669,7 +773,8 @@ class OrderController extends GetxController {
       total_surcharge_amount: 0,
       customer_name: '',
       customer_phone: '',
-      customer_time_booking: Timestamp.now(), deposit_amount: 0));
+      customer_time_booking: Timestamp.now(),
+      deposit_amount: 0));
 
   model.Order get orderDetailOrigin => _orderDetailOrigin.value;
   getOrderDetailOriginById(model.Order order) async {
@@ -706,7 +811,8 @@ class OrderController extends GetxController {
               total_surcharge_amount: 0,
               customer_name: '',
               customer_phone: '',
-              customer_time_booking: Timestamp.now(), deposit_amount: 0);
+              customer_time_booking: Timestamp.now(),
+              deposit_amount: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -843,7 +949,8 @@ class OrderController extends GetxController {
           total_surcharge_amount: 0,
           customer_name: '',
           customer_phone: '',
-          customer_time_booking: Timestamp.now(), deposit_amount: 0,
+          customer_time_booking: null,
+          deposit_amount: 0,
         );
 
         if (slot! > 0) {
@@ -986,102 +1093,120 @@ class OrderController extends GetxController {
   }
 
   //BOOKING
-  void createOrderBooking(String customer_name, String customer_phone, String customer_time_booking,  double deposit_amount, String table_id, String table_name,
-      List<OrderDetail> orderDetailList, bool isGift, BuildContext context,
-      [int? slot]) async {
+  /* 
+    ************* TẠO ĐƠN HÀNG BOOKING
+    - Khi booking thì chỉ ghi nhận đơn hàng.
+    - Không cập nhật trạng thái bàn sang BOOKING -> bàn vẫn ở trạng thái EMPTY và có thể nhận khách
+    - Trạng thái đơn hàng (active) booking là ACTIVE
+    - Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_BOOKING
+    -Chưa gửi bếp/bar
+
+    ************* LẤY THÔNG TIN ĐƠN HÀNG
+  Kiểm tra đơn hàng BOOKING (có customer_time_booking), 
+    1. Nếu trước thời gian booking 30p và sau 1h thì:
+     Kiểm tra bàn đã được booking có EMPTY không?
+      - Nếu có thì sẽ cập nhật trạng thái:
+          TABLE: EMPTY -> BOOKING
+
+      - Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+
+      ->>>> Nếu khách đã tới -> xác nhận đơn hàng -> cần phục vụ
+          TABLE: BOOKING -> SERVING
+          Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_SERVING
+          GỬI BẾP BAR NẾU CÓ ORDER TỪ TRƯỚC
+
+    2. Nếu sau thời gian booking 1h thì:
+      - Cập nhật hủy phục vụ đơn hàng booking này (active) là DEACTIVE
+      - Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_CANCEL
+      - Trường hợp khách đến sau 1 giờ thì chọn bàn phục vụ bình thường, không cần booking -> quá giờ quy định.
+  */
+
+  void createOrderBooking(
+      String customer_name,
+      String customer_phone,
+      String customer_time_booking,
+      double deposit_amount,
+      String table_id,
+      String table_name,
+      List<OrderDetail> orderDetailList,
+      bool isGift,
+      BuildContext context,
+      int slot) async {
     try {
-      //kiểm tra xem don hang đã được order chưa
-      var tableOrdered = await firestore
-          .collection("orders")
-          .where("table_id", isEqualTo: table_id)
-          .where("active", isEqualTo: ACTIVE)
+      //nếu don hang đang trống thì tạo order mới
+      String id = Utils.generateUUID();
+      // bo sung them note neu can
+      model.Order Order = model.Order(
+        order_id: id,
+        table_id: table_id,
+        employee_id: authController.user.uid,
+        order_status: ORDER_STATUS_BOOKING,
+        note: "",
+        create_at: Timestamp.fromDate(DateTime.now()),
+        payment_at: null,
+        is_vat: 0,
+        discount_amount_all: 0,
+        discount_amount_food: 0,
+        discount_amount_drink: 0,
+        active: 1,
+        table_merge_ids: [],
+        table_merge_names: [],
+        order_code: id.substring(0, 8),
+        total_amount: 0,
+        discount_reason: '',
+        is_discount: 0,
+        total_vat_amount: 0,
+        total_discount_amount: 0,
+        discount_percent: 0,
+        discount_amount_other: 0,
+        total_slot: slot,
+        total_surcharge_amount: 0,
+        customer_name: customer_name,
+        customer_phone: customer_phone,
+        customer_time_booking:
+            Timestamp.fromDate(DateTime.parse(customer_time_booking)),
+        deposit_amount: deposit_amount,
+      );
+
+      CollectionReference usersCollection =
+          FirebaseFirestore.instance.collection('orders');
+
+      await usersCollection.doc(id).set(Order.toJson());
+
+      // add order detail
+      var allDocsOrderDetail = await firestore
+          .collection('orders')
+          .doc(id)
+          .collection("orderDetails")
           .get();
-
-      if (tableOrdered.docs.isEmpty) {
-        //nếu don hang đang trống thì tạo order mới
-        String id = Utils.generateUUID();
-        // bo sung them note neu can
-        model.Order Order = model.Order(
-          order_id: id,
-          table_id: table_id,
-          employee_id: authController.user.uid,
-          order_status: ORDER_STATUS_SERVING,
-          note: "",
-          create_at: Timestamp.fromDate(DateTime.now()),
-          payment_at: null,
-          is_vat: 0,
-          discount_amount_all: 0,
-          discount_amount_food: 0,
-          discount_amount_drink: 0,
-          active: 1,
-          table_merge_ids: [],
-          table_merge_names: [],
-          order_code: id.substring(0, 8),
-          total_amount: 0,
-          discount_reason: '',
-          is_discount: 0,
-          total_vat_amount: 0,
-          total_discount_amount: 0,
-          discount_percent: 0,
-          discount_amount_other: 0,
-          total_slot: (slot ?? 1),
-          total_surcharge_amount: 0,
-          customer_name: customer_name,
-          customer_phone: customer_phone,
-          customer_time_booking: Timestamp.fromDate(DateTime.parse(customer_time_booking)), deposit_amount: deposit_amount,
-        );
-
-        if (slot! > 0) {
-          Order.total_slot = slot;
+      double totalAmount = 0;
+      for (OrderDetail orderDetail in orderDetailList) {
+        String idDetail = Utils.generateUUID();
+        orderDetail.order_detail_id = idDetail;
+        //nếu là món tặng -> không tính tiền món ăn
+        if (isGift) {
+          orderDetail.is_gift = true;
+          orderDetail.price = 0;
+        } else {
+          orderDetail.is_gift = false;
         }
-        CollectionReference usersCollection =
-            FirebaseFirestore.instance.collection('orders');
 
-        await usersCollection.doc(id).set(Order.toJson());
+        totalAmount += (orderDetail.price * orderDetail.quantity);
 
-        // add order detail
-        var allDocsOrderDetail = await firestore
+        orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
+
+        await firestore
             .collection('orders')
             .doc(id)
             .collection("orderDetails")
-            .get();
-        double totalAmount = 0;
-        for (OrderDetail orderDetail in orderDetailList) {
-          String idDetail = Utils.generateUUID();
-          orderDetail.order_detail_id = idDetail;
-          //nếu là món tặng -> không tính tiền món ăn
-          if (isGift) {
-            orderDetail.is_gift = true;
-            orderDetail.price = 0;
-          } else {
-            orderDetail.is_gift = false;
-          }
-
-          totalAmount += (orderDetail.price * orderDetail.quantity);
-
-          orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
-
-          await firestore
-              .collection('orders')
-              .doc(id)
-              .collection("orderDetails")
-              .doc(idDetail)
-              .set(orderDetail.toJson());
-        }
-        // cập nhật tổng tiền cho order
-        await firestore.collection('orders').doc(id).update({
-          "total_amount": totalAmount,
+            .doc(idDetail)
+            .set(orderDetail.toJson())
+            .then((value) async {
+          // cập nhật tổng tiền cho order
+          await firestore.collection('orders').doc(id).update({
+            "total_amount": totalAmount,
+          });
         });
-        // cập nhật trạng thái don hang empty -> serving
-        await firestore.collection('tables').doc(table_id).update({
-          "status": TABLE_STATUS_BOOKING, // đang phục vụ
-        });
-
-        //GỬI BẾP BAR
-        sendToChefBar(id, table_name, orderDetailList);
-      } else {
-        Utils.showStylishDialog(context, 'THẤT BẠI!',
-            'Bàn này hiện tại không còn trống!', StylishDialogType.ERROR);
       }
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
@@ -1495,7 +1620,8 @@ class OrderController extends GetxController {
               total_surcharge_amount: 0,
               customer_name: '',
               customer_phone: '',
-              customer_time_booking: Timestamp.now(), deposit_amount: 0);
+              customer_time_booking: Timestamp.now(),
+              deposit_amount: 0);
           // cập nhật lại tổng tiền cho order
 
           Order.total_amount = totalAmountSplit;
@@ -1955,6 +2081,24 @@ class OrderController extends GetxController {
       update();
     } catch (e) {
       Utils.showToast('Cập nhật trạng thái món thất bại!', TypeToast.ERROR);
+    }
+  }
+
+  //UPDATE BOOKING
+  //CẬP NHẬT TRẠNG THÁI MÓN ĐƠN
+  updateServingTableById(table.Table table) async {
+    try {
+      if (table.table_id != '') {
+        //Cập nhật trạng thái món ăn theo foodStatus
+        await firestore.collection('tables').doc(table.table_id).update({
+          "status": TABLE_STATUS_SERVING,
+        }).then((_) {
+          Utils.showToast('Bàn đã sẵn sàng phục vụ!', TypeToast.SUCCESS);
+        });
+        update();
+      }
+    } catch (e) {
+      Utils.showToast('Cập nhật trạng thái thất bại!', TypeToast.ERROR);
     }
   }
 
