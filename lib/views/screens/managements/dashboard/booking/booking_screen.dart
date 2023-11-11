@@ -13,6 +13,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/managements/dashboard/booking/dialog_choose_price.dart';
 import 'package:myorder/views/screens/managements/dashboard/booking/dialog_confirm_booking.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
@@ -44,6 +45,7 @@ class _DashboardBookingState extends State<DashboardBooking> {
   final phoneTextEditingController = TextEditingController();
   final slotTextEditingController = TextEditingController();
   final timeTextEditingController = TextEditingController();
+  final depositAmountTextEditingController = TextEditingController();
 
   String keySearch = "";
   int categoryCodeSelected = 0;
@@ -66,6 +68,7 @@ class _DashboardBookingState extends State<DashboardBooking> {
 
     //Lây thông tin đơn hàng
     foodController.getfoodsToOrder(keySearch, defaultCategory);
+    depositAmountTextEditingController.text = '0';
   }
 
   //Giảm giá
@@ -397,8 +400,9 @@ class _DashboardBookingState extends State<DashboardBooking> {
                                                             child: Marquee(
                                                                 direction: Axis
                                                                     .horizontal,
-                                                                // textDirection:
-                                                                //     TextDirection.ltr,
+                                                                textDirection:
+                                                                    TextDirection
+                                                                        .ltr,
                                                                 animationDuration:
                                                                     const Duration(
                                                                         seconds:
@@ -665,7 +669,7 @@ class _DashboardBookingState extends State<DashboardBooking> {
                                   ),
                                   const SizedBox(width: 16),
                                   Text(
-                                    widget.table.name,
+                                    '${widget.table.name} - Số lượng tối đa: ${widget.table.total_slot} khách',
                                     style: textStyleTabLandscapeLabelBold,
                                   ),
                                   const Spacer(),
@@ -871,8 +875,9 @@ class _DashboardBookingState extends State<DashboardBooking> {
                                                                         //GIÁ TIỀN
                                                                         foodController.foodsToOrder[index].isGift ==
                                                                                 false
-                                                                            ? Text(Utils.formatCurrency(foodController.foodsToOrder[index].price),
-                                                                                style: textStyleTabLandscapeLabel)
+                                                                            ? (Utils.isDateTimeInRange(foodController.foodsToOrder[index].temporary_price_from_date, foodController.foodsToOrder[index].temporary_price_to_date)
+                                                                                ? Text(Utils.formatCurrency(((foodController.foodsToOrder[index].price_with_temporary ?? 0) + foodController.foodsToOrder[index].price)), style: textStyleTabLandscapeLabel)
+                                                                                : Text(Utils.formatCurrency(foodController.foodsToOrder[index].price), style: textStyleTabLandscapeLabel))
                                                                             : const Icon(
                                                                                 Icons.card_giftcard,
                                                                                 color: colorWarning,
@@ -997,12 +1002,13 @@ class _DashboardBookingState extends State<DashboardBooking> {
                                                                     const Spacer(),
                                                                     foodController.foodsToOrder[index].isGift ==
                                                                             false
-                                                                        ? Text(
-                                                                            Utils.formatCurrency(foodController.foodsToOrder[index].price *
-                                                                                (foodController.foodsToOrder[index].quantity ??
-                                                                                    0)),
-                                                                            style:
-                                                                                textStyleTabLandscapeLabel)
+                                                                        ? (Utils.isDateTimeInRange(foodController.foodsToOrder[index].temporary_price_from_date, foodController.foodsToOrder[index].temporary_price_to_date)
+                                                                            ? Text(Utils.formatCurrency(((foodController.foodsToOrder[index].price_with_temporary ?? 0) + foodController.foodsToOrder[index].price) * (foodController.foodsToOrder[index].quantity ?? 0)),
+                                                                                style:
+                                                                                    textStyleTabLandscapeLabel)
+                                                                            : Text(Utils.formatCurrency(foodController.foodsToOrder[index].price * (foodController.foodsToOrder[index].quantity ?? 0)),
+                                                                                style:
+                                                                                    textStyleTabLandscapeLabel))
                                                                         : const Text(
                                                                             '0',
                                                                             style:
@@ -1092,41 +1098,60 @@ class _DashboardBookingState extends State<DashboardBooking> {
                           ),
                         ),
                         marginTop5,
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                              left: 5,
-                            ),
-                            padding: const EdgeInsets.only(
-                              left: 5,
-                              right: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: const Center(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: Column(children: [
-                                  //ĐÃ ĐẶT CỌC
-                                  Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Spacer(),
-                                        Text(
-                                          "ĐẶT CỌC",
-                                          style: textStylePrimaryLandscapeBold,
-                                        ),
-                                        Spacer(),
-                                        //Chọn số tiền cọc
-                                        Text('0',
+                        InkWell(
+                          onTap: () async {
+                            final result = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const MyDialogChoosePrice();
+                              },
+                            );
+                            if (result != null) {
+                              setState(() {
+                                depositAmountTextEditingController.text =
+                                    result;
+                              });
+                            }
+                          },
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                left: 5,
+                              ),
+                              padding: const EdgeInsets.only(
+                                left: 5,
+                                right: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Center(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Column(children: [
+                                    //ĐÃ ĐẶT CỌC
+                                    Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          const Spacer(),
+                                          const Text(
+                                            "ĐẶT CỌC",
                                             style:
-                                                textStylePrimaryLandscapeBold)
-                                      ]),
-                                ]),
+                                                textStylePrimaryLandscapeBold,
+                                          ),
+                                          const Spacer(),
+                                          //Chọn số tiền cọc
+                                          Text(
+                                              depositAmountTextEditingController
+                                                  .text,
+                                              style:
+                                                  textStylePrimaryLandscapeBold)
+                                        ]),
+                                  ]),
+                                ),
                               ),
                             ),
                           ),
@@ -1291,15 +1316,19 @@ class _DashboardBookingState extends State<DashboardBooking> {
                                 customer_phone: phoneTextEditingController.text,
                                 customer_time_booking:
                                     timeTextEditingController.text,
+                                //tiền đặt cọc
+                                deposit_amount: (double.tryParse(
+                                        Utils.formatCurrencytoDouble(
+                                            depositAmountTextEditingController
+                                                .text)) ??
+                                    0),
                               );
                             },
                           );
                           if (result == 'success') {
-                            Utils.showStylishDialog(
-                                context,
-                                'THÀNH CÔNG!',
-                                'Đặt bàn thành công!',
-                                StylishDialogType.SUCCESS);
+                            Utils.showToast(
+                                'Đặt bàn thành công!', TypeToast.SUCCESS);
+
                             Utils.myPopSuccess(context);
                           }
                         }

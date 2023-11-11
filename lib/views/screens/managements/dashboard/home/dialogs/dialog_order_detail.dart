@@ -902,6 +902,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                                                           size:
                                                                               10,
                                                                         ),
+
                                                                   marginTop5,
                                                                   //TRẠNG THÍA MÓN
                                                                   //TRONG BẾP
@@ -1218,8 +1219,9 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                                                         //GIÁ TIỀN
                                                                         foodController.foodsToOrder[index].isGift ==
                                                                                 false
-                                                                            ? Text(Utils.formatCurrency(foodController.foodsToOrder[index].price),
-                                                                                style: textStyleTabLandscapeLabel)
+                                                                            ? (Utils.isDateTimeInRange(foodController.foodsToOrder[index].temporary_price_from_date, foodController.foodsToOrder[index].temporary_price_to_date)
+                                                                                ? Text(Utils.formatCurrency(((foodController.foodsToOrder[index].price_with_temporary ?? 0) + foodController.foodsToOrder[index].price)), style: textStyleTabLandscapeLabel)
+                                                                                : Text(Utils.formatCurrency(foodController.foodsToOrder[index].price), style: textStyleTabLandscapeLabel))
                                                                             : const Icon(
                                                                                 Icons.card_giftcard,
                                                                                 color: colorWarning,
@@ -1344,12 +1346,13 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                                                     const Spacer(),
                                                                     foodController.foodsToOrder[index].isGift ==
                                                                             false
-                                                                        ? Text(
-                                                                            Utils.formatCurrency(foodController.foodsToOrder[index].price *
-                                                                                (foodController.foodsToOrder[index].quantity ??
-                                                                                    0)),
-                                                                            style:
-                                                                                textStyleTabLandscapeLabel)
+                                                                        ? (Utils.isDateTimeInRange(foodController.foodsToOrder[index].temporary_price_from_date, foodController.foodsToOrder[index].temporary_price_to_date)
+                                                                            ? Text(Utils.formatCurrency(((foodController.foodsToOrder[index].price_with_temporary ?? 0) + foodController.foodsToOrder[index].price) * (foodController.foodsToOrder[index].quantity ?? 0)),
+                                                                                style:
+                                                                                    textStyleTabLandscapeLabel)
+                                                                            : Text(Utils.formatCurrency(foodController.foodsToOrder[index].price * (foodController.foodsToOrder[index].quantity ?? 0)),
+                                                                                style:
+                                                                                    textStyleTabLandscapeLabel))
                                                                         : const Text(
                                                                             '0',
                                                                             style:

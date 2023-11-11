@@ -42,8 +42,8 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
         ),
         elevation: 5, // Độ nâng của bóng đổ
         backgroundColor: backgroundColor,
-        child:  SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,8 +84,8 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                       ),
                       const Expanded(
                         flex: 2,
-                        child:
-                            Text('Tổng bill', style: textStyleTitleGrayRegular16),
+                        child: Text('Tổng bill',
+                            style: textStyleTitleGrayRegular16),
                       ),
                       Expanded(
                         child: Theme(
@@ -104,7 +104,8 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                       ),
                       const Expanded(
                         flex: 2,
-                        child: Text('Món ăn', style: textStyleTitleGrayRegular16),
+                        child:
+                            Text('Món ăn', style: textStyleTitleGrayRegular16),
                       ),
                       Expanded(
                         child: Theme(
@@ -144,8 +145,8 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                       ),
                       const Expanded(
                         flex: 2,
-                        child:
-                            Text('Món khác', style: textStyleTitleGrayRegular16),
+                        child: Text('Món khác',
+                            style: textStyleTitleGrayRegular16),
                       ),
                     ],
                   ),
@@ -193,9 +194,9 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                                 );
                               },
                             );
-        
+
                             // Kiểm tra giá trị trả về và xử lý nó
-        
+
                             if (result != null && result.isNotEmpty) {
                               priceTextEditController.text = result;
                             } else {
@@ -213,9 +214,16 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                           // ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: MyTextFieldPrice(textEditingController: priceTextEditController, label: 'Số tiền muốn giảm', placeholder: 'Nhập số tiền', min: MIN_PRICE, max: MAX_PRICE, isRequire: true),
-                          )
-                        )
+                            child: MyTextFieldPrice(
+                              textEditingController: priceTextEditController,
+                              label: 'Số tiền muốn giảm',
+                              placeholder: 'Nhập số tiền',
+                              min: MIN_PRICE,
+                              max: MAX_PRICE,
+                              isRequire: true,
+                              textAlignRight: false,
+                            ),
+                          ))
                       : const SizedBox()),
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Theme(
@@ -239,13 +247,14 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                 )
               ]),
               AnimatedOpacity(
-                  opacity: isCheckedPercent ? 1.0 : 0.0, // 1.0 là hiện, 0.0 là ẩn
+                  opacity:
+                      isCheckedPercent ? 1.0 : 0.0, // 1.0 là hiện, 0.0 là ẩn
                   duration:
                       const Duration(milliseconds: 500), // Độ dài của animation
                   child: isCheckedPercent
                       ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: MyTextFieldNumber(
+                          padding: const EdgeInsets.all(8.0),
+                          child: MyTextFieldNumber(
                             textController: percentTextEditController,
                             label: 'Phần trăm (%) muốn giảm',
                             placeholder: 'Nhập %',
@@ -254,7 +263,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                             max: 100,
                             isRequire: true,
                           ),
-                      )
+                        )
                       : const SizedBox()),
               marginTop20,
               MyButton(
@@ -273,10 +282,9 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                         0,
                         int.tryParse(percentTextEditController.text) ?? 0,
                       );
-        
                     } else {
                       // thông báo lớn hơn 0
-        
+
                       Utils.showStylishDialog(
                           context,
                           'THÔNG BÁO',
@@ -293,12 +301,13 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                         context,
                         orderController.orderDetail,
                         selectedRadioDecrease,
-                        Utils.stringConvertToDouble(priceTextEditController.text),
+                        Utils.stringConvertToDouble(
+                            priceTextEditController.text),
                         0,
                       );
                     } else {
                       // thông báo lớn hơn 1000
-        
+
                       Utils.showStylishDialog(
                           context,
                           'THÔNG BÁO',

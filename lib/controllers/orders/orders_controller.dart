@@ -490,7 +490,7 @@ class OrderController extends GetxController {
       total_surcharge_amount: 0,
       customer_name: '',
       customer_phone: '',
-      customer_time_booking: Timestamp.now()));
+      customer_time_booking: Timestamp.now(), deposit_amount: 0));
 
   //lấy 1 order
 
@@ -529,7 +529,7 @@ class OrderController extends GetxController {
               total_surcharge_amount: 0,
               customer_name: '',
               customer_phone: '',
-              customer_time_booking: Timestamp.now());
+              customer_time_booking: Timestamp.now(), deposit_amount: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -669,7 +669,7 @@ class OrderController extends GetxController {
       total_surcharge_amount: 0,
       customer_name: '',
       customer_phone: '',
-      customer_time_booking: Timestamp.now()));
+      customer_time_booking: Timestamp.now(), deposit_amount: 0));
 
   model.Order get orderDetailOrigin => _orderDetailOrigin.value;
   getOrderDetailOriginById(model.Order order) async {
@@ -706,7 +706,7 @@ class OrderController extends GetxController {
               total_surcharge_amount: 0,
               customer_name: '',
               customer_phone: '',
-              customer_time_booking: Timestamp.now());
+              customer_time_booking: Timestamp.now(), deposit_amount: 0);
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -843,7 +843,7 @@ class OrderController extends GetxController {
           total_surcharge_amount: 0,
           customer_name: '',
           customer_phone: '',
-          customer_time_booking: Timestamp.now(),
+          customer_time_booking: Timestamp.now(), deposit_amount: 0,
         );
 
         if (slot! > 0) {
@@ -986,7 +986,7 @@ class OrderController extends GetxController {
   }
 
   //BOOKING
-  void createOrderBooking(String customer_name, String customer_phone, String customer_time_booking, String table_id, String table_name,
+  void createOrderBooking(String customer_name, String customer_phone, String customer_time_booking,  double deposit_amount, String table_id, String table_name,
       List<OrderDetail> orderDetailList, bool isGift, BuildContext context,
       [int? slot]) async {
     try {
@@ -1028,7 +1028,7 @@ class OrderController extends GetxController {
           total_surcharge_amount: 0,
           customer_name: customer_name,
           customer_phone: customer_phone,
-          customer_time_booking: Timestamp.fromDate(DateTime.parse(customer_time_booking)),
+          customer_time_booking: Timestamp.fromDate(DateTime.parse(customer_time_booking)), deposit_amount: deposit_amount,
         );
 
         if (slot! > 0) {
@@ -1495,7 +1495,7 @@ class OrderController extends GetxController {
               total_surcharge_amount: 0,
               customer_name: '',
               customer_phone: '',
-              customer_time_booking: Timestamp.now());
+              customer_time_booking: Timestamp.now(), deposit_amount: 0);
           // cập nhật lại tổng tiền cho order
 
           Order.total_amount = totalAmountSplit;

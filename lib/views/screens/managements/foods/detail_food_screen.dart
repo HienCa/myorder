@@ -682,7 +682,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             min: MIN_PRICE,
                             max: MAX_PERCENT,
                             isRequire: true,
-                            defaultValue: widget.food.price),
+                            defaultValue: widget.food.price, textAlignRight: false,),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
                           height: 50,

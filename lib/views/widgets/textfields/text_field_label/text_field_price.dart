@@ -13,6 +13,7 @@ class MyTextFieldPrice extends StatefulWidget {
   final int max;
   final int min;
   final double? defaultValue;
+  final bool textAlignRight;
 
   const MyTextFieldPrice(
       {super.key,
@@ -22,7 +23,8 @@ class MyTextFieldPrice extends StatefulWidget {
       required this.min,
       required this.max,
       required this.isRequire,
-       this.defaultValue});
+      this.defaultValue,
+      required this.textAlignRight});
 
   @override
   State<MyTextFieldPrice> createState() => _MyTextFieldPriceState();
@@ -77,6 +79,9 @@ class _MyTextFieldPriceState extends State<MyTextFieldPrice> {
           child: Column(
             children: [
               TextField(
+                  textAlign: widget.textAlignRight == true
+                      ? TextAlign.right
+                      : TextAlign.left,
                   controller: widget.textEditingController,
                   style: textStyleInput,
                   keyboardType: TextInputType.number,

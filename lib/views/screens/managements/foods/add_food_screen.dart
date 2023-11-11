@@ -561,7 +561,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                             placeholder: 'Nhập giá món',
                             min: MIN_PRICE,
                             max: MAX_PERCENT,
-                            isRequire: true),
+                            isRequire: true, textAlignRight: false,),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
                           height: 50,

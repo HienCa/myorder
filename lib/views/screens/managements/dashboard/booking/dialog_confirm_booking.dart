@@ -14,6 +14,7 @@ class MyDialogConfirmBooking extends StatefulWidget {
   final String customer_name;
   final String customer_phone;
   final String customer_time_booking;
+  final double deposit_amount;
   final int slot;
   final List<OrderDetail> orderDetailList;
   const MyDialogConfirmBooking({
@@ -26,7 +27,7 @@ class MyDialogConfirmBooking extends StatefulWidget {
     required this.orderDetailList,
     required this.customer_name,
     required this.customer_phone,
-    required this.customer_time_booking,
+    required this.customer_time_booking, required this.deposit_amount,
   }) : super(key: key);
 
   @override
@@ -110,6 +111,7 @@ class _MyDialogConfirmBookingState extends State<MyDialogConfirmBooking> {
                                   widget.customer_name,
                                   widget.customer_phone,
                                   widget.customer_time_booking,
+                                  widget.deposit_amount,
                                   widget.table_id,
                                   widget.table_name,
                                   widget.orderDetailList,

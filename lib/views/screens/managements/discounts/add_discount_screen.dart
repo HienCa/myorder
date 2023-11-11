@@ -105,7 +105,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                           placeholder: 'Nhập số tiền...',
                           min: MIN_PRICE,
                           max: MAX_PRICE,
-                          isRequire: true)
+                          isRequire: true, textAlignRight: false,)
                     ],
                   ),
                 ),

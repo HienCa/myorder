@@ -17,16 +17,21 @@ class MyCloseIcon extends StatefulWidget {
 class _MyCloseIconState extends State<MyCloseIcon> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: widget.heightWidth,
-      width: widget.heightWidth,
-      decoration: BoxDecoration(
-        color: grayColor200,
-        borderRadius: BorderRadius.circular(widget.heightWidth / 2),
-      ),
-      child: Center(
-        child: FaIcon(FontAwesomeIcons.xmark,
-            color: iconColor, size: widget.sizeIcon),
+    return InkWell(
+      onTap: () => {
+        Navigator.pop(context)
+      },
+      child: Container(
+        height: widget.heightWidth,
+        width: widget.heightWidth,
+        decoration: BoxDecoration(
+          color: grayColor200,
+          borderRadius: BorderRadius.circular(widget.heightWidth / 2),
+        ),
+        child: Center(
+          child: FaIcon(FontAwesomeIcons.xmark,
+              color: iconColor, size: widget.sizeIcon),
+        ),
       ),
     );
   }

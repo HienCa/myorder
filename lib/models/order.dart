@@ -38,7 +38,7 @@ class Order {
   String customer_name = '';
   String customer_phone = '';
   Timestamp customer_time_booking;
-
+  double deposit_amount = 0;
   Order({
     required this.order_id,
     required this.order_code,
@@ -69,6 +69,7 @@ class Order {
     required this.customer_name,
     required this.customer_phone,
     required this.customer_time_booking,
+    required this.deposit_amount,
   });
   Order.empty()
       : order_id = '',
@@ -93,6 +94,7 @@ class Order {
         table_id = '',
         customer_name = '',
         customer_phone = '',
+        deposit_amount = 0,
         customer_time_booking = Timestamp.now(),
         table_merge_ids = [],
         table_merge_names = [];
@@ -125,6 +127,7 @@ class Order {
         "customer_name": customer_name,
         "customer_phone": customer_phone,
         "customer_time_booking": customer_time_booking,
+        "deposit_amount": deposit_amount,
       };
 
   static Order fromSnap(DocumentSnapshot snap) {
@@ -158,6 +161,7 @@ class Order {
       customer_name: snapshot['customer_name'],
       customer_phone: snapshot['customer_phone'],
       customer_time_booking: snapshot['customer_time_booking'],
+      deposit_amount: snapshot['deposit_amount'],
     );
   }
 }
