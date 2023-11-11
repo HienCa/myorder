@@ -1647,7 +1647,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                             style: textStyleSecondLandscapeBold,
                                           ),
                                           Text(
-                                            "(GỒM GIẢM GIÁ)",
+                                            "(GỒM GIẢM GIÁ, ĐẶT CỌC)",
                                             style: textStyleSecondLandscape,
                                           ),
                                         ],
@@ -1658,7 +1658,10 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                       Obx(() {
                                         return Text(
                                             Utils.formatCurrency(orderController
-                                                .order.total_discount_amount),
+                                                    .order
+                                                    .total_discount_amount +
+                                                orderController
+                                                    .order.deposit_amount),
                                             style:
                                                 textStyleSecondLandscapeBold);
                                       })
@@ -1682,7 +1685,8 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                       Obx(() {
                                         return Text(
                                             Utils.formatCurrency(orderController
-                                                .order.total_amount),
+                                                .order.total_amount - orderController
+                                                .order.deposit_amount),
                                             style:
                                                 textStylePrimaryLandscapeBold);
                                       })

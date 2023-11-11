@@ -76,9 +76,11 @@ class _AddUnitPageState extends State<AddUnitPage> {
       ),
       body: Theme(
         data: ThemeData(unselectedWidgetColor: primaryColor),
-        child: SingleChildScrollView(
+        child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
               children: [
                 Container(
                   margin: const EdgeInsets.all(10.0),
@@ -95,10 +97,13 @@ class _AddUnitPageState extends State<AddUnitPage> {
                           max: maxlength50,
                           isRequire: true,
                         ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.6,
-                        ),
-                        SizedBox(
+                        
+                        
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
                           height: 50,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -163,10 +168,6 @@ class _AddUnitPageState extends State<AddUnitPage> {
                             ],
                           ),
                         )
-                      ],
-                    ),
-                  ),
-                ),
               ],
             )),
       ),

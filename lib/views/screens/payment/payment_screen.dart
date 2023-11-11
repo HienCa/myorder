@@ -693,6 +693,32 @@ class _PaymentPageState extends State<PaymentPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
+                                  "Đã cọc trước",
+                                  style: textStylePriceBold20,
+                                ),
+                              ]),
+                        ),
+                        trailing: Obx(() {
+                          return Text(
+                              Utils.formatCurrency(
+                                  orderController.order.deposit_amount),
+                              style: textStylePriceBold20);
+                        }))),
+                Container(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
+                    ),
+                    child: ListTile(
+                        title: const SizedBox(
+                          width: 50,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
                                   "Tổng thanh toán",
                                   style: textStylePriceBold20,
                                 ),
@@ -701,7 +727,8 @@ class _PaymentPageState extends State<PaymentPage> {
                         trailing: Obx(() {
                           return Text(
                               Utils.formatCurrency(
-                                  orderController.order.total_amount),
+                                  orderController.order.total_amount -
+                                      orderController.order.deposit_amount),
                               style: textStylePriceBold20);
                         }))),
                 const SizedBox(height: 10),

@@ -100,7 +100,7 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
       ),
       body: Theme(
         data: ThemeData(unselectedWidgetColor: primaryColor),
-        child: SingleChildScrollView(
+        child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,9 +128,7 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                ),
+                
                 SizedBox(
                   height: 50,
                   child: Row(

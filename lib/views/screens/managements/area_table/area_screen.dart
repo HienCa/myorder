@@ -24,78 +24,77 @@ class _ManagementAreaPageState extends State<ManagementAreaPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          height: 50,
-          width: 400,
-          margin: const EdgeInsets.all(kDefaultPadding),
-          padding: const EdgeInsets.symmetric(
-            horizontal: kDefaultPadding,
-            vertical: kDefaultPadding / 4, // 5 top and bottom
-          ),
-          decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.4),
-              borderRadius: borderRadiusTextField30,
-              border: Border.all(width: 1, color: borderColorPrimary)),
-          child: TextField(
-            onChanged: (value) {
-              areaController.getAreas(value);
-            },
-            style: const TextStyle(color: borderColorPrimary),
-            decoration: const InputDecoration(
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              fillColor: borderColorPrimary,
-              icon: Icon(
-                Icons.search,
-                color: iconColorPrimary,
+        Column(
+          children: [
+            Container(
+              height: 50,
+              width: 400,
+              margin: const EdgeInsets.all(kDefaultPadding),
+              padding: const EdgeInsets.symmetric(
+                horizontal: kDefaultPadding,
+                vertical: kDefaultPadding / 4, // 5 top and bottom
               ),
-              hintText: 'Tìm kiếm khu vực ...',
-              hintStyle: TextStyle(color: borderColorPrimary),
-            ),
-            cursorColor: borderColorPrimary,
-          ),
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: ResponsiveGridList(
-              desiredItemWidth: 100,
-              minSpacing: 10,
-              children:
-                  List.generate(areaController.areas.length, (index) => index)
-                      .map((i) {
-                return InkWell(
-                  onTap: () => {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CustomDialogCreateUpdateArea(
-                          isUpdate: true,
-                          area_id: areaController.areas[i].area_id,
-                          name: areaController.areas[i].name,
-                          active: areaController.areas[i].active,
-                        );
-                      },
-                    )
-                  },
-                  child: Container(
-                    height: 100,
-                    alignment: const Alignment(0, 0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: areaController.areas[i].active == ACTIVE
-                          ? activeColor
-                          : deActiveColor,
-                    ),
-                    child: Text(areaController.areas[i].name,
-                        style: textStyleWhiteBold20),
+              decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.4),
+                  borderRadius: borderRadiusTextField30,
+                  border: Border.all(width: 1, color: borderColorPrimary)),
+              child: TextField(
+                onChanged: (value) {
+                  areaController.getAreas(value);
+                },
+                style: const TextStyle(color: borderColorPrimary),
+                decoration: const InputDecoration(
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  fillColor: borderColorPrimary,
+                  icon: Icon(
+                    Icons.search,
+                    color: iconColorPrimary,
                   ),
-                );
-              }).toList()),
-        ),
-        const SizedBox(
-          height: 10,
+                  hintText: 'Tìm kiếm khu vực ...',
+                  hintStyle: TextStyle(color: borderColorPrimary),
+                ),
+                cursorColor: borderColorPrimary,
+              ),
+            ),
+            SizedBox(
+              child: ResponsiveGridList(
+                  desiredItemWidth: 100,
+                  minSpacing: 10,
+                  children: List.generate(
+                      areaController.areas.length, (index) => index).map((i) {
+                    return InkWell(
+                      onTap: () => {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialogCreateUpdateArea(
+                              isUpdate: true,
+                              area_id: areaController.areas[i].area_id,
+                              name: areaController.areas[i].name,
+                              active: areaController.areas[i].active,
+                            );
+                          },
+                        )
+                      },
+                      child: Container(
+                        height: 100,
+                        alignment: const Alignment(0, 0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: areaController.areas[i].active == ACTIVE
+                              ? activeColor
+                              : deActiveColor,
+                        ),
+                        child: Text(areaController.areas[i].name,
+                            style: textStyleWhiteBold20),
+                      ),
+                    );
+                  }).toList()),
+            ),
+          ],
         ),
         InkWell(
           onTap: () => {

@@ -95,9 +95,10 @@ class _VatDetailPageState extends State<VatDetailPage> {
         ],
         backgroundColor: primaryColor,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SingleChildScrollView(
                 child: Column(
@@ -122,9 +123,6 @@ class _VatDetailPageState extends State<VatDetailPage> {
                         isRequire: true),
                   ],
                 ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
               ),
               SizedBox(
                 height: 50,

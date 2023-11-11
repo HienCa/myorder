@@ -80,8 +80,8 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
         backgroundColor: primaryColor,
       ),
       body: Theme(
-        data: ThemeData(unselectedWidgetColor: primaryColor),
-        child: SingleChildScrollView(
+          data: ThemeData(unselectedWidgetColor: primaryColor),
+          child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,17 +100,16 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                         isRequire: true,
                       ),
                       MyTextFieldPrice(
-                          textEditingController: discountPriceController,
-                          label: 'Số tiền muốn giảm',
-                          placeholder: 'Nhập số tiền...',
-                          min: MIN_PRICE,
-                          max: MAX_PRICE,
-                          isRequire: true, textAlignRight: false,)
+                        textEditingController: discountPriceController,
+                        label: 'Số tiền muốn giảm',
+                        placeholder: 'Nhập số tiền...',
+                        min: MIN_PRICE,
+                        max: MAX_PRICE,
+                        isRequire: true,
+                        textAlignRight: false,
+                      )
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
                 ),
                 SizedBox(
                   height: 50,
@@ -139,10 +138,8 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            
                             discountPriceController.text =
-                                discountPriceController.text
-                                    .replaceAll(r',', '');
+                                discountPriceController.text.replaceAll(r',', '');
                             if (!Utils.isValidLengthTextEditController(
                                     nameController, minlength2, maxlength50) &&
                                 !Utils.isValidRangeTextEditController(
@@ -159,7 +156,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                               discountPriceController.text =
                                   Utils.convertTextFieldPrice(
                                       discountPriceController.text);
-
+          
                               Utils.showStylishDialog(
                                   context,
                                   'THÔNG BÁO',
@@ -170,7 +167,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                               discountPriceController.text =
                                   Utils.convertTextFieldPrice(
                                       discountPriceController.text);
-
+          
                               Utils.showStylishDialog(
                                   context,
                                   'THÔNG BÁO',
@@ -188,8 +185,7 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                             height: 50,
                             decoration: const BoxDecoration(
                               color: primaryColor,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
                             ),
                             child: const Align(
                               alignment: Alignment.center,
@@ -203,8 +199,8 @@ class _AddDiscountPageState extends State<AddDiscountPage> {
                   ),
                 )
               ],
-            )),
-      ),
+            ),
+          )),
     );
   }
 }

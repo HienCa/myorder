@@ -90,9 +90,10 @@ class _UnitDetailPageState extends State<UnitDetailPage> {
         ],
         backgroundColor: primaryColor,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 margin: const EdgeInsets.all(10.0),
@@ -108,76 +109,72 @@ class _UnitDetailPageState extends State<UnitDetailPage> {
                         max: maxlength50,
                         isRequire: true,
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.6,
-                      ),
-                      SizedBox(
-                        height: 50,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () => {Navigator.pop(context)},
-                                child: Container(
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                      color: dividerColor,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5))),
-                                  child: const Align(
-                                    alignment: Alignment.center,
-                                    child:
-                                        Text("HỦY", style: buttonStyleCancel),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () => {
-                                  if (!Utils.isValidLengthTextEditController(
-                                      nameController, minlength2, maxlength50))
-                                    {
-                                      Utils.showStylishDialog(
-                                          context,
-                                          'THÔNG BÁO',
-                                          'Tên đơn vị phải từ $minlength2 đến $maxlength50 ký tự.',
-                                          StylishDialogType.ERROR)
-                                    }
-                                  else
-                                    {
-                                      unitController.updateUnit(
-                                        unit.unit_id,
-                                        nameController.text,
-                                      ),
-                                      Utils.myPopSuccess(context)
-                                    }
-                                },
-                                child: Container(
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5))),
-                                  child: const Align(
-                                    alignment: Alignment.center,
-                                    child: Text("CẬP NHẬT",
-                                        style: buttonStyleWhiteBold),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
                     ],
                   ),
                 ),
               ),
+              SizedBox(
+                height: 50,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => {Navigator.pop(context)},
+                        child: Container(
+                          height: 50,
+                          decoration: const BoxDecoration(
+                              color: dividerColor,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text("HỦY", style: buttonStyleCancel),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => {
+                          if (!Utils.isValidLengthTextEditController(
+                              nameController, minlength2, maxlength50))
+                            {
+                              Utils.showStylishDialog(
+                                  context,
+                                  'THÔNG BÁO',
+                                  'Tên đơn vị phải từ $minlength2 đến $maxlength50 ký tự.',
+                                  StylishDialogType.ERROR)
+                            }
+                          else
+                            {
+                              unitController.updateUnit(
+                                unit.unit_id,
+                                nameController.text,
+                              ),
+                              Utils.myPopSuccess(context)
+                            }
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: const BoxDecoration(
+                              color: primaryColor,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child:
+                                Text("CẬP NHẬT", style: buttonStyleWhiteBold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           )),
     );

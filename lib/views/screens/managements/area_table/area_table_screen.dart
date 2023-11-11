@@ -69,278 +69,291 @@ class _ManagementAreaTablePageState extends State<ManagementAreaTablePage> {
           body: TabBarView(
             children: [
               Obx(() {
-                return SingleChildScrollView(
-                  child: Container(
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 400,
-                            margin: const EdgeInsets.all(kDefaultPadding),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: kDefaultPadding,
-                              vertical: kDefaultPadding / 4, // 5 top and bottom
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.4),
-                                borderRadius: borderRadiusTextField30,
-                                border: Border.all(
-                                    width: 1, color: borderColorPrimary)),
-                            child: TextField(
-                              onChanged: (value) {
-                                areaController.getAreas(value);
-                              },
-                              style: const TextStyle(color: borderColorPrimary),
-                              decoration: const InputDecoration(
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                fillColor: borderColorPrimary,
-                                icon: Icon(
-                                  Icons.search,
-                                  color: iconColorPrimary,
-                                ),
-                                hintText: 'Tìm kiếm khu vực ...',
-                                hintStyle: TextStyle(color: borderColorPrimary),
-                              ),
-                              cursorColor: borderColorPrimary,
-                            ),
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.55,
-                            child: ResponsiveGridList(
-                                desiredItemWidth: 100,
-                                minSpacing: 10,
-                                children: List.generate(
-                                    areaController.areas.length,
-                                    (index) => index).map((i) {
-                                  return InkWell(
-                                    onTap: () => {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomDialogCreateUpdateArea(
-                                            isUpdate: true,
-                                            area_id:
-                                                areaController.areas[i].area_id,
-                                            name: areaController.areas[i].name,
-                                            active:
-                                                areaController.areas[i].active,
-                                          );
-                                        },
-                                      )
-                                    },
-                                    child: Container(
-                                      height: 100,
-                                      alignment: const Alignment(0, 0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: areaController.areas[i].active ==
-                                                ACTIVE
-                                            ? activeColor
-                                            : deActiveColor,
-                                      ),
-                                      child: Text(areaController.areas[i].name,
-                                          style: textStyleWhiteBold20),
-                                    ),
-                                  );
-                                }).toList()),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          InkWell(
-                            onTap: () => {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const CustomDialogCreateUpdateArea(
-                                    isUpdate: false,
-                                  );
-                                },
-                              )
-                            },
-                            child: Container(
+                return Container(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
                               height: 50,
-                              margin: const EdgeInsets.only(
-                                  left: 10, right: 10, top: 10),
-                              decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(10),
+                              width: 400,
+                              margin: const EdgeInsets.all(kDefaultPadding),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding,
+                                vertical:
+                                    kDefaultPadding / 4, // 5 top and bottom
                               ),
-                              child: const Center(
-                                child: Text(
-                                  "+ THÊM KHU VỰC",
-                                  style: textStyleWhiteBold20,
+                              decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.4),
+                                  borderRadius: borderRadiusTextField30,
+                                  border: Border.all(
+                                      width: 1, color: borderColorPrimary)),
+                              child: TextField(
+                                onChanged: (value) {
+                                  areaController.getAreas(value);
+                                },
+                                style:
+                                    const TextStyle(color: borderColorPrimary),
+                                decoration: const InputDecoration(
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  fillColor: borderColorPrimary,
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: iconColorPrimary,
+                                  ),
+                                  hintText: 'Tìm kiếm khu vực ...',
+                                  hintStyle:
+                                      TextStyle(color: borderColorPrimary),
                                 ),
+                                cursorColor: borderColorPrimary,
+                              ),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: ResponsiveGridList(
+                                  desiredItemWidth: 100,
+                                  minSpacing: 10,
+                                  children: List.generate(
+                                      areaController.areas.length,
+                                      (index) => index).map((i) {
+                                    return InkWell(
+                                      onTap: () => {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialogCreateUpdateArea(
+                                              isUpdate: true,
+                                              area_id: areaController
+                                                  .areas[i].area_id,
+                                              name:
+                                                  areaController.areas[i].name,
+                                              active: areaController
+                                                  .areas[i].active,
+                                            );
+                                          },
+                                        )
+                                      },
+                                      child: Container(
+                                        height: 100,
+                                        alignment: const Alignment(0, 0),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color:
+                                              areaController.areas[i].active ==
+                                                      ACTIVE
+                                                  ? activeColor
+                                                  : deActiveColor,
+                                        ),
+                                        child: Text(
+                                            areaController.areas[i].name,
+                                            style: textStyleWhiteBold20),
+                                      ),
+                                    );
+                                  }).toList()),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () => {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CustomDialogCreateUpdateArea(
+                                  isUpdate: false,
+                                );
+                              },
+                            )
+                          },
+                          child: Container(
+                            height: 50,
+                            margin: const EdgeInsets.only(
+                                left: 10, right: 10, top: 10),
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "+ THÊM KHU VỰC",
+                                style: textStyleWhiteBold20,
                               ),
                             ),
                           ),
-                        ],
-                      )),
-                );
+                        ),
+                      ],
+                    ));
               }),
               //BÀN
               Obx(() {
-                return SingleChildScrollView(
-                  child: Container(
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          OptionArea(
-                            onOptionSelected: (selectedValue) {
-                              // Xử lý giá trị trả về từ OptionArea tại đây
-                              print(
-                                  'Đã nhận được giá trị từ OptionArea: $selectedValue');
-                              setState(() {
-                                areaIdSelected = selectedValue;
-                                tableController.getTablesOfArea(selectedValue,
-                                    keySearch); // tìm tất cả bàn theo khu vực
-                              });
-                            },
-                          ),
-                          Container(
-                            height: 50,
-                            width: 400,
-                            margin: const EdgeInsets.all(kDefaultPadding),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: kDefaultPadding,
-                              vertical: kDefaultPadding / 4, // 5 top and bottom
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.4),
-                                borderRadius: borderRadiusTextField30,
-                                border: Border.all(
-                                    width: 1, color: borderColorPrimary)),
-                            child: TextField(
-                              onChanged: (value) {
-                                //tìm tất cả bàn theo khu vực và keysearch
-                                tableController.getTablesOfArea(
-                                    areaIdSelected, value);
+                return Container(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            OptionArea(
+                              onOptionSelected: (selectedValue) {
+                                // Xử lý giá trị trả về từ OptionArea tại đây
+                                print(
+                                    'Đã nhận được giá trị từ OptionArea: $selectedValue');
                                 setState(() {
-                                  keySearch = value;
+                                  areaIdSelected = selectedValue;
+                                  tableController.getTablesOfArea(selectedValue,
+                                      keySearch); // tìm tất cả bàn theo khu vực
                                 });
                               },
-                              style: const TextStyle(color: borderColorPrimary),
-                              decoration: const InputDecoration(
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                fillColor: borderColorPrimary,
-                                icon: Icon(
-                                  Icons.search,
-                                  color: iconColorPrimary,
-                                ),
-                                hintText: 'Tìm kiếm bàn theo khu vực...',
-                                hintStyle: TextStyle(color: borderColorPrimary),
-                              ),
-                              cursorColor: borderColorPrimary,
                             ),
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.5,
-                            child: ResponsiveGridList(
-                                desiredItemWidth: 100,
-                                minSpacing: 10,
-                                children: List.generate(
-                                    tableController.tables.length,
-                                    (index) => index).map((i) {
-                                  return Container(
-                                      height: 100,
-                                      alignment: const Alignment(0, 0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Colors.transparent,
-                                      ),
-                                      child: InkWell(
-                                        onTap: () => {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return CustomDialogCreateUpdateTable(
-                                                isUpdate: true,
-                                                name: tableController
-                                                    .tables[i].name,
-                                                total_slot: tableController
-                                                    .tables[i].total_slot,
-                                                table_id: tableController
-                                                    .tables[i].table_id,
-                                                active: tableController
-                                                    .tables[i].active,
-                                                area_id: tableController
-                                                    .tables[i].area_id,
-                                              );
-                                            },
-                                          )
-                                        },
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            tableController.tables[i].active ==
-                                                    ACTIVE
-                                                ? ClipOval(
-                                                    child: Image.asset(
-                                                      "assets/images/icon-table-simple-serving.jpg",
-                                                      width: 100,
-                                                      height: 100,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  )
-                                                : ClipOval(
-                                                    child: Image.asset(
-                                                      "assets/images/icon-table-simple-empty.jpg",
-                                                      width: 100,
-                                                      height: 100,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                            Text(
-                                              tableController.tables[i].name,
-                                              style: const TextStyle(
-                                                  fontSize: 30,
-                                                  color: textWhiteColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            
-                                          ],
-                                        ),
-                                      ));
-                                }).toList()),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          InkWell(
-                            onTap: () => {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const CustomDialogCreateUpdateTable(
-                                    isUpdate: false,
-                                  );
-                                },
-                              )
-                            },
-                            child: Container(
+                            Container(
                               height: 50,
-                              margin: const EdgeInsets.only(
-                                  left: 10, right: 10, top: 10),
-                              decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(10),
+                              width: 400,
+                              margin: const EdgeInsets.all(kDefaultPadding),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding,
+                                vertical:
+                                    kDefaultPadding / 4, // 5 top and bottom
                               ),
-                              child: const Center(
-                                child: Text(
-                                  "+ THÊM BÀN",
-                                  style: textStyleWhiteBold20,
+                              decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.4),
+                                  borderRadius: borderRadiusTextField30,
+                                  border: Border.all(
+                                      width: 1, color: borderColorPrimary)),
+                              child: TextField(
+                                onChanged: (value) {
+                                  //tìm tất cả bàn theo khu vực và keysearch
+                                  tableController.getTablesOfArea(
+                                      areaIdSelected, value);
+                                  setState(() {
+                                    keySearch = value;
+                                  });
+                                },
+                                style:
+                                    const TextStyle(color: borderColorPrimary),
+                                decoration: const InputDecoration(
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  fillColor: borderColorPrimary,
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: iconColorPrimary,
+                                  ),
+                                  hintText: 'Tìm kiếm bàn theo khu vực...',
+                                  hintStyle:
+                                      TextStyle(color: borderColorPrimary),
                                 ),
+                                cursorColor: borderColorPrimary,
+                              ),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: ResponsiveGridList(
+                                  desiredItemWidth: 100,
+                                  minSpacing: 10,
+                                  children: List.generate(
+                                      tableController.tables.length,
+                                      (index) => index).map((i) {
+                                    return Container(
+                                        height: 100,
+                                        alignment: const Alignment(0, 0),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.transparent,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () => {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return CustomDialogCreateUpdateTable(
+                                                  isUpdate: true,
+                                                  name: tableController
+                                                      .tables[i].name,
+                                                  total_slot: tableController
+                                                      .tables[i].total_slot,
+                                                  table_id: tableController
+                                                      .tables[i].table_id,
+                                                  active: tableController
+                                                      .tables[i].active,
+                                                  area_id: tableController
+                                                      .tables[i].area_id,
+                                                );
+                                              },
+                                            )
+                                          },
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              tableController
+                                                          .tables[i].active ==
+                                                      ACTIVE
+                                                  ? ClipOval(
+                                                      child: Image.asset(
+                                                        "assets/images/icon-table-simple-serving.jpg",
+                                                        width: 100,
+                                                        height: 100,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    )
+                                                  : ClipOval(
+                                                      child: Image.asset(
+                                                        "assets/images/icon-table-simple-empty.jpg",
+                                                        width: 100,
+                                                        height: 100,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                              Text(
+                                                tableController.tables[i].name,
+                                                style: const TextStyle(
+                                                    fontSize: 30,
+                                                    color: textWhiteColor,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ));
+                                  }).toList()),
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () => {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CustomDialogCreateUpdateTable(
+                                  isUpdate: false,
+                                );
+                              },
+                            )
+                          },
+                          child: Container(
+                            height: 50,
+                            margin: const EdgeInsets.only(
+                                left: 10, right: 10, top: 10),
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "+ THÊM BÀN",
+                                style: textStyleWhiteBold20,
                               ),
                             ),
                           ),
-                        ],
-                      )),
-                );
+                        ),
+                      ],
+                    ));
               })
             ],
           ),

@@ -77,174 +77,163 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       ),
       body: Theme(
         data: ThemeData(unselectedWidgetColor: primaryColor),
-        child: SingleChildScrollView(
+        child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  margin: const EdgeInsets.all(10.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: SizedBox(
+                Column(
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        height: 50,
+                        width: 400,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Theme(
+                                data: ThemeData(
+                                    unselectedWidgetColor: primaryColor),
+                                child: Radio(
+                                  value: CATEGORY_FOOD,
+                                  groupValue: selectedRadioDecrease,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedRadioDecrease = value as int;
+                                      print(value);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                            const Expanded(
+                              flex: 2,
+                              child: Text('Món ăn',
+                                  style: textStyleTitleGrayRegular16),
+                            ),
+                            Expanded(
+                              child: Theme(
+                                data: ThemeData(
+                                    unselectedWidgetColor: primaryColor),
+                                child: Radio(
+                                  value: CATEGORY_DRINK,
+                                  groupValue: selectedRadioDecrease,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedRadioDecrease = value as int;
+                                      print(selectedRadioDecrease);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                            const Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Món nước',
+                                style: textStyleTitleGrayRegular16,
+                              ),
+                            ),
+                            Expanded(
+                              child: Theme(
+                                data: ThemeData(
+                                    unselectedWidgetColor: primaryColor),
+                                child: Radio(
+                                  value: CATEGORY_OTHER,
+                                  groupValue: selectedRadioDecrease,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedRadioDecrease = value as int;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                            const Expanded(
+                              flex: 2,
+                              child: Text('Món khác',
+                                  style: textStyleTitleGrayRegular16),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    MyTextFieldString(
+                      textController: nameController,
+                      label: 'Tên danh mục',
+                      placeholder: 'Nhập tên danh mục',
+                      isReadOnly: false,
+                      min: minlength2,
+                      max: maxlength50,
+                      isRequire: true,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => {Navigator.pop(context)},
+                          child: Container(
                             height: 50,
-                            width: 400,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Theme(
-                                    data: ThemeData(
-                                        unselectedWidgetColor: primaryColor),
-                                    child: Radio(
-                                      value: CATEGORY_FOOD,
-                                      groupValue: selectedRadioDecrease,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedRadioDecrease = value as int;
-                                          print(value);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const Expanded(
-                                  flex: 2,
-                                  child: Text('Món ăn',
-                                      style: textStyleTitleGrayRegular16),
-                                ),
-                                Expanded(
-                                  child: Theme(
-                                    data: ThemeData(
-                                        unselectedWidgetColor: primaryColor),
-                                    child: Radio(
-                                      value: CATEGORY_DRINK,
-                                      groupValue: selectedRadioDecrease,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedRadioDecrease = value as int;
-                                          print(selectedRadioDecrease);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    'Món nước',
-                                    style: textStyleTitleGrayRegular16,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Theme(
-                                    data: ThemeData(
-                                        unselectedWidgetColor: primaryColor),
-                                    child: Radio(
-                                      value: CATEGORY_OTHER,
-                                      groupValue: selectedRadioDecrease,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedRadioDecrease = value as int;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const Expanded(
-                                  flex: 2,
-                                  child: Text('Món khác',
-                                      style: textStyleTitleGrayRegular16),
-                                ),
-                              ],
+                            decoration: const BoxDecoration(
+                                color: dividerColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child: Text("QUAY LẠI", style: buttonStyleCancel),
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        MyTextFieldString(
-                          textController: nameController,
-                          label: 'Tên danh mục',
-                          placeholder: 'Nhập tên danh mục',
-                          isReadOnly: false,
-                          min: minlength2,
-                          max: maxlength50,
-                          isRequire: true,
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.5,
-                        ),
-                        SizedBox(
-                          height: 50,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => {Navigator.pop(context)},
-                                  child: Container(
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                        color: dividerColor,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5))),
-                                    child: const Align(
-                                      alignment: Alignment.center,
-                                      child: Text("QUAY LẠI",
-                                          style: buttonStyleCancel),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () => {
-                                    if (!Utils.isValidLengthTextEditController(
-                                        nameController,
-                                        minlength2,
-                                        maxlength50))
-                                      {
-                                        Utils.showStylishDialog(
-                                            context,
-                                            'THÔNG BÁO',
-                                            'Tên danh mục phải từ $minlength2 đến $maxlength50 ký tự.',
-                                            StylishDialogType.ERROR)
-                                      }
-                                    else
-                                      {
-                                        categoryController.createCategory(
-                                            nameController.text,
-                                            selectedRadioDecrease),
-                                        Utils.myPopSuccess(context)
-                                      }
-                                  },
-                                  child: Container(
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    child: const Align(
-                                      alignment: Alignment.center,
-                                      child: Text("THÊM MỚI",
-                                          style: buttonStyleBlackBold),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => {
+                            if (!Utils.isValidLengthTextEditController(
+                                nameController, minlength2, maxlength50))
+                              {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÔNG BÁO',
+                                    'Tên danh mục phải từ $minlength2 đến $maxlength50 ký tự.',
+                                    StylishDialogType.ERROR)
+                              }
+                            else
+                              {
+                                categoryController.createCategory(
+                                    nameController.text, selectedRadioDecrease),
+                                Utils.myPopSuccess(context)
+                              }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: const BoxDecoration(
+                              color: primaryColor,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child:
+                                  Text("THÊM MỚI", style: buttonStyleBlackBold),
+                            ),
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                )
               ],
             )),
       ),
