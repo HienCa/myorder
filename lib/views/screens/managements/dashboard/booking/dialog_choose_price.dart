@@ -7,6 +7,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_price.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class MyDialogChoosePrice extends StatefulWidget {
   const MyDialogChoosePrice({
@@ -63,21 +64,21 @@ class _MyDialogChoosePriceState extends State<MyDialogChoosePrice> {
           children: [
             Container(
                 color: primaryColor,
-                height: 50,
+                height: 40,
                 child: const Padding(
                   padding: EdgeInsets.only(left: 8, right: 8),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       marginRight20,
-                      marginRight20,
+                      marginRight10,
                       Spacer(),
                       Text(
                         "GỢI Ý SỐ TIỀN",
                         style: textStyleWhiteBold20,
                       ),
                       Spacer(),
-                      MyCloseIcon(heightWidth: 40, sizeIcon: 16),
+                      MyCloseIcon(heightWidth: 30, sizeIcon: 16),
                     ],
                   ),
                 )),
@@ -93,8 +94,8 @@ class _MyDialogChoosePriceState extends State<MyDialogChoosePrice> {
                 textAlignRight: true,
               ),
             ),
-            marginTop10,
-            marginTop10,
+            // marginTop10,
+            // marginTop10,
             Expanded(
               child: Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -145,12 +146,23 @@ class _MyDialogChoosePriceState extends State<MyDialogChoosePrice> {
                 ),
               ),
             ),
-            marginTop10,
+            marginTop5,
             InkWell(
-              onTap: () =>
-                  {Utils.myPopResult(context, textEditingController.text)},
+              onTap: () => {
+                // Bằng 0 dùng để reset về 0
+                if (Utils.stringConvertToDouble(textEditingController.text) >=
+                        MIN_PRICE ||
+                    Utils.stringConvertToDouble(textEditingController.text) ==
+                        0)
+                  {Utils.myPopResult(context, textEditingController.text)}
+                else
+                  {
+                    Utils.showStylishDialog(context, 'LƯU Ý',
+                        'Số tiền ít nhất là 1,000', StylishDialogType.INFO)
+                  }
+              },
               child: Container(
-                height: 50,
+                height: 40,
                 width: MediaQuery.of(context).size.width / 3,
                 decoration: BoxDecoration(
                   color: primaryColor,

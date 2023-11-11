@@ -124,6 +124,7 @@ class _DashboardBookingState extends State<DashboardBooking> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: grayColor200,
       body: Theme(
         data: ThemeData(unselectedWidgetColor: primaryColor),
