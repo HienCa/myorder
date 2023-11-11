@@ -10,8 +10,8 @@ import 'package:myorder/controllers/area/areas_controller.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/models/area.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/widgets/textfields/text_field_number.dart';
-import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_number.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class CustomDialogCreateUpdateTable extends StatefulWidget {

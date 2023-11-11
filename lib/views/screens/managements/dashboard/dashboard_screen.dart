@@ -1,10 +1,10 @@
 // ignore_for_file: constant_identifier_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/managements/dashboard/booking/dialog_choose_table.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/home_screen.dart';
 import 'package:myorder/views/screens/managements/dashboard/take_away/take_away_screen.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_confirm_pop_screen.dart';
@@ -22,7 +22,6 @@ class _MyDashBoardState extends State<MyDashBoard> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
     isHome = true;
     isOrder = false;
@@ -234,7 +233,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
                   ),
                 ]),
                 isHome ? const Expanded(flex: 1, child: DashboardHome()): const SizedBox(),
-                isOrder ? const Expanded(flex: 1, child: DashboardHome()): const SizedBox(),
+                isOrder ? const Expanded(flex: 1, child: MyDialogChooseTable()): const SizedBox(),
                 isTakeAway ? const Expanded(flex: 1, child: DashboardTakeAway()): const SizedBox()
               ],
             ),

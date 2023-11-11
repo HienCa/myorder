@@ -14,6 +14,7 @@ const EdgeInsets marginLeftRight8 = EdgeInsets.only(left: 8, right: 8);
 
 const EdgeInsets paddingAll8 = EdgeInsets.all(8);
 const EdgeInsets paddingLeftRight8 = EdgeInsets.only(left: 8, right: 8);
+const EdgeInsets paddingLeftRight4 = EdgeInsets.only(left: 4, right: 4);
 
 //height - width
 const heightContainer = 50;

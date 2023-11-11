@@ -25,6 +25,11 @@ enum TypeToast {
 
 //Các phương phức hay dùng
 class Utils {
+  //SCREEN
+  static bool isLandscapeOrientation(BuildContext context) {
+    return MediaQuery.of(context).orientation == Orientation.landscape;
+  }
+
   //Lọc món theo category_code
   static List<Food> filterCategoryFood(List<Food> list, int categoryCode) {
     List<Food> filteredList = [];
@@ -362,6 +367,15 @@ class Utils {
     double total = 0;
     for (var item in list) {
       total += item.total_amount;
+    }
+    return total;
+  }
+
+  //Tính tổng tiền theo total_amount
+  static double getSumPriceQuantity(List<dynamic> list) {
+    double total = 0;
+    for (var item in list) {
+      total += (item.price * item.quantity);
     }
     return total;
   }

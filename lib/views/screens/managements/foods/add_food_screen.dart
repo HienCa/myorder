@@ -22,8 +22,8 @@ import 'package:myorder/models/unit.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/models/category.dart' as model;
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/widgets/textfields/text_field_price.dart';
-import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_price.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddFoodPage extends StatefulWidget {

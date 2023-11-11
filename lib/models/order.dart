@@ -34,6 +34,11 @@ class Order {
   double total_amount = 0;
   List table_merge_ids = [];
   List table_merge_names = [];
+  //booking
+  String customer_name = '';
+  String customer_phone = '';
+  Timestamp customer_time_booking;
+
   Order({
     required this.order_id,
     required this.order_code,
@@ -61,6 +66,9 @@ class Order {
     required this.discount_percent,
     required this.table_merge_ids,
     required this.table_merge_names,
+    required this.customer_name,
+    required this.customer_phone,
+    required this.customer_time_booking,
   });
   Order.empty()
       : order_id = '',
@@ -83,6 +91,9 @@ class Order {
         active = 1,
         employee_id = '',
         table_id = '',
+        customer_name = '',
+        customer_phone = '',
+        customer_time_booking = Timestamp.now(),
         table_merge_ids = [],
         table_merge_names = [];
 
@@ -111,6 +122,9 @@ class Order {
         "discount_percent": discount_percent,
         "table_merge_ids": table_merge_ids,
         "table_merge_names": table_merge_names,
+        "customer_name": customer_name,
+        "customer_phone": customer_phone,
+        "customer_time_booking": customer_time_booking,
       };
 
   static Order fromSnap(DocumentSnapshot snap) {
@@ -141,6 +155,9 @@ class Order {
       discount_percent: snapshot['discount_percent'],
       table_merge_ids: snapshot['table_merge_ids'],
       table_merge_names: snapshot['table_merge_names'],
+      customer_name: snapshot['customer_name'],
+      customer_phone: snapshot['customer_phone'],
+      customer_time_booking: snapshot['customer_time_booking'],
     );
   }
 }

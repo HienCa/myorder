@@ -701,37 +701,19 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Expanded(
+                                Expanded(
                                   child: SizedBox(
                                     child: Row(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                            CrossAxisAlignment.start,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                            MainAxisAlignment.start,
                                         children: [
-                                          FaIcon(FontAwesomeIcons.user,
+                                          const FaIcon(FontAwesomeIcons.user,
                                               color: iconColor, size: 10),
                                           marginRight5,
                                           Text(
-                                            'Nguyễn Văn Hiền',
-                                            style: textStyleTabLandscapeLabel,
-                                          ),
-                                        ]),
-                                  ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          FaIcon(FontAwesomeIcons.phone,
-                                              color: iconColor, size: 10),
-                                          marginRight5,
-                                          Text(
-                                            '0384319201',
+                                            widget.order.customer_name,
                                             style: textStyleTabLandscapeLabel,
                                           ),
                                         ]),
@@ -744,6 +726,24 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                             CrossAxisAlignment.center,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
+                                        children: [
+                                          const FaIcon(FontAwesomeIcons.phone,
+                                              color: iconColor, size: 10),
+                                          marginRight5,
+                                          Text(
+                                            widget.order.customer_phone,
+                                            style: textStyleTabLandscapeLabel,
+                                          ),
+                                        ]),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: SizedBox(
+                                    child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
                                           const FaIcon(
                                               FontAwesomeIcons.userGroup,
@@ -1342,12 +1342,18 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                                                           .spaceBetween,
                                                                   children: [
                                                                     const Spacer(),
-                                                                    Text(
-                                                                        Utils.formatCurrency(foodController.foodsToOrder[index].price *
-                                                                            (foodController.foodsToOrder[index].quantity ??
-                                                                                0)),
-                                                                        style:
-                                                                            textStyleTabLandscapeLabel),
+                                                                    foodController.foodsToOrder[index].isGift ==
+                                                                            false
+                                                                        ? Text(
+                                                                            Utils.formatCurrency(foodController.foodsToOrder[index].price *
+                                                                                (foodController.foodsToOrder[index].quantity ??
+                                                                                    0)),
+                                                                            style:
+                                                                                textStyleTabLandscapeLabel)
+                                                                        : const Text(
+                                                                            '0',
+                                                                            style:
+                                                                                textStyleTabLandscapeLabel),
                                                                     const Spacer(),
                                                                     InkWell(
                                                                       onTap:

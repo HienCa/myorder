@@ -13,6 +13,8 @@ void main() async {
     Get.put(AuthController());
   });
   //  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
   runApp(const MyApp());
 }
 

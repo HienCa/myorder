@@ -8,7 +8,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddUnitPage extends StatefulWidget {

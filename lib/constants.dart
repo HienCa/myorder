@@ -106,10 +106,12 @@ const dividerColor = Color.fromARGB(255, 221, 221, 221);
 //text style error
 const textStyleErrorInput = TextStyle(
     fontSize: 14, fontWeight: FontWeight.normal, color: Colors.redAccent);
-
+const textStyleErrorInput8 = TextStyle(
+    fontSize: 8, fontWeight: FontWeight.normal, color: Colors.redAccent);
 //text style
 
 //Label
+const textStyleLabel8 = TextStyle(fontSize: 8, color: Colors.grey);
 const textStyleLabel16 = TextStyle(fontSize: 16, color: Colors.grey);
 const textStyleLabel20 = TextStyle(fontSize: 20, color: Colors.grey);
 
@@ -307,6 +309,8 @@ const textStylePlaceholder = TextStyle(
 const textStyleInput = TextStyle(
     color: tableemptyColor, fontSize: 16, fontWeight: FontWeight.normal);
 
+const textStyleInputLandscape = TextStyle(
+    color: tableemptyColor, fontSize: 10, fontWeight: FontWeight.normal);
 //button
 var buttonColor = const Color(0xFF40BAD5);
 var buttonCancelColor = Colors.redAccent;

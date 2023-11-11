@@ -13,6 +13,7 @@ import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class OrderController extends GetxController {
   //don hang
@@ -485,7 +486,11 @@ class OrderController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0));
+      total_slot: 1,
+      total_surcharge_amount: 0,
+      customer_name: '',
+      customer_phone: '',
+      customer_time_booking: Timestamp.now()));
 
   //lấy 1 order
 
@@ -520,7 +525,11 @@ class OrderController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0);
+              total_slot: 1,
+              total_surcharge_amount: 0,
+              customer_name: '',
+              customer_phone: '',
+              customer_time_booking: Timestamp.now());
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -580,8 +589,7 @@ class OrderController extends GetxController {
           if (orderCollection.exists) {
             final orderData = orderCollection.data();
             if (orderData != null && orderData is Map<String, dynamic>) {
-              order = model.Order.fromSnap(
-                  orderCollection); 
+              order = model.Order.fromSnap(orderCollection);
               retValue.total_amount = order.total_amount;
               retValue.total_vat_amount = order.total_vat_amount;
               retValue.total_discount_amount = order.total_discount_amount;
@@ -657,7 +665,11 @@ class OrderController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0));
+      total_slot: 1,
+      total_surcharge_amount: 0,
+      customer_name: '',
+      customer_phone: '',
+      customer_time_booking: Timestamp.now()));
 
   model.Order get orderDetailOrigin => _orderDetailOrigin.value;
   getOrderDetailOriginById(model.Order order) async {
@@ -690,7 +702,11 @@ class OrderController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0);
+              total_slot: 1,
+              total_surcharge_amount: 0,
+              customer_name: '',
+              customer_phone: '',
+              customer_time_booking: Timestamp.now());
           retValue.order_id = order.order_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -823,7 +839,11 @@ class OrderController extends GetxController {
           total_discount_amount: 0,
           discount_percent: 0,
           discount_amount_other: 0,
-          total_slot: 1, total_surcharge_amount: 0,
+          total_slot: 1,
+          total_surcharge_amount: 0,
+          customer_name: '',
+          customer_phone: '',
+          customer_time_booking: Timestamp.now(),
         );
 
         if (slot! > 0) {
@@ -952,6 +972,117 @@ class OrderController extends GetxController {
       }
 
       Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+        'Error!',
+        e.message ?? 'Có lỗi xãy ra.',
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error!',
+        e.toString(),
+      );
+    }
+  }
+
+  //BOOKING
+  void createOrderBooking(String customer_name, String customer_phone, String customer_time_booking, String table_id, String table_name,
+      List<OrderDetail> orderDetailList, bool isGift, BuildContext context,
+      [int? slot]) async {
+    try {
+      //kiểm tra xem don hang đã được order chưa
+      var tableOrdered = await firestore
+          .collection("orders")
+          .where("table_id", isEqualTo: table_id)
+          .where("active", isEqualTo: ACTIVE)
+          .get();
+
+      if (tableOrdered.docs.isEmpty) {
+        //nếu don hang đang trống thì tạo order mới
+        String id = Utils.generateUUID();
+        // bo sung them note neu can
+        model.Order Order = model.Order(
+          order_id: id,
+          table_id: table_id,
+          employee_id: authController.user.uid,
+          order_status: ORDER_STATUS_SERVING,
+          note: "",
+          create_at: Timestamp.fromDate(DateTime.now()),
+          payment_at: null,
+          is_vat: 0,
+          discount_amount_all: 0,
+          discount_amount_food: 0,
+          discount_amount_drink: 0,
+          active: 1,
+          table_merge_ids: [],
+          table_merge_names: [],
+          order_code: id.substring(0, 8),
+          total_amount: 0,
+          discount_reason: '',
+          is_discount: 0,
+          total_vat_amount: 0,
+          total_discount_amount: 0,
+          discount_percent: 0,
+          discount_amount_other: 0,
+          total_slot: (slot ?? 1),
+          total_surcharge_amount: 0,
+          customer_name: customer_name,
+          customer_phone: customer_phone,
+          customer_time_booking: Timestamp.fromDate(DateTime.parse(customer_time_booking)),
+        );
+
+        if (slot! > 0) {
+          Order.total_slot = slot;
+        }
+        CollectionReference usersCollection =
+            FirebaseFirestore.instance.collection('orders');
+
+        await usersCollection.doc(id).set(Order.toJson());
+
+        // add order detail
+        var allDocsOrderDetail = await firestore
+            .collection('orders')
+            .doc(id)
+            .collection("orderDetails")
+            .get();
+        double totalAmount = 0;
+        for (OrderDetail orderDetail in orderDetailList) {
+          String idDetail = Utils.generateUUID();
+          orderDetail.order_detail_id = idDetail;
+          //nếu là món tặng -> không tính tiền món ăn
+          if (isGift) {
+            orderDetail.is_gift = true;
+            orderDetail.price = 0;
+          } else {
+            orderDetail.is_gift = false;
+          }
+
+          totalAmount += (orderDetail.price * orderDetail.quantity);
+
+          orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
+
+          await firestore
+              .collection('orders')
+              .doc(id)
+              .collection("orderDetails")
+              .doc(idDetail)
+              .set(orderDetail.toJson());
+        }
+        // cập nhật tổng tiền cho order
+        await firestore.collection('orders').doc(id).update({
+          "total_amount": totalAmount,
+        });
+        // cập nhật trạng thái don hang empty -> serving
+        await firestore.collection('tables').doc(table_id).update({
+          "status": TABLE_STATUS_BOOKING, // đang phục vụ
+        });
+
+        //GỬI BẾP BAR
+        sendToChefBar(id, table_name, orderDetailList);
+      } else {
+        Utils.showStylishDialog(context, 'THẤT BẠI!',
+            'Bàn này hiện tại không còn trống!', StylishDialogType.ERROR);
+      }
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',
@@ -1338,30 +1469,33 @@ class OrderController extends GetxController {
           String id = Utils.generateUUID();
           // bo sung them note neu can
           model.Order Order = model.Order(
-            order_id: id,
-            table_id: targetTable.table_id,
-            employee_id: authController.user.uid,
-            order_status: FOOD_STATUS_IN_CHEF,
-            note: "",
-            create_at: Timestamp.fromDate(DateTime.now()),
-            payment_at: null,
-            is_vat: 0,
-            discount_amount_all: 0,
-            discount_amount_food: 0,
-            discount_amount_drink: 0,
-            active: 1,
-            table_merge_ids: [],
-            table_merge_names: [],
-            order_code: id.substring(0, 8),
-            total_amount: 0,
-            discount_reason: '',
-            is_discount: 0,
-            total_vat_amount: 0,
-            total_discount_amount: 0,
-            discount_percent: 0,
-            discount_amount_other: 0,
-            total_slot: 1, total_surcharge_amount: 0,
-          );
+              order_id: id,
+              table_id: targetTable.table_id,
+              employee_id: authController.user.uid,
+              order_status: FOOD_STATUS_IN_CHEF,
+              note: "",
+              create_at: Timestamp.fromDate(DateTime.now()),
+              payment_at: null,
+              is_vat: 0,
+              discount_amount_all: 0,
+              discount_amount_food: 0,
+              discount_amount_drink: 0,
+              active: 1,
+              table_merge_ids: [],
+              table_merge_names: [],
+              order_code: id.substring(0, 8),
+              total_amount: 0,
+              discount_reason: '',
+              is_discount: 0,
+              total_vat_amount: 0,
+              total_discount_amount: 0,
+              discount_percent: 0,
+              discount_amount_other: 0,
+              total_slot: 1,
+              total_surcharge_amount: 0,
+              customer_name: '',
+              customer_phone: '',
+              customer_time_booking: Timestamp.now());
           // cập nhật lại tổng tiền cho order
 
           Order.total_amount = totalAmountSplit;

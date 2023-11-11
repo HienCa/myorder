@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/widgets/textfields/text_field_number.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_number.dart';
 
 Future<void> showAlertDialogButtons(BuildContext context) async {
   return showDialog<void>(

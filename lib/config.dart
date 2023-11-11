@@ -50,7 +50,7 @@ int CATEGORY_ALL = 1; // giam gia tren bill
 int CATEGORY_FOOD = 2; // theo mon an
 int CATEGORY_DRINK = 3; // nuoc uong
 int CATEGORY_OTHER = 4; // khac
-int CATEGORY_GIFT = 4; // khac
+int CATEGORY_GIFT = 5; // mon tang
 
 //CALCULATOR
 int MIN_PRICE = 1000;

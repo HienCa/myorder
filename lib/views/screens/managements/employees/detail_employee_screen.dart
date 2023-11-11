@@ -11,10 +11,10 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/employees/employees_controller.dart';
 import 'package:myorder/models/employee.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/widgets/textfields/text_field_email.dart';
-import 'package:myorder/views/widgets/textfields/text_field_number_length.dart';
-import 'package:myorder/views/widgets/textfields/text_field_phone.dart';
-import 'package:myorder/views/widgets/textfields/text_field_string.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_email.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_number_length.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_phone.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class EmployeeDetailPage extends StatefulWidget {

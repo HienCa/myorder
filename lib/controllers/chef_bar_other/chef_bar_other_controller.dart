@@ -200,7 +200,7 @@ class ChefBarOtherController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0));
+      total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now()));
   model.Order get orderDetailOfChef => _orderDetailOfChef.value;
   getChefByOrder(String chef_bar_id, String keySearch) async {
     _orderDetailOfChef.bindStream(
@@ -232,7 +232,7 @@ class ChefBarOtherController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0);
+              total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now());
           retValue.order_id = chef_bar_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -322,7 +322,7 @@ class ChefBarOtherController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0));
+      total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now()));
   model.Order get orderDetailOfBar => _orderDetailOfBar.value;
   getBarByOrder(String chef_bar_id, String keySearch) async {
     _orderDetailOfBar.bindStream(
@@ -354,7 +354,7 @@ class ChefBarOtherController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0);
+              total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now());
           retValue.order_id = chef_bar_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -428,7 +428,7 @@ class ChefBarOtherController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0));
+      total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now()));
   model.Order get orderDetailOfOther => _orderDetailOfOther.value;
   getOtherByOrder(String chef_bar_id, String keySearch) async {
     _orderDetailOfOther.bindStream(
@@ -460,7 +460,7 @@ class ChefBarOtherController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0);
+              total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now(),);
           retValue.order_id = chef_bar_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
