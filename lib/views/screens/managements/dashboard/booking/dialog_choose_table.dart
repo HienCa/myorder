@@ -31,24 +31,67 @@ class _MyDialogChooseTableState extends State<MyDialogChooseTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      elevation: 5,
-      backgroundColor: grayColor200,
-      child: Theme(
+    return Scaffold(
+      body: Theme(
         data: ThemeData(unselectedWidgetColor: primaryColor),
         child: Column(
           children: [
+            Container(
+                color: primaryColor,
+                height: 50,
+                child: const Center(
+                    child:
+                        Text("ĐẶT BÀN BOOKING", style: textStyleWhiteBold16))),
+            marginTop5,
             //THÊM TÌM KIẾM THEO SỐ LƯỢNG NGƯỜI
-            OptionArea(
-              onOptionSelected: (selectedValue) {
-                print('Received value from OptionArea: $selectedValue');
-                setState(() {
-                  areaIdSelected = selectedValue;
-                });
-              },
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.only(left: 16),
+                    margin: const EdgeInsets.only(right: 8, left: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.4),
+                      borderRadius: borderRadiusTextField30,
+                      border: Border.all(width: 1, color: borderColorPrimary),
+                    ),
+                    child: TextField(
+                      controller: searchSlotTableTextEditingController,
+                      onChanged: (value) {
+                        print(value);
+                        setState(() {});
+                      },
+                      style: const TextStyle(color: borderColorPrimary),
+                      decoration: const InputDecoration(
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        fillColor: borderColorPrimary,
+                        icon: Icon(
+                          Icons.search,
+                          color: iconColorPrimary,
+                        ),
+                        hintText: 'Tìm kiếm đơn hàng ...',
+                        hintStyle: TextStyle(color: borderColorPrimary),
+                      ),
+                      cursorColor: borderColorPrimary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    child: OptionArea(
+                      onOptionSelected: (selectedValue) {
+                        print('Received value from OptionArea: $selectedValue');
+                        setState(() {
+                          areaIdSelected = selectedValue;
+                        });
+                      },
+                    ),
+                  ),
+                )
+              ],
             ),
             Expanded(
               child: Container(
@@ -62,9 +105,8 @@ class _MyDialogChooseTableState extends State<MyDialogChooseTable> {
                 ),
                 child: TableItemBooking(
                   areaIdSelected: areaIdSelected,
-                  slot: (int.tryParse(
-                          searchSlotTableTextEditingController.text) ??
-                      1), 
+                  keySearch:
+                          searchSlotTableTextEditingController.text,
                 ),
               ),
             ),

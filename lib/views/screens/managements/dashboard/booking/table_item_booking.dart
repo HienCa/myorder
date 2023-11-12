@@ -11,11 +11,11 @@ import 'package:myorder/models/table.dart' as model;
 
 class TableItemBooking extends StatefulWidget {
   final String? areaIdSelected;
-  final int slot;
+  final String keySearch;
   const TableItemBooking({
     super.key,
     this.areaIdSelected,
-    required this.slot,
+    required this.keySearch,
   });
 
   @override
@@ -56,71 +56,82 @@ class _TableItemBookingState extends State<TableItemBooking> {
           return Text('Error: ${snapshot.error}');
         }
         // Lấy danh sách bàn từ dữ liệu snapshot
-        final tables = snapshot.data?.docs
+        var tables = snapshot.data?.docs
                 .map((doc) => model.Table.fromSnap(doc))
                 .toList() ??
             [];
+
+        if ((int.tryParse(widget.keySearch) ?? 0) > 1) {
+          tables = tables
+              .where((element) =>
+                  element.total_slot >= (int.tryParse(widget.keySearch) ?? 0))
+              .toList();
+        } else {
+          tables = tables
+              .where((element) => element.name
+                  .toLowerCase()
+                  .contains(widget.keySearch.toLowerCase()))
+              .toList();
+        }
         return ResponsiveGridList(
           desiredItemWidth: 100,
           minSpacing: 10,
           children: List.generate(tables.length, (index) => index).map((i) {
-            return tables[i].total_slot >= widget.slot
-                ? InkWell(
-                    onTap: () {
-                      //Đặt bàn booking
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DashboardBooking(
-                                  table: tables[i],
-                                )),
-                      );
-                    },
-                    child: Container(
-                      height: 100,
-                      alignment: const Alignment(0, 0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.transparent,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ClipOval(child: tableImageEmpty),
-                          Text(
-                            tables[i].name,
-                            style: const TextStyle(
-                              fontSize: 30,
-                              color: textWhiteColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Positioned(
-                              top: 0,
-                              right: 5,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                    color: colorWarning,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(25))),
-                                height: 35,
-                                width: 35,
-                                child: Center(
-                                  child: Text(
-                                    "${tables[i].total_slot}",
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      color: secondColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ))
-                        ],
+            return InkWell(
+              onTap: () {
+                //Đặt bàn booking
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DashboardBooking(
+                            table: tables[i],
+                          )),
+                );
+              },
+              child: Container(
+                height: 100,
+                alignment: const Alignment(0, 0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.transparent,
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipOval(child: tableImageEmpty),
+                    Text(
+                      tables[i].name,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        color: textWhiteColor,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
-                : const SizedBox();
+                    Positioned(
+                        top: 0,
+                        right: 5,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              color: colorWarning,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25))),
+                          height: 35,
+                          width: 35,
+                          child: Center(
+                            child: Text(
+                              "${tables[i].total_slot}",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: secondColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ))
+                  ],
+                ),
+              ),
+            );
           }).toList(),
         );
       },
