@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
 import 'package:myorder/views/screens/managements/dashboard/booking/table_item_change_table_booking.dart';
 import 'package:myorder/models/order.dart' as model;
@@ -51,48 +52,49 @@ class _MyDialogChangeTableBookingState
               color: primaryColor,
               child: MyHeaderIcon(
                   icon: const Icon(Icons.close, color: secondColor),
-                  label: 'THAY ĐỔI BÀN BOOKING',
+                  label: 'THAY ĐỔI BÀN PHỤC VỤ',
                   labelStyle: textStyleWhiteBold16,
                   context: context),
             ),
-
+            marginTop5,
             //THÊM TÌM KIẾM THEO SỐ LƯỢNG NGƯỜI
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  height: 40,
-                  width: 250,
-                  padding: const EdgeInsets.only(left: 8),
-                  margin: const EdgeInsets.only(right: 8, left: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
-                    borderRadius: borderRadiusTextField30,
-                    border: Border.all(width: 1, color: borderColorPrimary),
-                  ),
-                  child: TextField(
-                    controller: searchSlotTableTextEditingController,
-                    onChanged: (value) {
-                      print(value);
-                      setState(() {});
-                    },
-                    style: const TextStyle(color: borderColorPrimary),
-                    decoration: const InputDecoration(
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      fillColor: borderColorPrimary,
-                      icon: Icon(
-                        Icons.search,
-                        color: iconColorPrimary,
-                      ),
-                      hintText: 'Tìm kiếm đơn hàng ...',
-                      hintStyle: TextStyle(color: borderColorPrimary),
+                Expanded(
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.only(left: 16),
+                    margin: const EdgeInsets.only(right: 8, left: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.4),
+                      borderRadius: borderRadiusTextField30,
+                      border: Border.all(width: 1, color: borderColorPrimary),
                     ),
-                    cursorColor: borderColorPrimary,
+                    child: TextField(
+                      controller: searchSlotTableTextEditingController,
+                      onChanged: (value) {
+                        print(value);
+                        setState(() {});
+                      },
+                      style: const TextStyle(color: borderColorPrimary),
+                      decoration: const InputDecoration(
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        fillColor: borderColorPrimary,
+                        icon: Icon(
+                          Icons.search,
+                          color: iconColorPrimary,
+                        ),
+                        hintText: 'Tìm kiếm đơn hàng ...',
+                        hintStyle: TextStyle(color: borderColorPrimary),
+                      ),
+                      cursorColor: borderColorPrimary,
+                    ),
                   ),
                 ),
-                SingleChildScrollView(
+                Expanded(
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 1.8,
                     child: OptionArea(
                       onOptionSelected: (selectedValue) {
                         print('Received value from OptionArea: $selectedValue');
@@ -102,9 +104,10 @@ class _MyDialogChangeTableBookingState
                       },
                     ),
                   ),
-                ),
+                )
               ],
             ),
+
             Expanded(
               child: Container(
                 margin: const EdgeInsets.only(top: 10),
