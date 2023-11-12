@@ -140,12 +140,15 @@ class _DashboardBookingState extends State<DashboardBooking> {
                       children: [
                         Container(
                           height: 40,
-                          color: backgroundColor,
+                          decoration: BoxDecoration(
+                            color: backgroundColor,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: SizedBox(
                               height: 40,
-                              width: MediaQuery.of(context).size.width * 0.45,
+                              // width: MediaQuery.of(context).size.width * 0.45,
                               child: Row(children: [
                                 InkWell(
                                   onTap: () {
@@ -1168,7 +1171,10 @@ class _DashboardBookingState extends State<DashboardBooking> {
               Container(
                 padding: const EdgeInsets.only(left: 4, right: 4),
                 height: 45,
-                color: backgroundColor,
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(5),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
