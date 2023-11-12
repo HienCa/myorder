@@ -8,7 +8,7 @@ import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/buttons/button.dart';
-import 'package:myorder/views/widgets/dialogs/dialog_choose_price.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/headers/header_icon.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_number.dart';
 import 'package:myorder/models/order.dart' as model;

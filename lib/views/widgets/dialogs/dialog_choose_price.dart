@@ -1,299 +1,191 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: non_constant_identifier_names, avoid_print, prefer_interpolation_to_compose_strings, constant_identifier_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/constants/app_constants.dart';
-import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/widgets/headers/header_icon.dart';
+import 'package:myorder/views/widgets/icons/icon_close.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_price.dart';
+import 'package:responsive_grid/responsive_grid.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
-class MyCalculator extends StatefulWidget {
-  final double priceDefault;
-  const MyCalculator({super.key, required this.priceDefault});
+class MyDialogChoosePrice extends StatefulWidget {
+  const MyDialogChoosePrice({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<MyCalculator> createState() => _MyCalculatorState();
+  State<MyDialogChoosePrice> createState() => _MyDialogChoosePriceState();
 }
 
-class _MyCalculatorState extends State<MyCalculator> {
-  int selectedRadioDecrease = CATEGORY_ALL;
-  final TextEditingController percentTextEditController =
-      TextEditingController();
-  final TextEditingController priceTextEditController = TextEditingController();
-  OrderController orderController = Get.put(OrderController());
-  bool isCheckedPrice = true;
-  bool isCheckedPercent = false;
-  String result = "0";
+class _MyDialogChoosePriceState extends State<MyDialogChoosePrice> {
+  final textEditingController = TextEditingController();
+  List<double> listpriceRecommend = [
+    0,
+    5000,
+    10000,
+    20000,
+    30000,
+    40000,
+    50000,
+    60000,
+    70000,
+    80000,
+    90000,
+    100000,
+    150000,
+    200000,
+    250000,
+    300000,
+    350000,
+    400000,
+  ];
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-    result = Utils.formatCurrency(widget.priceDefault);
-  }
-
-  ok() {
-    double formattedResult = Utils.stringConvertToDouble(result);
-    if (formattedResult >= MIN_PRICE) {
-      Utils.myPopResult(context, result);
-    } else {
-      Utils.showErrorFlushbar(context, '', 'Giá tiền phải lớn hơn $MIN_PRICE');
-      Utils.myPopResult(context, '0');
-    }
-    print('Giá trị đã nhập là: $result');
-  }
-
-  removeLastDigitFromResult() {
-    priceTextEditController.text = priceTextEditController.text
-        .substring(0, priceTextEditController.text.length - 1);
-    if (priceTextEditController.text.isEmpty) {
-      priceTextEditController.text = '0';
-    }
-
-    result =
-        Utils.formatCurrency(double.tryParse(priceTextEditController.text));
-  }
-
-  incrementValue() {
-    int currentValue = int.tryParse(priceTextEditController.text) ?? 0;
-    priceTextEditController.text = (currentValue + 1).toString();
-    result =
-        Utils.formatCurrency(double.tryParse(priceTextEditController.text));
-  }
-
-  decrementValue() {
-    int currentValue = int.tryParse(priceTextEditController.text) ?? 0;
-    priceTextEditController.text = (currentValue - 1).toString();
-    result =
-        Utils.formatCurrency(double.tryParse(priceTextEditController.text));
-  }
-
-  onButtonClick(value) {
-    if (value.isNotEmpty) {
-      if ((priceTextEditController.text == '0') ||
-          priceTextEditController.text == '000') {
-        priceTextEditController.text = '';
-      } else {
-        priceTextEditController.text += value;
-      }
-      print(priceTextEditController.text);
-      if (priceTextEditController.text.isNotEmpty) {
-        if (double.tryParse(priceTextEditController.text)! > 100000000) {
-          priceTextEditController.text = '100000000';
-          result = Utils.formatCurrency(
-              double.tryParse(priceTextEditController.text));
-        } else {
-          result = Utils.formatCurrency(
-              double.tryParse(priceTextEditController.text));
-        }
-      }
-    }
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
+        borderRadius: BorderRadius.circular(10.0),
       ),
-      elevation: 5, // Độ nâng của bóng đổ
-      backgroundColor: const Color.fromARGB(255, 204, 203, 203),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: primaryColor,
-            child: MyHeaderIcon(
-              icon: iconCloseWhite,
-              label: "NHẬP GIÁ TIỀN",
-              labelStyle: textStyleWhiteBold20,
-              context: context,
+      elevation: 5,
+      backgroundColor: grayColor200,
+      child: Theme(
+        data: ThemeData(unselectedWidgetColor: primaryColor),
+        child: Column(
+          children: [
+            Container(
+                color: primaryColor,
+                height: 40,
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 8, right: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      marginRight20,
+                      marginRight10,
+                      Spacer(),
+                      Text(
+                        "GỢI Ý SỐ TIỀN",
+                        style: textStyleWhiteBold20,
+                      ),
+                      Spacer(),
+                      MyCloseIcon(heightWidth: 30, sizeIcon: 16),
+                    ],
+                  ),
+                )),
+            Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8),
+              child: MyTextFieldPrice(
+                textEditingController: textEditingController,
+                label: '',
+                placeholder: '0',
+                min: 0,
+                max: MAX_PRICE,
+                isRequire: false,
+                textAlignRight: true,
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            height: 50,
-            margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.only(right: 10),
-            decoration: BoxDecoration(
-                border: Border.all(color: primaryColor, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5))),
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Text(
-                    textAlign: TextAlign.right,
-                    result,
-                    style: textStyleCalculaorBold20,
+            // marginTop10,
+            // marginTop10,
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                decoration: const BoxDecoration(
+                  color: secondColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
                   ),
                 ),
-              ],
-            ),
-          ),
-          marginTop10,
-          Row(children: [
-            Expanded(
-              child: Container(
-                  height: 60,
-                  margin: const EdgeInsets.all(8),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: primaryColor),
-                    onPressed: () => {
-                      setState(() {
-                        priceTextEditController.text = '0';
-                        result = priceTextEditController.text;
-                      })
-                    },
-                    child: const Text(
-                      "AC",
-                      style: TextStyle(
-                          color: secondColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )),
-            ),
-            Expanded(
-              child: Container(
-                  height: 60,
-                  margin: const EdgeInsets.all(8),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: primaryColor),
-                    onPressed: () => {
-                      setState(() {
-                        incrementValue();
-                      })
-                    },
-                    child: const Text(
-                      "+",
-                      style: TextStyle(
-                          color: secondColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )),
-            ),
-            Expanded(
-              child: Container(
-                  height: 60,
-                  margin: const EdgeInsets.all(8),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: primaryColor),
-                    onPressed: () => {
-                      setState(() {
-                        decrementValue();
-                      })
-                    },
-                    child: const Text(
-                      "-",
-                      style: TextStyle(
-                          color: secondColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )),
-            ),
-            Expanded(
-                child: Container(
-              height: 60,
-              margin: const EdgeInsets.all(8),
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      backgroundColor: primaryColor),
-                  onPressed: () => {
-                        setState(() {
-                          removeLastDigitFromResult();
-                        })
+                child: ResponsiveGridList(
+                  desiredItemWidth: 100,
+                  minSpacing: 10,
+                  children:
+                      List.generate(listpriceRecommend.length, (index) => index)
+                          .map((i) {
+                    return InkWell(
+                      onTap: () => {
+                        textEditingController.text =
+                            Utils.formatCurrency(listpriceRecommend[i]),
                       },
-                  child: const Icon(
-                    Icons.arrow_back_ios,
-                    color: secondColor,
-                  )),
-            ))
-          ]),
-          Row(children: [
-            button(text: '7'),
-            button(text: '8'),
-            button(text: '9'),
-          ]),
-          Row(children: [
-            button(text: '4'),
-            button(text: '5'),
-            button(text: '6'),
-          ]),
-          Row(children: [
-            button(text: '1'),
-            button(text: '2'),
-            button(text: '3'),
-          ]),
-          Row(children: [
-            button(text: '0'),
-            button(text: '000'),
-            Expanded(
-              child: Container(
-                  height: 60,
-                  margin: const EdgeInsets.all(8),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: primaryColor
-                        // shadowColor: buttonBGcolor,
-                        ),
-                    onPressed: () => {ok()},
-                    child: const Text(
-                      "Xong",
-                      style: TextStyle(
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, top: 8, bottom: 8),
+                        decoration: BoxDecoration(
                           color: secondColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        height: 50,
+                        child: Center(
+                          child: Text(
+                            Utils.formatCurrency(listpriceRecommend[i]),
+                            style: textStyleLabel16,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
-          ]),
-        ],
+            marginTop5,
+            InkWell(
+              onTap: () => {
+                // Bằng 0 dùng để reset về 0
+                if (Utils.stringConvertToDouble(textEditingController.text) >=
+                        MIN_PRICE ||
+                    Utils.stringConvertToDouble(textEditingController.text) ==
+                        0)
+                  {Utils.myPopResult(context, textEditingController.text)}
+                else
+                  {
+                    Utils.showStylishDialog(context, 'LƯU Ý',
+                        'Số tiền ít nhất là 1,000', StylishDialogType.INFO)
+                  }
+              },
+              child: Container(
+                height: 40,
+                width: MediaQuery.of(context).size.width / 3,
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                    child: Text(
+                  "XONG",
+                  style: textStyleWhiteBold20,
+                )),
+              ),
+            )
+          ],
+        ),
       ),
     );
-  }
-
-  Widget button(
-      {text, tColor = Colors.white, buttonBGcolor = buttonCalculatorColor}) {
-    return Expanded(
-        child: Container(
-      margin: const EdgeInsets.all(8),
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.all(22),
-              // shadowColor: buttonBGcolor,
-              backgroundColor: Colors.white),
-          onPressed: () => onButtonClick(text),
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
-            ),
-          )),
-    ));
   }
 }
