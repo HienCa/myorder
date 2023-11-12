@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
 import 'package:myorder/views/screens/managements/dashboard/booking/table_item_change_table_booking.dart';
 import 'package:myorder/models/order.dart' as model;
@@ -120,9 +119,7 @@ class _MyDialogChangeTableBookingState
                 ),
                 child: TableItemChangeTableBooking(
                   areaIdSelected: areaIdSelected,
-                  slot: (int.tryParse(
-                          searchSlotTableTextEditingController.text) ??
-                      1),
+                  keySearch: searchSlotTableTextEditingController.text,
                   order: widget.order,
                 ),
               ),

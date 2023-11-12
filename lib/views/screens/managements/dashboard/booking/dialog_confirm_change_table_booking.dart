@@ -14,7 +14,8 @@ class MyDialogConfirmChangeTableBooking extends StatefulWidget {
   const MyDialogConfirmChangeTableBooking({
     Key? key,
     required this.oldTable,
-    required this.newTable, required this.order_id,
+    required this.newTable,
+    required this.order_id,
   }) : super(key: key);
 
   @override
@@ -97,9 +98,10 @@ class _MyDialogConfirmChangeTableBookingState
                           InkWell(
                             onTap: () => {
                               orderController.changeTableBooking(
-                                  widget.order_id,
-                                  widget.newTable,
-                                  ),
+                                widget.order_id,
+                                widget.oldTable,
+                                widget.newTable,
+                              ),
                               Navigator.pop(context, 'success')
                             },
                             child: Container(

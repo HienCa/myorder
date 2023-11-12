@@ -2127,12 +2127,23 @@ class OrderController extends GetxController {
   }
 
   //ĐỔI BÀN BOOKING
-  changeTableBooking(String order_id, table.Table newTable) async {
+  changeTableBooking(
+      String order_id, table.Table oldTable, table.Table newTable) async {
     try {
       if (order_id != '' && newTable.table_id != '') {
         //Đổi bàn
         await firestore.collection('orders').doc(order_id).update({
           "table_id": newTable.table_id,
+        }).then((_) async {
+          //cập nhật bàn cũ thành empty
+          await firestore.collection('tables').doc(oldTable.table_id).update({
+            "status": TABLE_STATUS_EMPTY,
+          });
+        }).then((_) async {
+          //cập nhật bàn mới là trạng thái bàn cũ
+          await firestore.collection('tables').doc(newTable.table_id).update({
+            "status": oldTable.status,
+          });
         }).then((_) {
           Utils.showToast('Bàn booking đã được thay đổi!', TypeToast.SUCCESS);
         });

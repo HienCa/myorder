@@ -684,7 +684,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                       )
                                     },
                                     child: Text(
-                                      widget.order.table!.name,
+                                      '${widget.order.table!.name} - Số lượng tối đa: ${widget.order.table!.total_slot} khách',
                                       style: textStyleTabLandscapeLabelBold,
                                     ),
                                   ),

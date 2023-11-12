@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_prefixes
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +14,12 @@ import 'package:myorder/models/order.dart' as orderM;
 
 class TableItemChangeTableBooking extends StatefulWidget {
   final String? areaIdSelected;
-  final int slot;
+  final String keySearch;
   final orderM.Order order;
   const TableItemChangeTableBooking({
     super.key,
     this.areaIdSelected,
-    required this.slot,
+    required this.keySearch,
     required this.order,
   });
 
@@ -67,9 +67,16 @@ class _TableItemChangeTableBookingState
                 .map((doc) => model.Table.fromSnap(doc))
                 .toList() ??
             [];
-        if (widget.slot > 1) {
+        if ((int.tryParse(widget.keySearch) ?? 0) > 1) {
           tables = tables
-              .where((element) => element.total_slot >= widget.slot)
+              .where((element) =>
+                  element.total_slot >= (int.tryParse(widget.keySearch) ?? 0))
+              .toList();
+        } else {
+          tables = tables
+              .where((element) => element.name
+                  .toLowerCase()
+                  .contains(widget.keySearch.toLowerCase()))
               .toList();
         }
         return ResponsiveGridList(
