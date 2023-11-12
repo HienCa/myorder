@@ -11,9 +11,10 @@ import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/managements/dashboard/take_away/dialog_confirm_booking.dart';
+import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
-import 'package:myorder/views/widgets/dialogs/dialog_choose_price.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:myorder/views/widgets/textfields/text_field_icon/text_field_icon_phone.dart';
 import 'package:myorder/views/widgets/textfields/text_field_icon/text_field_icon_string.dart';
@@ -36,9 +37,9 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
   OrderController orderController = Get.put(OrderController());
   final nameTextEditingController = TextEditingController();
   final phoneTextEditingController = TextEditingController();
-  final slotTextEditingController = TextEditingController();
-  final timeTextEditingController = TextEditingController();
-  final depositAmountTextEditingController = TextEditingController();
+  final totalVatAmountTextEditingController = TextEditingController();
+  final totalDiscountAmountTextEditingController = TextEditingController();
+  final totalSurchargeAmountTextEditingController = TextEditingController();
 
   String keySearch = "";
   int categoryCodeSelected = 0;
@@ -61,7 +62,9 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
 
     //Lây thông tin đơn hàng
     foodController.getfoodsToOrder(keySearch, defaultCategory);
-    depositAmountTextEditingController.text = '0';
+    totalVatAmountTextEditingController.text = '0';
+    totalDiscountAmountTextEditingController.text = '0';
+    totalSurchargeAmountTextEditingController.text = '0';
   }
 
   //Giảm giá
@@ -304,7 +307,9 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                           } else {
                                             food.isGift = false;
                                           }
-
+                                          totalVatAmountTextEditingController
+                                                  .text =
+                                              '${Utils.getSumPriceQuantity(Utils.filterSelected(foodController.foodsToOrder))}';
                                           print(
                                               "THÊM MÓN: ${food.name} - SL: ${food.quantity}");
                                         })
@@ -661,7 +666,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                       color: iconColor, size: 16),
                                   const SizedBox(width: 8),
                                   const Text(
-                                    'THÔNG TIN ĐẶT BÀN',
+                                    'THÔNG TIN BÁN MANG VỀ',
                                     style: textStyleTabLandscapeLabel,
                                   ),
                                   const Spacer(),
@@ -697,9 +702,9 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                   iconData: FontAwesomeIcons.userLarge,
                                   placeholder: 'Tên khách hàng',
                                   isReadOnly: false,
-                                  min: 2,
+                                  min: 0,
                                   max: 50,
-                                  isRequire: true,
+                                  isRequire: false,
                                   height: 30,
                                   isBorder: false,
                                 )),
@@ -708,7 +713,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                     child: MyTextFieldIconPhone(
                                   textController: phoneTextEditingController,
                                   placeholder: 'Số điện thoại',
-                                  isRequire: true,
+                                  isRequire: false,
                                   height: 30,
                                   isBorder: false,
                                 )),
@@ -720,8 +725,8 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                         marginTop5,
                         //DANH SÁCH MÓN ĂN CỦA ĐƠN HÀNG
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          width: MediaQuery.of(context).size.width * 0.6,
+                          height: MediaQuery.of(context).size.height * 0.4,
+                          width: MediaQuery.of(context).size.width * 0.5,
                           child: Container(
                               margin: const EdgeInsets.only(
                                 left: 5,
@@ -836,7 +841,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                                         marginTop5,
                                                                         //TRẠNG THÁI MÓN
                                                                         const Text(
-                                                                            'CHƯA LƯU',
+                                                                            'CHỜ XÁC NHẬN',
                                                                             style:
                                                                                 textStyleCancelLandscape)
                                                                       ],
@@ -1003,7 +1008,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                         ),
                         marginTop5,
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          height: MediaQuery.of(context).size.height * 0.225,
                           child: Container(
                             margin: const EdgeInsets.only(
                               left: 5,
@@ -1016,93 +1021,276 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5),
                             ),
-                            child: Center(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: Column(children: [
-                                  //ĐÃ ĐẶT CỌC
-                                  Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        const Spacer(),
-                                        const Text(
-                                          "TỔNG TẠM TÍNH",
-                                          style: textStylePrimaryLandscapeBold,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Column(children: [
+                                //SURCHARGE - PHỤ THU
+                                Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 95,
+                                        height: 20,
+                                        child: Row(
+                                          children: [
+                                            Theme(
+                                              data: ThemeData(
+                                                  unselectedWidgetColor:
+                                                      iconColor),
+                                              child: Transform.scale(
+                                                scale: 0.8,
+                                                child: Checkbox(
+                                                  value: isSurcharge,
+                                                  onChanged: (bool? value) {},
+                                                  activeColor: iconColor,
+                                                  visualDensity:
+                                                      VisualDensity.compact,
+                                                ),
+                                              ),
+                                            ),
+                                            marginRight5,
+                                            const Text(
+                                              "PHỤ THU",
+                                              style: textStyleTabLandscapeLabel,
+                                            )
+                                          ],
                                         ),
-                                        const Spacer(),
-                                        Obx(() {
-                                          return Text(
-                                              Utils.formatCurrency(
-                                                  Utils.getSumPriceQuantity(
-                                                      Utils.filterSelected(
-                                                          foodController
-                                                              .foodsToOrder))),
-                                              style:
-                                                  textStylePrimaryLandscapeBold);
-                                        })
-                                      ]),
-                                ]),
-                              ),
-                            ),
-                          ),
-                        ),
-                        marginTop5,
-                        InkWell(
-                          onTap: () async {
-                            final result = await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const MyDialogChoosePrice();
-                              },
-                            );
-                            if (result != null) {
-                              setState(() {
-                                depositAmountTextEditingController.text =
-                                    result;
-                              });
-                            }
-                          },
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                left: 5,
-                              ),
-                              padding: const EdgeInsets.only(
-                                left: 5,
-                                right: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.vertical,
-                                  child: Column(children: [
-                                    //ĐÃ ĐẶT CỌC
-                                    Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                      ),
+
+                                      const Spacer(),
+                                      //Số tiền đã thu - phụ thu
+                                      Obx(() {
+                                        return Text(
+                                            Utils.formatCurrency(orderController
+                                                .order.total_surcharge_amount),
+                                            style: textStyleTabLandscapeLabel);
+                                      })
+                                    ]),
+
+                                //VAT
+                                Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 65,
+                                        height: 20,
+                                        child: Row(
+                                          children: [
+                                            Theme(
+                                              data: ThemeData(
+                                                  unselectedWidgetColor:
+                                                      primaryColor),
+                                              child: Transform.scale(
+                                                scale: 0.8,
+                                                child: Checkbox(
+                                                  value: isCheckedGTGT,
+                                                  onChanged: (bool? value) {
+                                                    if (orderController
+                                                            .orderDetail
+                                                            .total_amount >
+                                                        0) {
+                                                      setState(() {
+                                                        isCheckedGTGT = value!;
+                                                        print(isCheckedGTGT);
+                                                        // áp dụng thue
+                                                        totalVatAmountTextEditingController
+                                                                .text =
+                                                            '${Utils.getSumPriceQuantity(Utils.filterSelected(foodController.foodsToOrder))}';
+                                                      });
+                                                    } else {
+                                                      Utils.showStylishDialog(
+                                                          context,
+                                                          'THÔNG BÁO',
+                                                          'Hóa đơn này chưa đủ điều kiện áp dụng VAT.',
+                                                          StylishDialogType
+                                                              .INFO);
+                                                    }
+                                                  },
+                                                  activeColor: primaryColor,
+                                                  visualDensity:
+                                                      VisualDensity.compact,
+                                                ),
+                                              ),
+                                            ),
+                                            marginRight5,
+                                            const Text(
+                                              "VAT",
+                                              style: textStyleTabLandscapeLabel,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Obx(() {
+                                        return orderController
+                                                    .order.total_vat_amount >
+                                                0
+                                            ? Text(
+                                                "$VAT_PERCENT%",
+                                                style:
+                                                    textStyleTabLandscapeLabel,
+                                              )
+                                            : const SizedBox();
+                                      }),
+                                      const Spacer(),
+                                      //Số tiền thuế đã áp dụng
+                                      Obx(() {
+                                        return Text(
+                                            Utils.formatCurrency(orderController
+                                                .order.total_vat_amount),
+                                            style: textStyleTabLandscapeLabel);
+                                      })
+                                    ]),
+
+                                //DISCOUNT
+                                Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 95,
+                                        height: 20,
+                                        child: Row(
+                                          children: [
+                                            Theme(
+                                              data: ThemeData(
+                                                  unselectedWidgetColor:
+                                                      primaryColor),
+                                              child: Transform.scale(
+                                                scale: 0.8,
+                                                child: Checkbox(
+                                                  value: isCheckedDecrease,
+                                                  onChanged: (bool? value) {
+                                                    if (orderController
+                                                            .orderDetail
+                                                            .total_amount >
+                                                        0) {
+                                                      setState(() {
+                                                        isCheckedDecrease =
+                                                            value!;
+                                                        //Hủy DISCOUNT khi nhấn uncheck checkbox
+                                                        if (isCheckedDecrease ==
+                                                            false) {
+                                                          orderController.cancelDiscount(
+                                                              context,
+                                                              orderController
+                                                                  .orderDetail,
+                                                              orderController
+                                                                  .orderDetail
+                                                                  .order_details);
+                                                        }
+                                                        // bật popup
+                                                        if (isCheckedDecrease) {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return CustomDialogDecreasePrice(
+                                                                order: orderController
+                                                                    .orderDetail,
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+                                                      });
+                                                    } else {
+                                                      Utils.showStylishDialog(
+                                                          context,
+                                                          'THÔNG BÁO',
+                                                          'Hóa đơn này hiện tại không thể áp dụng giảm giá.',
+                                                          StylishDialogType
+                                                              .INFO);
+                                                    }
+                                                  },
+                                                  activeColor: primaryColor,
+                                                  visualDensity:
+                                                      VisualDensity.compact,
+                                                ),
+                                              ),
+                                            ),
+                                            marginRight5,
+                                            const Text(
+                                              "GIẢM GIÁ",
+                                              style: textStyleTabLandscapeLabel,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+
+                                      const Spacer(),
+                                      //Số tiền đã giảm
+                                      Obx(() {
+                                        return Text(
+                                            Utils.formatCurrency(orderController
+                                                .order.total_discount_amount),
+                                            style: textStyleTabLandscapeLabel);
+                                      })
+                                    ]),
+                                marginTop10,
+                                //TỔNG GIẢM TRỪ
+                                Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Spacer(),
+
+                                      const Column(
                                         children: [
-                                          const Spacer(),
-                                          const Text(
-                                            "ĐẶT CỌC",
-                                            style:
-                                                textStylePrimaryLandscapeBold,
-                                          ),
-                                          const Spacer(),
-                                          //Chọn số tiền cọc
                                           Text(
-                                              depositAmountTextEditingController
-                                                  .text,
-                                              style:
-                                                  textStylePrimaryLandscapeBold)
-                                        ]),
-                                  ]),
-                                ),
-                              ),
+                                            "TỔNG GIẢM TRỪ",
+                                            style: textStyleSecondLandscapeBold,
+                                          ),
+                                          Text(
+                                            "(GỒM GIẢM GIÁ, ĐẶT CỌC)",
+                                            style: textStyleSecondLandscape,
+                                          ),
+                                        ],
+                                      ),
+
+                                      const Spacer(),
+                                      //Tổng giảm trừ
+                                      Obx(() {
+                                        return Text(
+                                            Utils.formatCurrency(orderController
+                                                    .order
+                                                    .total_discount_amount +
+                                                orderController
+                                                    .order.deposit_amount),
+                                            style:
+                                                textStyleSecondLandscapeBold);
+                                      })
+                                    ]),
+                                marginTop10,
+
+                                //TỔNG THANH TOÁN
+                                Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Spacer(),
+
+                                      const Text(
+                                        "TỔNG THANH TOÁN",
+                                        style: textStylePrimaryLandscapeBold,
+                                      ),
+
+                                      const Spacer(),
+                                      //Tổng thanh toán
+                                      Obx(() {
+                                        return Text(
+                                            Utils.formatCurrency(orderController
+                                                    .order.total_amount -
+                                                orderController
+                                                    .order.deposit_amount),
+                                            style:
+                                                textStylePrimaryLandscapeBold);
+                                      })
+                                    ]),
+                                marginTop10,
+                              ]),
                             ),
                           ),
                         ),
@@ -1130,160 +1318,126 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                     //LƯU THÊM MÓN MỚI
                     InkWell(
                       onTap: () async {
-                        //Có quyền không gọi món trước
-                        if (!Utils.isValidLengthTextEditController(
-                            nameTextEditingController,
-                            minlength2,
-                            maxlength50)) {
-                          Utils.showStylishDialog(
-                              context,
-                              'THÔNG BÁO',
-                              'Tên khách hàng phải từ 2-50 ký tự.',
-                              StylishDialogType.ERROR);
-                        } else if (!Utils.startsWithZero(
-                                phoneTextEditingController.text) &&
-                            (phoneTextEditingController.text.trim().length <
-                                    minlengthPhone ||
-                                phoneTextEditingController.text.trim().length >
-                                    maxlengthPhone)) {
-                          Utils.showStylishDialog(
-                              context,
-                              'THÔNG BÁO',
-                              'Số điện thoại chưa hợp lệ',
-                              StylishDialogType.ERROR);
-                        } else if (timeTextEditingController.text.trim() ==
-                            '') {
-                          Utils.showStylishDialog(
-                              context,
-                              'THÔNG BÁO',
-                              'Vui lòng chọn thời gian đặt bàn!',
-                              StylishDialogType.ERROR);
-                        } else {
-                          List<OrderDetail> orderDetailList =
-                              []; // danh sach cac mon khi order
-                          print(
-                              "================MÓN CẦN ORDER===================");
-                          for (var foodOrder in foodController.foodsToOrder) {
-                            if (foodOrder.isSelected == true) {
+                        List<OrderDetail> orderDetailList =
+                            []; // danh sach cac mon khi order
+                        print(
+                            "================MÓN CẦN ORDER===================");
+                        for (var foodOrder in foodController.foodsToOrder) {
+                          if (foodOrder.isSelected == true) {
+                            //chi tiet don hang
+                            //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                            OrderDetail orderDetail = OrderDetail(
+                              order_detail_id: "",
+                              price: Utils.isDateTimeInRange(
+                                      foodOrder.temporary_price_from_date,
+                                      foodOrder.temporary_price_to_date)
+                                  ? (foodOrder.price +
+                                      foodOrder.price_with_temporary!)
+                                  : foodOrder.price,
+                              quantity: foodOrder.quantity!,
+                              food_status: FOOD_STATUS_IN_CHEF,
+                              food_id: foodOrder.food_id,
+                              is_gift: (foodOrder.isGift ?? false),
+                              category_id: '',
+                              category_code: foodOrder.category_code,
+                              chef_bar_status: CHEF_BAR_STATUS,
+                              is_addition: false,
+                            );
+                            //MÓN TẶNG
+                            if (orderDetail.is_gift == true) {
+                              orderDetail.price = 0;
+                              isGift = true;
+                            }
+
+                            orderDetailList.add(orderDetail);
+
+                            //show thong tin console
+                            print("--------------------------------");
+                            print("ID: ${foodOrder.food_id}");
+                            print("Name: ${foodOrder.name}");
+                            print("Price: ${foodOrder.price}");
+                            print("Quantity: ${foodOrder.quantity}");
+                            print("Is Selected: ${foodOrder.isSelected}");
+                            print("--------------------------------");
+                          }
+
+                          //Món bán kèm nếu chọn
+                          for (var additionFood
+                              in foodOrder.addition_food_details) {
+                            if (additionFood.isSelected == true) {
                               //chi tiet don hang
                               //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
                               OrderDetail orderDetail = OrderDetail(
                                 order_detail_id: "",
                                 price: Utils.isDateTimeInRange(
-                                        foodOrder.temporary_price_from_date,
-                                        foodOrder.temporary_price_to_date)
-                                    ? (foodOrder.price +
-                                        foodOrder.price_with_temporary!)
-                                    : foodOrder.price,
-                                quantity: foodOrder.quantity!,
+                                        additionFood.temporary_price_from_date,
+                                        additionFood.temporary_price_to_date)
+                                    ? (additionFood.price +
+                                        additionFood.price_with_temporary!)
+                                    : additionFood.price,
+                                quantity: additionFood.quantity!,
                                 food_status: FOOD_STATUS_IN_CHEF,
-                                food_id: foodOrder.food_id,
-                                is_gift: (foodOrder.isGift ?? false),
+                                food_id: additionFood.food_id,
+                                is_gift: false,
                                 category_id: '',
-                                category_code: foodOrder.category_code,
+                                category_code: additionFood.category_code,
                                 chef_bar_status: CHEF_BAR_STATUS,
-                                is_addition: false,
+                                is_addition: true,
                               );
-                              //MÓN TẶNG
-                              if (orderDetail.is_gift == true) {
-                                orderDetail.price = 0;
-                                isGift = true;
-                              }
 
                               orderDetailList.add(orderDetail);
 
                               //show thong tin console
                               print("--------------------------------");
-                              print("ID: ${foodOrder.food_id}");
-                              print("Name: ${foodOrder.name}");
-                              print("Price: ${foodOrder.price}");
-                              print("Quantity: ${foodOrder.quantity}");
-                              print("Is Selected: ${foodOrder.isSelected}");
+                              print("ID: ${additionFood.food_id}");
+                              print("Name: ${additionFood.name}");
+                              print("Price: ${additionFood.price}");
+                              print("Quantity: ${additionFood.quantity}");
+                              print("Is Selected: ${additionFood.isSelected}");
                               print("--------------------------------");
                             }
-
-                            //Món bán kèm nếu chọn
-                            for (var additionFood
-                                in foodOrder.addition_food_details) {
-                              if (additionFood.isSelected == true) {
-                                //chi tiet don hang
-                                //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
-                                OrderDetail orderDetail = OrderDetail(
-                                  order_detail_id: "",
-                                  price: Utils.isDateTimeInRange(
-                                          additionFood
-                                              .temporary_price_from_date,
-                                          additionFood.temporary_price_to_date)
-                                      ? (additionFood.price +
-                                          additionFood.price_with_temporary!)
-                                      : additionFood.price,
-                                  quantity: additionFood.quantity!,
-                                  food_status: FOOD_STATUS_IN_CHEF,
-                                  food_id: additionFood.food_id,
-                                  is_gift: false,
-                                  category_id: '',
-                                  category_code: additionFood.category_code,
-                                  chef_bar_status: CHEF_BAR_STATUS,
-                                  is_addition: true,
-                                );
-
-                                orderDetailList.add(orderDetail);
-
-                                //show thong tin console
-                                print("--------------------------------");
-                                print("ID: ${additionFood.food_id}");
-                                print("Name: ${additionFood.name}");
-                                print("Price: ${additionFood.price}");
-                                print("Quantity: ${additionFood.quantity}");
-                                print(
-                                    "Is Selected: ${additionFood.isSelected}");
-                                print("--------------------------------");
-                              }
-                            }
                           }
-                          print(
-                              "================HẾT MÓN CẦN ORDER===================");
-                          // final result = await showDialog(
-                          //   context: context,
-                          //   builder: (BuildContext context) {
-                          //     return MyDialogConfirmBooking(
-                          //       title: 'BOOKING',
-                          //       discription:
-                          //           'Bàn ${widget.table.name} sẽ được đặt trước vào thời gian ${Utils.convertTimestampToFormatDateVN(Timestamp.fromDate(DateTime.parse(timeTextEditingController.text)))}',
-                          //       table_id: widget.table.table_id,
-                          //       table_name: widget.table.name,
-                          //       slot: (int.tryParse(
-                          //               slotTextEditingController.text) ??
-                          //           0),
-                          //       orderDetailList: orderDetailList,
-                          //       customer_name: nameTextEditingController.text,
-                          //       customer_phone: phoneTextEditingController.text,
-                          //       customer_time_booking:
-                          //           timeTextEditingController.text,
-                          //       //tiền đặt cọc
-                          //       deposit_amount: (double.tryParse(
-                          //               Utils.formatCurrencytoDouble(
-                          //                   depositAmountTextEditingController
-                          //                       .text)) ??
-                          //           0),
-                          //     );
-                          //   },
-                          // );
-                          // if (result == 'success') {
-                          //   Utils.showToast(
-                          //       'Đặt bàn thành công!', TypeToast.SUCCESS);
+                        }
+                        print(
+                            "================HẾT MÓN CẦN ORDER===================");
+                        final result = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MyDialogConfirmOrderTakeAway(
+                              title: 'ĐƠN HÀNG MANG VỀ',
+                              discription: 'Đơn hàng bán mang về?',
+                              total_discount_amount:
+                                  Utils.stringConvertToDouble(
+                                      totalDiscountAmountTextEditingController
+                                          .text),
+                              total_vat_amount: Utils.stringConvertToDouble(
+                                  totalVatAmountTextEditingController.text),
+                              total_surcharge_amount:
+                                  Utils.stringConvertToDouble(
+                                      totalSurchargeAmountTextEditingController
+                                          .text),
+                              orderDetailList: orderDetailList,
+                            );
+                          },
+                        );
+                        if (result == 'success') {
+                          Utils.showToast('Lập đơn hàng mang về thành công!',
+                              TypeToast.SUCCESS);
 
-                          //   Utils.myPopSuccess(context);
-                          // }
+                          Utils.myPopSuccess(context);
                         }
                       },
-                      child: const CustomButtonIcon(
-                          label: 'XÁC NHẬN ĐẶT BÀN',
+                      child: CustomButtonIcon(
+                          label: 'XÁC NHẬN ĐƠN HÀNG',
                           height: 40,
                           iconColor: secondColor,
                           icon: FontAwesomeIcons.plus,
-                          backgroundColor: colorSuccess,
-                          textStyle: TextStyle(
+                          backgroundColor:
+                              Utils.filterSelected(foodController.foodsToOrder)
+                                      .isNotEmpty
+                                  ? colorSuccess
+                                  : grayColor,
+                          textStyle: const TextStyle(
                             color: secondColor,
                             fontSize: 10,
                           )),

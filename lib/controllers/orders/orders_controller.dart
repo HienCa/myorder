@@ -1097,6 +1097,81 @@ class OrderController extends GetxController {
     }
   }
 
+  void createOrderTakeAway(
+    List<OrderDetail> orderDetailList,
+    double total_discount_amount,
+    double total_vat_amount,
+    double total_surcharge_amount,
+    BuildContext context,
+  ) async {
+    try {
+      if (orderDetailList.isNotEmpty) {
+        String id = Utils.generateUUID();
+        // bo sung them note neu can
+        model.Order Order = model.Order.empty();
+        order.order_id = id;
+        order.employee_id = authController.user.uid;
+        order.order_status = ORDER_STATUS_TAKE_AWAY;
+        order.create_at = Timestamp.fromDate(DateTime.now());
+        order.active = DEACTIVE;
+        order.order_code = id.substring(0, 8);
+        order.total_slot = 0;
+        order.total_amount = 0;
+        order.total_discount_amount = 0;
+        order.total_vat_amount = 0;
+        order.total_surcharge_amount = 0;
+
+        CollectionReference ordersCollection =
+            FirebaseFirestore.instance.collection('orders');
+
+        await ordersCollection.doc(id).set(Order.toJson());
+
+        // add order detail
+        var allDocsOrderDetail = await firestore
+            .collection('orders')
+            .doc(id)
+            .collection("orderDetails")
+            .get();
+        double totalAmount = 0;
+        for (OrderDetail orderDetail in orderDetailList) {
+          String idDetail = Utils.generateUUID();
+          orderDetail.order_detail_id = idDetail;
+          if (orderDetail.is_gift == true) {
+            orderDetail.price = 0;
+          }
+          totalAmount += (orderDetail.price * orderDetail.quantity);
+
+          orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
+
+          await firestore
+              .collection('orders')
+              .doc(id)
+              .collection("orderDetails")
+              .doc(idDetail)
+              .set(orderDetail.toJson());
+        }
+        // cập nhật tổng tiền cho order
+        await firestore.collection('orders').doc(id).update({
+          "total_amount": totalAmount,
+        });
+
+        //GỬI BẾP BAR
+        sendToChefBar(id, "MANG VỀ", orderDetailList);
+      }
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+        'Error!',
+        e.message ?? 'Có lỗi xãy ra.',
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error!',
+        e.toString(),
+      );
+    }
+  }
+
   //BOOKING
   /* 
     ************* TẠO ĐƠN HÀNG BOOKING

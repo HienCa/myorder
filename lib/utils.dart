@@ -30,6 +30,11 @@ class Utils {
     return MediaQuery.of(context).orientation == Orientation.landscape;
   }
 
+  //DATETIME
+  static Timestamp convertDatetimeToTimestamp(DateTime datetime) {
+    return Timestamp.fromDate(DateTime.parse(datetime.toString()));
+  }
+
   //TIME BOOKING
   //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
   static bool isNearBookingTime(Timestamp? timeBooking) {
