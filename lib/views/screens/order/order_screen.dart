@@ -7,6 +7,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/area/dialogs/dialog_confirm_table_booking.dart';
 import 'package:myorder/views/screens/order/actions/merge/merge_table_screen.dart';
 import 'package:myorder/views/screens/order/actions/move/move_table_screen.dart';
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
@@ -197,14 +198,33 @@ class _OrderPageState extends State<OrderPage> {
                                   tag: 1,
                                   child: InkWell(
                                     onTap: () => {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  OrderdetailPage(
-                                                    order: orderController
-                                                        .orders[index],
-                                                  )))
+                                      if (orderController
+                                              .orders[index].table!.status ==
+                                          TABLE_STATUS_BOOKING)
+                                        {
+                                          //BOOKING
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CustomDialogConfirmTableBooking(
+                                                targetTable: orderController
+                                                    .orders[index].table!,
+                                              );
+                                            },
+                                          )
+                                        }
+                                      else
+                                        {
+                                          //SERVING
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      OrderdetailPage(
+                                                        order: orderController
+                                                            .orders[index],
+                                                      )))
+                                        }
                                     },
                                     child: Container(
                                         decoration: const BoxDecoration(
@@ -224,50 +244,48 @@ class _OrderPageState extends State<OrderPage> {
                                               child: InkWell(
                                                 onTap: () => {
                                                   showCustomAlertDialogConfirmOrder(
-                                                    context,
-                                                    "SỐ LƯỢNG KHÁCH ${orderController.orders[index].table!.name}",
-                                                    "",
-                                                    colorInformation,
-                                                    slotTextEditingController, //số khách muốn đặt
-                                                    orderController
-                                                        .orders[index]
-                                                        .table!
-                                                        .total_slot, // số lượng khách tối đa có thể tiếp của 1 bàn
-                                                    () async {
-                                                      // order theo table_id
-                                                      print(
-                                                          "SỐ KHÁCH MỚI CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController.text}");
-                                                      if (int.tryParse(
-                                                                  slotTextEditingController
-                                                                      .text)! >
-                                                              1 &&
+                                                      context,
+                                                      "SỐ LƯỢNG KHÁCH ${orderController.orders[index].table!.name}",
+                                                      "",
+                                                      colorInformation,
+                                                      slotTextEditingController, //số khách muốn đặt
+                                                      orderController
+                                                          .orders[index]
+                                                          .table!
+                                                          .total_slot, // số lượng khách tối đa có thể tiếp của 1 bàn
+                                                      () async {
+                                                    // order theo table_id
+                                                    print(
+                                                        "SỐ KHÁCH MỚI CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController.text}");
+                                                    if (int.tryParse(
+                                                                slotTextEditingController
+                                                                    .text)! >
+                                                            1 &&
+                                                        int.tryParse(
+                                                                slotTextEditingController
+                                                                    .text)! <=
+                                                            orderController
+                                                                .orders[index]
+                                                                .table!
+                                                                .total_slot) {
+                                                      //Nếu là đơn hàng mới thì phải nhập số khách
+                                                      orderController.updateSlot(
+                                                          orderController
+                                                              .orders[index],
                                                           int.tryParse(
                                                                   slotTextEditingController
-                                                                      .text)! <=
+                                                                      .text) ??
                                                               orderController
                                                                   .orders[index]
-                                                                  .table!
-                                                                  .total_slot) {
-                                                        //Nếu là đơn hàng mới thì phải nhập số khách
-                                                        orderController.updateSlot(
-                                                            orderController
-                                                                .orders[index],
-                                                            int.tryParse(
-                                                                    slotTextEditingController
-                                                                        .text) ??
-                                                                orderController
-                                                                    .orders[
-                                                                        index]
-                                                                    .total_slot,
-                                                            context);
-                                                      } else {
-                                                        Utils.showErrorFlushbar(
-                                                            context,
-                                                            '',
-                                                            'Số lượng khách không hợp lệ!');
-                                                      }
-                                                    },false
-                                                  )
+                                                                  .total_slot,
+                                                          context);
+                                                    } else {
+                                                      Utils.showErrorFlushbar(
+                                                          context,
+                                                          '',
+                                                          'Số lượng khách không hợp lệ!');
+                                                    }
+                                                  }, false)
                                                 },
                                                 child: Container(
                                                   height: 120,
@@ -281,10 +299,18 @@ class _OrderPageState extends State<OrderPage> {
                                                     color: backgroundOrderColor,
                                                   ),
                                                   child: Center(
-                                                      child: Text(
-                                                          "ĐANG PHỤC VỤ (${orderController.orders[index].total_slot})",
-                                                          style:
-                                                              textStyleOrderTitleBold16)),
+                                                      child: orderController
+                                                                  .orders[index]
+                                                                  .order_status ==
+                                                              ORDER_STATUS_BOOKING
+                                                          ? Text(
+                                                              "BÀN BOOKING (${orderController.orders[index].total_slot})",
+                                                              style:
+                                                                  textStyleOrderTitleBold16)
+                                                          : Text(
+                                                              "ĐANG PHỤC VỤ (${orderController.orders[index].total_slot})",
+                                                              style:
+                                                                  textStyleOrderTitleBold16)),
                                                 ),
                                               ),
                                             ),

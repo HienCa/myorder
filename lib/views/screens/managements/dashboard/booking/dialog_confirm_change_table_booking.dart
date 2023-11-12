@@ -4,30 +4,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
-
 import 'package:myorder/models/table.dart' as table;
-import 'package:myorder/utils.dart';
 
-class CustomDialogConfirmTableBooking extends StatefulWidget {
-  final table.Table targetTable;
-  const CustomDialogConfirmTableBooking({
+class MyDialogConfirmChangeTableBooking extends StatefulWidget {
+  final String order_id;
+  final table.Table oldTable;
+  final table.Table newTable;
+
+  const MyDialogConfirmChangeTableBooking({
     Key? key,
-    required this.targetTable,
+    required this.oldTable,
+    required this.newTable, required this.order_id,
   }) : super(key: key);
 
   @override
-  State<CustomDialogConfirmTableBooking> createState() =>
-      _CustomDialogConfirmTableBookingState();
+  State<MyDialogConfirmChangeTableBooking> createState() =>
+      _MyDialogConfirmChangeTableBookingState();
 }
 
-class _CustomDialogConfirmTableBookingState
-    extends State<CustomDialogConfirmTableBooking> {
+class _MyDialogConfirmChangeTableBookingState
+    extends State<MyDialogConfirmChangeTableBooking> {
+  OrderController orderController = Get.put(OrderController());
   @override
   void dispose() {
     super.dispose();
   }
-
-  OrderController orderController = Get.put(OrderController());
 
   @override
   void initState() {
@@ -56,15 +57,17 @@ class _CustomDialogConfirmTableBookingState
                   children: [
                     const Center(
                       child: Text(
-                        'XÁC NHẬN PHỤC VỤ',
+                        'THAY ĐỔI BÀN PHỤC VỤ',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
                     ListTile(
-                      title: Text(
-                        "Bàn ${widget.targetTable.name} sẽ được chuyển sang trạng thái phục vụ?",
-                        style: textStyleBlackRegular,
+                      title: Center(
+                        child: Text(
+                          'Bạn muốn đổi bàn từ ${widget.oldTable.name} -> ${widget.newTable.name}?',
+                          style: textStyleBlackRegular,
+                        ),
                       ),
                     ),
                     marginTop20,
@@ -93,11 +96,11 @@ class _CustomDialogConfirmTableBookingState
                           ),
                           InkWell(
                             onTap: () => {
-                              // booking
-                              orderController.updateServingTableById(
-                                widget.targetTable,
-                              ),
-                              // Utils.myPopSuccess(context)
+                              orderController.changeTableBooking(
+                                  widget.order_id,
+                                  widget.newTable,
+                                  ),
+                              Navigator.pop(context, 'success')
                             },
                             child: Container(
                               height: 50,
@@ -110,7 +113,7 @@ class _CustomDialogConfirmTableBookingState
                               child: const Center(
                                 child: Text(
                                   'XÁC NHẬN',
-                                  style: textStyleWhiteBold20,
+                                  style: textStyleWhiteBold16,
                                 ),
                               ),
                             ),

@@ -4,23 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
-
 import 'package:myorder/models/table.dart' as table;
+import 'package:myorder/utils.dart';
 
-class CustomDialogCancelMergeTable extends StatefulWidget {
 
+class CustomDialogConfirmTableBooking extends StatefulWidget {
   final table.Table targetTable;
-  const CustomDialogCancelMergeTable({
+  const CustomDialogConfirmTableBooking({
     Key? key,
-
     required this.targetTable,
   }) : super(key: key);
 
   @override
-  State<CustomDialogCancelMergeTable> createState() => _CustomDialogCancelMergeTableState();
+  State<CustomDialogConfirmTableBooking> createState() =>
+      _CustomDialogConfirmTableBookingState();
 }
 
-class _CustomDialogCancelMergeTableState extends State<CustomDialogCancelMergeTable> {
+class _CustomDialogConfirmTableBookingState
+    extends State<CustomDialogConfirmTableBooking> {
   @override
   void dispose() {
     super.dispose();
@@ -55,7 +56,7 @@ class _CustomDialogCancelMergeTableState extends State<CustomDialogCancelMergeTa
                   children: [
                     const Center(
                       child: Text(
-                        'XÁC NHẬN HỦY GỘP BÀN',
+                        'XÁC NHẬN PHỤC VỤ',
                         style: textStylePrimaryBold,
                       ),
                     ),
@@ -63,7 +64,7 @@ class _CustomDialogCancelMergeTableState extends State<CustomDialogCancelMergeTa
                     ListTile(
                       title: Center(
                         child: Text(
-                          "Bàn ${widget.targetTable.name} sẽ về trạng thái chờ nhận khách?",
+                          "Bàn ${widget.targetTable.name} sẽ được chuyển sang trạng thái phục vụ?",
                           style: textStyleBlackRegular,
                         ),
                       ),
@@ -94,10 +95,11 @@ class _CustomDialogCancelMergeTableState extends State<CustomDialogCancelMergeTa
                           ),
                           InkWell(
                             onTap: () => {
-                              // merge
-                              orderController.cancelMergeTableById(
-                                  context, widget.targetTable.table_id, widget.targetTable.name),
-                                  Navigator.pop(context)
+                              // booking
+                              orderController.updateServingTableById(
+                                widget.targetTable,
+                              ),
+                              Utils.myPopSuccess(context)
                             },
                             child: Container(
                               height: 50,

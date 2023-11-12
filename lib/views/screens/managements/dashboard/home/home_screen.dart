@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +9,7 @@ import 'package:myorder/constants/app_constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/area/dialogs/dialog_confirm_table_booking.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_order_detail.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -209,11 +210,11 @@ class _DashboardHomeState extends State<DashboardHome> {
                   Container(
                     height: 40,
                     padding: const EdgeInsets.only(left: 4, right: 8),
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             FaIcon(FontAwesomeIcons.sackDollar,
@@ -223,7 +224,12 @@ class _DashboardHomeState extends State<DashboardHome> {
                                 style: textStyleTabLandscapeLabel),
                           ],
                         ),
-                        Text("500,000", style: textStylePriceBold16)
+                        Obx(() {
+                          return Text(
+                              Utils.formatCurrency(Utils.getSumTotalAmount(
+                                  orderController.orders)),
+                              style: textStylePriceBold16);
+                        })
                       ],
                     ),
                   )
@@ -369,16 +375,30 @@ class _DashboardHomeState extends State<DashboardHome> {
                           marginTop5,
                           InkWell(
                             onTap: () async {
-                              final result = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return MyDialogOrderDetail(
-                                    order: orderController.orders[i],
-                                  );
-                                },
-                              );
-                              if (result == 'success') {
-                                Utils.myPopResult(context, 'success');
+                              if (orderController.orders[i].order_status ==
+                                  ORDER_STATUS_BOOKING) {
+                                //BOOKING
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialogConfirmTableBooking(
+                                      targetTable:
+                                          orderController.orders[i].table!,
+                                    );
+                                  },
+                                );
+                              } else {
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return MyDialogOrderDetail(
+                                      order: orderController.orders[i],
+                                    );
+                                  },
+                                );
+                                if (result == 'success') {
+                                  Utils.myPopResult(context, 'success');
+                                }
                               }
                             },
                             child: Container(

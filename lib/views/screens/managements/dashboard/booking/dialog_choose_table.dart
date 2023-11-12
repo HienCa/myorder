@@ -64,7 +64,7 @@ class _MyDialogChooseTableState extends State<MyDialogChooseTable> {
                   areaIdSelected: areaIdSelected,
                   slot: (int.tryParse(
                           searchSlotTableTextEditingController.text) ??
-                      1),
+                      1), 
                 ),
               ),
             ),

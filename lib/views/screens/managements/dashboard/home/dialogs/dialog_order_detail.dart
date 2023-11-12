@@ -13,6 +13,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/order.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_change_table_booking.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_confirm_update_new_quantity.dart';
 import 'package:myorder/views/screens/order/orderdetail/dialogs/dialog_confirm_finish_foos.dart';
 import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
@@ -670,9 +671,22 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                     style: textStyleTabLandscapeLabel,
                                   ),
                                   const SizedBox(width: 16),
-                                  Text(
-                                    widget.order.table!.name,
-                                    style: textStyleTabLandscapeLabelBold,
+                                  InkWell(
+                                    onTap: () => {
+                                      //show dialog
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return MyDialogChangeTableBooking(
+                                            order: orderController.orderDetail,
+                                          );
+                                        },
+                                      )
+                                    },
+                                    child: Text(
+                                      widget.order.table!.name,
+                                      style: textStyleTabLandscapeLabelBold,
+                                    ),
                                   ),
                                   const Spacer(),
                                   InkWell(
@@ -1685,8 +1699,9 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                       Obx(() {
                                         return Text(
                                             Utils.formatCurrency(orderController
-                                                .order.total_amount - orderController
-                                                .order.deposit_amount),
+                                                    .order.total_amount -
+                                                orderController
+                                                    .order.deposit_amount),
                                             style:
                                                 textStylePrimaryLandscapeBold);
                                       })

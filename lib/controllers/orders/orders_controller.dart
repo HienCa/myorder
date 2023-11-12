@@ -38,7 +38,7 @@ class OrderController extends GetxController {
           Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_SERVING
           GỬI BẾP BAR NẾU CÓ ORDER TỪ TRƯỚC
 
-    2. Nếu sau thời gian booking 1h thì:
+    2. Nếu sau thời gian booking 1h và đơn hàng vẫn ở trạng thái booking thì:
       - Cập nhật hủy phục vụ đơn hàng booking này (active) là DEACTIVE
       - Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_CANCEL
       - Trường hợp khách đến sau 1 giờ thì chọn bàn phục vụ bình thường, không cần booking -> quá giờ quy định.
@@ -147,18 +147,19 @@ class OrderController extends GetxController {
                     });
                   }
                 } else if (Utils.isAfterOneHourFromBookingTime(
-                    order.customer_time_booking)) {
+                        order.customer_time_booking) &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
                   //KIỂM TRA SAU GIỜ BOOKING 1H
                   await firestore
                       .collection('orders')
                       .doc(order.order_id)
                       .update({
-                    "active": DEACTIVE, // đang booking
-                    "order_status": ORDER_STATUS_CANCEL, // đang booking
+                    "active": DEACTIVE,
+                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
                   });
-                  // cập nhật trạng thái don hang empty -> serving
+                  // cập nhật trạng thái bàn empty -> trống
                   await firestore.collection('tables').doc(table_id).update({
-                    "status": TABLE_STATUS_EMPTY, // đang booking
+                    "status": TABLE_STATUS_EMPTY, // đang trống
                   });
                 }
               }
@@ -269,18 +270,19 @@ class OrderController extends GetxController {
                     });
                   }
                 } else if (Utils.isAfterOneHourFromBookingTime(
-                    order.customer_time_booking)) {
+                        order.customer_time_booking) &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
                   //KIỂM TRA SAU GIỜ BOOKING 1H
                   await firestore
                       .collection('orders')
                       .doc(order.order_id)
                       .update({
-                    "active": DEACTIVE, // đang booking
-                    "order_status": ORDER_STATUS_CANCEL, // đang booking
+                    "active": DEACTIVE,
+                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
                   });
-                  // cập nhật trạng thái don hang empty -> serving
+                  // cập nhật trạng thái bàn empty -> trống
                   await firestore.collection('tables').doc(table_id).update({
-                    "status": TABLE_STATUS_EMPTY, // đang booking
+                    "status": TABLE_STATUS_EMPTY, // đang trống
                   });
                 }
               }
@@ -394,18 +396,19 @@ class OrderController extends GetxController {
                   });
                 }
               } else if (Utils.isAfterOneHourFromBookingTime(
-                  order.customer_time_booking)) {
+                      order.customer_time_booking) &&
+                  order.order_status == ORDER_STATUS_BOOKING) {
                 //KIỂM TRA SAU GIỜ BOOKING 1H
                 await firestore
                     .collection('orders')
                     .doc(order.order_id)
                     .update({
-                  "active": DEACTIVE, // đang booking
-                  "order_status": ORDER_STATUS_CANCEL, // đang booking
+                  "active": DEACTIVE,
+                  "order_status": ORDER_STATUS_CANCEL, // đã hủy
                 });
-                // cập nhật trạng thái don hang empty -> serving
+                // cập nhật trạng thái bàn empty -> trống
                 await firestore.collection('tables').doc(table_id).update({
-                  "status": TABLE_STATUS_EMPTY, // đang booking
+                  "status": TABLE_STATUS_EMPTY, // đang trống
                 });
               }
             }
@@ -516,18 +519,19 @@ class OrderController extends GetxController {
                   });
                 }
               } else if (Utils.isAfterOneHourFromBookingTime(
-                  order.customer_time_booking)) {
+                      order.customer_time_booking) &&
+                  order.order_status == ORDER_STATUS_BOOKING) {
                 //KIỂM TRA SAU GIỜ BOOKING 1H
                 await firestore
                     .collection('orders')
                     .doc(order.order_id)
                     .update({
-                  "active": DEACTIVE, // đang booking
-                  "order_status": ORDER_STATUS_CANCEL, // đang booking
+                  "active": DEACTIVE,
+                  "order_status": ORDER_STATUS_CANCEL, // đã hủy
                 });
-                // cập nhật trạng thái don hang empty -> serving
+                // cập nhật trạng thái bàn empty -> trống
                 await firestore.collection('tables').doc(table_id).update({
-                  "status": TABLE_STATUS_EMPTY, // đang booking
+                  "status": TABLE_STATUS_EMPTY, // đang trống
                 });
               }
             }
@@ -1115,7 +1119,7 @@ class OrderController extends GetxController {
           Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_SERVING
           GỬI BẾP BAR NẾU CÓ ORDER TỪ TRƯỚC
 
-    2. Nếu sau thời gian booking 1h thì:
+    2. Nếu sau thời gian booking 1h và đơn hàng vẫn ở trạng thái booking thì:
       - Cập nhật hủy phục vụ đơn hàng booking này (active) là DEACTIVE
       - Trạng thái đơn hàng (order_status) booking là ORDER_STATUS_CANCEL
       - Trường hợp khách đến sau 1 giờ thì chọn bàn phục vụ bình thường, không cần booking -> quá giờ quy định.
@@ -2092,6 +2096,26 @@ class OrderController extends GetxController {
         //Cập nhật trạng thái món ăn theo foodStatus
         await firestore.collection('tables').doc(table.table_id).update({
           "status": TABLE_STATUS_SERVING,
+        }).then((_) async {
+          var tableOrdered = await firestore
+              .collection("orders")
+              .where("table_id", isEqualTo: table.table_id)
+              .where("active", isEqualTo: ACTIVE)
+              .where("order_status", isEqualTo: ORDER_STATUS_BOOKING)
+              .get();
+
+          if (tableOrdered.docs.isNotEmpty) {
+            var order_id = "";
+            for (var doc in tableOrdered.docs) {
+              order_id = doc.id;
+              print(order_id);
+            }
+            if (order_id != "") {
+              await firestore.collection('orders').doc(order_id).update({
+                "order_status": ORDER_STATUS_SERVING,
+              });
+            }
+          }
         }).then((_) {
           Utils.showToast('Bàn đã sẵn sàng phục vụ!', TypeToast.SUCCESS);
         });
@@ -2099,6 +2123,23 @@ class OrderController extends GetxController {
       }
     } catch (e) {
       Utils.showToast('Cập nhật trạng thái thất bại!', TypeToast.ERROR);
+    }
+  }
+
+  //ĐỔI BÀN BOOKING
+  changeTableBooking(String order_id, table.Table newTable) async {
+    try {
+      if (order_id != '' && newTable.table_id != '') {
+        //Đổi bàn
+        await firestore.collection('orders').doc(order_id).update({
+          "table_id": newTable.table_id,
+        }).then((_) {
+          Utils.showToast('Bàn booking đã được thay đổi!', TypeToast.SUCCESS);
+        });
+        update();
+      }
+    } catch (e) {
+      Utils.showToast('Bàn booking thay đổi thất bại!', TypeToast.ERROR);
     }
   }
 

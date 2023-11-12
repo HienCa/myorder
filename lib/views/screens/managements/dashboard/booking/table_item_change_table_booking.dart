@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,21 +7,29 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
-import 'package:myorder/views/screens/area/dialogs/dialog_confirm_table_booking.dart';
-import 'package:myorder/views/screens/order/actions/merge/dialog_confirm_cancel_merge_table.dart';
-import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
+import 'package:myorder/views/screens/managements/dashboard/booking/dialog_confirm_change_table_booking.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:myorder/models/table.dart' as model;
+import 'package:myorder/models/order.dart' as orderM;
 
-class TableItem extends StatefulWidget {
+class TableItemChangeTableBooking extends StatefulWidget {
   final String? areaIdSelected;
-  const TableItem({super.key, this.areaIdSelected});
+  final int slot;
+  final orderM.Order order;
+  const TableItemChangeTableBooking({
+    super.key,
+    this.areaIdSelected,
+    required this.slot,
+    required this.order,
+  });
 
   @override
-  State<TableItem> createState() => _TableItemState();
+  State<TableItemChangeTableBooking> createState() =>
+      _TableItemChangeTableBookingState();
 }
 
-class _TableItemState extends State<TableItem> {
+class _TableItemChangeTableBookingState
+    extends State<TableItemChangeTableBooking> {
   int selectedIndex = 0;
   TableController tableController = Get.put(TableController());
   OrderController orderController = Get.put(OrderController());
@@ -36,11 +46,13 @@ class _TableItemState extends State<TableItem> {
       stream: widget.areaIdSelected == defaultArea
           ? FirebaseFirestore.instance
               .collection('tables')
+              .where('status', isEqualTo: TABLE_STATUS_EMPTY)
               .where('active', isEqualTo: 1)
               .snapshots()
           : FirebaseFirestore.instance
               .collection('tables')
               .where('active', isEqualTo: 1)
+              .where('status', isEqualTo: TABLE_STATUS_EMPTY)
               .where('area_id', isEqualTo: widget.areaIdSelected)
               .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -51,47 +63,34 @@ class _TableItemState extends State<TableItem> {
           return Text('Error: ${snapshot.error}');
         }
         // Lấy danh sách bàn từ dữ liệu snapshot
-        final tables = snapshot.data?.docs
+        var tables = snapshot.data?.docs
                 .map((doc) => model.Table.fromSnap(doc))
                 .toList() ??
             [];
+        if (widget.slot > 1) {
+          tables = tables
+              .where((element) => element.total_slot >= widget.slot)
+              .toList();
+        }
         return ResponsiveGridList(
           desiredItemWidth: 100,
           minSpacing: 10,
           children: List.generate(tables.length, (index) => index).map((i) {
             return InkWell(
-              onTap: () {
-                if (tables[i].status == TABLE_STATUS_MERGED) {
-                  //MERGE
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CustomDialogCancelMergeTable(
-                        targetTable: tables[i],
-                      );
-                    },
-                  );
-                } else if (tables[i].status == TABLE_STATUS_BOOKING) {
-                  //BOOKING
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CustomDialogConfirmTableBooking(
-                        targetTable: tables[i],
-                      );
-                    },
-                  );
-                } else {
-                  //EMPTY AND SERVING
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AddFoodToOrderPage(
-                              table: tables[i],
-                              booking: true,
-                              isGift: false,
-                            )),
-                  );
+              onTap: () async {
+                //Đổi bàn đã booking khi bàn booking vô tình đang phục vụ
+                final result = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return MyDialogConfirmChangeTableBooking(
+                      order_id: widget.order.order_id,
+                      oldTable: widget.order.table!,
+                      newTable: tables[i],
+                    );
+                  },
+                );
+                if (result == 'success') {
+                  Navigator.pop(context);
                 }
               },
               child: Container(
@@ -104,29 +103,7 @@ class _TableItemState extends State<TableItem> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    tables[i].status == TABLE_STATUS_EMPTY
-                        ? ClipOval(child: tableImageEmpty)
-                        : const SizedBox(),
-                    tables[i].status == TABLE_STATUS_SERVING
-                        ? ClipOval(
-                            child: tableImageServing,
-                          )
-                        : const SizedBox(),
-                    tables[i].status == TABLE_STATUS_MERGED
-                        ? ClipOval(
-                            child: tableImageMerge,
-                          )
-                        : const SizedBox(),
-                    tables[i].status == TABLE_STATUS_EMPTY
-                        ? ClipOval(
-                            child: tableImageEmpty,
-                          )
-                        : const SizedBox(),
-                    tables[i].status == TABLE_STATUS_BOOKING
-                        ? ClipOval(
-                            child: tableImageBooking,
-                          )
-                        : const SizedBox(),
+                    ClipOval(child: tableImageEmpty),
                     Text(
                       tables[i].name,
                       style: const TextStyle(

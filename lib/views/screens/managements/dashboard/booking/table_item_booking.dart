@@ -6,14 +6,17 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
 import 'package:myorder/views/screens/managements/dashboard/booking/booking_screen.dart';
-import 'package:myorder/views/screens/order/actions/merge/dialog_confirm_cancel_merge_table.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:myorder/models/table.dart' as model;
 
 class TableItemBooking extends StatefulWidget {
   final String? areaIdSelected;
   final int slot;
-  const TableItemBooking({super.key, this.areaIdSelected, required this.slot});
+  const TableItemBooking({
+    super.key,
+    this.areaIdSelected,
+    required this.slot,
+  });
 
   @override
   State<TableItemBooking> createState() => _TableItemBookingState();
@@ -64,24 +67,14 @@ class _TableItemBookingState extends State<TableItemBooking> {
             return tables[i].total_slot >= widget.slot
                 ? InkWell(
                     onTap: () {
-                      if (tables[i].status != TABLE_STATUS_MERGED) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DashboardBooking(
-                                    table: tables[i],
-                                  )),
-                        );
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomDialogCancelMergeTable(
-                              targetTable: tables[i],
-                            );
-                          },
-                        );
-                      }
+                      //Đặt bàn booking
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DashboardBooking(
+                                  table: tables[i],
+                                )),
+                      );
                     },
                     child: Container(
                       height: 100,
