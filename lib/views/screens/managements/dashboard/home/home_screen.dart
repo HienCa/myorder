@@ -29,6 +29,7 @@ class _DashboardHomeState extends State<DashboardHome> {
   OrderController orderController = Get.put(OrderController());
   var keySearch = "";
   String employeeIdSelected = defaultEmployee;
+  int orderStatus = ORDER_STATUS_SERVING;
   @override
   void initState() {
     super.initState();
@@ -39,7 +40,7 @@ class _DashboardHomeState extends State<DashboardHome> {
     isFinish = false;
 
     //Lấy đơn hàng
-    orderController.getOrders(defaultEmployee, keySearch);
+    orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_SERVING);
   }
 
   bool isServing = true;
@@ -53,18 +54,24 @@ class _DashboardHomeState extends State<DashboardHome> {
           isServing = true;
           isBooking = false;
           isFinish = false;
+
+          orderController.getOrders(defaultEmployee, keySearch, orderStatus);
         });
       case DashBoardHome.Booking:
         setState(() {
           isServing = false;
           isBooking = true;
           isFinish = false;
+          orderController.getOrders(
+              defaultEmployee, keySearch, ORDER_STATUS_BOOKING);
         });
       case DashBoardHome.Finish:
         setState(() {
           isServing = false;
           isBooking = false;
           isFinish = true;
+          orderController.getOrders(
+              defaultEmployee, keySearch, ORDER_STATUS_PAID);
         });
 
       default:
@@ -189,7 +196,8 @@ class _DashboardHomeState extends State<DashboardHome> {
                             Border.all(width: 1, color: borderColorPrimary)),
                     child: TextField(
                       onChanged: (value) {
-                        orderController.getOrders(employeeIdSelected, value);
+                        orderController.getOrders(
+                            employeeIdSelected, value, orderStatus);
                       },
                       style: const TextStyle(color: borderColorPrimary),
                       decoration: const InputDecoration(

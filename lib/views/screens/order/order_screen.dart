@@ -33,7 +33,7 @@ class _OrderPageState extends State<OrderPage> {
   @override
   void initState() {
     super.initState();
-    orderController.getOrders(defaultEmployee, keySearch);
+    orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_SERVING);
   }
 
   @override
@@ -59,7 +59,7 @@ class _OrderPageState extends State<OrderPage> {
               onChanged: (value) => {
                 setState(() {
                   keySearch = value;
-                  orderController.getOrders(employeeIdSelected, value);
+                  orderController.getOrders(employeeIdSelected, value, ORDER_STATUS_SERVING);
                 }),
                 print(value)
               },
@@ -94,7 +94,7 @@ class _OrderPageState extends State<OrderPage> {
                       employeeIdSelected =
                           authController.user.uid; // user dang login
                     }
-                    orderController.getOrders(employeeIdSelected, keySearch);
+                    orderController.getOrders(employeeIdSelected, keySearch, ORDER_STATUS_SERVING);
                     print(employeeIdSelected);
                   });
                 },
@@ -753,7 +753,7 @@ class _OrderPageState extends State<OrderPage> {
                                                         setState(() {
                                                           orderController.getOrders(
                                                               employeeIdSelected,
-                                                              keySearch);
+                                                              keySearch, ORDER_STATUS_SERVING);
                                                         });
                                                       } else if (result ==
                                                           "MERGE-TABLE") {
@@ -764,7 +764,7 @@ class _OrderPageState extends State<OrderPage> {
                                                         setState(() {
                                                           orderController.getOrders(
                                                               employeeIdSelected,
-                                                              keySearch);
+                                                              keySearch, ORDER_STATUS_SERVING);
                                                         });
                                                       } else if (result ==
                                                           "SPLIT-FOOD") {
@@ -781,7 +781,7 @@ class _OrderPageState extends State<OrderPage> {
                                                         setState(() {
                                                           orderController.getOrders(
                                                               employeeIdSelected,
-                                                              keySearch);
+                                                              keySearch, ORDER_STATUS_SERVING);
                                                         });
                                                       } else if (result ==
                                                           'FAIL-CANCEL-TABLE') {

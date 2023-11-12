@@ -47,7 +47,8 @@ class OrderController extends GetxController {
   //don hang
   final Rx<List<model.Order>> _orders = Rx<List<model.Order>>([]);
   List<model.Order> get orders => _orders.value;
-  getOrders(String employeeIdSelected, String keySearch) async {
+  getOrders(
+      String employeeIdSelected, String keySearch, int orderStatus) async {
     if (keySearch.isEmpty && employeeIdSelected == defaultEmployee) {
       //lấy tất cả don hang
       print("lấy tất cả");
@@ -56,7 +57,7 @@ class OrderController extends GetxController {
         firestore
             .collection('orders')
             .where("active", isEqualTo: ACTIVE)
-            // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+            .where('order_status', isEqualTo: orderStatus)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -179,7 +180,7 @@ class OrderController extends GetxController {
             .collection('orders')
             .where('employee_id', isEqualTo: employeeIdSelected)
             .where("active", isEqualTo: ACTIVE)
-            // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+            .where('order_status', isEqualTo: orderStatus)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -302,7 +303,7 @@ class OrderController extends GetxController {
           .collection('orders')
           .where('employee_id', isEqualTo: employeeIdSelected)
           .where("active", isEqualTo: ACTIVE)
-          // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+          .where('order_status', isEqualTo: orderStatus)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<model.Order> retVal = [];
@@ -424,7 +425,7 @@ class OrderController extends GetxController {
       _orders.bindStream(firestore
           .collection('orders')
           .where("active", isEqualTo: ACTIVE)
-          // .where('order_status', isEqualTo: ORDER_STATUS_SERVING)
+          .where('order_status', isEqualTo: orderStatus)
           .orderBy('name')
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
