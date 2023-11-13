@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/table.dart' as table;
@@ -983,21 +984,9 @@ class OrderController extends GetxController {
           } else {
             orderDetail.is_gift = false;
           }
-          // //nếu là món nước -> trạng thái Hoàn Thành
-          // if (orderDetail.category_code == CATEGORY_DRINK) {
-          //   orderDetail.food_status = FOOD_STATUS_FINISH;
-          // }
+
           totalAmount += (orderDetail.price * orderDetail.quantity);
 
-          //Thông báo cho bếp rằng khách yêu cầu dừng chế biến
-          //Hiện tại chỉ có món ăn cần chế biến
-          // if (orderDetail.category_code == CATEGORY_FOOD) {
-          //   //MÓN ĂN
-          //   orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
-          // }else if (orderDetail.category_code == CATEGORY_OTHER) {
-          //   //MÓN KHÁC
-          //   orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
-          // }
           orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
 
           await firestore
@@ -1099,6 +1088,7 @@ class OrderController extends GetxController {
 
   void createOrderTakeAway(
     List<OrderDetail> orderDetailList,
+    double discount_percent,
     double total_discount_amount,
     double total_vat_amount,
     double total_surcharge_amount,
@@ -1109,11 +1099,13 @@ class OrderController extends GetxController {
       if (orderDetailList.isNotEmpty) {
         String id = Utils.generateUUID();
         // bo sung them note neu can
-        model.Order Order = model.Order.empty();
+        model.Order order = model.Order.empty();
         order.order_id = id;
+        // order.table_id = "MV";
         order.employee_id = authController.user.uid;
         order.order_status = ORDER_STATUS_TAKE_AWAY;
         order.create_at = Timestamp.fromDate(DateTime.now());
+        order.payment_at = Timestamp.fromDate(DateTime.now());
         order.active = DEACTIVE;
         order.order_code = id.substring(0, 8);
         order.total_slot = 0;
@@ -1125,7 +1117,7 @@ class OrderController extends GetxController {
         CollectionReference ordersCollection =
             FirebaseFirestore.instance.collection('orders');
 
-        await ordersCollection.doc(id).set(Order.toJson());
+        await ordersCollection.doc(id).set(order.toJson());
 
         // add order detail
         var allDocsOrderDetail = await firestore
@@ -1149,11 +1141,58 @@ class OrderController extends GetxController {
               .doc(idDetail)
               .set(orderDetail.toJson());
         }
-
+        createBillTakeAway(id, id.substring(0, 8), total_vat_amount,
+            total_discount_amount, total_amount);
         //GỬI BẾP BAR
-        sendToChefBar(id, "MANG VỀ", orderDetailList);
+        sendToChefBar(id, "MV", orderDetailList);
       }
       Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+        'Error!',
+        e.message ?? 'Có lỗi xãy ra.',
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error!',
+        e.toString(),
+      );
+    }
+  }
+
+  void createBillTakeAway(String order_id, String order_code, double vat_amount,
+      double discount_amount, double total_amount) async {
+    try {
+      String id = Utils.generateUUID();
+
+      //total_amount: tổng tiền đơn hàng đã cộng trừ vat và discount -> số tiền thực tế phải trả
+      //vat_amount: tổng tiền vat đã áp dụng cho đơn hàng
+      //discount_amount: tổng tiền giảm giá đã áp dụng cho đơn hàng
+      Timestamp now = Timestamp.now();
+
+      Bill bill = Bill(
+          bill_id: id,
+          order_id: order_id,
+          total_amount: total_amount,
+          total_estimate_amount: 0.0,
+          vat_amount: vat_amount,
+          discount_amount: discount_amount,
+          payment_at: now,
+          order_code: order_code,
+          total_slot: 0);
+      bill.total_estimate_amount =
+          bill.total_amount - bill.vat_amount + bill.discount_amount;
+      //tối thiểu là 0đ
+      if (bill.total_estimate_amount < 0) {
+        bill.total_estimate_amount = 0;
+      }
+      if (bill.total_amount < 0) {
+        bill.total_amount = 0;
+      }
+      CollectionReference billsCollection =
+          FirebaseFirestore.instance.collection('bills');
+
+      await billsCollection.doc(id).set(bill.toJson());
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',

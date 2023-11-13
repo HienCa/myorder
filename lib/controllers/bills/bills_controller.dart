@@ -208,7 +208,8 @@ class BillController extends GetxController {
                     //     image: image,
                     //     category_id: category_id);
                     // print(food_name);
-                     modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                    modelFood.Food food =
+                        modelFood.Food.fromSnap(foodCollection);
                     orderDetail.food = food;
                   }
                 }
@@ -438,8 +439,9 @@ class BillController extends GetxController {
                       //     category_id: category_id);
                       // print(food_name);
 
-                      modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
-                    orderDetail.food = food;
+                      modelFood.Food food =
+                          modelFood.Food.fromSnap(foodCollection);
+                      orderDetail.food = food;
                     }
                   }
                   orderDetails.add(orderDetail);
@@ -476,7 +478,8 @@ class BillController extends GetxController {
           vat_amount: vat_amount ?? 0,
           discount_amount: discount_amount ?? 0,
           payment_at: now,
-          order_code: order_code, total_slot: order.total_slot);
+          order_code: order_code,
+          total_slot: order.total_slot);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ
@@ -530,4 +533,6 @@ class BillController extends GetxController {
       );
     }
   }
+
+  
 }

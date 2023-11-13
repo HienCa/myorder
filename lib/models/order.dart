@@ -95,7 +95,7 @@ class Order {
         customer_name = '',
         customer_phone = '',
         deposit_amount = 0,
-        customer_time_booking = Timestamp.now(),
+        customer_time_booking = null,
         table_merge_ids = [],
         table_merge_names = [];
 

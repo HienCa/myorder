@@ -14,7 +14,7 @@ import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
-enum DashBoardHome { Serving, Booking, Finish }
+enum DashBoardHome { Serving, Booking, Finish, TakeAway }
 
 class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
@@ -38,6 +38,7 @@ class _DashboardHomeState extends State<DashboardHome> {
     isServing = true;
     isBooking = false;
     isFinish = false;
+    isTakeAway = false;
 
     //Lấy đơn hàng
     orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_SERVING);
@@ -46,6 +47,7 @@ class _DashboardHomeState extends State<DashboardHome> {
   bool isServing = true;
   bool isBooking = false;
   bool isFinish = false;
+  bool isTakeAway = false;
 
   void setUpScreen(DashBoardHome dashBoardHome) {
     switch (dashBoardHome) {
@@ -54,7 +56,7 @@ class _DashboardHomeState extends State<DashboardHome> {
           isServing = true;
           isBooking = false;
           isFinish = false;
-
+          isTakeAway = false;
           orderController.getOrders(defaultEmployee, keySearch, orderStatus);
         });
       case DashBoardHome.Booking:
@@ -62,6 +64,7 @@ class _DashboardHomeState extends State<DashboardHome> {
           isServing = false;
           isBooking = true;
           isFinish = false;
+          isTakeAway = false;
           orderController.getOrders(
               defaultEmployee, keySearch, ORDER_STATUS_BOOKING);
         });
@@ -70,8 +73,18 @@ class _DashboardHomeState extends State<DashboardHome> {
           isServing = false;
           isBooking = false;
           isFinish = true;
+          isTakeAway = false;
           orderController.getOrders(
               defaultEmployee, keySearch, ORDER_STATUS_PAID);
+        });
+      case DashBoardHome.TakeAway:
+        setState(() {
+          isServing = false;
+          isBooking = false;
+          isFinish = false;
+          isTakeAway = true;
+          orderController.getOrders(
+              defaultEmployee, keySearch, ORDER_STATUS_TAKE_AWAY);
         });
 
       default:
@@ -171,6 +184,36 @@ class _DashboardHomeState extends State<DashboardHome> {
                         ),
                       ),
                       isFinish
+                          ? Container(
+                              height: 5,
+                              width: 80,
+                              decoration: const BoxDecoration(
+                                color: primaryColor,
+                                borderRadius: borderContainer8,
+                              ),
+                            )
+                          : const SizedBox()
+                    ]),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setUpScreen(DashBoardHome.TakeAway);
+                    },
+                    child: Column(children: [
+                      Expanded(
+                        child: SizedBox(
+                          width: 70,
+                          child: Center(
+                            child: Text(
+                              "MANG VỀ",
+                              style: isTakeAway
+                                  ? textStyleTabLandscapeActive
+                                  : textStyleTabLandscapeDeActive,
+                            ),
+                          ),
+                        ),
+                      ),
+                      isTakeAway
                           ? Container(
                               height: 5,
                               width: 80,

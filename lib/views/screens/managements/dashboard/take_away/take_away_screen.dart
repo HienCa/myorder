@@ -1468,120 +1468,129 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    //VALIDATE THÔNG TIN
-
                     //LƯU THÊM MÓN MỚI
                     InkWell(
                       onTap: () async {
-                        List<OrderDetail> orderDetailList =
-                            []; // danh sach cac mon khi order
-                        print(
-                            "================MÓN CẦN ORDER===================");
-                        for (var foodOrder in foodController.foodsToOrder) {
-                          if (foodOrder.isSelected == true) {
-                            //chi tiet don hang
-                            //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
-                            OrderDetail orderDetail = OrderDetail(
-                              order_detail_id: "",
-                              price: Utils.isDateTimeInRange(
-                                      foodOrder.temporary_price_from_date,
-                                      foodOrder.temporary_price_to_date)
-                                  ? (foodOrder.price +
-                                      foodOrder.price_with_temporary!)
-                                  : foodOrder.price,
-                              quantity: foodOrder.quantity!,
-                              food_status: FOOD_STATUS_IN_CHEF,
-                              food_id: foodOrder.food_id,
-                              is_gift: (foodOrder.isGift ?? false),
-                              category_id: '',
-                              category_code: foodOrder.category_code,
-                              chef_bar_status: CHEF_BAR_STATUS,
-                              is_addition: false,
-                            );
-                            //MÓN TẶNG
-                            if (orderDetail.is_gift == true) {
-                              orderDetail.price = 0;
-                              isGift = true;
-                            }
-
-                            orderDetailList.add(orderDetail);
-
-                            //show thong tin console
-                            print("--------------------------------");
-                            print("ID: ${foodOrder.food_id}");
-                            print("Name: ${foodOrder.name}");
-                            print("Price: ${foodOrder.price}");
-                            print("Quantity: ${foodOrder.quantity}");
-                            print("Is Selected: ${foodOrder.isSelected}");
-                            print("--------------------------------");
-                          }
-
-                          //Món bán kèm nếu chọn
-                          for (var additionFood
-                              in foodOrder.addition_food_details) {
-                            if (additionFood.isSelected == true) {
+                        if (Utils.filterSelected(foodController.foodsToOrder)
+                            .isNotEmpty) {
+                          List<OrderDetail> orderDetailList =
+                              []; // danh sach cac mon khi order
+                          print(
+                              "================MÓN CẦN ORDER===================");
+                          for (var foodOrder in foodController.foodsToOrder) {
+                            if (foodOrder.isSelected == true) {
                               //chi tiet don hang
                               //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
                               OrderDetail orderDetail = OrderDetail(
                                 order_detail_id: "",
                                 price: Utils.isDateTimeInRange(
-                                        additionFood.temporary_price_from_date,
-                                        additionFood.temporary_price_to_date)
-                                    ? (additionFood.price +
-                                        additionFood.price_with_temporary!)
-                                    : additionFood.price,
-                                quantity: additionFood.quantity!,
+                                        foodOrder.temporary_price_from_date,
+                                        foodOrder.temporary_price_to_date)
+                                    ? (foodOrder.price +
+                                        foodOrder.price_with_temporary!)
+                                    : foodOrder.price,
+                                quantity: foodOrder.quantity!,
                                 food_status: FOOD_STATUS_IN_CHEF,
-                                food_id: additionFood.food_id,
-                                is_gift: false,
+                                food_id: foodOrder.food_id,
+                                is_gift: (foodOrder.isGift ?? false),
                                 category_id: '',
-                                category_code: additionFood.category_code,
+                                category_code: foodOrder.category_code,
                                 chef_bar_status: CHEF_BAR_STATUS,
-                                is_addition: true,
+                                is_addition: false,
                               );
+                              //MÓN TẶNG
+                              if (orderDetail.is_gift == true) {
+                                orderDetail.price = 0;
+                                isGift = true;
+                              }
 
                               orderDetailList.add(orderDetail);
 
                               //show thong tin console
                               print("--------------------------------");
-                              print("ID: ${additionFood.food_id}");
-                              print("Name: ${additionFood.name}");
-                              print("Price: ${additionFood.price}");
-                              print("Quantity: ${additionFood.quantity}");
-                              print("Is Selected: ${additionFood.isSelected}");
+                              print("ID: ${foodOrder.food_id}");
+                              print("Name: ${foodOrder.name}");
+                              print("Price: ${foodOrder.price}");
+                              print("Quantity: ${foodOrder.quantity}");
+                              print("Is Selected: ${foodOrder.isSelected}");
                               print("--------------------------------");
                             }
-                          }
-                        }
-                        print(
-                            "================HẾT MÓN CẦN ORDER===================");
-                        final result = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return MyDialogConfirmOrderTakeAway(
-                              title: 'ĐƠN HÀNG MANG VỀ',
-                              discription: 'Đơn hàng bán mang về?',
-                              total_discount_amount:
-                                  Utils.stringConvertToDouble(
-                                      totalDiscountAmountTextEditingController
-                                          .text),
-                              total_vat_amount: Utils.stringConvertToDouble(
-                                  totalVatAmountTextEditingController.text),
-                              total_surcharge_amount:
-                                  Utils.stringConvertToDouble(
-                                      totalSurchargeAmountTextEditingController
-                                          .text),
-                              orderDetailList: orderDetailList,
-                              total_amount: Utils.stringConvertToDouble(
-                                  totalAmountTextEditingController.text),
-                            );
-                          },
-                        );
-                        if (result == 'success') {
-                          Utils.showToast('Lập đơn hàng mang về thành công!',
-                              TypeToast.SUCCESS);
 
-                          Utils.myPopSuccess(context);
+                            //Món bán kèm nếu chọn
+                            for (var additionFood
+                                in foodOrder.addition_food_details) {
+                              if (additionFood.isSelected == true) {
+                                //chi tiet don hang
+                                //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                OrderDetail orderDetail = OrderDetail(
+                                  order_detail_id: "",
+                                  price: Utils.isDateTimeInRange(
+                                          additionFood
+                                              .temporary_price_from_date,
+                                          additionFood.temporary_price_to_date)
+                                      ? (additionFood.price +
+                                          additionFood.price_with_temporary!)
+                                      : additionFood.price,
+                                  quantity: additionFood.quantity!,
+                                  food_status: FOOD_STATUS_IN_CHEF,
+                                  food_id: additionFood.food_id,
+                                  is_gift: false,
+                                  category_id: '',
+                                  category_code: additionFood.category_code,
+                                  chef_bar_status: CHEF_BAR_STATUS,
+                                  is_addition: true,
+                                );
+
+                                orderDetailList.add(orderDetail);
+
+                                //show thong tin console
+                                print("--------------------------------");
+                                print("ID: ${additionFood.food_id}");
+                                print("Name: ${additionFood.name}");
+                                print("Price: ${additionFood.price}");
+                                print("Quantity: ${additionFood.quantity}");
+                                print(
+                                    "Is Selected: ${additionFood.isSelected}");
+                                print("--------------------------------");
+                              }
+                            }
+                          }
+                          print(
+                              "================HẾT MÓN CẦN ORDER===================");
+
+                          final result = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return MyDialogConfirmOrderTakeAway(
+                                title: 'ĐƠN HÀNG MANG VỀ',
+                                discription: 'Đơn hàng bán mang về?',
+                                total_discount_amount:
+                                    Utils.stringConvertToDouble(
+                                        totalDiscountAmountTextEditingController
+                                            .text),
+                                total_vat_amount: Utils.stringConvertToDouble(
+                                    totalVatAmountTextEditingController.text),
+                                total_surcharge_amount:
+                                    Utils.stringConvertToDouble(
+                                        totalSurchargeAmountTextEditingController
+                                            .text),
+                                orderDetailList: orderDetailList,
+                                total_amount: Utils.stringConvertToDouble(
+                                    totalAmountTextEditingController.text),
+                                discount_percent:
+                                    pricePercentResult.type_value ==
+                                            TYPE_PERCENT
+                                        ? pricePercentResult.value
+                                        : 0,
+                              );
+                            },
+                          );
+                          if (result == 'success') {
+                            Utils.showToast('Lập đơn hàng mang về thành công!',
+                                TypeToast.SUCCESS);
+
+                            Utils.myPopSuccess(context);
+                          }
                         }
                       },
                       child: CustomButtonIcon(
