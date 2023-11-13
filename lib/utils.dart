@@ -335,6 +335,24 @@ class Utils {
     return fliteredList;
   }
 
+  static List<FoodOrder> filterSelectedCategory(
+      List<FoodOrder> list, int categoryCode) {
+    List<FoodOrder> fliteredList = [];
+    for (var item in list) {
+      //Nếu có category thì lọc theo category, nếu truyền vào CATEGORY_ALL thì lấy tất cả selected
+      if (categoryCode == CATEGORY_ALL) {
+        if (item.isSelected == true) {
+          fliteredList.add(item);
+        }
+      } else {
+        if (item.isSelected == true && item.category_code == categoryCode) {
+          fliteredList.add(item);
+        }
+      }
+    }
+    return fliteredList;
+  }
+
   static List<String> filterFoodIdsSelected(List<Food> list) {
     List<String> listFoodIds = [];
     for (var item in list) {
@@ -425,12 +443,40 @@ class Utils {
     }
     return total;
   }
-
   //Tính tổng tiền theo total_amount
   static double getSumPriceQuantity(List<dynamic> list) {
     double total = 0;
     for (var item in list) {
       total += (item.price * item.quantity);
+    }
+    return total;
+  }
+  //Tính tổng tiền theo total_amount
+  static double getSumPriceQuantitySelected(List<dynamic> list) {
+    double total = 0;
+    for (var item in list) {
+      if (item.isSelected == true && Utils.isDateTimeInRange(
+          item.temporary_price_from_date, item.temporary_price_to_date)) {
+        total += ((item.price_with_temporary ?? 0) * item.quantity);
+      } else if (item.isSelected == true) {
+        total += (item.price * item.quantity);
+      }
+    }
+    return total;
+  }
+
+  //Tính tổng tiền theo price * quantity theo category
+  static double getSumPriceQuantityCategory(
+      List<FoodOrder> list, int categoryCode) {
+    list = filterSelectedCategory(list, categoryCode);
+    double total = 0;
+    for (var item in list) {
+      if (Utils.isDateTimeInRange(
+          item.temporary_price_from_date, item.temporary_price_to_date)) {
+        total += ((item.price_with_temporary ?? 0) * (item.quantity ?? 1));
+      } else {
+        total += (item.price * (item.quantity ?? 1));
+      }
     }
     return total;
   }

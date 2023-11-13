@@ -69,6 +69,11 @@ const int ERROR = 2;
 const int WARNING = 3;
 const int INFO = 4;
 
+//VALUE TYPE
+const int TYPE_PRICE = 1;
+const int TYPE_PERCENT = 2;
+
+
 // text length
 const maxlengthName = 50;
 const minlengthName = 2;

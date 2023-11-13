@@ -12,6 +12,7 @@ class MyDialogConfirmOrderTakeAway extends StatefulWidget {
   final double total_vat_amount;
   final double total_discount_amount;
   final double total_surcharge_amount;
+  final double total_amount;
 
   final List<OrderDetail> orderDetailList;
   const MyDialogConfirmOrderTakeAway({
@@ -21,7 +22,7 @@ class MyDialogConfirmOrderTakeAway extends StatefulWidget {
     required this.total_vat_amount,
     required this.total_discount_amount,
     required this.total_surcharge_amount,
-    required this.orderDetailList,
+    required this.orderDetailList, required this.total_amount,
   }) : super(key: key);
 
   @override
@@ -108,6 +109,7 @@ class _MyDialogConfirmOrderTakeAwayState
                                   widget.total_discount_amount,
                                   widget.total_vat_amount,
                                   widget.total_surcharge_amount,
+                                  widget.total_amount,
                                   context),
                               Navigator.pop(context, 'success')
                             },

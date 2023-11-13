@@ -1102,6 +1102,7 @@ class OrderController extends GetxController {
     double total_discount_amount,
     double total_vat_amount,
     double total_surcharge_amount,
+    double total_amount,
     BuildContext context,
   ) async {
     try {
@@ -1116,10 +1117,10 @@ class OrderController extends GetxController {
         order.active = DEACTIVE;
         order.order_code = id.substring(0, 8);
         order.total_slot = 0;
-        order.total_amount = 0;
-        order.total_discount_amount = 0;
-        order.total_vat_amount = 0;
-        order.total_surcharge_amount = 0;
+        order.total_amount = total_amount;
+        order.total_discount_amount = total_discount_amount;
+        order.total_vat_amount = total_vat_amount;
+        order.total_surcharge_amount = total_surcharge_amount;
 
         CollectionReference ordersCollection =
             FirebaseFirestore.instance.collection('orders');
@@ -1132,15 +1133,13 @@ class OrderController extends GetxController {
             .doc(id)
             .collection("orderDetails")
             .get();
-        double totalAmount = 0;
+
         for (OrderDetail orderDetail in orderDetailList) {
           String idDetail = Utils.generateUUID();
           orderDetail.order_detail_id = idDetail;
           if (orderDetail.is_gift == true) {
             orderDetail.price = 0;
           }
-          totalAmount += (orderDetail.price * orderDetail.quantity);
-
           orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
 
           await firestore
@@ -1150,10 +1149,6 @@ class OrderController extends GetxController {
               .doc(idDetail)
               .set(orderDetail.toJson());
         }
-        // cập nhật tổng tiền cho order
-        await firestore.collection('orders').doc(id).update({
-          "total_amount": totalAmount,
-        });
 
         //GỬI BẾP BAR
         sendToChefBar(id, "MANG VỀ", orderDetailList);

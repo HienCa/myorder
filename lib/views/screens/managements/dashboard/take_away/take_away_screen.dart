@@ -10,9 +10,10 @@ import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/models/price_percent.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/dashboard/take_away/dialog_confirm_booking.dart';
-import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
+import 'package:myorder/views/screens/managements/dashboard/take_away/dialog_confirm_take_away.dart';
+import 'package:myorder/views/screens/managements/dashboard/take_away/dialog_decrease_price_take_away.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
@@ -40,9 +41,13 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
   final totalVatAmountTextEditingController = TextEditingController();
   final totalDiscountAmountTextEditingController = TextEditingController();
   final totalSurchargeAmountTextEditingController = TextEditingController();
+  final totalAmountTextEditingController = TextEditingController();
 
   String keySearch = "";
   int categoryCodeSelected = 0;
+  int categoryCodeDecrease = CATEGORY_ALL;
+  PricePercent pricePercentResult =
+      PricePercent(value: 0, type_value: TYPE_PRICE);
   @override
   void dispose() {
     super.dispose();
@@ -114,6 +119,75 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
           categoryCodeSelected = CATEGORY_GIFT;
         });
       default:
+    }
+  }
+
+  void getTotalAmount() {
+    double totalSelectedAmount =
+        Utils.getSumPriceQuantitySelected(foodController.foodsToOrder);
+
+    //Tính lại VAT
+    //TỔNG VAT THEO ĐƠN HÀNG
+    if (isCheckedGTGT) {
+      double totalVatAmount = (totalSelectedAmount * VAT_PERCENT) / 100;
+
+      totalVatAmountTextEditingController.text =
+          Utils.formatCurrency(totalVatAmount);
+    }
+    //Tính lại discount
+    if (isCheckedDecrease) {
+      //TỔNG GIẢM GIÁ THEO ĐƠN HÀNG
+      double totalSelectedAmount = Utils.getSumPriceQuantityCategory(
+          foodController.foodsToOrder,
+          (pricePercentResult.type_category ?? CATEGORY_ALL));
+      double priceDecrease = 0;
+      if (pricePercentResult.value > 0) {
+        if (pricePercentResult.type_value == TYPE_PRICE) {
+          //Nếu giảm giá bằng tiền
+          priceDecrease = pricePercentResult.value;
+          //Giới hạn số tiền giảm
+          if (priceDecrease > totalSelectedAmount) {
+            priceDecrease = totalSelectedAmount;
+
+            Utils.showStylishDialog(
+                context,
+                "THÔNG BÁO",
+                "Đơn hàng này giảm tối đa ${Utils.formatCurrency(priceDecrease)}.",
+                StylishDialogType.INFO);
+            if (priceDecrease == 0) {
+              isCheckedDecrease = false;
+            }
+          }
+        } else {
+          //giảm giá theo %
+          priceDecrease =
+              (totalSelectedAmount * pricePercentResult.value) / 100;
+        }
+      }
+
+      totalDiscountAmountTextEditingController.text =
+          Utils.formatCurrency(priceDecrease);
+    }
+
+    double totalVatAmount =
+        Utils.stringConvertToDouble(totalVatAmountTextEditingController.text);
+    double totalDiscountAmount = Utils.stringConvertToDouble(
+        totalDiscountAmountTextEditingController.text);
+    double totalSurchargeAmount = Utils.stringConvertToDouble(
+        totalSurchargeAmountTextEditingController.text);
+
+    totalAmountTextEditingController.text = Utils.formatCurrency(
+        totalSelectedAmount +
+            totalVatAmount -
+            totalDiscountAmount +
+            totalSurchargeAmount);
+
+    if ((totalSelectedAmount +
+            totalVatAmount -
+            totalDiscountAmount +
+            totalSurchargeAmount) <
+        0) {
+      totalAmountTextEditingController.text = '0';
     }
   }
 
@@ -312,6 +386,8 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                               '${Utils.getSumPriceQuantity(Utils.filterSelected(foodController.foodsToOrder))}';
                                           print(
                                               "THÊM MÓN: ${food.name} - SL: ${food.quantity}");
+                                          //TÍNH TỔNG TIỀN
+                                          getTotalAmount();
                                         })
                                       },
                                       child: Container(
@@ -484,6 +560,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
 
                                           print(
                                               "THÊM MÓN: ${food.name} - SL: ${food.quantity}");
+                                          getTotalAmount();
                                         })
                                       },
                                       child: Container(
@@ -865,6 +942,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                                               () {
                                                                             foodController.foodsToOrder[index].quantity =
                                                                                 (foodController.foodsToOrder[index].quantity ?? 0) - 1;
+                                                                            getTotalAmount();
                                                                           });
                                                                         }
                                                                       },
@@ -913,6 +991,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                                           foodController
                                                                               .foodsToOrder[index]
                                                                               .quantity = (foodController.foodsToOrder[index].quantity ?? 0) + 1;
+                                                                          getTotalAmount();
                                                                         });
                                                                       },
                                                                       child:
@@ -982,6 +1061,8 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                                           () async {
                                                                             setState(() {
                                                                               foodController.foodsToOrder[index].isSelected = false;
+                                                                              //TÍNH TỔNG ĐƠN HÀNG
+                                                                              getTotalAmount();
                                                                             });
                                                                           },
                                                                         ),
@@ -1087,26 +1168,39 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                 child: Checkbox(
                                                   value: isCheckedGTGT,
                                                   onChanged: (bool? value) {
-                                                    if (orderController
-                                                            .orderDetail
-                                                            .total_amount >
-                                                        0) {
-                                                      setState(() {
-                                                        isCheckedGTGT = value!;
-                                                        print(isCheckedGTGT);
-                                                        // áp dụng thue
+                                                    setState(() {
+                                                      isCheckedGTGT = value!;
+                                                      if (isCheckedGTGT) {
+                                                        //TỔNG TIỀN ĐƠN HÀNG
+
+                                                        double totalAmount = Utils
+                                                            .getSumPriceQuantitySelected(
+                                                                foodController
+                                                                    .foodsToOrder);
+
+                                                        //TỔNG VAT THEO ĐƠN HÀNG
+                                                        double totalVatAmount =
+                                                            (totalAmount *
+                                                                    VAT_PERCENT) /
+                                                                100;
+
                                                         totalVatAmountTextEditingController
                                                                 .text =
-                                                            '${Utils.getSumPriceQuantity(Utils.filterSelected(foodController.foodsToOrder))}';
-                                                      });
-                                                    } else {
-                                                      Utils.showStylishDialog(
-                                                          context,
-                                                          'THÔNG BÁO',
-                                                          'Hóa đơn này chưa đủ điều kiện áp dụng VAT.',
-                                                          StylishDialogType
-                                                              .INFO);
-                                                    }
+                                                            Utils.formatCurrency(
+                                                                totalVatAmount);
+                                                      } else {
+                                                        // Utils.showStylishDialog(
+                                                        //     context,
+                                                        //     'THÔNG BÁO',
+                                                        //     'Hóa đơn này chưa đủ điều kiện áp dụng VAT.',
+                                                        //     StylishDialogType
+                                                        //         .INFO);
+                                                        isCheckedGTGT = false;
+                                                        totalVatAmountTextEditingController
+                                                            .text = '0';
+                                                      }
+                                                      getTotalAmount();
+                                                    });
                                                   },
                                                   activeColor: primaryColor,
                                                   visualDensity:
@@ -1123,25 +1217,22 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                         ),
                                       ),
                                       const Spacer(),
-                                      Obx(() {
-                                        return orderController
-                                                    .order.total_vat_amount >
-                                                0
-                                            ? Text(
-                                                "$VAT_PERCENT%",
-                                                style:
-                                                    textStyleTabLandscapeLabel,
-                                              )
-                                            : const SizedBox();
-                                      }),
+
+                                      isCheckedGTGT
+                                          ? Text(
+                                              "$VAT_PERCENT%",
+                                              style: textStyleTabLandscapeLabel,
+                                            )
+                                          : const SizedBox(),
+
                                       const Spacer(),
                                       //Số tiền thuế đã áp dụng
-                                      Obx(() {
-                                        return Text(
-                                            Utils.formatCurrency(orderController
-                                                .order.total_vat_amount),
-                                            style: textStyleTabLandscapeLabel);
-                                      })
+                                      Text(
+                                          Utils.formatCurrency(
+                                              Utils.stringConvertToDouble(
+                                                  totalVatAmountTextEditingController
+                                                      .text)),
+                                          style: textStyleTabLandscapeLabel)
                                     ]),
 
                                 //DISCOUNT
@@ -1162,47 +1253,102 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                 scale: 0.8,
                                                 child: Checkbox(
                                                   value: isCheckedDecrease,
-                                                  onChanged: (bool? value) {
-                                                    if (orderController
-                                                            .orderDetail
-                                                            .total_amount >
-                                                        0) {
+                                                  onChanged:
+                                                      (bool? value) async {
+                                                    isCheckedDecrease = value!;
+                                                    if (isCheckedDecrease) {
+                                                      PricePercent result =
+                                                          await showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return const CustomDialogDecreasePriceBooking();
+                                                        },
+                                                      );
+
+                                                      //xử lý kết quả
                                                       setState(() {
-                                                        isCheckedDecrease =
-                                                            value!;
-                                                        //Hủy DISCOUNT khi nhấn uncheck checkbox
-                                                        if (isCheckedDecrease ==
-                                                            false) {
-                                                          orderController.cancelDiscount(
-                                                              context,
-                                                              orderController
-                                                                  .orderDetail,
-                                                              orderController
-                                                                  .orderDetail
-                                                                  .order_details);
-                                                        }
-                                                        // bật popup
-                                                        if (isCheckedDecrease) {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return CustomDialogDecreasePrice(
-                                                                order: orderController
-                                                                    .orderDetail,
-                                                              );
-                                                            },
-                                                          );
+                                                        if (result.value > 0) {
+                                                          pricePercentResult =
+                                                              result;
+                                                          //TỔNG TIỀN ĐƠN HÀNG
+
+                                                          //TỔNG GIẢM GIÁ THEO ĐƠN HÀNG
+                                                          double
+                                                              totalSelectedAmount =
+                                                              Utils.getSumPriceQuantityCategory(
+                                                                  foodController
+                                                                      .foodsToOrder,
+                                                                  (result.type_category ??
+                                                                      CATEGORY_ALL));
+                                                          double priceDecrease =
+                                                              0;
+                                                          if (result.value >
+                                                              0) {
+                                                            if (result
+                                                                    .type_value ==
+                                                                TYPE_PRICE) {
+                                                              //Nếu giảm giá bằng tiền
+                                                              priceDecrease =
+                                                                  result.value;
+                                                              //Giới hạn số tiền giảm
+                                                              if (priceDecrease >
+                                                                  totalSelectedAmount) {
+                                                                priceDecrease =
+                                                                    totalSelectedAmount;
+
+                                                                Utils.showStylishDialog(
+                                                                    context,
+                                                                    "THÔNG BÁO",
+                                                                    "Đơn hàng này giảm tối đa ${Utils.formatCurrency(priceDecrease)}.",
+                                                                    StylishDialogType
+                                                                        .INFO);
+                                                                if (priceDecrease ==
+                                                                    0) {
+                                                                  isCheckedDecrease =
+                                                                      false;
+                                                                }
+                                                              }
+                                                            } else {
+                                                              //giảm giá theo %
+                                                              priceDecrease =
+                                                                  (totalSelectedAmount *
+                                                                          result
+                                                                              .value) /
+                                                                      100;
+                                                            }
+                                                          }
+
+                                                          totalDiscountAmountTextEditingController
+                                                                  .text =
+                                                              Utils.formatCurrency(
+                                                                  priceDecrease);
+
+                                                          //TÍNH TỔNG ĐƠN HÀNG
+                                                          getTotalAmount();
+
+                                                          //loại món muốn giảm: ALL FOOD DRINK OTHER
+                                                          categoryCodeDecrease =
+                                                              (result.type_category ??
+                                                                  CATEGORY_ALL);
+                                                        } else {
+                                                          totalDiscountAmountTextEditingController
+                                                              .text = '0';
+                                                          isCheckedDecrease =
+                                                              false;
+                                                          //TÍNH TỔNG ĐƠN HÀNG
+                                                          getTotalAmount();
                                                         }
                                                       });
                                                     } else {
-                                                      Utils.showStylishDialog(
-                                                          context,
-                                                          'THÔNG BÁO',
-                                                          'Hóa đơn này hiện tại không thể áp dụng giảm giá.',
-                                                          StylishDialogType
-                                                              .INFO);
+                                                      setState(() {
+                                                        totalDiscountAmountTextEditingController
+                                                            .text = '0';
+                                                        isCheckedDecrease =
+                                                            false;
+                                                        //TÍNH TỔNG ĐƠN HÀNG
+                                                        getTotalAmount();
+                                                      });
                                                     }
                                                   },
                                                   activeColor: primaryColor,
@@ -1221,48 +1367,60 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                       ),
 
                                       const Spacer(),
+                                      (isCheckedDecrease &&
+                                              pricePercentResult.type_value ==
+                                                  TYPE_PERCENT)
+                                          ? Row(
+                                              children: [
+                                                Text(
+                                                  "${pricePercentResult.value.toInt()}%",
+                                                  style:
+                                                      textStyleTabLandscapeLabel,
+                                                ),
+                                                marginRight5,
+                                                pricePercentResult
+                                                            .type_category ==
+                                                        CATEGORY_ALL
+                                                    ? const Text(
+                                                        "(Tất cả)",
+                                                        style:
+                                                            textStyleTabLandscapeLabel,
+                                                      )
+                                                    : pricePercentResult
+                                                                .type_category ==
+                                                            CATEGORY_FOOD
+                                                        ? const Text(
+                                                            "(Món ăn)",
+                                                            style:
+                                                                textStyleTabLandscapeLabel,
+                                                          )
+                                                        : pricePercentResult
+                                                                    .type_category ==
+                                                                CATEGORY_DRINK
+                                                            ? const Text(
+                                                                "(Đồ uống)",
+                                                                style:
+                                                                    textStyleTabLandscapeLabel,
+                                                              )
+                                                            : const Text(
+                                                                "(Khác)",
+                                                                style:
+                                                                    textStyleTabLandscapeLabel,
+                                                              ),
+                                              ],
+                                            )
+                                          : const SizedBox(),
+                                      const Spacer(),
+
                                       //Số tiền đã giảm
-                                      Obx(() {
-                                        return Text(
-                                            Utils.formatCurrency(orderController
-                                                .order.total_discount_amount),
-                                            style: textStyleTabLandscapeLabel);
-                                      })
+                                      Text(
+                                          Utils.formatCurrency(
+                                              Utils.stringConvertToDouble(
+                                                  totalDiscountAmountTextEditingController
+                                                      .text)),
+                                          style: textStyleTabLandscapeLabel)
                                     ]),
-                                marginTop10,
-                                //TỔNG GIẢM TRỪ
-                                Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Spacer(),
 
-                                      const Column(
-                                        children: [
-                                          Text(
-                                            "TỔNG GIẢM TRỪ",
-                                            style: textStyleSecondLandscapeBold,
-                                          ),
-                                          Text(
-                                            "(GỒM GIẢM GIÁ, ĐẶT CỌC)",
-                                            style: textStyleSecondLandscape,
-                                          ),
-                                        ],
-                                      ),
-
-                                      const Spacer(),
-                                      //Tổng giảm trừ
-                                      Obx(() {
-                                        return Text(
-                                            Utils.formatCurrency(orderController
-                                                    .order
-                                                    .total_discount_amount +
-                                                orderController
-                                                    .order.deposit_amount),
-                                            style:
-                                                textStyleSecondLandscapeBold);
-                                      })
-                                    ]),
                                 marginTop10,
 
                                 //TỔNG THANH TOÁN
@@ -1279,15 +1437,12 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
 
                                       const Spacer(),
                                       //Tổng thanh toán
-                                      Obx(() {
-                                        return Text(
-                                            Utils.formatCurrency(orderController
-                                                    .order.total_amount -
-                                                orderController
-                                                    .order.deposit_amount),
-                                            style:
-                                                textStylePrimaryLandscapeBold);
-                                      })
+                                      Text(
+                                          Utils.formatCurrency(
+                                              Utils.stringConvertToDouble(
+                                                  totalAmountTextEditingController
+                                                      .text)),
+                                          style: textStyleTabLandscapeLabel)
                                     ]),
                                 marginTop10,
                               ]),
@@ -1417,6 +1572,8 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                       totalSurchargeAmountTextEditingController
                                           .text),
                               orderDetailList: orderDetailList,
+                              total_amount: Utils.stringConvertToDouble(
+                                  totalAmountTextEditingController.text),
                             );
                           },
                         );
