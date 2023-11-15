@@ -41,6 +41,7 @@ const primaryColor = Color(0xFF40BAD5);
 const secondColor = Colors.white;
 const labelColor = Color(0xFF434343);
 const transparentColor = Colors.transparent;
+const blueColor = Color(0xFF035AA6);
 
 const activeColor = Color(0xFF40BAD5);
 const deActiveColor = Colors.grey;

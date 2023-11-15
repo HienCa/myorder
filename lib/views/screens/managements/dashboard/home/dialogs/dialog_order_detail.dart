@@ -1745,7 +1745,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                             height: 40,
                             icon: FontAwesomeIcons.clockRotateLeft,
                             iconColor: secondColor,
-                            backgroundColor: grayColor,
+                            backgroundColor: blueColor,
                             textStyle: TextStyle(
                               color: secondColor,
                               fontSize: 10,

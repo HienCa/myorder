@@ -16,6 +16,7 @@ class OrderHistoryController extends GetxController {
             .collection('orders')
             .doc(order_id)
             .collection('orderHistory')
+            .orderBy('create_at')
             .snapshots()
             .map(
           (QuerySnapshot query) {
@@ -33,7 +34,7 @@ class OrderHistoryController extends GetxController {
           .collection('orders')
           .doc(order_id)
           .collection('orderHistory')
-          .orderBy('name')
+          .orderBy('create_at')
           .snapshots()
           .map((QuerySnapshot query) {
         List<OrderHistory> retVal = [];

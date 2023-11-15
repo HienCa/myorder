@@ -78,7 +78,7 @@ class _MyDialogOrderHistoryState extends State<MyDialogOrderHistory> {
                             marginRight20,
                             Text(
                               "#${widget.order.order_code}",
-                              style: textStyleTabLandscapeLabelBold,
+                              style: textStylePrimaryLandscapeBold,
                             )
                           ],
                         ),
@@ -119,19 +119,22 @@ class _MyDialogOrderHistoryState extends State<MyDialogOrderHistory> {
                         ),
                       ),
                       const Spacer(),
-                      const MyCloseIcon(heightWidth: 30, sizeIcon: 20)
+                      const Padding(
+                        padding: EdgeInsets.only(right: 6),
+                        child: MyCloseIcon(heightWidth: 30, sizeIcon: 20),
+                      )
                     ],
                   ),
                 ),
                 marginTop5,
                 Container(
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.of(context).size.height  * 0.7,
                   color: backgroundColor,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        marginTop10,
+                        marginTop5,
                         const Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -152,7 +155,7 @@ class _MyDialogOrderHistoryState extends State<MyDialogOrderHistory> {
                         ),
                         marginTop10,
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.88,
+                          height: MediaQuery.of(context).size.height * 0.58,
                           child: Obx(() {
                             return ListView.builder(
                                 itemCount:
