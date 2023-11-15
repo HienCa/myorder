@@ -11,6 +11,7 @@ import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/dialogs/dialog_confirm_table_booking.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_order_detail.dart';
+import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_order_history.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
@@ -485,21 +486,34 @@ class _DashboardHomeState extends State<DashboardHome> {
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: Container(
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: orderController
-                                                  .orders[i].order_status ==
-                                              ORDER_STATUS_SERVING
-                                          ? primaryColor
-                                          : grayColor200,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: const Center(
-                                      child: FaIcon(
-                                          FontAwesomeIcons.clockRotateLeft,
-                                          color: secondColor,
-                                          size: 16),
+                                  child: InkWell(
+                                    onTap: () async {
+                                      //Lịch sử đơn hàng
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return MyDialogOrderHistory(
+                                            order: orderController.orders[i],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: orderController
+                                                    .orders[i].order_status ==
+                                                ORDER_STATUS_SERVING
+                                            ? primaryColor
+                                            : grayColor200,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: const Center(
+                                        child: FaIcon(
+                                            FontAwesomeIcons.clockRotateLeft,
+                                            color: secondColor,
+                                            size: 16),
+                                      ),
                                     ),
                                   ),
                                 ),

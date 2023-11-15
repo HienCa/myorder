@@ -8,6 +8,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
@@ -577,6 +578,10 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                               if (foodOrder.isSelected == true) {
                                 //chi tiet don hang
                                 //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                        Food foodDetail = Food.empty();
+                                foodDetail.name = foodOrder.name;
+                                foodDetail.food_combo_details = foodOrder.food_combo_details;
+                                foodDetail.addition_food_details = foodOrder.addition_food_details;
                                 OrderDetail orderDetail = OrderDetail(
                                   order_detail_id: "",
                                   price: 0,
@@ -587,6 +592,7 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                   category_id: '',
                                   category_code: foodOrder.category_code,
                                   chef_bar_status: CHEF_BAR_STATUS, is_addition: false,
+                                  food: foodDetail
                                 );
 
                                 orderDetailList.add(orderDetail);

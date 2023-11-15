@@ -104,7 +104,7 @@ class _ChooseTargetTableSplitSingleFoodPageState
                 Expanded(
                   child: SingleChildScrollView(
                     child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.65,
+                      height: MediaQuery.of(context).size.height * 0.45,
                       width: double.infinity,
                       child: ResponsiveGridList(
                           desiredItemWidth: 70,

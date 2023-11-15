@@ -31,6 +31,26 @@ class Utils {
   }
 
   //DATETIME
+  static String formatTimestamp(Timestamp? timestamp) {
+    if (timestamp != null) {
+      var dateTime = timestamp.toDate();
+      var formatter = DateFormat('dd/MM/yyyy');
+      return formatter.format(dateTime);
+    } else {
+      return '';
+    }
+  }
+
+  static String formatTime(Timestamp? timestamp) {
+    if (timestamp != null) {
+      var dateTime = timestamp.toDate();
+      var formatter = DateFormat('HH:mm:ss');
+      return formatter.format(dateTime);
+    } else {
+      return '';
+    }
+  }
+
   static Timestamp convertDatetimeToTimestamp(DateTime datetime) {
     return Timestamp.fromDate(DateTime.parse(datetime.toString()));
   }
@@ -443,6 +463,7 @@ class Utils {
     }
     return total;
   }
+
   //Tính tổng tiền theo total_amount
   static double getSumPriceQuantity(List<dynamic> list) {
     double total = 0;
@@ -451,12 +472,14 @@ class Utils {
     }
     return total;
   }
+
   //Tính tổng tiền theo total_amount
   static double getSumPriceQuantitySelected(List<dynamic> list) {
     double total = 0;
     for (var item in list) {
-      if (item.isSelected == true && Utils.isDateTimeInRange(
-          item.temporary_price_from_date, item.temporary_price_to_date)) {
+      if (item.isSelected == true &&
+          Utils.isDateTimeInRange(
+              item.temporary_price_from_date, item.temporary_price_to_date)) {
         total += ((item.price_with_temporary ?? 0) * item.quantity);
       } else if (item.isSelected == true) {
         total += (item.price * item.quantity);

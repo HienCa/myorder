@@ -198,7 +198,7 @@ class _ListFoodNeedSplitPageState extends State<ListFoodNeedSplitPage> {
                                                               BorderRadius
                                                                   .circular(5),
                                                           child: Image.asset(
-                                                            "assets/images/lykem.jpg",
+                                                           defaultFoodImageString,
                                                             width: 50,
                                                             height: 50,
                                                             fit: BoxFit.cover,

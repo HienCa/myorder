@@ -8,6 +8,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/categories/categories_controller.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
@@ -925,23 +926,27 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                               if (foodOrder.isSelected == true) {
                                 //chi tiet don hang
                                 //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                Food foodDetail = Food.empty();
+                                foodDetail.name = foodOrder.name;
+                                foodDetail.food_combo_details = foodOrder.food_combo_details;
+                                foodDetail.addition_food_details = foodOrder.addition_food_details;
                                 OrderDetail orderDetail = OrderDetail(
-                                  order_detail_id: "",
-                                  price: Utils.isDateTimeInRange(
-                                          foodOrder.temporary_price_from_date,
-                                          foodOrder.temporary_price_to_date)
-                                      ? (foodOrder.price +
-                                          foodOrder.price_with_temporary!)
-                                      : foodOrder.price,
-                                  quantity: foodOrder.quantity!,
-                                  food_status: FOOD_STATUS_IN_CHEF,
-                                  food_id: foodOrder.food_id,
-                                  is_gift: false,
-                                  category_id: '',
-                                  category_code: foodOrder.category_code,
-                                  chef_bar_status: CHEF_BAR_STATUS,
-                                  is_addition: false,
-                                );
+                                    order_detail_id: "",
+                                    price: Utils.isDateTimeInRange(
+                                            foodOrder.temporary_price_from_date,
+                                            foodOrder.temporary_price_to_date)
+                                        ? (foodOrder.price +
+                                            foodOrder.price_with_temporary!)
+                                        : foodOrder.price,
+                                    quantity: foodOrder.quantity!,
+                                    food_status: FOOD_STATUS_IN_CHEF,
+                                    food_id: foodOrder.food_id,
+                                    is_gift: false,
+                                    category_id: '',
+                                    category_code: foodOrder.category_code,
+                                    chef_bar_status: CHEF_BAR_STATUS,
+                                    is_addition: false,
+                                    food: foodDetail);
 
                                 orderDetailList.add(orderDetail);
 
@@ -964,8 +969,10 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                   OrderDetail orderDetail = OrderDetail(
                                     order_detail_id: "",
                                     price: Utils.isDateTimeInRange(
-                                            additionFood.temporary_price_from_date,
-                                            additionFood.temporary_price_to_date)
+                                            additionFood
+                                                .temporary_price_from_date,
+                                            additionFood
+                                                .temporary_price_to_date)
                                         ? (additionFood.price +
                                             additionFood.price_with_temporary!)
                                         : additionFood.price,
@@ -987,7 +994,8 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                   print("Name: ${additionFood.name}");
                                   print("Price: ${additionFood.price}");
                                   print("Quantity: ${additionFood.quantity}");
-                                  print("Is Selected: ${additionFood.isSelected}");
+                                  print(
+                                      "Is Selected: ${additionFood.isSelected}");
                                   print("--------------------------------");
                                 }
                               }
@@ -1006,34 +1014,33 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                       widget.table
                                           .total_slot, // số lượng khách tối đa có thể tiếp của 1 bàn
                                       () async {
-                                        // order theo table_id
-                                        print(
-                                            "SỐ KHÁCH CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController.text}");
-                                        if (Utils.isValidRangeString(
-                                            slotTextEditingController.text,
-                                            1,
-                                            widget.table.total_slot)) {
-                                          //Nếu là đơn hàng mới thì phải nhập số khách
-                                          orderController.createOrder(
-                                              widget.table.table_id,
-                                              widget.table.name,
-                                              orderDetailList,
-                                              widget.isGift,
-                                              context,
-                                              int.tryParse(
-                                                  slotTextEditingController
-                                                      .text));
-                                        } else {
-                                          Get.snackbar(
-                                            'THÔNG BÁO',
-                                            'Bạn phải nhập số lượng khách của bàn này.',
-                                            backgroundColor:
-                                                backgroundFailureColor,
-                                            colorText: Colors.white,
-                                          );
-                                        }
-                                      },false
-                                    )
+                                      // order theo table_id
+                                      print(
+                                          "SỐ KHÁCH CỦA ĐƠN HÀNG NÀY: ${slotTextEditingController.text}");
+                                      if (Utils.isValidRangeString(
+                                          slotTextEditingController.text,
+                                          1,
+                                          widget.table.total_slot)) {
+                                        //Nếu là đơn hàng mới thì phải nhập số khách
+                                        orderController.createOrder(
+                                            widget.table.table_id,
+                                            widget.table.name,
+                                            orderDetailList,
+                                            widget.isGift,
+                                            context,
+                                            int.tryParse(
+                                                slotTextEditingController
+                                                    .text));
+                                      } else {
+                                        Get.snackbar(
+                                          'THÔNG BÁO',
+                                          'Bạn phải nhập số lượng khách của bàn này.',
+                                          backgroundColor:
+                                              backgroundFailureColor,
+                                          colorText: Colors.white,
+                                        );
+                                      }
+                                    }, false)
                                   : showCustomAlertDialogConfirm(
                                       context,
                                       "GỌI THÊM MÓN",

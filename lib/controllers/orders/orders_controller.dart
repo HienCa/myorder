@@ -7,15 +7,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/order_history/order_history_controller.dart';
 import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/models/order.dart' as model;
+import 'package:myorder/models/order_history.dart';
 import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 
 class OrderController extends GetxController {
+  OrderHistoryController orderHistoryController =
+      Get.put(OrderHistoryController());
+
   //BOOKING
   /* 
     ************* TẠO ĐƠN HÀNG BOOKING
@@ -81,7 +86,7 @@ class OrderController extends GetxController {
                   order.employee_name = name;
                 }
               }
-              print("Nhân viên order: ${order.employee_name}");
+              print("Nhân viên order1: ${order.employee_name}");
 
               // Truy vấn collection orderDetailArrayList
               var orderDetailCollection = firestore
@@ -137,33 +142,66 @@ class OrderController extends GetxController {
                 }
 
                 //CHECK BOOKING
-
-                if (Utils.isNearBookingTime(order.customer_time_booking)) {
-                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
-
-                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
-                  if (order.table!.status == TABLE_STATUS_EMPTY) {
-                    // cập nhật trạng thái don hang empty -> serving
-                    await firestore.collection('tables').doc(table_id).update({
-                      "status": TABLE_STATUS_BOOKING, // đang booking
-                    });
-                  }
-                } else if (Utils.isAfterOneHourFromBookingTime(
-                        order.customer_time_booking) &&
+                if (order.customer_time_booking != null &&
                     order.order_status == ORDER_STATUS_BOOKING) {
-                  //KIỂM TRA SAU GIỜ BOOKING 1H
-                  await firestore
-                      .collection('orders')
-                      .doc(order.order_id)
-                      .update({
-                    "active": DEACTIVE,
-                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
-                  });
-                  // cập nhật trạng thái bàn empty -> trống
-                  await firestore.collection('tables').doc(table_id).update({
-                    "status": TABLE_STATUS_EMPTY, // đang trống
-                  });
+                  print('order.customer_time_booking != null');
+                  print(order.customer_time_booking != null);
+                  String idOrderHistory = Utils.generateUUID();
+                  String description = '';
+                  OrderHistory orderHistory = OrderHistory(
+                      history_id: idOrderHistory,
+                      order_id: order_id,
+                      employee_id: authController.user.uid,
+                      employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                      description: description,
+                      create_at: Timestamp.now());
+                  if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                    //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                    //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                    if (order.table!.status == TABLE_STATUS_EMPTY) {
+                      // cập nhật trạng thái don hang empty -> serving
+                      await firestore
+                          .collection('tables')
+                          .doc(table_id)
+                          .update({
+                        "status": TABLE_STATUS_BOOKING, // đang booking
+                      });
+
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    } else {
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại. Bàn đã booking đang được phục vụ đơn hàng khác.';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    }
+                  } else if (Utils.isAfterOneHourFromBookingTime(
+                          order.customer_time_booking) &&
+                      order.order_status == ORDER_STATUS_BOOKING) {
+                    //KIỂM TRA SAU GIỜ BOOKING 1H
+                    await firestore
+                        .collection('orders')
+                        .doc(order.order_id)
+                        .update({
+                      "active": DEACTIVE,
+                      "order_status": ORDER_STATUS_CANCEL, // đã hủy
+                    });
+                    // cập nhật trạng thái bàn empty -> trống
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_EMPTY, // đang trống
+                    });
+
+                    description =
+                        'Đơn hàng booking đã hủy (khách không tới quán)';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
                 }
+
+                //Tạo lịch sử đơn hàng
               }
 
               retValue.add(order);
@@ -204,7 +242,7 @@ class OrderController extends GetxController {
                   order.employee_name = name;
                 }
               }
-              print("Nhân viên order: ${order.employee_name}");
+              print("Nhân viên order2: ${order.employee_name}");
 
               // Truy vấn collection orderDetailArrayList
               var orderDetailCollection = firestore
@@ -258,34 +296,65 @@ class OrderController extends GetxController {
                       area_id: area_id);
                   print(name);
                 }
-
-                //CHECK BOOKING
-
-                if (Utils.isNearBookingTime(order.customer_time_booking)) {
-                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
-
-                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
-                  if (order.table!.status == TABLE_STATUS_EMPTY) {
-                    // cập nhật trạng thái don hang empty -> serving
-                    await firestore.collection('tables').doc(table_id).update({
-                      "status": TABLE_STATUS_BOOKING, // đang booking
-                    });
-                  }
-                } else if (Utils.isAfterOneHourFromBookingTime(
-                        order.customer_time_booking) &&
+                if (order.customer_time_booking != null &&
                     order.order_status == ORDER_STATUS_BOOKING) {
-                  //KIỂM TRA SAU GIỜ BOOKING 1H
-                  await firestore
-                      .collection('orders')
-                      .doc(order.order_id)
-                      .update({
-                    "active": DEACTIVE,
-                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
-                  });
-                  // cập nhật trạng thái bàn empty -> trống
-                  await firestore.collection('tables').doc(table_id).update({
-                    "status": TABLE_STATUS_EMPTY, // đang trống
-                  });
+                  //CHECK BOOKING
+                  print('order.customer_time_booking != null');
+                  print(order.customer_time_booking != null);
+                  String idOrderHistory = Utils.generateUUID();
+                  String description = '';
+                  OrderHistory orderHistory = OrderHistory(
+                      history_id: idOrderHistory,
+                      order_id: order_id,
+                      employee_id: authController.user.uid,
+                      employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                      description: description,
+                      create_at: Timestamp.now());
+                  if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                    //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                    //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                    if (order.table!.status == TABLE_STATUS_EMPTY) {
+                      // cập nhật trạng thái don hang empty -> serving
+                      await firestore
+                          .collection('tables')
+                          .doc(table_id)
+                          .update({
+                        "status": TABLE_STATUS_BOOKING, // đang booking
+                      });
+
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    } else {
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại. Bàn đã booking đang được phục vụ đơn hàng khác.';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    }
+                  } else if (Utils.isAfterOneHourFromBookingTime(
+                          order.customer_time_booking) &&
+                      order.order_status == ORDER_STATUS_BOOKING) {
+                    //KIỂM TRA SAU GIỜ BOOKING 1H
+                    await firestore
+                        .collection('orders')
+                        .doc(order.order_id)
+                        .update({
+                      "active": DEACTIVE,
+                      "order_status": ORDER_STATUS_CANCEL, // đã hủy
+                    });
+                    // cập nhật trạng thái bàn empty -> trống
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_EMPTY, // đang trống
+                    });
+
+                    description =
+                        'Đơn hàng booking đã hủy (khách không tới quán)';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
+                  //Tạo lịch sử đơn hàng
                 }
               }
               retValue.add(order);
@@ -331,7 +400,7 @@ class OrderController extends GetxController {
                 order.employee_name = name;
               }
             }
-            print("Nhân viên order: ${order.employee_name}");
+            print("Nhân viên order3: ${order.employee_name}");
 
             // Truy vấn collection orderDetailArrayList
             var orderDetailCollection = firestore
@@ -384,34 +453,60 @@ class OrderController extends GetxController {
                     area_id: area_id);
                 print(name);
               }
+              if (order.customer_time_booking != null) {
+                //CHECK BOOKING
+                String idOrderHistory = Utils.generateUUID();
+                String description = '';
+                OrderHistory orderHistory = OrderHistory(
+                    history_id: idOrderHistory,
+                    order_id: order_id,
+                    employee_id: authController.user.uid,
+                    employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                    description: description,
+                    create_at: Timestamp.now());
+                if (order.customer_time_booking != null &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
 
-              //CHECK BOOKING
+                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                  if (order.table!.status == TABLE_STATUS_EMPTY) {
+                    // cập nhật trạng thái don hang empty -> serving
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_BOOKING, // đang booking
+                    });
 
-              if (Utils.isNearBookingTime(order.customer_time_booking)) {
-                //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
-
-                //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
-                if (order.table!.status == TABLE_STATUS_EMPTY) {
-                  // cập nhật trạng thái don hang empty -> serving
-                  await firestore.collection('tables').doc(table_id).update({
-                    "status": TABLE_STATUS_BOOKING, // đang booking
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  } else {
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại. Bàn đã booking đang được phục vụ đơn hàng khác.';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
+                } else if (Utils.isAfterOneHourFromBookingTime(
+                        order.customer_time_booking) &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  //KIỂM TRA SAU GIỜ BOOKING 1H
+                  await firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "active": DEACTIVE,
+                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
                   });
+                  // cập nhật trạng thái bàn empty -> trống
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_EMPTY, // đang trống
+                  });
+
+                  description =
+                      'Đơn hàng booking đã hủy (khách không tới quán)';
+                  orderHistory.description = description;
+                  orderHistoryController.createOrderHistory(orderHistory);
                 }
-              } else if (Utils.isAfterOneHourFromBookingTime(
-                      order.customer_time_booking) &&
-                  order.order_status == ORDER_STATUS_BOOKING) {
-                //KIỂM TRA SAU GIỜ BOOKING 1H
-                await firestore
-                    .collection('orders')
-                    .doc(order.order_id)
-                    .update({
-                  "active": DEACTIVE,
-                  "order_status": ORDER_STATUS_CANCEL, // đã hủy
-                });
-                // cập nhật trạng thái bàn empty -> trống
-                await firestore.collection('tables').doc(table_id).update({
-                  "status": TABLE_STATUS_EMPTY, // đang trống
-                });
+                //Tạo lịch sử đơn hàng
               }
             }
 
@@ -452,7 +547,7 @@ class OrderController extends GetxController {
                 order.employee_name = name;
               }
             }
-            print("Nhân viên order: ${order.employee_name}");
+            print("Nhân viên order4: ${order.employee_name}");
 
             // Truy vấn collection orderDetailArrayList
             var orderDetailCollection = firestore
@@ -507,34 +602,59 @@ class OrderController extends GetxController {
                     area_id: area_id);
                 print(name);
               }
-
-              //CHECK BOOKING
-
-              if (Utils.isNearBookingTime(order.customer_time_booking)) {
-                //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
-
-                //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
-                if (order.table!.status == TABLE_STATUS_EMPTY) {
-                  // cập nhật trạng thái don hang empty -> serving
-                  await firestore.collection('tables').doc(table_id).update({
-                    "status": TABLE_STATUS_BOOKING, // đang booking
-                  });
-                }
-              } else if (Utils.isAfterOneHourFromBookingTime(
-                      order.customer_time_booking) &&
+              if (order.customer_time_booking != null &&
                   order.order_status == ORDER_STATUS_BOOKING) {
-                //KIỂM TRA SAU GIỜ BOOKING 1H
-                await firestore
-                    .collection('orders')
-                    .doc(order.order_id)
-                    .update({
-                  "active": DEACTIVE,
-                  "order_status": ORDER_STATUS_CANCEL, // đã hủy
-                });
-                // cập nhật trạng thái bàn empty -> trống
-                await firestore.collection('tables').doc(table_id).update({
-                  "status": TABLE_STATUS_EMPTY, // đang trống
-                });
+                //CHECK BOOKING
+                String idOrderHistory = Utils.generateUUID();
+                String description = '';
+                OrderHistory orderHistory = OrderHistory(
+                    history_id: idOrderHistory,
+                    order_id: order_id,
+                    employee_id: authController.user.uid,
+                    employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                    description: description,
+                    create_at: Timestamp.now());
+                if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                  if (order.table!.status == TABLE_STATUS_EMPTY) {
+                    // cập nhật trạng thái don hang empty -> serving
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_BOOKING, // đang booking
+                    });
+
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  } else {
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại.\\\n Bàn đã booking đang được phục vụ đơn hàng khác.';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
+                } else if (Utils.isAfterOneHourFromBookingTime(
+                        order.customer_time_booking) &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  //KIỂM TRA SAU GIỜ BOOKING 1H
+                  await firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "active": DEACTIVE,
+                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
+                  });
+                  // cập nhật trạng thái bàn empty -> trống
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_EMPTY, // đang trống
+                  });
+
+                  description =
+                      'Đơn hàng booking đã hủy (khách không tới quán)';
+                  orderHistory.description = description;
+                  orderHistoryController.createOrderHistory(orderHistory);
+                }
               }
             }
             retVal.add(order);
@@ -839,17 +959,6 @@ class OrderController extends GetxController {
             if (foodCollection.exists) {
               final foodData = foodCollection.data();
               if (foodData != null && foodData is Map<String, dynamic>) {
-                // String food_name = foodData['name'] ?? '';
-                // String image = foodData['image'] ?? '';
-                // String category_id = foodData['category_id'] ?? '';
-
-                // retValue.order_details[i].food = FoodOrderDetail(
-                //     food_id: orderDetails[i].food_id,
-                //     name: food_name,
-                //     image: image,
-                //     category_id: category_id);
-                // print(food_name);
-
                 modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
                 retValue.order_details[i].food = food;
               }
@@ -918,6 +1027,7 @@ class OrderController extends GetxController {
       [int? slot]) async {
     try {
       //kiểm tra xem don hang đã được order chưa
+
       var tableOrdered = await firestore
           .collection("orders")
           .where("table_id", isEqualTo: table_id)
@@ -974,6 +1084,8 @@ class OrderController extends GetxController {
             .collection("orderDetails")
             .get();
         double totalAmount = 0;
+        String description = 'Đơn hàng đã được tạo:\\\n';
+
         for (OrderDetail orderDetail in orderDetailList) {
           String idDetail = Utils.generateUUID();
           orderDetail.order_detail_id = idDetail;
@@ -981,10 +1093,13 @@ class OrderController extends GetxController {
           if (isGift) {
             orderDetail.is_gift = true;
             orderDetail.price = 0;
+            description +=
+                '+ ${orderDetail.food!.name}: Món tặng - SL: ${orderDetail.quantity}\\\n';
           } else {
             orderDetail.is_gift = false;
+            description +=
+                '+ ${orderDetail.food!.name}: Đơn giá: ${Utils.formatCurrency(orderDetail.price)} - SL: ${orderDetail.quantity}\\\n';
           }
-
           totalAmount += (orderDetail.price * orderDetail.quantity);
 
           orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
@@ -1005,8 +1120,35 @@ class OrderController extends GetxController {
           "status": TABLE_STATUS_SERVING, // đang phục vụ
         });
 
-        //GỬI BẾP BAR
-        sendToChefBar(id, table_name, orderDetailList);
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description: description,
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+          print("description :$orderHistory");
+          print("description :$description");
+          orderHistory.description = description;
+          orderHistoryController.createOrderHistory(orderHistory);
+
+          //GỬI BẾP BAR
+          sendToChefBar(id, table_name, orderDetailList);
+        }
       } else {
         // thêm foods vào order hiện tại đang phục vụ
         // add order detail
@@ -1021,7 +1163,7 @@ class OrderController extends GetxController {
             .get();
 
         double totalAmount = 0;
-
+        String description = 'Thêm món:\\\n';
         for (OrderDetail orderDetail in orderDetailList) {
           String idDetail = Utils.generateUUID();
 
@@ -1030,13 +1172,14 @@ class OrderController extends GetxController {
           if (isGift) {
             orderDetail.is_gift = true;
             orderDetail.price = 0;
+            description +=
+                '+ ${orderDetail.food!.name}: Món tặng - SL: ${orderDetail.quantity}\\\n';
           } else {
             orderDetail.is_gift = false;
+            description +=
+                '+ ${orderDetail.food!.name}: Đơn giá: ${Utils.formatCurrency(orderDetail.price)} - SL: ${orderDetail.quantity}\\\n';
           }
-          //nếu là món nước -> trạng thái Hoàn Thành
-          // if (orderDetail.category_code == CATEGORY_DRINK) {
-          //   orderDetail.food_status = FOOD_STATUS_FINISH;
-          // }
+
           totalAmount += (orderDetail.price * orderDetail.quantity);
 
           //Thông báo cho bếp rằng khách yêu cầu dừng chế biến
@@ -1067,6 +1210,30 @@ class OrderController extends GetxController {
             });
           }
         }
+
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: order_id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description: description,
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistory.description = description;
+        orderHistoryController.createOrderHistory(orderHistory);
 
         //GỬI BẾP BAR
         sendToChefBar(order_id, table_name, orderDetailList);
@@ -1125,13 +1292,20 @@ class OrderController extends GetxController {
             .doc(id)
             .collection("orderDetails")
             .get();
+        String description = 'Đơn hàng mang về đã được tạo.\\\n';
 
         for (OrderDetail orderDetail in orderDetailList) {
           String idDetail = Utils.generateUUID();
           orderDetail.order_detail_id = idDetail;
           if (orderDetail.is_gift == true) {
             orderDetail.price = 0;
+            description +=
+                '+ ${orderDetail.food!.name}: Món tặng - SL: ${orderDetail.quantity}\\\n';
+          } else {
+            description +=
+                '+ ${orderDetail.food!.name}: Đơn giá: ${orderDetail.price} - SL: ${orderDetail.quantity}\\\n';
           }
+
           orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
 
           await firestore
@@ -1143,6 +1317,31 @@ class OrderController extends GetxController {
         }
         createBillTakeAway(id, id.substring(0, 8), total_vat_amount,
             total_discount_amount, total_amount);
+
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description: description,
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistory.description = description;
+        orderHistoryController.createOrderHistory(orderHistory);
+
         //GỬI BẾP BAR
         sendToChefBar(id, "MV", orderDetailList);
       }
@@ -1193,6 +1392,30 @@ class OrderController extends GetxController {
           FirebaseFirestore.instance.collection('bills');
 
       await billsCollection.doc(id).set(bill.toJson());
+
+      //Tạo lịch sử đơn hàng
+      String idOrderHistory = Utils.generateUUID();
+      //Thông tin nhân viên phụ trách đơn hàng
+      DocumentSnapshot employeeCollection = await firestore
+          .collection('employees')
+          .doc(authController.user.uid)
+          .get();
+      OrderHistory orderHistory = OrderHistory(
+          history_id: idOrderHistory,
+          order_id: id,
+          employee_id: authController.user.uid,
+          employee_name: '',
+          description:
+              'Đơn hàng đã được thanh toán.\\\nTổng hóa đơn: ${bill.total_amount}',
+          create_at: Timestamp.now());
+      if (employeeCollection.exists) {
+        final employeeData = employeeCollection.data();
+        if (employeeData != null && employeeData is Map<String, dynamic>) {
+          String name = employeeData['name'] ?? '';
+          orderHistory.employee_name = name;
+        }
+      }
+      orderHistoryController.createOrderHistory(orderHistory);
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',
@@ -1294,6 +1517,7 @@ class OrderController extends GetxController {
           .collection("orderDetails")
           .get();
       double totalAmount = 0;
+      String description = 'Đơn hàng booking đã được tạo.\\\n';
       for (OrderDetail orderDetail in orderDetailList) {
         String idDetail = Utils.generateUUID();
         orderDetail.order_detail_id = idDetail;
@@ -1301,8 +1525,12 @@ class OrderController extends GetxController {
         if (isGift) {
           orderDetail.is_gift = true;
           orderDetail.price = 0;
+          description +=
+              '+ ${orderDetail.food!.name}: Món tặng - SL: ${orderDetail.quantity}\\\n';
         } else {
           orderDetail.is_gift = false;
+          description +=
+              '+ ${orderDetail.food!.name}: Đơn giá: ${orderDetail.price} - SL: ${orderDetail.quantity}\\\n';
         }
 
         totalAmount += (orderDetail.price * orderDetail.quantity);
@@ -1322,6 +1550,30 @@ class OrderController extends GetxController {
           });
         });
       }
+
+      //Tạo lịch sử đơn hàng
+      String idOrderHistory = Utils.generateUUID();
+      //Thông tin nhân viên phụ trách đơn hàng
+      DocumentSnapshot employeeCollection = await firestore
+          .collection('employees')
+          .doc(authController.user.uid)
+          .get();
+      OrderHistory orderHistory = OrderHistory(
+          history_id: idOrderHistory,
+          order_id: id,
+          employee_id: authController.user.uid,
+          employee_name: '',
+          description: description,
+          create_at: Timestamp.now());
+      if (employeeCollection.exists) {
+        final employeeData = employeeCollection.data();
+        if (employeeData != null && employeeData is Map<String, dynamic>) {
+          String name = employeeData['name'] ?? '';
+          orderHistory.employee_name = name;
+        }
+      }
+      orderHistory.description = description;
+      orderHistoryController.createOrderHistory(orderHistory);
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',
@@ -1360,6 +1612,30 @@ class OrderController extends GetxController {
           await firestore.collection('orders').doc(order.order_id).update({
             "total_amount": newTotalAmount,
           });
+        }).then((_) async {
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description:
+                  'Đã hủy món: ${orderDetail.food!.name} - SL: ${orderDetail.quantity}',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
         });
 
         update();
@@ -1369,19 +1645,6 @@ class OrderController extends GetxController {
       Utils.showErrorFlushbar(context, '', 'Hủy món thất bại!');
     }
   }
-
-//================================DELETE==================================
-// DocumentReference docRef =
-//             FirebaseFirestore.instance.collection('orders').doc(order.order_id);
-
-//         try {
-//           // Gọi phương thức delete để xóa document
-//           await docRef.delete();
-//           print('Document deleted successfully');
-//         } catch (e) {
-//           print('Error deleting document: $e');
-//         }
-//=================================
 
   //HỦY ĐƠN HÀNG
   cancelOrder(
@@ -1399,7 +1662,31 @@ class OrderController extends GetxController {
           "order_status": ORDER_STATUS_CANCEL, // đơn hàng đã hủy
           "payment_at": Timestamp.now(), // đơn hàng đã hủy
           "active": DEACTIVE, // đơn hàng đã hủy
+        }).then((_) async {
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: 'Đơn hàng đã được hủy.',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
         });
+
         update();
 
         Navigator.pop(context);
@@ -1439,13 +1726,35 @@ class OrderController extends GetxController {
           await firestore.collection('tables').doc(newTable.table_id).update({
             "status": TABLE_STATUS_SERVING, // cập nhật lại trạng thái bàn mới
           });
+
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description:
+                  'Chuyển bàn: từ [${order.table!.name} -> [${newTable.name}]].',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
           update();
           // Utils.showSuccessFlushbar(context, '', 'Chuyển bàn thành công!');
         } else {
           Utils.showErrorFlushbar(context, '', 'Chuyển bàn thất bại!');
         }
-
-        // Navigator.pop(context);
       }
     } catch (e) {
       Utils.showErrorFlushbar(context, '', 'Chuyển bàn thất bại!');
@@ -1460,6 +1769,30 @@ class OrderController extends GetxController {
       }).then((_) async {
         Utils.showSuccessFlushbar(context, 'SỐ LƯỢNG KHÁCH',
             'Cập nhật số lượng khách của bàn ${order.table!.name} thành công!');
+      }).then((_) async {
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: order.order_id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description:
+                'Cập nhật số lượng khách: từ ${order.total_slot} -> $new_slot.',
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistoryController.createOrderHistory(orderHistory);
       });
     } catch (e) {
       Get.snackbar(
@@ -1518,9 +1851,6 @@ class OrderController extends GetxController {
               tableNames.add(tableOrdered.data()?['name']); //lấy tên bàn
 
               if (status == TABLE_STATUS_EMPTY) {
-                print("Index valid: $i");
-                print("Index valid: ${tableIds[i]} - $name");
-
                 // Cập nhật trạng thái bàn gộp
                 await firestore.collection('tables').doc(tableIds[i]).update({
                   "status": TABLE_STATUS_MERGED,
@@ -1540,15 +1870,37 @@ class OrderController extends GetxController {
                       .update({
                     "table_merge_names": FieldValue.arrayUnion(tableNames),
                   });
-                }).then((_) {
+                }).then((_) async {
                   Utils.showSuccessFlushbar(context, '', 'Gộp bàn thành công!');
+
+                  //Tạo lịch sử đơn hàng
+                  String idOrderHistory = Utils.generateUUID();
+                  //Thông tin nhân viên phụ trách đơn hàng
+                  DocumentSnapshot employeeCollection = await firestore
+                      .collection('employees')
+                      .doc(authController.user.uid)
+                      .get();
+                  OrderHistory orderHistory = OrderHistory(
+                      history_id: idOrderHistory,
+                      order_id: order.order_id,
+                      employee_id: authController.user.uid,
+                      employee_name: '',
+                      description: 'Gộp bàn với [${tableNames.join(',')}]',
+                      create_at: Timestamp.now());
+                  if (employeeCollection.exists) {
+                    final employeeData = employeeCollection.data();
+                    if (employeeData != null &&
+                        employeeData is Map<String, dynamic>) {
+                      String name = employeeData['name'] ?? '';
+                      orderHistory.employee_name = name;
+                    }
+                  }
+                  orderHistoryController.createOrderHistory(orderHistory);
                 }).catchError((error) {
                   Utils.showErrorFlushbar(context, '', 'Gộp bàn thất bại!');
                 });
               }
             } else {
-              print("Index invalid: $i");
-              print("Index invalid: ${tableIds[i]}");
               break;
             }
           }
@@ -1556,8 +1908,6 @@ class OrderController extends GetxController {
           print("Tất cả các bàn cần gộp không còn trống");
           Utils.showErrorFlushbar(context, '', 'Gộp bàn thất bại!');
         }
-
-        // Navigator.pop(context);
       }
     } catch (e) {
       // Get.snackbar(
@@ -1596,6 +1946,30 @@ class OrderController extends GetxController {
           await firestore.collection('tables').doc(tableId).update({
             "status":
                 TABLE_STATUS_EMPTY, // cập nhật trạng thái bàn trống sau khi không còn gộp
+          }).then((_) async {
+            //Tạo lịch sử đơn hàng
+            String idOrderHistory = Utils.generateUUID();
+            //Thông tin nhân viên phụ trách đơn hàng
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(authController.user.uid)
+                .get();
+            OrderHistory orderHistory = OrderHistory(
+                history_id: idOrderHistory,
+                order_id: orderData.order_id,
+                employee_id: authController.user.uid,
+                employee_name: '',
+                description: 'Hủy gộp bàn với [$tableName]',
+                create_at: Timestamp.now());
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                orderHistory.employee_name = name;
+              }
+            }
+            orderHistoryController.createOrderHistory(orderHistory);
           });
 
           Utils.showSuccessFlushbar(context, '', 'Hủy gộp bàn thành công!');
@@ -1627,6 +2001,9 @@ class OrderController extends GetxController {
       print("===========================TÁCH MÓN=========================");
       if (orderDetailNeedSplitArray.isNotEmpty && targetTable.table_id != "") {
         double totalAmountSplit = 0;
+        String description =
+            'Đơn hàng mới đã được tạo.\\\nCác món đã được tách từ đơn hàng ${order.order_id.substring(0, 8)} - (Bàn ${order.table!.name}):\\\n';
+        String description2 = 'Đã tách món sang bàn ${targetTable.name}:\\\n';
         for (int i = 0; i < orderDetailNeedSplitArray.length; i++) {
           if (orderDetailNeedSplitArray[i].isSelected) {
             totalAmountSplit += (orderDetailNeedSplitArray[i].price *
@@ -1664,6 +2041,11 @@ class OrderController extends GetxController {
               print("Số lượng tách: ${orderDetailNeedSplitArray[i].quantity}");
               print("Số lượng sau: $newQuantity");
               // nếu chuyển hết thì xóa món ăn ở đơn hàng cần tách
+
+              description +=
+                  '+ ${orderDetailNeedSplitArray[i].food!.name}: SL tách: ${orderDetailNeedSplitArray[i].quantity}\\\n';
+              description2 +=
+                  '+ ${orderDetailNeedSplitArray[i].food!.name}: SL tách: ${orderDetailNeedSplitArray[i].quantity} : SL còn: $newQuantity\\\n';
               if (newQuantity == 0) {
                 await firestore
                     .collection("orders")
@@ -1692,6 +2074,12 @@ class OrderController extends GetxController {
             .where("table_id", isEqualTo: targetTable.table_id)
             .where("active", isEqualTo: ACTIVE)
             .get();
+
+        String tableOrdered_order_id = "";
+        for (var doc in tableOrdered.docs) {
+          // Lấy order_id từ mỗi tài liệu và thêm vào danh sách
+          tableOrdered_order_id = doc.id;
+        }
 
         var orderCollection =
             await firestore.collection("orders").doc(order.order_id).get();
@@ -1734,7 +2122,7 @@ class OrderController extends GetxController {
               total_surcharge_amount: 0,
               customer_name: '',
               customer_phone: '',
-              customer_time_booking: Timestamp.now(),
+              customer_time_booking: null,
               deposit_amount: 0);
           // cập nhật lại tổng tiền cho order
 
@@ -1777,11 +2165,56 @@ class OrderController extends GetxController {
           await firestore.collection("orders").doc(order.order_id).update({
             "total_amount": totalAmountOrigin - totalAmountSplit,
           });
+
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description;
+          orderHistoryController.createOrderHistory(orderHistory);
+
+          //Tạo lịch sử đơn hàng đã bị tách
+          OrderHistory orderHistory2 = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description2,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description2;
+          orderHistoryController.createOrderHistory(orderHistory2);
+
+          //Gửi bếp bar
+          sendToChefBar(id, targetTable.name, orderDetailNeedSplitArray);
         } else {
           var allDocsOrderDetail = await firestore
               .collection('orders')
               .doc(
-                  order.order_id) //order_id của don hang hiện đang được phục vụ
+                  tableOrdered_order_id) //order_id của don hang hiện đang được phục vụ
               .collection("orderDetails")
               .get();
 
@@ -1792,19 +2225,80 @@ class OrderController extends GetxController {
             if (orderDetail.isSelected) {
               await firestore
                   .collection('orders')
-                  .doc(order
-                      .order_id) //order_id của don hang hiện đang được phục vụ
+                  .doc(
+                      tableOrdered_order_id) //order_id của don hang hiện đang được phục vụ
                   .collection("orderDetails")
                   .doc(idDetail)
                   .set(orderDetail.toJson());
             }
           }
-          await firestore.collection("orders").doc(order.order_id).update({
-            "total_amount": totalAmountOrigin + totalAmountSplit,
+          var orderDocument = await firestore
+              .collection("orders")
+              .doc(tableOrdered_order_id)
+              .get();
+
+          // Kiểm tra xem document có tồn tại không
+          double totalAmount = 0;
+          if (orderDocument.exists) {
+            // Lấy thông tin từ document
+            String order_id = orderDocument.id;
+            totalAmount = orderDocument["total_amount"];
+          }
+          await firestore
+              .collection("orders")
+              .doc(tableOrdered_order_id)
+              .update({
+            "total_amount": totalAmount + totalAmountSplit,
           });
+
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: tableOrdered_order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description;
+          orderHistoryController.createOrderHistory(orderHistory);
+
+          //Tạo lịch sử đơn hàng đã bị tách
+          OrderHistory orderHistory2 = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description2,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description2;
+          orderHistoryController.createOrderHistory(orderHistory2);
+
+          sendToChefBar(tableOrdered_order_id, targetTable.name,
+              orderDetailNeedSplitArray);
         }
 
         update();
+
         Utils.showSuccessFlushbar(context, '', 'Tách món thành công!');
       }
     } catch (e) {
@@ -1822,11 +2316,13 @@ class OrderController extends GetxController {
       print(
           "===========================CẬP NHẬT SỐ LƯỢNG MÓN=========================");
       if (orderDetailNeedUpdate.isNotEmpty) {
+        String description = 'Cập nhật số lượng món: \\\n';
         for (int i = 0; i < orderDetailNeedUpdate.length; i++) {
           print("Món: ${orderDetailNeedUpdate[i].food!.name}");
           print("SL: ${orderDetailNeedUpdate[i].quantity}");
           print("----------------------------------------");
-
+          description +=
+              '+ ${orderDetailNeedUpdate[i].food!.name}: SL mới: ${orderDetailNeedUpdate[i].quantity}\\\n';
           await firestore
               .collection("orders")
               .doc(order_id)
@@ -1894,7 +2390,29 @@ class OrderController extends GetxController {
           } else {
             await firestore.collection("others").doc(order_id).delete();
           }
-
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description;
+          orderHistoryController.createOrderHistory(orderHistory);
           update();
         }
       }
@@ -1913,12 +2431,15 @@ class OrderController extends GetxController {
       print(
           "===========================CẬP NHẬT SỐ LƯỢNG MÓN=========================");
       if (orderDetailNeedUpdate.isNotEmpty) {
+        String description = 'Cập nhật số lượng món: \\\n';
         for (int i = 0; i < orderDetailNeedUpdate.length; i++) {
           print("Món: ${orderDetailNeedUpdate[i].food!.name}");
           print("SL: ${orderDetailNeedUpdate[i].quantity}");
           print("----------------------------------------");
 
           if (orderDetailNeedUpdate[i].isSelected) {
+            description +=
+                '+ ${orderDetailNeedUpdate[i].food!.name}: SL cũ:${orderDetailNeedUpdate[i].quantity} -> SL mới: ${orderDetailNeedUpdate[i].new_quantity}\\\n';
             await firestore
                 .collection("orders")
                 .doc(order_id)
@@ -1987,7 +2508,29 @@ class OrderController extends GetxController {
           } else {
             await firestore.collection("others").doc(order_id).delete();
           }
-
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description;
+          orderHistoryController.createOrderHistory(orderHistory);
           update();
         }
       }
@@ -2143,6 +2686,28 @@ class OrderController extends GetxController {
           }
           // }
         }
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: order_id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description: 'Đã gửi tới Bếp/Bar/Khác',
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistoryController.createOrderHistory(orderHistory);
       }
     } catch (e) {
       Utils.showToast('Gửi Bếp/Bar thất bại! + $e', TypeToast.ERROR);
@@ -2189,6 +2754,29 @@ class OrderController extends GetxController {
             }
           }
         }
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: order.order_id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description:
+                'Tất cả món đã được yêu cầu hoàn tất món để thanh toán.',
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistoryController.createOrderHistory(orderHistory);
 
         update();
       }
@@ -2199,10 +2787,12 @@ class OrderController extends GetxController {
   }
 
   //UPDATE BOOKING
-  //CẬP NHẬT TRẠNG THÁI MÓN ĐƠN
+
   updateServingTableById(table.Table table) async {
     try {
       if (table.table_id != '') {
+        var order_id = "";
+
         //Cập nhật trạng thái món ăn theo foodStatus
         await firestore.collection('tables').doc(table.table_id).update({
           "status": TABLE_STATUS_SERVING,
@@ -2213,9 +2803,7 @@ class OrderController extends GetxController {
               .where("active", isEqualTo: ACTIVE)
               .where("order_status", isEqualTo: ORDER_STATUS_BOOKING)
               .get();
-
           if (tableOrdered.docs.isNotEmpty) {
-            var order_id = "";
             for (var doc in tableOrdered.docs) {
               order_id = doc.id;
               print(order_id);
@@ -2226,13 +2814,36 @@ class OrderController extends GetxController {
               });
             }
           }
-        }).then((_) {
+        }).then((_) async {
           Utils.showToast('Bàn đã sẵn sàng phục vụ!', TypeToast.SUCCESS);
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description:
+                  'Chuyển trạng thái bàn: từ [Bàn Booking] -> [Bàn đang phục vụ]',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
         });
         update();
       }
     } catch (e) {
-      Utils.showToast('Cập nhật trạng thái thất bại!', TypeToast.ERROR);
+      Utils.showToast('Bàn chưa sẵn sàng phục vụ!', TypeToast.ERROR);
     }
   }
 
@@ -2254,8 +2865,31 @@ class OrderController extends GetxController {
           await firestore.collection('tables').doc(newTable.table_id).update({
             "status": oldTable.status,
           });
-        }).then((_) {
+        }).then((_) async {
           Utils.showToast('Bàn booking đã được thay đổi!', TypeToast.SUCCESS);
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description:
+                  'Đổi bàn booking: từ bàn [${oldTable.name}] -> [${newTable.name}]',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
         });
         update();
       }
@@ -2278,6 +2912,28 @@ class OrderController extends GetxController {
             .update({
           "food_status": foodStatus,
         });
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: order.order_id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description: 'Đã cập nhật trạng thái món.',
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistoryController.createOrderHistory(orderHistory);
         update();
       }
     } catch (e) {
@@ -2315,6 +2971,28 @@ class OrderController extends GetxController {
           "is_vat": ACTIVE,
         }).then((_) async {
           Utils.showToast('Áp dụng VAT thành công!', TypeToast.SUCCESS);
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: 'Áp dụng VAT.',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
         });
         update();
       }
@@ -2346,6 +3024,28 @@ class OrderController extends GetxController {
           "total_vat_amount": 0.0,
           "is_vat": DEACTIVE,
         }).then((_) async {
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: 'Hủy áp dụng VAT.',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
           Utils.showToast('Hủy VAT thành công!', TypeToast.SUCCESS);
         });
         update();
@@ -2440,6 +3140,30 @@ class OrderController extends GetxController {
             "discount_amount_other": discount_amount_other,
             "is_discount": ACTIVE,
           }).then((_) async {
+            //Tạo lịch sử đơn hàng
+            String idOrderHistory = Utils.generateUUID();
+            //Thông tin nhân viên phụ trách đơn hàng
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(authController.user.uid)
+                .get();
+            OrderHistory orderHistory = OrderHistory(
+                history_id: idOrderHistory,
+                order_id: order.order_id,
+                employee_id: authController.user.uid,
+                employee_name: '',
+                description:
+                    'Áp dụng giảm giá: ${Utils.formatCurrency(total_discount_amount)}.',
+                create_at: Timestamp.now());
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                orderHistory.employee_name = name;
+              }
+            }
+            orderHistoryController.createOrderHistory(orderHistory);
             Utils.myPop(context);
             Utils.showToast('Áp dụng giảm giá thành công!', TypeToast.SUCCESS);
           });
@@ -2469,8 +3193,32 @@ class OrderController extends GetxController {
           "total_discount_amount": 0.0,
           "total_amount": totalAmount + order.total_vat_amount,
           "is_discount": DEACTIVE,
-        }).then((_) =>
-            {Utils.showToast('Hủy giảm giá thành công!', TypeToast.SUCCESS)});
+        }).then((_) async {
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order.order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description:
+                  'Hủy áp dụng giảm giá: ${Utils.formatCurrency(order.total_discount_amount)}',
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistoryController.createOrderHistory(orderHistory);
+          Utils.showToast('Hủy giảm giá thành công!', TypeToast.SUCCESS);
+        });
 
         update();
       }

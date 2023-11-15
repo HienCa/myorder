@@ -57,7 +57,7 @@ class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
                 padding: const EdgeInsets.only(top: 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Center(
                       child: Text(
@@ -70,18 +70,11 @@ class _CustomDialogSplitFoodState extends State<CustomDialogSplitFood> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: Container(
-                              height: 100,
-                              alignment: const Alignment(0, 0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.transparent,
-                              ),
-                              child: Center(
+                           child:Center(
                                   child: Text(
                                 "Bạn chắc chắn muốn tách món từ bàn ${widget.order.table!.name} sang ${widget.table.name} ?",
                                 style: textStyleContentDialog16,
-                              ))),
+                              )),
                         ),
                       ],
                     ),

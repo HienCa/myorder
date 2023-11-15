@@ -10,11 +10,13 @@ import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_change_table_booking.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_confirm_update_new_quantity.dart';
+import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_order_history.dart';
 import 'package:myorder/views/screens/order/orderdetail/dialogs/dialog_confirm_finish_foos.dart';
 import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
@@ -1727,7 +1729,17 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       InkWell(
-                        onTap: () {},
+                        onTap: () async {
+                          //Lịch sử đơn hàng
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return MyDialogOrderHistory(
+                                order: widget.order,
+                              );
+                            },
+                          );
+                        },
                         child: const CustomButtonIcon(
                             label: 'LỊCH SỬ ĐƠN HÀNG',
                             height: 40,
@@ -1825,24 +1837,32 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                   if (foodOrder.isSelected == true) {
                                     //chi tiet don hang
                                     //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                                    Food foodDetail = Food.empty();
+                                    foodDetail.name = foodOrder.name;
+                                    foodDetail.food_combo_details =
+                                        foodOrder.food_combo_details;
+                                    foodDetail.addition_food_details =
+                                        foodOrder.addition_food_details;
+
                                     OrderDetail orderDetail = OrderDetail(
-                                      order_detail_id: "",
-                                      price: Utils.isDateTimeInRange(
-                                              foodOrder
-                                                  .temporary_price_from_date,
-                                              foodOrder.temporary_price_to_date)
-                                          ? (foodOrder.price +
-                                              foodOrder.price_with_temporary!)
-                                          : foodOrder.price,
-                                      quantity: foodOrder.quantity!,
-                                      food_status: FOOD_STATUS_IN_CHEF,
-                                      food_id: foodOrder.food_id,
-                                      is_gift: (foodOrder.isGift ?? false),
-                                      category_id: '',
-                                      category_code: foodOrder.category_code,
-                                      chef_bar_status: CHEF_BAR_STATUS,
-                                      is_addition: false,
-                                    );
+                                        order_detail_id: "",
+                                        price: Utils.isDateTimeInRange(
+                                                foodOrder
+                                                    .temporary_price_from_date,
+                                                foodOrder
+                                                    .temporary_price_to_date)
+                                            ? (foodOrder.price +
+                                                foodOrder.price_with_temporary!)
+                                            : foodOrder.price,
+                                        quantity: foodOrder.quantity!,
+                                        food_status: FOOD_STATUS_IN_CHEF,
+                                        food_id: foodOrder.food_id,
+                                        is_gift: (foodOrder.isGift ?? false),
+                                        category_id: '',
+                                        category_code: foodOrder.category_code,
+                                        chef_bar_status: CHEF_BAR_STATUS,
+                                        is_addition: false,
+                                        food: foodDetail);
                                     //MÓN TẶNG
                                     if (orderDetail.is_gift == true) {
                                       orderDetail.price = 0;

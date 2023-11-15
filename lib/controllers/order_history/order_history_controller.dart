@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/order_history.dart';
-import 'package:myorder/utils.dart';
 
 class OrderHistoryController extends GetxController {
   final Rx<List<OrderHistory>> _orderHistory = Rx<List<OrderHistory>>([]);
@@ -55,14 +54,14 @@ class OrderHistoryController extends GetxController {
   ) async {
     try {
       if (orderHistory.order_id != "") {
-        String id = Utils.generateUUID();
-
         CollectionReference usersCollection = FirebaseFirestore.instance
             .collection('orders')
             .doc(orderHistory.order_id)
             .collection('orderHistory');
 
-        await usersCollection.doc(id).set(orderHistory.toJson());
+        await usersCollection
+            .doc(orderHistory.history_id)
+            .set(orderHistory.toJson());
       } else {
         Get.snackbar(
           'Error!',

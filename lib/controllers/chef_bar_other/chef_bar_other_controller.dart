@@ -4,13 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Correct import for Fir
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/order_history/order_history_controller.dart';
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/models/order_history.dart';
 import 'package:myorder/utils.dart';
 
 class ChefBarOtherController extends GetxController {
+  OrderHistoryController orderHistoryController =
+      Get.put(OrderHistoryController());
   final Rx<List<ChefBar>> _chefs = Rx<List<ChefBar>>([]);
   List<ChefBar> get chefs => _chefs.value;
 
@@ -200,7 +204,12 @@ class ChefBarOtherController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now(), deposit_amount: 0));
+      total_slot: 1,
+      total_surcharge_amount: 0,
+      customer_name: '',
+      customer_phone: '',
+      customer_time_booking: Timestamp.now(),
+      deposit_amount: 0));
   model.Order get orderDetailOfChef => _orderDetailOfChef.value;
   getChefByOrder(String chef_bar_id, String keySearch) async {
     _orderDetailOfChef.bindStream(
@@ -232,7 +241,12 @@ class ChefBarOtherController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now(), deposit_amount: 0);
+              total_slot: 1,
+              total_surcharge_amount: 0,
+              customer_name: '',
+              customer_phone: '',
+              customer_time_booking: Timestamp.now(),
+              deposit_amount: 0);
           retValue.order_id = chef_bar_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -322,7 +336,12 @@ class ChefBarOtherController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now(), deposit_amount: 0));
+      total_slot: 1,
+      total_surcharge_amount: 0,
+      customer_name: '',
+      customer_phone: '',
+      customer_time_booking: Timestamp.now(),
+      deposit_amount: 0));
   model.Order get orderDetailOfBar => _orderDetailOfBar.value;
   getBarByOrder(String chef_bar_id, String keySearch) async {
     _orderDetailOfBar.bindStream(
@@ -354,7 +373,12 @@ class ChefBarOtherController extends GetxController {
               total_discount_amount: 0,
               discount_percent: 0,
               discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now(), deposit_amount: 0);
+              total_slot: 1,
+              total_surcharge_amount: 0,
+              customer_name: '',
+              customer_phone: '',
+              customer_time_booking: Timestamp.now(),
+              deposit_amount: 0);
           retValue.order_id = chef_bar_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -428,7 +452,12 @@ class ChefBarOtherController extends GetxController {
       total_discount_amount: 0,
       discount_percent: 0,
       discount_amount_other: 0,
-      total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now(), deposit_amount: 0));
+      total_slot: 1,
+      total_surcharge_amount: 0,
+      customer_name: '',
+      customer_phone: '',
+      customer_time_booking: Timestamp.now(),
+      deposit_amount: 0));
   model.Order get orderDetailOfOther => _orderDetailOfOther.value;
   getOtherByOrder(String chef_bar_id, String keySearch) async {
     _orderDetailOfOther.bindStream(
@@ -440,27 +469,33 @@ class ChefBarOtherController extends GetxController {
           .asyncMap(
         (QuerySnapshot query) async {
           model.Order retValue = model.Order(
-              order_id: '',
-              order_status: 0,
-              create_at: Timestamp.now(),
-              active: 1,
-              employee_id: '',
-              table_id: '',
-              table_merge_ids: [],
-              table_merge_names: [],
-              order_code: '',
-              total_amount: 0,
-              is_vat: 0,
-              discount_amount_all: 0,
-              discount_amount_food: 0,
-              discount_amount_drink: 0,
-              discount_reason: '',
-              is_discount: 0,
-              total_vat_amount: 0,
-              total_discount_amount: 0,
-              discount_percent: 0,
-              discount_amount_other: 0,
-              total_slot: 1, total_surcharge_amount: 0, customer_name: '', customer_phone: '', customer_time_booking: Timestamp.now(), deposit_amount: 0,);
+            order_id: '',
+            order_status: 0,
+            create_at: Timestamp.now(),
+            active: 1,
+            employee_id: '',
+            table_id: '',
+            table_merge_ids: [],
+            table_merge_names: [],
+            order_code: '',
+            total_amount: 0,
+            is_vat: 0,
+            discount_amount_all: 0,
+            discount_amount_food: 0,
+            discount_amount_drink: 0,
+            discount_reason: '',
+            is_discount: 0,
+            total_vat_amount: 0,
+            total_discount_amount: 0,
+            discount_percent: 0,
+            discount_amount_other: 0,
+            total_slot: 1,
+            total_surcharge_amount: 0,
+            customer_name: '',
+            customer_phone: '',
+            customer_time_booking: Timestamp.now(),
+            deposit_amount: 0,
+          );
           retValue.order_id = chef_bar_id;
 
           List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
@@ -522,7 +557,7 @@ class ChefBarOtherController extends GetxController {
         print(
             "=================$FOOD_STATUS_COOKING_STRING -> $FOOD_STATUS_FINISH_STRING=======================");
         //Cập nhật trạng thái món ăn theo foodStatus
-
+        String description = 'Cập nhật trạng thái món: "\\n"';
         for (OrderDetail item in orderDetailList) {
           if (item.isSelected) {
             if (item.food_status == FOOD_STATUS_IN_CHEF) {
@@ -535,11 +570,14 @@ class ChefBarOtherController extends GetxController {
                   .update({
                 "food_status": FOOD_STATUS_COOKING,
               });
-
+              description +=
+                  '+ ${item.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING]\\n';
               print(
                   "${item.food!.name}: ${item.food_status}:FOOD_STATUS_IN_CHEF -> $FOOD_STATUS_COOKING: FOOD_STATUS_COOKING");
             } else if (item.food_status == FOOD_STATUS_COOKING) {
               //ĐANG CHẾ BIẾN -> HOÀN THÀNH
+              description +=
+                  '+ ${item.food!.name}: [$FOOD_STATUS_COOKING_STRING] -> [$FOOD_STATUS_FINISH_STRING]\\n';
               await firestore
                   .collection('orders')
                   .doc(order_id)
@@ -617,6 +655,29 @@ class ChefBarOtherController extends GetxController {
           }
           update();
         }
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: order_id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description: description,
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistory.description = description;
+        orderHistoryController.createOrderHistory(orderHistory);
       }
     } catch (e) {
       Utils.showToast('Cập nhật trạng thái món thất bại!', TypeToast.ERROR);
@@ -633,10 +694,11 @@ class ChefBarOtherController extends GetxController {
         print(
             "=================$FOOD_STATUS_IN_CHEF_STRING -> $FOOD_STATUS_CANCEL_STRING=======================");
         //Cập nhật trạng thái món ăn theo foodStatus
-
+        String description = 'Quán yêu cầu hủy món:\\n';
         for (OrderDetail item in orderDetailList) {
           if (item.isSelected) {
             if (item.food_status == FOOD_STATUS_IN_CHEF) {
+              description += '+ ${item.food!.name}\\n';
               //CHỜ CHẾ BIẾN -> ĐANG CHẾ BIẾN
               await firestore
                   .collection('orders')
@@ -715,6 +777,29 @@ class ChefBarOtherController extends GetxController {
           }
           update();
         }
+        //Tạo lịch sử đơn hàng
+        String idOrderHistory = Utils.generateUUID();
+        //Thông tin nhân viên phụ trách đơn hàng
+        DocumentSnapshot employeeCollection = await firestore
+            .collection('employees')
+            .doc(authController.user.uid)
+            .get();
+        OrderHistory orderHistory = OrderHistory(
+            history_id: idOrderHistory,
+            order_id: order_id,
+            employee_id: authController.user.uid,
+            employee_name: '',
+            description: description,
+            create_at: Timestamp.now());
+        if (employeeCollection.exists) {
+          final employeeData = employeeCollection.data();
+          if (employeeData != null && employeeData is Map<String, dynamic>) {
+            String name = employeeData['name'] ?? '';
+            orderHistory.employee_name = name;
+          }
+        }
+        orderHistory.description = description;
+        orderHistoryController.createOrderHistory(orderHistory);
       }
     } catch (e) {
       Utils.showToast('Cập nhật trạng thái món thất bại!', TypeToast.ERROR);
