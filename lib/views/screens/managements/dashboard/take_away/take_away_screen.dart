@@ -651,8 +651,9 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                             child: Marquee(
                                                                 direction: Axis
                                                                     .horizontal,
-                                                                // textDirection:
-                                                                //     TextDirection.ltr,
+                                                                textDirection:
+                                                                    TextDirection
+                                                                        .ltr,
                                                                 animationDuration:
                                                                     const Duration(
                                                                         seconds:
@@ -669,6 +670,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                                     DirectionMarguee
                                                                         .TwoDirection,
                                                                 child: RichText(
+                                                                  textAlign: TextAlign.center,
                                                                   text:
                                                                       TextSpan(
                                                                     style: DefaultTextStyle.of(

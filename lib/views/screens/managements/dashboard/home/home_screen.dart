@@ -501,11 +501,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                                     child: Container(
                                       height: 30,
                                       decoration: BoxDecoration(
-                                        color: orderController
-                                                    .orders[i].order_status ==
-                                                ORDER_STATUS_SERVING
-                                            ? primaryColor
-                                            : grayColor200,
+                                        color: primaryColor,
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: const Center(

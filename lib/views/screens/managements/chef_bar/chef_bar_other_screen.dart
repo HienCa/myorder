@@ -96,6 +96,7 @@ class _ManagementChefBarOtherPageState
                           style: textStyleWhiteBold14,
                         );
                 })),
+                
               ],
             ),
             title: const Center(

@@ -21,7 +21,13 @@ class Food {
   List<dynamic> food_combo_details = [];
   List addition_food_ids = [];
   List<dynamic> addition_food_details = [];
+  int is_addition_food;
 
+  //quản lý số lượng món trong thời gian chỉ định
+  double max_order_limit;
+  double current_order_count;
+  Timestamp? quanity_start_date_time;
+  Timestamp? quanity_end_date_time;
   Food({
     required this.food_id,
     required this.name,
@@ -40,6 +46,11 @@ class Food {
     required this.food_combo_details,
     required this.addition_food_ids,
     required this.addition_food_details,
+    required this.max_order_limit,
+    required this.current_order_count,
+    required this.quanity_start_date_time,
+    required this.quanity_end_date_time,
+    required this.is_addition_food,
   });
   Food.empty()
       : food_id = '',
@@ -52,13 +63,18 @@ class Food {
         temporary_price_from_date = null,
         temporary_price_to_date = null,
         active = 0,
+        is_addition_food = 0,
         category_id = '',
         unit_id = '',
         temporary_percent = 0,
         food_combo_ids = [],
         food_combo_details = [],
         addition_food_ids = [],
-        addition_food_details = [];
+        addition_food_details = [],
+        max_order_limit = 0,
+        current_order_count = 0,
+        quanity_start_date_time = null,
+        quanity_end_date_time = null;
 
   Map<String, dynamic> toJson() => {
         "food_id": food_id,
@@ -70,6 +86,7 @@ class Food {
         "temporary_price_from_date": temporary_price_from_date,
         "temporary_price_to_date": temporary_price_to_date,
         "active": active,
+        "is_addition_food": is_addition_food,
         "category_id": category_id,
         "category_code": category_code,
         "unit_id": unit_id,
@@ -78,6 +95,10 @@ class Food {
         "food_combo_details": food_combo_details,
         "addition_food_ids": addition_food_ids,
         "addition_food_details": addition_food_details,
+        "max_order_limit": max_order_limit,
+        "current_order_count": current_order_count,
+        "quanity_start_date_time": quanity_start_date_time,
+        "quanity_end_date_time": quanity_end_date_time,
       };
 
   static Food fromSnap(DocumentSnapshot snap) {
@@ -92,6 +113,7 @@ class Food {
       temporary_price_from_date: snapshot['temporary_price_from_date'],
       temporary_price_to_date: snapshot['temporary_price_to_date'],
       active: snapshot['active'],
+      is_addition_food: snapshot['is_addition_food'],
       category_id: snapshot['category_id'],
       category_code: snapshot['category_code'],
       unit_id: snapshot['unit_id'],
@@ -100,6 +122,10 @@ class Food {
       food_combo_details: snapshot['food_combo_details'] ?? [],
       addition_food_ids: snapshot['addition_food_ids'],
       addition_food_details: snapshot['addition_food_details'] ?? [],
+      max_order_limit: snapshot['max_order_limit'] ?? 0,
+      current_order_count: snapshot['current_order_count'] ?? 0,
+      quanity_start_date_time: snapshot['quanity_start_date_time'],
+      quanity_end_date_time: snapshot['quanity_end_date_time'],
     );
   }
 }

@@ -137,6 +137,11 @@ class FoodController extends GetxController {
             food_combo_details: listFoodComboDetail,
             addition_food_ids: addition_food_ids,
             addition_food_details: listAdditionFoodDetail,
+            max_order_limit: 0,
+            current_order_count: 0,
+            quanity_start_date_time: null,
+            quanity_end_date_time: null,
+            is_addition_food: DEACTIVE,
           );
         }
       }
@@ -148,10 +153,14 @@ class FoodController extends GetxController {
 
   final Rx<List<model.Food>> _foods = Rx<List<model.Food>>([]);
   List<model.Food> get foods => _foods.value;
-  getfoods(String keySearch) async {
+  getfoods(String keySearch, int isAdditionFood) async {
     if (keySearch.isEmpty) {
       _foods.bindStream(
-        firestore.collection('foods').snapshots().asyncMap(
+        firestore
+            .collection('foods')
+            .where('is_addition_food', isEqualTo: isAdditionFood)
+            .snapshots()
+            .asyncMap(
           (QuerySnapshot query) async {
             List<model.Food> retValue = [];
             for (var element in query.docs) {
@@ -182,6 +191,79 @@ class FoodController extends GetxController {
       );
     } else {
       _foods.bindStream(firestore
+          .collection('foods')
+          .orderBy('name')
+          .where('is_addition_food', isEqualTo: isAdditionFood)
+          .snapshots()
+          .asyncMap((QuerySnapshot query) async {
+        List<model.Food> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            model.Food food = model.Food.fromSnap(elem);
+
+            List<model.Food> listFoodComboDetail = [];
+            if (food.food_combo_ids.isNotEmpty) {
+              // Lấy thông tin món combo
+              print("===============COMBO CỦA ${food.name}===========");
+
+              for (String item in food.food_combo_ids) {
+                var foodSnapshot =
+                    await firestore.collection("foods").doc(item).get();
+
+                model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                print(food.name);
+                listFoodComboDetail.add(food);
+              }
+            }
+
+            food.food_combo_details = listFoodComboDetail;
+            retVal.add(food);
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
+
+  final Rx<List<model.Food>> _foodAll = Rx<List<model.Food>>([]);
+  List<model.Food> get foodAll => _foodAll.value;
+  getAllFood(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _foodAll.bindStream(
+        firestore.collection('foods').snapshots().asyncMap(
+          (QuerySnapshot query) async {
+            List<model.Food> retValue = [];
+            for (var element in query.docs) {
+              model.Food food = model.Food.fromSnap(element);
+
+              List<model.Food> listFoodComboDetail = [];
+              if (food.food_combo_ids.isNotEmpty) {
+                // Lấy thông tin món combo
+                print("===============COMBO CỦA ${food.name}===========");
+
+                for (String item in food.food_combo_ids) {
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
+
+                  model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                  print(food.name);
+                  listFoodComboDetail.add(food);
+                }
+              }
+
+              food.food_combo_details = listFoodComboDetail;
+              retValue.add(food);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _foodAll.bindStream(firestore
           .collection('foods')
           .orderBy('name')
           .snapshots()
@@ -318,15 +400,13 @@ class FoodController extends GetxController {
                 print("===============MÓN BÁN KÈM CỦA ${food.name}===========");
 
                 for (String item in food.addition_food_ids) {
-                  var foodSnapshot = await firestore
-                      .collection("additionFoods")
-                      .doc(item)
-                      .get();
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
 
                   FoodOrder additionFood = FoodOrder.fromSnap(foodSnapshot);
                   additionFood.isSelected = false;
                   additionFood.quantity = 1;
-                 
+
                   print(additionFood.name);
                   listAdditionFoodDetail.add(additionFood);
                 }
@@ -382,15 +462,13 @@ class FoodController extends GetxController {
                 print("===============MÓN BÁN KÈM CỦA ${food.name}===========");
 
                 for (String item in food.addition_food_ids) {
-                  var foodSnapshot = await firestore
-                      .collection("additionFoods")
-                      .doc(item)
-                      .get();
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
 
                   FoodOrder additionFood = FoodOrder.fromSnap(foodSnapshot);
                   additionFood.isSelected = false;
                   additionFood.quantity = 1;
-                 
+
                   print(additionFood.name);
                   listAdditionFoodDetail.add(additionFood);
                 }
@@ -515,26 +593,31 @@ class FoodController extends GetxController {
         String id = Utils.generateUUID();
         if (price_with_temporary != "") {
           model.Food Food = model.Food(
-            food_id: id,
-            name: name,
-            image: downloadUrl,
-            price: double.tryParse(price) ?? 0.0,
-            price_with_temporary: double.tryParse(price_with_temporary!) ?? 0.0,
-            temporary_price_from_date:
-                Timestamp.fromDate(temporary_price_from_date!),
-            temporary_price_to_date:
-                Timestamp.fromDate(temporary_price_to_date!),
-            category_id: category_id,
-            unit_id: unit_id,
-            vat_id: vat_id,
-            temporary_percent: temporary_percent,
-            active: 1,
-            category_code: category_code,
-            food_combo_ids: food_combo_ids,
-            food_combo_details: [],
-            addition_food_ids: addition_food_ids,
-            addition_food_details: [],
-          );
+              food_id: id,
+              name: name,
+              image: downloadUrl,
+              price: double.tryParse(price) ?? 0.0,
+              price_with_temporary:
+                  double.tryParse(price_with_temporary!) ?? 0.0,
+              temporary_price_from_date:
+                  Timestamp.fromDate(temporary_price_from_date!),
+              temporary_price_to_date:
+                  Timestamp.fromDate(temporary_price_to_date!),
+              category_id: category_id,
+              unit_id: unit_id,
+              vat_id: vat_id,
+              temporary_percent: temporary_percent,
+              active: 1,
+              category_code: category_code,
+              food_combo_ids: food_combo_ids,
+              food_combo_details: [],
+              addition_food_ids: addition_food_ids,
+              addition_food_details: [],
+              max_order_limit: 0,
+              current_order_count: 0,
+              quanity_start_date_time: null,
+              quanity_end_date_time: null,
+              is_addition_food: DEACTIVE);
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
 
@@ -558,7 +641,12 @@ class FoodController extends GetxController {
               food_combo_ids: food_combo_ids,
               food_combo_details: [],
               addition_food_ids: addition_food_ids,
-              addition_food_details: []);
+              addition_food_details: [],
+              max_order_limit: 0,
+              current_order_count: 0,
+              quanity_start_date_time: null,
+              quanity_end_date_time: null,
+              is_addition_food: DEACTIVE);
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
 
@@ -709,7 +797,7 @@ class FoodController extends GetxController {
       int temporary_percent,
       List<String> food_combo_ids,
       List<String> addition_food_ids) async {
-    // var doc = await firestore.collection('additionFoods').doc(Food_id).get();
+    // var doc = await firestore.collection('foods').doc(Food_id).get();
     String downloadUrl = "";
     try {
       print("food_id $food_id");
@@ -741,6 +829,7 @@ class FoodController extends GetxController {
                 double.tryParse(price_with_temporary!) ?? 0.0,
             "temporary_price_from_date": temporary_price_from_date,
             "temporary_price_to_date": temporary_price_to_date,
+            "is_addition_food": DEACTIVE,
 
             // "active": active,
             "category_id": category_id.trim(),
@@ -769,6 +858,7 @@ class FoodController extends GetxController {
                 double.tryParse(price_with_temporary!) ?? 0.0,
             "temporary_price_from_date": temporary_price_from_date,
             "temporary_price_to_date": temporary_price_to_date,
+            "is_addition_food": DEACTIVE,
 
             // "active": active,
             "category_id": category_id.trim(),
@@ -786,6 +876,35 @@ class FoodController extends GetxController {
       //   backgroundColor: backgroundSuccessColor,
       //   colorText: Colors.white,
       // );
+      update();
+    } catch (e) {
+      Get.snackbar(
+        'Cập nhật thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  updateQuantityFoodOrder(
+    String food_id,
+    double max_order_limit,
+    // double current_order_count,
+    Timestamp start_date_time,
+    Timestamp end_date_time,
+    BuildContext context,
+  ) async {
+    try {
+      if (food_id != "") {
+        await firestore.collection('foods').doc(food_id).update({
+          "max_order_limit": max_order_limit,
+          "current_order_count": max_order_limit,
+          "start_date_time": start_date_time,
+          "end_date_time": end_date_time,
+        }).then((value) => {Utils.myPopSuccess(context)});
+      }
+
       update();
     } catch (e) {
       Get.snackbar(

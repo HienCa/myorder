@@ -28,8 +28,8 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
   @override
   void initState() {
     super.initState();
-    foodController.getfoods("");
-    additionFoodController.getAdditionfoods('');
+    foodController.getfoods("", DEACTIVE);
+    additionFoodController.getAdditionfoods('', ACTIVE);
   }
 
   @override
@@ -95,7 +95,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
           body: TabBarView(children: [
             SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     height: 50,
@@ -112,7 +112,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                             Border.all(width: 1, color: borderColorPrimary)),
                     child: TextField(
                       onChanged: (value) {
-                        foodController.getfoods(value);
+                        foodController.getfoods(value, DEACTIVE);
                       },
                       style: const TextStyle(color: borderColorPrimary),
                       decoration: const InputDecoration(
@@ -131,7 +131,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                   ),
                   marginTop10,
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.58,
+                    height: MediaQuery.of(context).size.height * 0.7,
                     child: Obx(() {
                       return ListView.builder(
                           itemCount: foodController.foods.length,
@@ -334,7 +334,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
 
             SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     height: 50,
@@ -351,7 +351,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                             Border.all(width: 1, color: borderColorPrimary)),
                     child: TextField(
                       onChanged: (value) {
-                        additionFoodController.getAdditionfoods(value);
+                        additionFoodController.getAdditionfoods(value, ACTIVE);
                       },
                       style: const TextStyle(color: borderColorPrimary),
                       decoration: const InputDecoration(
@@ -370,7 +370,7 @@ class _ManagementFoodsPageState extends State<ManagementFoodsPage> {
                   ),
                   marginTop10,
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.58,
+                    height: MediaQuery.of(context).size.height * 0.7,
                     child: Obx(() {
                       return ListView.builder(
                           itemCount: additionFoodController.foods.length,

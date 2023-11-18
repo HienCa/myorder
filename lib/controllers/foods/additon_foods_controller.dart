@@ -53,7 +53,7 @@ class AdditionFoodController extends GetxController {
   getAddtionFoodById(String foodId) async {
     try {
       DocumentSnapshot Food =
-          await firestore.collection('additionFoods').doc(foodId).get();
+          await firestore.collection("foods").doc(foodId).get();
       if (Food.exists) {
         final foodData = Food.data();
         if (foodData != null && foodData is Map<String, dynamic>) {
@@ -61,6 +61,7 @@ class AdditionFoodController extends GetxController {
           String name = foodData['name'] ?? "";
           String image = foodData['image'] ?? "";
           double price = foodData['price'] ?? 0;
+          int is_addition_food = foodData['is_addition_food'] ?? 0;
           double price_with_temporary = foodData['price_with_temporary'] ?? 0;
           print(price_with_temporary);
           print(foodData['price_with_temporary']);
@@ -121,25 +122,30 @@ class AdditionFoodController extends GetxController {
           }
 
           return model.Food(
-            food_id: food_id,
-            name: name,
-            image: image,
-            price: price,
-            price_with_temporary: price_with_temporary,
-            temporary_price_from_date: temporary_price_from_date,
-            temporary_price_to_date: temporary_price_to_date,
-            // temporary_price: temporary_price,
-            // temporary_percent: temporary_percent,
-            category_id: category_id,
-            unit_id: unit_id,
-            vat_id: vat_id,
-            temporary_percent: temporary_percent,
-            active: active, category_code: category_code,
-            food_combo_ids: food_combo_ids,
-            food_combo_details: listFoodComboDetail,
-            addition_food_ids: addition_food_combo_ids,
-            addition_food_details: listAdditionFoodDetail,
-          );
+              food_id: food_id,
+              name: name,
+              image: image,
+              price: price,
+              price_with_temporary: price_with_temporary,
+              temporary_price_from_date: temporary_price_from_date,
+              temporary_price_to_date: temporary_price_to_date,
+              // temporary_price: temporary_price,
+              // temporary_percent: temporary_percent,
+              category_id: category_id,
+              unit_id: unit_id,
+              vat_id: vat_id,
+              temporary_percent: temporary_percent,
+              active: active,
+              category_code: category_code,
+              food_combo_ids: food_combo_ids,
+              food_combo_details: listFoodComboDetail,
+              addition_food_ids: addition_food_combo_ids,
+              addition_food_details: listAdditionFoodDetail,
+              max_order_limit: 0,
+              current_order_count: 0,
+              quanity_start_date_time: null,
+              quanity_end_date_time: null,
+              is_addition_food: is_addition_food);
         }
       }
     } catch (e) {
@@ -150,10 +156,14 @@ class AdditionFoodController extends GetxController {
 
   final Rx<List<model.Food>> _foods = Rx<List<model.Food>>([]);
   List<model.Food> get foods => _foods.value;
-  getAdditionfoods(String keySearch) async {
+  getAdditionfoods(String keySearch, int isAdditionFood) async {
     if (keySearch.isEmpty) {
       _foods.bindStream(
-        firestore.collection('additionFoods').snapshots().asyncMap(
+        firestore
+            .collection("foods")
+            .where('is_addition_food', isEqualTo: isAdditionFood)
+            .snapshots()
+            .asyncMap(
           (QuerySnapshot query) async {
             List<model.Food> retValue = [];
             for (var element in query.docs) {
@@ -165,10 +175,8 @@ class AdditionFoodController extends GetxController {
                 print("===============COMBO CỦA ${food.name}===========");
 
                 for (String item in food.food_combo_ids) {
-                  var foodSnapshot = await firestore
-                      .collection("additionFoods")
-                      .doc(item)
-                      .get();
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
 
                   model.Food food = model.Food.fromSnap(foodSnapshot);
 
@@ -186,8 +194,9 @@ class AdditionFoodController extends GetxController {
       );
     } else {
       _foods.bindStream(firestore
-          .collection('additionFoods')
+          .collection('foods')
           .orderBy('name')
+          .where('is_addition_food', isEqualTo: isAdditionFood)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<model.Food> retVal = [];
@@ -204,7 +213,7 @@ class AdditionFoodController extends GetxController {
 
               for (String item in food.food_combo_ids) {
                 var foodSnapshot =
-                    await firestore.collection("additionFoods").doc(item).get();
+                    await firestore.collection("foods").doc(item).get();
 
                 model.Food food = model.Food.fromSnap(foodSnapshot);
 
@@ -275,7 +284,7 @@ class AdditionFoodController extends GetxController {
 
       _foodsToOrder.bindStream(
         firestore
-            .collection('additionFoods')
+            .collection("foods")
             .where("active", isEqualTo: ACTIVE)
             .snapshots()
             .asyncMap(
@@ -306,10 +315,8 @@ class AdditionFoodController extends GetxController {
                 print("===============COMBO CỦA ${food.name}===========");
 
                 for (String item in food.food_combo_ids) {
-                  var foodSnapshot = await firestore
-                      .collection("additionFoods")
-                      .doc(item)
-                      .get();
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
 
                   model.Food food = model.Food.fromSnap(foodSnapshot);
 
@@ -333,7 +340,7 @@ class AdditionFoodController extends GetxController {
 
       _foodsToOrder.bindStream(
         firestore
-            .collection('additionFoods')
+            .collection("foods")
             .where('category_id', isEqualTo: categoryIdSelected)
             .snapshots()
             .asyncMap(
@@ -350,10 +357,8 @@ class AdditionFoodController extends GetxController {
                 print("===============COMBO CỦA ${food.name}===========");
 
                 for (String item in food.food_combo_ids) {
-                  var foodSnapshot = await firestore
-                      .collection("additionFoods")
-                      .doc(item)
-                      .get();
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
 
                   model.Food food = model.Food.fromSnap(foodSnapshot);
 
@@ -378,7 +383,7 @@ class AdditionFoodController extends GetxController {
       print("theo danh muc và có search");
 
       _foodsToOrder.bindStream(firestore
-          .collection('additionFoods')
+          .collection("foods")
           .where('category_id', isEqualTo: categoryIdSelected)
           .orderBy('name')
           .snapshots()
@@ -398,7 +403,7 @@ class AdditionFoodController extends GetxController {
 
               for (String item in food.food_combo_ids) {
                 var foodSnapshot =
-                    await firestore.collection("additionFoods").doc(item).get();
+                    await firestore.collection("foods").doc(item).get();
 
                 model.Food food = model.Food.fromSnap(foodSnapshot);
 
@@ -419,7 +424,7 @@ class AdditionFoodController extends GetxController {
       //tìm kiếm theo danh muc
       print("tìm kiếm theo danh muc");
       _foodsToOrder.bindStream(firestore
-          .collection('additionFoods')
+          .collection("foods")
           .where("active", isEqualTo: ACTIVE)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
@@ -438,7 +443,7 @@ class AdditionFoodController extends GetxController {
 
               for (String item in food.food_combo_ids) {
                 var foodSnapshot =
-                    await firestore.collection("additionFoods").doc(item).get();
+                    await firestore.collection("foods").doc(item).get();
 
                 model.Food food = model.Food.fromSnap(foodSnapshot);
 
@@ -469,7 +474,8 @@ class AdditionFoodController extends GetxController {
       String? vat_id,
       int temporary_percent,
       int category_code,
-      List<String> food_combo_ids, List<String> addition_food_ids) async {
+      List<String> food_combo_ids,
+      List<String> addition_food_ids) async {
     try {
       if (name.isNotEmpty && category_id.isNotEmpty && unit_id.isNotEmpty) {
         String downloadUrl = "";
@@ -480,50 +486,62 @@ class AdditionFoodController extends GetxController {
         String id = Utils.generateUUID();
         if (price_with_temporary != "") {
           model.Food Food = model.Food(
-            food_id: id,
-            name: name,
-            image: downloadUrl,
-            price: double.tryParse(price) ?? 0.0,
-            price_with_temporary: double.tryParse(price_with_temporary!) ?? 0.0,
-            temporary_price_from_date:
-                Timestamp.fromDate(temporary_price_from_date!),
-            temporary_price_to_date:
-                Timestamp.fromDate(temporary_price_to_date!),
-            category_id: category_id,
-            unit_id: unit_id,
-            vat_id: vat_id,
-            temporary_percent: temporary_percent,
-            active: 1,
-            category_code: category_code,
-            food_combo_ids: [],
-            food_combo_details: [],
-            addition_food_ids: [],
-            addition_food_details: [],
-          );
+              food_id: id,
+              name: name,
+              image: downloadUrl,
+              price: double.tryParse(price) ?? 0.0,
+              price_with_temporary:
+                  double.tryParse(price_with_temporary!) ?? 0.0,
+              temporary_price_from_date:
+                  Timestamp.fromDate(temporary_price_from_date!),
+              temporary_price_to_date:
+                  Timestamp.fromDate(temporary_price_to_date!),
+              category_id: category_id,
+              unit_id: unit_id,
+              vat_id: vat_id,
+              temporary_percent: temporary_percent,
+              active: 1,
+              category_code: category_code,
+              food_combo_ids: [],
+              food_combo_details: [],
+              addition_food_ids: [],
+              addition_food_details: [],
+              max_order_limit: 0,
+              current_order_count: 0,
+              quanity_start_date_time: null,
+              quanity_end_date_time: null,
+              is_addition_food: ACTIVE);
           CollectionReference foodsCollection =
-              FirebaseFirestore.instance.collection('additionFoods');
+              FirebaseFirestore.instance.collection('foods');
 
           await foodsCollection.doc(id).set(Food.toJson());
         } else {
           model.Food Food = model.Food(
-            food_id: id,
-            name: name,
-            image: downloadUrl,
-            price: double.tryParse(price) ?? 0.0,
-            price_with_temporary: double.tryParse(price_with_temporary!) ?? 0.0,
-            temporary_price_from_date: null,
-            temporary_price_to_date: null,
-            category_id: category_id,
-            unit_id: unit_id,
-            vat_id: vat_id,
-            temporary_percent: temporary_percent,
-            active: 1,
-            category_code: category_code,
-            food_combo_ids: food_combo_ids,
-            food_combo_details: [], addition_food_ids: addition_food_ids, addition_food_details: [],
-          );
+              food_id: id,
+              name: name,
+              image: downloadUrl,
+              price: double.tryParse(price) ?? 0.0,
+              price_with_temporary:
+                  double.tryParse(price_with_temporary!) ?? 0.0,
+              temporary_price_from_date: null,
+              temporary_price_to_date: null,
+              category_id: category_id,
+              unit_id: unit_id,
+              vat_id: vat_id,
+              temporary_percent: temporary_percent,
+              active: 1,
+              category_code: category_code,
+              food_combo_ids: food_combo_ids,
+              food_combo_details: [],
+              addition_food_ids: addition_food_ids,
+              addition_food_details: [],
+              max_order_limit: 0,
+              current_order_count: 0,
+              quanity_start_date_time: null,
+              quanity_end_date_time: null,
+              is_addition_food: ACTIVE);
           CollectionReference foodsCollection =
-              FirebaseFirestore.instance.collection('additionFoods');
+              FirebaseFirestore.instance.collection('foods');
 
           await foodsCollection.doc(id).set(Food.toJson());
         }
@@ -670,8 +688,9 @@ class AdditionFoodController extends GetxController {
       String unit_id,
       String vat_id,
       int temporary_percent,
-      List<String> food_combo_ids, List<String> addition_food_ids) async {
-    // var doc = await firestore.collection('additionFoods').doc(Food_id).get();
+      List<String> food_combo_ids,
+      List<String> addition_food_ids) async {
+    // var doc = await firestore.collection("foods").doc(Food_id).get();
     String downloadUrl = "";
     try {
       print("food_id $food_id");
@@ -689,11 +708,11 @@ class AdditionFoodController extends GetxController {
         // Tải ảnh mới lên Firebase Storage và nhận URL
         downloadUrl = await _uploadToStorage(newImage);
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
-        await firestore.collection('additionFoods').doc(food_id).update({
+        await firestore.collection('foods').doc(food_id).update({
           "food_combo_ids": [],
           "addition_food_ids": [],
         }).then((value) async {
-          await firestore.collection('additionFoods').doc(food_id).update({
+          await firestore.collection('foods').doc(food_id).update({
             "food_id": food_id.trim(),
             "name": name.trim(),
             "image": downloadUrl,
@@ -707,23 +726,22 @@ class AdditionFoodController extends GetxController {
             // "active": active,
             "category_id": category_id.trim(),
             "category_code": category_code,
+            "is_addition_food": ACTIVE,
             "unit_id": unit_id.trim(),
             "temporary_percent": temporary_percent,
             "food_combo_ids": FieldValue.arrayUnion(food_combo_ids),
             "addition_food_ids": FieldValue.arrayUnion(food_combo_ids),
-
           });
         });
       } else {
         print("NO Image Selected");
 
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
-        await firestore.collection('additionFoods').doc(food_id).update({
+        await firestore.collection('foods').doc(food_id).update({
           "food_combo_ids": [],
           "addition_food_ids": [],
-
         }).then((value) async {
-          await firestore.collection('additionFoods').doc(food_id).update({
+          await firestore.collection('foods').doc(food_id).update({
             "food_id": food_id.trim(),
             "name": name.trim(),
             "image": image,
@@ -733,6 +751,7 @@ class AdditionFoodController extends GetxController {
                 double.tryParse(price_with_temporary!) ?? 0.0,
             "temporary_price_from_date": temporary_price_from_date,
             "temporary_price_to_date": temporary_price_to_date,
+            "is_addition_food": ACTIVE,
 
             // "active": active,
             "category_id": category_id.trim(),
@@ -762,7 +781,7 @@ class AdditionFoodController extends GetxController {
     int active,
   ) async {
     try {
-      await firestore.collection('additionFoods').doc(Food_id).update({
+      await firestore.collection('foods').doc(Food_id).update({
         "active": active == ACTIVE ? DEACTIVE : ACTIVE,
       });
 

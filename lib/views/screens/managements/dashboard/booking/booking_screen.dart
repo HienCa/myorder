@@ -10,6 +10,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
@@ -1230,23 +1231,29 @@ class _DashboardBookingState extends State<DashboardBooking> {
                             if (foodOrder.isSelected == true) {
                               //chi tiet don hang
                               //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                              Food foodDetail = Food.empty();
+                              foodDetail.name = foodOrder.name;
+                              foodDetail.food_combo_details =
+                                  foodOrder.food_combo_details;
+                              foodDetail.addition_food_details =
+                                  foodOrder.addition_food_details;
                               OrderDetail orderDetail = OrderDetail(
-                                order_detail_id: "",
-                                price: Utils.isDateTimeInRange(
-                                        foodOrder.temporary_price_from_date,
-                                        foodOrder.temporary_price_to_date)
-                                    ? (foodOrder.price +
-                                        foodOrder.price_with_temporary!)
-                                    : foodOrder.price,
-                                quantity: foodOrder.quantity!,
-                                food_status: FOOD_STATUS_IN_CHEF,
-                                food_id: foodOrder.food_id,
-                                is_gift: (foodOrder.isGift ?? false),
-                                category_id: '',
-                                category_code: foodOrder.category_code,
-                                chef_bar_status: CHEF_BAR_STATUS,
-                                is_addition: false,
-                              );
+                                  order_detail_id: "",
+                                  price: Utils.isDateTimeInRange(
+                                          foodOrder.temporary_price_from_date,
+                                          foodOrder.temporary_price_to_date)
+                                      ? (foodOrder.price +
+                                          foodOrder.price_with_temporary!)
+                                      : foodOrder.price,
+                                  quantity: foodOrder.quantity!,
+                                  food_status: FOOD_STATUS_IN_CHEF,
+                                  food_id: foodOrder.food_id,
+                                  is_gift: (foodOrder.isGift ?? false),
+                                  category_id: '',
+                                  category_code: foodOrder.category_code,
+                                  chef_bar_status: CHEF_BAR_STATUS,
+                                  is_addition: false,
+                                  food: foodDetail);
                               //MÓN TẶNG
                               if (orderDetail.is_gift == true) {
                                 orderDetail.price = 0;

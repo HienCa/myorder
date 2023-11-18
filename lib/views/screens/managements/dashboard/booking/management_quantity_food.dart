@@ -5,16 +5,16 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/area/option_area.dart';
 import 'package:myorder/views/screens/managements/dashboard/booking/table_item_booking.dart';
 
-class MyDialogChooseTable extends StatefulWidget {
-  const MyDialogChooseTable({
+class ManagementQuantityFood extends StatefulWidget {
+  const ManagementQuantityFood({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<MyDialogChooseTable> createState() => _MyDialogChooseTableState();
+  State<ManagementQuantityFood> createState() => _ManagementQuantityFoodState();
 }
 
-class _MyDialogChooseTableState extends State<MyDialogChooseTable> {
+class _ManagementQuantityFoodState extends State<ManagementQuantityFood> {
   var areaIdSelected = defaultArea; // mặc định lấy tất cả danh sách
   final searchSlotTableTextEditingController = TextEditingController();
   String keySearch = "";
@@ -41,9 +41,9 @@ class _MyDialogChooseTableState extends State<MyDialogChooseTable> {
                 height: 50,
                 child: const Center(
                     child:
-                        Text("ĐẶT BÀN BOOKING", style: textStyleWhiteBold16))),
+                        Text("QUẢN LÝ SỐ LƯỢNG MÓN", style: textStyleWhiteBold16))),
             marginTop5,
-            //THÊM TÌM KIẾM THEO SỐ LƯỢNG NGƯỜI
+            
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -105,8 +105,7 @@ class _MyDialogChooseTableState extends State<MyDialogChooseTable> {
                 ),
                 child: TableItemBooking(
                   areaIdSelected: areaIdSelected,
-                  keySearch:
-                          searchSlotTableTextEditingController.text,
+                  keySearch: searchSlotTableTextEditingController.text,
                 ),
               ),
             ),

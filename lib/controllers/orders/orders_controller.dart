@@ -1094,11 +1094,11 @@ class OrderController extends GetxController {
             orderDetail.is_gift = true;
             orderDetail.price = 0;
             description +=
-                '+ ${orderDetail.food!.name}: Món tặng x ${orderDetail.quantity}\\\n';
+                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): Món tặng\\\n';
           } else {
             orderDetail.is_gift = false;
             description +=
-                '+ ${orderDetail.food!.name}: ${Utils.formatCurrency(orderDetail.price)} x ${orderDetail.quantity}\\\n';
+                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): ${Utils.formatCurrency(orderDetail.price * orderDetail.quantity)}\\\n';
           }
           totalAmount += (orderDetail.price * orderDetail.quantity);
 
@@ -1173,11 +1173,11 @@ class OrderController extends GetxController {
             orderDetail.is_gift = true;
             orderDetail.price = 0;
             description +=
-                '+ ${orderDetail.food!.name}: Món tặng x ${orderDetail.quantity}\\\n';
+                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): Món tặng\\\n';
           } else {
             orderDetail.is_gift = false;
             description +=
-                '+ ${orderDetail.food!.name}: ${Utils.formatCurrency(orderDetail.price)} x ${orderDetail.quantity}\\\n';
+                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): ${Utils.formatCurrency(orderDetail.price * orderDetail.quantity)}\\\n';
           }
 
           totalAmount += (orderDetail.price * orderDetail.quantity);
@@ -1300,10 +1300,10 @@ class OrderController extends GetxController {
           if (orderDetail.is_gift == true) {
             orderDetail.price = 0;
             description +=
-                '+ ${orderDetail.food!.name}: Món tặng x ${orderDetail.quantity}\\\n';
+                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): Món tặng\\\n';
           } else {
             description +=
-                '+ ${orderDetail.food!.name}: ${orderDetail.price} x ${orderDetail.quantity}\\\n';
+                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): ${Utils.formatCurrency(orderDetail.price * orderDetail.quantity)}\\\n';
           }
 
           orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
@@ -1526,11 +1526,11 @@ class OrderController extends GetxController {
           orderDetail.is_gift = true;
           orderDetail.price = 0;
           description +=
-              '+ ${orderDetail.food!.name}: Món tặng x ${orderDetail.quantity}\\\n';
+              '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): Món tặng\\\n';
         } else {
           orderDetail.is_gift = false;
           description +=
-              '+ ${orderDetail.food!.name}: ${orderDetail.price} x ${orderDetail.quantity}\\\n';
+              '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): ${Utils.formatCurrency(orderDetail.price * orderDetail.quantity)} \\\n';
         }
 
         totalAmount += (orderDetail.price * orderDetail.quantity);

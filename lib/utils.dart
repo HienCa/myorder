@@ -51,6 +51,16 @@ class Utils {
     }
   }
 
+  //DATETIME
+  static String formatDatetime(DateTime? datetime) {
+    if (datetime != null) {
+      var formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
+      return formatter.format(datetime);
+    } else {
+      return '';
+    }
+  }
+
   static Timestamp convertDatetimeToTimestamp(DateTime datetime) {
     return Timestamp.fromDate(DateTime.parse(datetime.toString()));
   }
@@ -100,6 +110,18 @@ class Utils {
 
       // Kiểm tra xem thời gian hiện tại có nằm sau 1 giờ kể từ thời gian đặt hàng không
       return currentTime.isAfter(endTime);
+    } else {
+      return false;
+    }
+  }
+
+  static bool isValidDateTime(String time, DateTime? startTime) {
+    if (startTime != null && time != "") {
+      final currentTime = DateTime.parse(time);
+
+      final startDateTime = startTime;
+
+      return currentTime.isAfter(startDateTime);
     } else {
       return false;
     }
@@ -468,7 +490,9 @@ class Utils {
   static double getSumPriceQuantity(List<dynamic> list) {
     double total = 0;
     for (var item in list) {
-      total += (item.price * item.quantity);
+      if (item.isGift == false) {
+        total += (item.price * item.quantity);
+      }
     }
     return total;
   }
@@ -477,12 +501,14 @@ class Utils {
   static double getSumPriceQuantitySelected(List<dynamic> list) {
     double total = 0;
     for (var item in list) {
-      if (item.isSelected == true &&
-          Utils.isDateTimeInRange(
-              item.temporary_price_from_date, item.temporary_price_to_date)) {
-        total += ((item.price_with_temporary ?? 0) * item.quantity);
-      } else if (item.isSelected == true) {
-        total += (item.price * item.quantity);
+      if (item.isGift == false) {
+        if (item.isSelected == true &&
+            Utils.isDateTimeInRange(
+                item.temporary_price_from_date, item.temporary_price_to_date)) {
+          total += ((item.price_with_temporary ?? 0) * item.quantity);
+        } else if (item.isSelected == true) {
+          total += (item.price * item.quantity);
+        }
       }
     }
     return total;
