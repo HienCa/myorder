@@ -569,6 +569,116 @@ class FoodController extends GetxController {
     }
   }
 
+  getfoodsToOrderCategoryCode(String keySearch, int categoryIdCode) async {
+    if (keySearch.isEmpty) {
+      //lấy tất cả mon an
+      print("lấy tất cả");
+
+      _foodsToOrder.bindStream(
+        firestore
+            .collection('foods')
+            .where("active", isEqualTo: ACTIVE)
+            .where("category_code", isEqualTo: categoryIdCode)
+            .snapshots()
+            .asyncMap(
+          (QuerySnapshot query) async {
+            List<FoodOrder> retValue = [];
+            for (var element in query.docs) {
+              FoodOrder food = FoodOrder.fromSnap(element);
+              print(food.temporary_price_from_date);
+              print(food.temporary_price_to_date);
+              print("category_code: ${food.category_code}");
+
+              food.isSelected = false;
+              food.quantity = 1;
+
+              // Lấy thông tin món combo
+              List<model.Food> listFoodComboDetail = [];
+              if (food.food_combo_ids.isNotEmpty) {
+                print("===============COMBO CỦA ${food.name}===========");
+
+                for (String item in food.food_combo_ids) {
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
+
+                  model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                  print(food.name);
+                  listFoodComboDetail.add(food);
+                }
+              }
+              food.food_combo_details = listFoodComboDetail;
+
+              // Lấy thông tin món bán kèm
+              List<FoodOrder> listAdditionFoodDetail = [];
+              if (food.addition_food_ids.isNotEmpty) {
+                print("===============MÓN BÁN KÈM CỦA ${food.name}===========");
+
+                for (String item in food.addition_food_ids) {
+                  var foodSnapshot =
+                      await firestore.collection("foods").doc(item).get();
+
+                  FoodOrder additionFood = FoodOrder.fromSnap(foodSnapshot);
+                  additionFood.isSelected = false;
+                  additionFood.quantity = 1;
+
+                  print(additionFood.name);
+                  listAdditionFoodDetail.add(additionFood);
+                }
+              }
+
+              food.addition_food_details = listAdditionFoodDetail;
+
+              retValue.add(food);
+            }
+            Utils.showDataJson(query);
+            return retValue;
+          },
+        ),
+      );
+    } else if (keySearch.isNotEmpty) {
+      //tìm kiếm theo danh muc
+      print("tìm kiếm theo danh muc");
+      _foodsToOrder.bindStream(firestore
+          .collection('foods')
+          .where("active", isEqualTo: ACTIVE)
+          .where("category_code", isEqualTo: categoryIdCode)
+          .snapshots()
+          .asyncMap((QuerySnapshot query) async {
+        List<FoodOrder> retValue = [];
+        for (var element in query.docs) {
+          FoodOrder food = FoodOrder.fromSnap(element);
+          food.isSelected = false;
+          food.quantity = 1;
+          String name = element['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            List<model.Food> listFoodComboDetail = [];
+            if (food.food_combo_ids.isNotEmpty) {
+              // Lấy thông tin món combo
+              print("===============COMBO CỦA ${food.name}===========");
+
+              for (String item in food.food_combo_ids) {
+                var foodSnapshot =
+                    await firestore.collection("foods").doc(item).get();
+
+                model.Food food = model.Food.fromSnap(foodSnapshot);
+
+                print(food.name);
+                listFoodComboDetail.add(food);
+              }
+            }
+
+            food.food_combo_details = listFoodComboDetail;
+            retValue.add(food);
+          }
+        }
+        Utils.showDataJson(query);
+        return retValue;
+      }));
+    }
+  }
+
   void createFood(
       String name,
       File? image,
