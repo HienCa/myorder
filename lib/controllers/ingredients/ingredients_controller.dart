@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/ingredient.dart';
+import 'package:myorder/models/recipe_detail.dart';
 import 'package:myorder/utils.dart';
 
 class IngredientController extends GetxController {
@@ -57,6 +58,7 @@ class IngredientController extends GetxController {
           String ingredient_id = data['ingredient_id'] ?? "";
           String name = data['name'] ?? "";
           String image = data['image'] ?? "";
+          String unit_id = data['unit_id'] ?? "";
           // int is_weight = data['is_weight'] ?? 0;
           int active = data['active'] ?? 0;
           return Ingredient(
@@ -64,7 +66,8 @@ class IngredientController extends GetxController {
               name: name,
               image: image,
               // is_weight: is_weight,
-              active: active);
+              active: active,
+              unit_id: unit_id);
         }
       }
     } catch (e) {
@@ -88,6 +91,29 @@ class IngredientController extends GetxController {
             for (var element in query.docs) {
               Ingredient ingredient = Ingredient.fromSnap(element);
 
+              RecipeDetail recipeDetail = RecipeDetail(
+                  recipe_detail_id: "",
+                  ingredient_id: ingredient.ingredient_id,
+                  quantity: 1,
+                  unit_name: "",
+                  name: ingredient.name);
+
+              // if (ingredient.is_weight == ACTIVE) {
+              //   recipeDetail.quantity = 0.1;
+              // }
+              ingredient.recipeDetail = recipeDetail;
+
+              DocumentSnapshot unit = await firestore
+                  .collection('units')
+                  .doc(ingredient.unit_id)
+                  .get();
+              if (unit.exists) {
+                final userData = unit.data();
+                if (userData != null && userData is Map<String, dynamic>) {
+                  String unit_name = userData['name'] ?? '';
+                  ingredient.recipeDetail!.unit_name = unit_name;
+                }
+              }
               retValue.add(ingredient);
             }
             return retValue;
@@ -106,7 +132,115 @@ class IngredientController extends GetxController {
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
             Ingredient ingredient = Ingredient.fromSnap(elem);
+            RecipeDetail recipeDetail = RecipeDetail(
+                recipe_detail_id: "",
+                ingredient_id: ingredient.ingredient_id,
+                quantity: 1,
+                unit_name: "",
+                name: ingredient.name);
+            ingredient.recipeDetail = recipeDetail;
+            // if (ingredient.is_weight == ACTIVE) {
+            recipeDetail.quantity = 0.1;
+            // }
 
+            DocumentSnapshot unit = await firestore
+                .collection('units')
+                .doc(ingredient.unit_id)
+                .get();
+            if (unit.exists) {
+              final userData = unit.data();
+              if (userData != null && userData is Map<String, dynamic>) {
+                String unit_name = userData['name'] ?? '';
+                ingredient.recipeDetail!.unit_name = unit_name;
+              }
+            }
+            retVal.add(ingredient);
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
+
+  final Rx<List<Ingredient>> _ingredientsOfFood = Rx<List<Ingredient>>([]);
+  List<Ingredient> get ingredientsOfFood => _ingredientsOfFood.value;
+  getIngredientsOfFood(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _ingredientsOfFood.bindStream(
+        firestore
+            .collection('ingredients')
+            // .where('active', isEqualTo: ACTIVE)
+            .snapshots()
+            .asyncMap(
+          (QuerySnapshot query) async {
+            List<Ingredient> retValue = [];
+            for (var element in query.docs) {
+              Ingredient ingredient = Ingredient.fromSnap(element);
+
+              RecipeDetail recipeDetail = RecipeDetail(
+                  recipe_detail_id: "",
+                  ingredient_id: ingredient.ingredient_id,
+                  quantity: 1,
+                  unit_name: "",
+                  name: ingredient.name);
+
+              // if (ingredient.is_weight == ACTIVE) {
+              //   recipeDetail.quantity = 0.1;
+              // }
+              ingredient.recipeDetail = recipeDetail;
+
+              DocumentSnapshot unit = await firestore
+                  .collection('units')
+                  .doc(ingredient.unit_id)
+                  .get();
+              if (unit.exists) {
+                final userData = unit.data();
+                if (userData != null && userData is Map<String, dynamic>) {
+                  String unit_name = userData['name'] ?? '';
+                  ingredient.recipeDetail!.unit_name = unit_name;
+                }
+              }
+
+              retValue.add(ingredient);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _ingredientsOfFood.bindStream(firestore
+          .collection('ingredients')
+          // .where('active', isEqualTo: ACTIVE)
+          .snapshots()
+          .asyncMap((QuerySnapshot query) async {
+        List<Ingredient> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            Ingredient ingredient = Ingredient.fromSnap(elem);
+            RecipeDetail recipeDetail = RecipeDetail(
+                recipe_detail_id: "",
+                ingredient_id: ingredient.ingredient_id,
+                quantity: 1,
+                unit_name: "",
+                name: ingredient.name);
+            ingredient.recipeDetail = recipeDetail;
+            // if (ingredient.is_weight == ACTIVE) {
+            recipeDetail.quantity = 0.1;
+            // }
+
+            DocumentSnapshot unit = await firestore
+                .collection('units')
+                .doc(ingredient.unit_id)
+                .get();
+            if (unit.exists) {
+              final userData = unit.data();
+              if (userData != null && userData is Map<String, dynamic>) {
+                String unit_name = userData['name'] ?? '';
+                ingredient.recipeDetail!.unit_name = unit_name;
+              }
+            }
             retVal.add(ingredient);
           }
         }
@@ -119,6 +253,7 @@ class IngredientController extends GetxController {
     String name,
     File? image,
     // int is_weight,
+    String unit_id,
   ) async {
     try {
       if (name.isNotEmpty) {
@@ -134,6 +269,7 @@ class IngredientController extends GetxController {
           image: downloadUrl,
           // is_weight: is_weight,
           active: 1,
+          unit_id: unit_id,
         );
         CollectionReference ingredientsCollection =
             FirebaseFirestore.instance.collection('ingredients');
@@ -166,6 +302,7 @@ class IngredientController extends GetxController {
     String name,
     File? newImage,
     // int is_weight,
+    String unit_id,
   ) async {
     String downloadUrl = "";
     try {
@@ -177,6 +314,7 @@ class IngredientController extends GetxController {
         await firestore.collection('ingredients').doc(ingredient_id).update({
           // "is_weight": is_weight,
           "name": name.trim(),
+          "unit_id": unit_id.trim(),
           "image": downloadUrl,
         });
       } else {
@@ -185,6 +323,7 @@ class IngredientController extends GetxController {
         await firestore.collection('ingredients').doc(ingredient_id).update({
           "name": name.trim(),
           // "is_weight": is_weight,
+          "unit_id": unit_id.trim(),
         });
       }
 

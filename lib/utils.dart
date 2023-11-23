@@ -348,6 +348,12 @@ class Utils {
     }
   }
 
+  static void unSelectedAll(List<dynamic> list) {
+    for (var item in list) {
+      item.isSelected = false;
+    }
+  }
+
   static bool isAnyFoodSelected(List<FoodOrder> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {
@@ -441,6 +447,17 @@ class Utils {
   static bool isAnySelected(List<dynamic> foods) {
     for (var food in foods) {
       if (food.isSelected == true) {
+        // Có ít nhất một đối tượng đã được chọn
+        return true;
+      }
+    }
+    // Không có đối tượng nào được chọn
+    return false;
+  }
+
+  static bool isAnyQuantityChanged(List<dynamic> list) {
+    for (var item in list) {
+      if (item.quantity != item.new_quantity) {
         // Có ít nhất một đối tượng đã được chọn
         return true;
       }

@@ -2,6 +2,8 @@
 
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +11,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/models/ingredient.dart';
+import 'package:myorder/models/unit.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -63,6 +66,43 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
       nameController.text = widget.ingredient!.name;
       // isCheckWeight = widget.ingredient!.is_weight == ACTIVE ? true : false;
     }
+
+    getUnits().then((units) {
+      setState(() {
+        unitOptions = units;
+      });
+    });
+
+    textUnitIdController.text = widget.ingredient!.unit_id;
+  }
+
+  final TextEditingController textSearchUnitController =
+      TextEditingController();
+  final TextEditingController textUnitIdController = TextEditingController();
+  final TextEditingController textVatIdController = TextEditingController();
+
+  // get units
+  List<Unit> unitOptions = List.empty();
+  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1);
+  bool isErrorTextUnitId = false;
+  Unit? selectedUnitValue;
+  List<Unit> unitList = [];
+
+  Future<List<Unit>> getUnits() async {
+    try {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('units').get();
+      for (final doc in querySnapshot.docs) {
+        final unit = Unit.fromSnap(doc);
+        unitList.add(unit);
+        print(unit.name);
+      }
+
+      return unitList;
+    } catch (e) {
+      print('Error fetching units: $e');
+    }
+    return unitList;
   }
 
   @override
@@ -172,10 +212,137 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
                         max: maxlength255,
                         isRequire: true,
                       ),
+                      Container(
+                        margin: const EdgeInsets.only(left: 5),
+                        height: 50,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Đơn vị:',
+                                    style: textStyleInput,
+                                  ),
+                                  marginRight10,
+                                  const Text(
+                                    '(*)',
+                                    style: textStyleErrorInput,
+                                  ),
+                                  Expanded(
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton2<Unit>(
+                                        isExpanded: true,
+                                        hint: Text(
+                                          'Tìm kiếm đơn vị tính',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Theme.of(context).hintColor,
+                                          ),
+                                        ),
+                                        items: unitList
+                                            .map((item) => DropdownMenuItem(
+                                                  value: item,
+                                                  child: Text(
+                                                    item.name,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                        value: selectedUnitValue,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedUnitValue = value;
+                                            print(
+                                                "Unit selected: ${selectedUnitValue!.unit_id}");
+                                            if (selectedUnitValue!.unit_id !=
+                                                "") {
+                                              isErrorTextUnitId = false;
+                                              textUnitIdController.text =
+                                                  selectedUnitValue!.unit_id;
+                                            } else {
+                                              isErrorTextUnitId = true;
+                                            }
+                                          });
+                                        },
+                                        buttonStyleData: const ButtonStyleData(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          height: 40,
+                                          width: 200,
+                                        ),
+                                        dropdownStyleData:
+                                            const DropdownStyleData(
+                                          maxHeight: 200,
+                                        ),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 40,
+                                        ),
+                                        dropdownSearchData: DropdownSearchData(
+                                          searchController:
+                                              textSearchUnitController,
+                                          searchInnerWidgetHeight: 50,
+                                          searchInnerWidget: Container(
+                                            height: 50,
+                                            padding: const EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 4,
+                                              right: 8,
+                                              left: 8,
+                                            ),
+                                            child: TextFormField(
+                                              expands: true,
+                                              maxLines: null,
+                                              controller:
+                                                  textSearchUnitController,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                  vertical: 8,
+                                                ),
+                                                hintText: 'Tìm kiếm đơn vị...',
+                                                hintStyle: const TextStyle(
+                                                    fontSize: 12),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          searchMatchFn: (item, searchValue) {
+                                            print("Search Value: $searchValue");
+
+                                            return item.value!.name
+                                                .toLowerCase()
+                                                .toString()
+                                                .contains(
+                                                    searchValue.toLowerCase());
+                                          },
+                                        ),
+                                        //This to clear the search value when you close the menu
+                                        onMenuStateChange: (isOpen) {
+                                          if (!isOpen) {
+                                            textSearchUnitController.clear();
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       // ListTile(
                       //   leading: Theme(
-                      //     data:
-                      //         ThemeData(unselectedWidgetColor: primaryColor),
+                      //     data: ThemeData(unselectedWidgetColor: primaryColor),
                       //     child: Checkbox(
                       //       value: isCheckWeight,
                       //       onChanged: (bool? value) {
@@ -233,24 +400,24 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
                                       if (widget.ingredient != null)
                                         {
                                           ingredientController.updateIngredient(
-                                            widget.ingredient!.ingredient_id,
-                                            nameController.text,
-                                            _pickedImage.value,
-                                            // isCheckWeight == true
-                                            //     ? ACTIVE
-                                            //     : DEACTIVE
-                                          ),
-                                          Utils.myPopResult(context,"update")
+                                              widget.ingredient!.ingredient_id,
+                                              nameController.text,
+                                              _pickedImage.value,
+                                              // isCheckWeight == true
+                                              //     ? ACTIVE
+                                              //     : DEACTIVE,
+                                              textUnitIdController.text),
+                                          Utils.myPopResult(context, "update")
                                         }
                                       else
                                         {
                                           ingredientController.createIngredient(
-                                            nameController.text,
-                                            _pickedImage.value,
-                                            // isCheckWeight == true
-                                            //     ? ACTIVE
-                                            //     : DEACTIVE
-                                          ),
+                                              nameController.text,
+                                              _pickedImage.value,
+                                              // isCheckWeight == true
+                                              //     ? ACTIVE
+                                              //     : DEACTIVE,
+                                              textUnitIdController.text),
                                           Utils.myPopResult(context, "add")
                                         }
                                     }

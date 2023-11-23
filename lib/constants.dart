@@ -388,6 +388,13 @@ var defaultFoodImage = Image.asset(
   fit: BoxFit.cover,
 );
 
+var defaultFoodImage100 = Image.asset(
+  "assets/images/logofunnyfood.jpg",
+  width: 50,
+  height: 50,
+  fit: BoxFit.cover,
+);
+
 var defaultFoodImage80 = Image.asset(
   "assets/images/logofunnyfood.jpg",
   width: 80,

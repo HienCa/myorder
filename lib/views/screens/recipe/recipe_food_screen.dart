@@ -7,9 +7,9 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
-import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/models/price_percent.dart';
 import 'package:myorder/views/screens/managements/dashboard/take_away/take_away_screen.dart';
+import 'package:myorder/views/screens/recipe/recipe_food_detail_screen.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
@@ -24,13 +24,6 @@ class RecipesScreen extends StatefulWidget {
 
 class _RecipesScreenState extends State<RecipesScreen> {
   FoodController foodController = Get.put(FoodController());
-  OrderController orderController = Get.put(OrderController());
-  final nameTextEditingController = TextEditingController();
-  final phoneTextEditingController = TextEditingController();
-  final totalVatAmountTextEditingController = TextEditingController();
-  final totalDiscountAmountTextEditingController = TextEditingController();
-  final totalSurchargeAmountTextEditingController = TextEditingController();
-  final totalAmountTextEditingController = TextEditingController();
 
   String keySearch = "";
   int categoryCodeSelected = 0;
@@ -54,10 +47,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
     isOther = false;
 
     //Lây thông tin đơn hàng
-    foodController.getfoodsToOrderCategoryCode(keySearch, CATEGORY_FOOD);
-    totalVatAmountTextEditingController.text = '0';
-    totalDiscountAmountTextEditingController.text = '0';
-    totalSurchargeAmountTextEditingController.text = '0';
+    foodController.getfoods(keySearch, DEACTIVE);
+
   }
 
   //Giảm giá
@@ -244,20 +235,18 @@ class _RecipesScreenState extends State<RecipesScreen> {
                                 desiredItemWidth: 100,
                                 minSpacing: 10,
                                 children: List.generate(
-                                    foodController.foodsToOrder.length,
-                                    (index) {
-                                  var food = foodController.foodsToOrder[index];
+                                    foodController.foods.length, (index) {
+                                  var food = foodController.foods[index];
 
                                   return InkWell(
                                     onTap: () => {
-                                      setState(() {
-                                        if (food.isSelected == false) {
-                                          food.isSelected = true;
-                                        } else {
-                                          food.quantity =
-                                              (food.quantity ?? 1) + 1;
-                                        }
-                                      })
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RecipeDetailScreen(
+                                                    food: food,
+                                                  )))
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(5),
