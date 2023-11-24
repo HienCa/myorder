@@ -565,10 +565,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                                               final result = await showDialog(
                                                                                 context: context,
                                                                                 builder: (BuildContext context) {
-                                                                                  return const MyDialogCalculator2();
+                                                                                  return MyDialogCalculator2(
+                                                                                    value: recipeDetail.recipeDetail!.quantity,
+                                                                                  );
                                                                                 },
                                                                               );
-                                                                              if (result != '') {
+                                                                              if (result != null) {
                                                                                 setState(() {
                                                                                   recipeDetail.recipeDetail!.quantity = double.parse(result);
                                                                                 });
@@ -815,11 +817,13 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                                                 await showDialog(
                                                                               context: context,
                                                                               builder: (BuildContext context) {
-                                                                                return const MyDialogCalculator2();
+                                                                                return MyDialogCalculator2(
+                                                                                  value: recipeDetail.new_quantity ?? 0,
+                                                                                );
                                                                               },
                                                                             );
                                                                             if (result !=
-                                                                                '') {
+                                                                                null) {
                                                                               setState(() {
                                                                                 recipeDetail.new_quantity = double.parse(result);
                                                                               });

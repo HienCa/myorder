@@ -21,6 +21,7 @@ import 'package:myorder/views/screens/order/orderdetail/dialogs/dialog_confirm_f
 import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -1012,18 +1013,47 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                                                         width:
                                                                             5),
                                                                     orderDetail.quantity ==
-                                                                            orderDetail
-                                                                                .new_quantity
-                                                                        ? Text(
-                                                                            orderDetail.quantity
-                                                                                .toString(),
-                                                                            style:
-                                                                                textStyleTabLandscapeLabel)
-                                                                        : Text(
                                                                             orderDetail.new_quantity
-                                                                                .toString(),
-                                                                            style:
-                                                                                textStyleTabLandscapeLabel),
+                                                                        ? InkWell(
+                                                                            onTap:
+                                                                                () async {
+                                                                              final result = await showDialog(
+                                                                                context: context,
+                                                                                builder: (BuildContext context) {
+                                                                                  return MyDialogCalculatorInt(
+                                                                                    value: orderDetail.quantity,
+                                                                                  );
+                                                                                },
+                                                                              );
+                                                                              if (result != null) {
+                                                                                orderDetail.new_quantity = int.parse(result);
+
+                                                                                setState(() {});
+                                                                              }
+                                                                            },
+                                                                            child:
+                                                                                Text(orderDetail.quantity.toString(), style: textStyleTabLandscapeLabel),
+                                                                          )
+                                                                        : InkWell(
+                                                                            onTap:
+                                                                                () async {
+                                                                              final result = await showDialog(
+                                                                                context: context,
+                                                                                builder: (BuildContext context) {
+                                                                                  return MyDialogCalculatorInt(
+                                                                                    value: orderDetail.new_quantity,
+                                                                                  );
+                                                                                },
+                                                                              );
+                                                                              if (result != null) {
+                                                                                orderDetail.new_quantity = int.parse(result);
+
+                                                                                setState(() {});
+                                                                              }
+                                                                            },
+                                                                            child:
+                                                                                Text(orderDetail.new_quantity.toString(), style: textStyleTabLandscapeLabel),
+                                                                          ),
                                                                     const SizedBox(
                                                                         width:
                                                                             5),

@@ -8,18 +8,18 @@ import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_price_read_only.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
-class MyDialogCalculator2 extends StatefulWidget {
-  final double value;
-  const MyDialogCalculator2({
+class MyDialogCalculatorInt extends StatefulWidget {
+  final int value;
+  const MyDialogCalculatorInt({
     Key? key,
     required this.value,
   }) : super(key: key);
 
   @override
-  State<MyDialogCalculator2> createState() => _MyDialogCalculator2State();
+  State<MyDialogCalculatorInt> createState() => _MyDialogCalculatorIntState();
 }
 
-class _MyDialogCalculator2State extends State<MyDialogCalculator2> {
+class _MyDialogCalculatorIntState extends State<MyDialogCalculatorInt> {
   var textEditingController = TextEditingController();
   @override
   void dispose() {
@@ -29,6 +29,7 @@ class _MyDialogCalculator2State extends State<MyDialogCalculator2> {
   @override
   void initState() {
     super.initState();
+    textEditingController.text = widget.value.toString();
   }
 
   @override
@@ -69,8 +70,8 @@ class _MyDialogCalculator2State extends State<MyDialogCalculator2> {
               child: MyTextFieldPriceReadOnly(
                 textEditingController: textEditingController,
                 label: '',
-                placeholder: '0',
-                min: 0,
+                placeholder: '1',
+                min: 1,
                 max: MAX_PRICE,
                 isRequire: false,
                 textAlignRight: true,
@@ -241,20 +242,18 @@ class _ButtonCalculatorState extends State<ButtonCalculator> {
             if (widget.item == 'AC') {
               widget.textEditingController.text = '';
             } else if (widget.item == 'Tăng') {
-              double value =
-                  double.tryParse(widget.textEditingController.text) ?? 0;
-              value += 0.1;
+              int value = int.tryParse(widget.textEditingController.text) ?? 0;
+              value += 1;
               if (value >= 0) {
-                widget.textEditingController.text = value.toStringAsFixed(1);
+                widget.textEditingController.text = value.toString();
               } else {
                 widget.textEditingController.text = '0';
               }
             } else if (widget.item == 'Giảm') {
-              double value =
-                  double.tryParse(widget.textEditingController.text) ?? 0;
-              value -= 0.1;
+              int value = int.tryParse(widget.textEditingController.text) ?? 0;
+              value -= 1;
               if (value >= 0) {
-                widget.textEditingController.text = value.toStringAsFixed(1);
+                widget.textEditingController.text = value.toString();
               } else {
                 widget.textEditingController.text = '0';
               }
@@ -262,13 +261,13 @@ class _ButtonCalculatorState extends State<ButtonCalculator> {
               Utils.myPopResult(context, widget.textEditingController.text);
             } else {
               //Là số bình thường
-              double currentValue =
-                  double.tryParse(widget.textEditingController.text) ?? 0;
-              double newItem = double.tryParse(widget.item) ?? 0;
+              int currentValue =
+                  int.tryParse(widget.textEditingController.text) ?? 0;
+              int newItem = int.tryParse(widget.item) ?? 0;
 
-              double newValue = currentValue * 10 + newItem;
+              int newValue = currentValue * 10 + newItem;
               if (newValue <= MAX_PRICE) {
-                widget.textEditingController.text = newValue.toStringAsFixed(1);
+                widget.textEditingController.text = newValue.toString();
               } else {
                 widget.textEditingController.text = MAX_PRICE.toString();
                 Utils.showStylishDialog(context, 'THÔNG BÁO',
