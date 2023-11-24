@@ -16,6 +16,7 @@ import 'package:myorder/views/screens/recipe/dialogs/dialog_confirm_add_recipe_d
 import 'package:myorder/views/screens/recipe/dialogs/dialog_confirm_delete_recipe_detail.dart';
 import 'package:myorder/views/screens/recipe/dialogs/dialog_confirm_update_quantity_recipe_detail;.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -556,13 +557,31 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                                         const SizedBox(
                                                                             width:
                                                                                 5),
-                                                                        Text(
-                                                                          recipeDetail
-                                                                              .recipeDetail!
-                                                                              .quantity
-                                                                              .toString(),
-                                                                          style:
-                                                                              textStyleLabel8,
+                                                                        Expanded(
+                                                                          child:
+                                                                              InkWell(
+                                                                            onTap:
+                                                                                () async {
+                                                                              final result = await showDialog(
+                                                                                context: context,
+                                                                                builder: (BuildContext context) {
+                                                                                  return const MyDialogCalculator2();
+                                                                                },
+                                                                              );
+                                                                              if (result != '') {
+                                                                                setState(() {
+                                                                                  recipeDetail.recipeDetail!.quantity = double.parse(result);
+                                                                                });
+                                                                              }
+                                                                            },
+                                                                            child:
+                                                                                Center(
+                                                                              child: Text(
+                                                                                recipeDetail.recipeDetail!.quantity.toString(),
+                                                                                style: textStyleLabel8,
+                                                                              ),
+                                                                            ),
+                                                                          ),
                                                                         ),
                                                                         const SizedBox(
                                                                             width:
@@ -787,12 +806,34 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                                       const SizedBox(
                                                                           width:
                                                                               5),
-                                                                      Text(
-                                                                        recipeDetail
-                                                                            .new_quantity
-                                                                            .toString(),
-                                                                        style:
-                                                                            textStyleLabel8,
+                                                                      Expanded(
+                                                                        child:
+                                                                            InkWell(
+                                                                          onTap:
+                                                                              () async {
+                                                                            final result =
+                                                                                await showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return const MyDialogCalculator2();
+                                                                              },
+                                                                            );
+                                                                            if (result !=
+                                                                                '') {
+                                                                              setState(() {
+                                                                                recipeDetail.new_quantity = double.parse(result);
+                                                                              });
+                                                                            }
+                                                                          },
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Text(
+                                                                              recipeDetail.new_quantity.toString(),
+                                                                              style: textStyleLabel8,
+                                                                            ),
+                                                                          ),
+                                                                        ),
                                                                       ),
                                                                       const SizedBox(
                                                                           width:
