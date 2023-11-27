@@ -9,6 +9,8 @@ class MyTextFieldString extends StatefulWidget {
   final String placeholder;
   final bool isReadOnly;
   final bool isRequire;
+  final bool? isBorder;
+  final bool? isMultiline;
   final int max;
   final int min;
 
@@ -21,6 +23,7 @@ class MyTextFieldString extends StatefulWidget {
     required this.min,
     required this.max,
     required this.isRequire,
+    this.isBorder, this.isMultiline,
   });
 
   @override
@@ -53,23 +56,70 @@ class _MyTextFieldStringState extends State<MyTextFieldString> {
             ],
           ),
         ),
-        Container(
+       (widget.isMultiline == null || widget.isMultiline == false) ? Container(
           height: 50,
           padding: paddingLeftRight8,
           decoration: BoxDecoration(
               borderRadius: borderContainer8,
-              border: Border.all(color: borderColor, width: 1)),
+              border: (widget.isBorder == null || widget.isBorder == true)
+                  ? Border.all(color: borderColor, width: 1)
+                  : const Border()),
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
               TextField(
+                  maxLines: null,
                   readOnly: widget.isReadOnly,
                   controller: widget.textController,
                   style: textStyleInput,
                   decoration: InputDecoration(
-                      hintText: widget.placeholder,
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      border: InputBorder.none),
+                    hintText: widget.placeholder,
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                  ),
+                  // autofocus: true,
+                  // maxLength: widget.max,
+                  onChanged: (value) => {
+                        setState(() {
+                          isInValid = !Utils.isValidLengthString(
+                              value, widget.min, widget.max);
+                          // print(value.length);
+                          if (value.trim().length > widget.max) {
+                            // Nếu vượt quá giới hạn, cắt bớt chuỗi
+                            widget.textController.text =
+                                value.substring(0, widget.max);
+                            widget.textController.selection =
+                                TextSelection.fromPosition(
+                              TextPosition(
+                                  offset: widget.textController.text.length),
+                            );
+                            isInValid = false;
+                          }
+                        })
+                      }),
+            ],
+          ),
+        ) :  Container(
+         margin: const EdgeInsets.all(0),
+          padding: paddingLeftRight8,
+          decoration: BoxDecoration(
+              borderRadius: borderContainer8,
+              border: (widget.isBorder == null || widget.isBorder == true)
+                  ? Border.all(color: borderColor, width: 1)
+                  : const Border()),
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              TextField(
+                  maxLines: null,
+                  readOnly: widget.isReadOnly,
+                  controller: widget.textController,
+                  style: textStyleInput,
+                  decoration: InputDecoration(
+                    hintText: widget.placeholder,
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                  ),
                   // autofocus: true,
                   // maxLength: widget.max,
                   onChanged: (value) => {

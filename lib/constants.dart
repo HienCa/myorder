@@ -58,14 +58,21 @@ const colorPriceDecrease = Colors.redAccent;
 var primaryColorOpacity = const Color(0xFF40BAD5).withOpacity(0.2);
 var chooseColorOpacity = const Color(0xFF40BAD5);
 //Gray
+var grayColor100 = Colors.grey[100];
 var grayColor200 = Colors.grey[200];
 var grayColor600 = Colors.grey[600];
 // Green
 const grayColor = Colors.grey;
 
+var greenColor50 = Colors.green[50];
 var greenColor100 = Colors.green[100];
 var greenColor200 = Colors.green[200];
 var greenColor600 = Colors.green[600];
+
+var redColor50 = Colors.red[50];
+var redColor100 = Colors.red[100];
+var redColor200 = Colors.red[200];
+var redColor600 = Colors.red[600];
 
 //color of order
 const tableservingColor = Color(0xFF40BAD5);
@@ -113,6 +120,7 @@ const textStyleErrorInput8 = TextStyle(
 
 //Label
 const textStyleLabel8 = TextStyle(fontSize: 8, color: Colors.grey);
+const textStyleLabel14 = TextStyle(fontSize: 14, color: Colors.grey);
 const textStyleLabel16 = TextStyle(fontSize: 16, color: Colors.grey);
 const textStyleLabel20 = TextStyle(fontSize: 20, color: Colors.grey);
 
@@ -141,11 +149,17 @@ const textStyleOrderTitleBold16 =
 //===============================
 
 //PRIMARY
+var textStyleGreen14 = TextStyle(fontSize: 14, color: greenColor600);
+const textStyleOrange14 = TextStyle(fontSize: 14, color: colorPrice);
+const textStylePrimary14 = TextStyle(fontSize: 14, color: primaryColor);
 const textStylePrimary16 = TextStyle(fontSize: 16, color: primaryColor);
+const textStylePrimaryBold16 = TextStyle(fontSize: 16, color: primaryColor, fontWeight: FontWeight.bold);
 //CANCEL
 const textStyleCancel16 = TextStyle(fontSize: 16, color: colorCancel);
+const textStyleCanceBoldl16 = TextStyle(fontSize: 16, color: colorCancel, fontWeight: FontWeight.bold);
 //SUCCESS
 const textStyleSuccess16 = TextStyle(fontSize: 16, color: colorSuccess);
+const textStyleSuccessBold16 = TextStyle(fontSize: 16, color: colorSuccess, fontWeight: FontWeight.bold);
 
 //LANDSCAPE
 const textStyleTabLandscapeActive =
@@ -206,11 +220,16 @@ const textStyleTrailingProfitRegular16 =
 
 const textStyleWhiteBold14 =
     TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold);
+const textStyleGreyBold14 =
+    TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold);
+    const textStyleGrey14 =
+    TextStyle(color: Colors.grey, fontSize: 14,);
 const textStyleWhiteRegular16 =
     TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400);
 const textStyleWhiteBold16 =
     TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold);
-
+const textStyleGreyBold16 =
+    TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold);
 const textStyleTemporaryPriceWhiteBold16 =
     TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold);
 
@@ -235,7 +254,8 @@ const textStyleWhiteBold30 =
 
 const textStylePriceBold16 =
     TextStyle(color: primaryColor, fontSize: 16, fontWeight: FontWeight.bold);
-
+const textStylePriceBold14 =
+    TextStyle(color: primaryColor, fontSize: 14, fontWeight: FontWeight.bold);
 const textStylePriceBold20 =
     TextStyle(color: primaryColor, fontSize: 20, fontWeight: FontWeight.bold);
 
@@ -338,6 +358,8 @@ const iconWhiteColor = Colors.white;
 const iconColorPrimary = Color(0xFF40BAD5);
 var iconColorPrimaryOpacity = const Color(0xFF40BAD5).withOpacity(0.8);
 
+var deviderColor10 = Container(height: 10, color: grayColor100,);
+var deviderColor1 = Container(height: 1, color: grayColor100,);
 const marginTop5 = SizedBox(height: 5);
 const marginTop10 = SizedBox(height: 10);
 const marginTop20 = SizedBox(height: 20);

@@ -30,6 +30,11 @@ String FOOD_STATUS_FINISH_STRING = "HOÀN THÀNH";
 String FOOD_STATUS_CANCEL_STRING = "ĐÃ HỦY";
 String FOOD_STATUS_COOKING_STRING = "ĐANG CHẾ BIẾN";
 
+//INVENTORY
+int INVENTORY_WAITING = 1; //CHỜ XỬ LÝ
+int INVENTORY_MAIN = 1; //CHỜ XỬ LÝ
+int INVENTORY_FINISH = 1; //CHỜ XỬ LÝ
+
 //CHEF/BAR
 int CHEF_BAR_STATUS = 0; // BÌNH THƯỜNG
 int CHEF_BAR_STATUS_ACTIVE = 1; // CẦN CHẾ BIẾN
@@ -72,7 +77,6 @@ const int INFO = 4;
 //VALUE TYPE
 const int TYPE_PRICE = 1;
 const int TYPE_PERCENT = 2;
-
 
 // text length
 const maxlengthName = 50;

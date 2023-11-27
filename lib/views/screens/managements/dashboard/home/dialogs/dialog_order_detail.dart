@@ -1021,7 +1021,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                                                                 context: context,
                                                                                 builder: (BuildContext context) {
                                                                                   return MyDialogCalculatorInt(
-                                                                                    value: orderDetail.quantity,
+                                                                                    value: orderDetail.quantity, label: '', min: 1, max:  MAX_PRICE,
                                                                                   );
                                                                                 },
                                                                               );
@@ -1041,7 +1041,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
                                                                                 context: context,
                                                                                 builder: (BuildContext context) {
                                                                                   return MyDialogCalculatorInt(
-                                                                                    value: orderDetail.new_quantity,
+                                                                                    value: orderDetail.new_quantity, label: '', min: 1, max:  MAX_PRICE,
                                                                                   );
                                                                                 },
                                                                               );

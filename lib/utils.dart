@@ -11,6 +11,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/models/food.dart';
 import 'package:myorder/models/food_combo.dart';
 import 'package:myorder/models/food_order.dart';
+import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 import 'package:uuid/uuid.dart';
@@ -382,6 +383,15 @@ class Utils {
     }
     return fliteredList;
   }
+  static List<Ingredient> filterIngredientSelected(List<Ingredient> list) {
+    List<Ingredient> fliteredList = [];
+    for (var item in list) {
+      if (item.isSelected == true) {
+        fliteredList.add(item);
+      }
+    }
+    return fliteredList;
+  }
 
   static List<FoodOrder> filterSelectedCategory(
       List<FoodOrder> list, int categoryCode) {
@@ -510,6 +520,17 @@ class Utils {
       if (item.isGift == false) {
         total += (item.price * item.quantity);
       }
+    }
+    return total;
+  }
+
+  //Tính tổng tiền theo total_amount
+  static double getSumPriceQuantity2(List<dynamic> list) {
+    double total = 0;
+    for (var item in list) {
+     
+        total += (item.price * item.quantity);
+      
     }
     return total;
   }

@@ -77,138 +77,136 @@ class _MyDialogCalculator2State extends State<MyDialogCalculator2> {
                 defaultValue: double.parse(widget.value.toString()),
               ),
             ),
-            Expanded(
-              child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '7',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '8',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '9',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: 'AC',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                          ],
-                        ),
+            Container(
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '7',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '8',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '9',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: 'AC',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                        ],
                       ),
-                      marginTop10,
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '4',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '5',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '6',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: 'Tăng',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                          ],
-                        ),
+                    ),
+                    marginTop10,
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '4',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '5',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '6',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: 'Tăng',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                        ],
                       ),
-                      marginTop10,
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '1',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '2',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '3',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: 'Giảm',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                          ],
-                        ),
+                    ),
+                    marginTop10,
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '1',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '2',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '3',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: 'Giảm',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                        ],
                       ),
-                      marginTop10,
-                      SizedBox(
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '1',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '0',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: '.',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                            ButtonCalculator(
-                              item: 'Xong',
-                              textEditingController: textEditingController,
-                            ),
-                            marginRight10,
-                          ],
-                        ),
+                    ),
+                    marginTop10,
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '1',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '0',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: '.',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                          ButtonCalculator(
+                            item: 'Xong',
+                            textEditingController: textEditingController,
+                          ),
+                          marginRight10,
+                        ],
                       ),
-                    ],
-                  )),
-            ),
+                    ),
+                  ],
+                )),
           ],
         ),
       ),

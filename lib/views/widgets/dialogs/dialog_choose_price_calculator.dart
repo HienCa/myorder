@@ -8,9 +8,11 @@ import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/headers/header_icon.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class MyCalculator extends StatefulWidget {
   final double priceDefault;
+
   const MyCalculator({super.key, required this.priceDefault});
 
   @override
@@ -37,8 +39,8 @@ class _MyCalculatorState extends State<MyCalculator> {
     if (formattedResult >= MIN_PRICE) {
       Utils.myPopResult(context, result);
     } else {
-      Utils.showErrorFlushbar(context, '', 'Giá tiền phải lớn hơn $MIN_PRICE');
-      Utils.myPopResult(context, '0');
+      Utils.showStylishDialog(context, "THÔNG BÁO!", 'Giá tiền phải lớn hơn $MIN_PRICE', StylishDialogType.INFO);
+      // Utils.myPopResult(widget.context2, '0');
     }
     print('Giá trị đã nhập là: $result');
   }

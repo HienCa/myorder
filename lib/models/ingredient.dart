@@ -12,6 +12,8 @@ class Ingredient {
   int active;
   bool? isSelected = false;
   RecipeDetail? recipeDetail;
+  double? price = 0;
+  double? quantity = 0;
   Ingredient({
     required this.ingredient_id,
     required this.unit_id,
