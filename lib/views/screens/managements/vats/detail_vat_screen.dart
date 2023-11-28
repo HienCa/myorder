@@ -14,10 +14,10 @@ import 'package:myorder/views/widgets/textfields/text_field_label/text_field_str
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class VatDetailPage extends StatefulWidget {
-  final String vatId;
+  final Vat vat;
   const VatDetailPage({
     Key? key,
-    required this.vatId,
+    required this.vat,
   }) : super(key: key);
 
   @override
@@ -39,18 +39,8 @@ class _VatDetailPageState extends State<VatDetailPage> {
   @override
   void initState() {
     super.initState();
-    loadVat();
-  }
-
-  Future<void> loadVat() async {
-    final Vat result = await vatController.getVatById(widget.vatId);
-    if (result.vat_id != "") {
-      setState(() {
-        vat = result;
-        nameController.text = vat.name;
-        vatPercentController.text = "${vat.vat_percent}";
-      });
-    }
+    nameController.text = widget.vat.name;
+    vatPercentController.text = widget.vat.vat_percent.toString();
   }
 
   final TextEditingController nameController = TextEditingController();
@@ -176,7 +166,7 @@ class _VatDetailPageState extends State<VatDetailPage> {
                                 StylishDialogType.ERROR);
                           } else {
                             vatController.updateVat(
-                              vat.vat_id,
+                              widget.vat.vat_id,
                               nameController.text,
                               vatPercentController.text,
                             );

@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/inventory/add_ingredient_to_inventory.dart';
+import 'package:myorder/views/screens/managements/inventory/add_ingredient_to_inventory_screen.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
@@ -37,6 +38,16 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
     ingredientController.getIngredients("");
     discountTextEditingController.text = '0';
     vatTextEditingController.text = '0';
+  }
+
+  double getTotal() {
+    double totalAmount = Utils.getSumPriceQuantity2(listIngredient);
+    int vatPercent = int.tryParse(vatTextEditingController.text) ?? 0;
+    double discountPrice =
+        Utils.stringConvertToDouble(discountTextEditingController.text);
+
+    double totalVat = totalAmount * vatPercent / 100;
+    return totalAmount + totalVat - discountPrice;
   }
 
   @override
@@ -67,7 +78,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
           color: backgroundColor,
           child: Column(
             children: [
-              marginTop10,
+              // marginTop10,
               Container(
                 margin: const EdgeInsets.all(0),
                 child: Container(
@@ -94,7 +105,135 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                   ),
                 ),
               ),
-              
+              deviderColor10,
+              Container(
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.all(0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Expanded(
+                              child: Text("Tổng tiền", style: textStyleLabel14),
+                            ),
+                            Expanded(
+                              child: Text(
+                                Utils.formatCurrency(
+                                    Utils.getSumPriceQuantity2(listIngredient)),
+                                style: textStyleLabel14,
+                                textAlign: TextAlign.right,
+                              ),
+                            )
+                          ]),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Expanded(
+                              child: Text("Giảm trừ", style: textStyleLabel14),
+                            ),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  final result = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return MyCalculator(
+                                          priceDefault:
+                                              Utils.stringConvertToDouble(
+                                                  discountTextEditingController
+                                                      .text), min: 0, max: Utils.getSumPriceQuantity2(listIngredient).toInt(),);
+                                    },
+                                  );
+                                  if (result != null) {
+                                    setState(() {
+                                      print(result);
+                                      discountTextEditingController.text =
+                                          Utils.formatCurrency(
+                                              Utils.stringConvertToDouble(
+                                                  Utils.formatCurrencytoDouble(
+                                                      result)));
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  Utils.formatCurrency(
+                                      Utils.stringConvertToDouble(
+                                          discountTextEditingController.text)),
+                                  style: textStyleLabel14,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            )
+                          ]),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Expanded(
+                              child: Text("V.A.T (%)", style: textStyleLabel14),
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return MyDialogCalculatorInt(
+                                        value: int.tryParse(
+                                                vatTextEditingController
+                                                    .text) ??
+                                            0,
+                                        label: "V.A.T (%)",
+                                        min: 0,
+                                        max: 10);
+                                  },
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    print(result);
+                                    vatTextEditingController.text =
+                                        result.toString();
+                                  });
+                                }
+                              },
+                              child: Expanded(
+                                child: Text(
+                                  vatTextEditingController.text,
+                                  style: textStyleLabel14,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            )
+                          ]),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Expanded(
+                              child: Text("THANH TOÁN",
+                                  style: textStylePriceBold16),
+                            ),
+                            Expanded(
+                              child: Text(
+                                Utils.formatCurrency(getTotal()),
+                                style: textStylePriceBold16,
+                                textAlign: TextAlign.right,
+                              ),
+                            )
+                          ]),
+                    ),
+                  ],
+                ),
+              ),
               deviderColor10,
               //DANH SÁCH CÁC MẶT HÀNG
               Expanded(
@@ -247,7 +386,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                                               builder: (BuildContext context) {
                                                 return MyCalculator(
                                                     priceDefault:
-                                                        ingredient.price ?? 0);
+                                                        ingredient.price ?? 0, min: 0, max: MAX_PRICE,);
                                               },
                                             );
                                             if (result != null) {
@@ -295,136 +434,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                   ),
                 ),
               )),
-              deviderColor10,
-              Container(
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.all(0),
-                child: Column(
-                  children: [
-                    
-                    SizedBox(
-                      height: 40,
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Expanded(
-                              child: Text("Tổng tiền", style: textStyleLabel14),
-                            ),
-                            Expanded(
-                              child: Text(
-                                Utils.formatCurrency(
-                                    Utils.getSumPriceQuantity2(listIngredient)),
-                                style: textStyleLabel14,
-                                textAlign: TextAlign.right,
-                              ),
-                            )
-                          ]),
-                    ),
-                    SizedBox(
-                      height: 40,
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Expanded(
-                              child: Text("Giảm trừ", style: textStyleLabel14),
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  final result = await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return MyCalculator(
-                                          priceDefault:
-                                              Utils.stringConvertToDouble(
-                                                  discountTextEditingController
-                                                      .text));
-                                    },
-                                  );
-                                  if (result != null) {
-                                    setState(() {
-                                      print(result);
-                                      discountTextEditingController.text =
-                                          Utils.formatCurrency(
-                                              Utils.stringConvertToDouble(
-                                                  Utils.formatCurrencytoDouble(
-                                                      result)));
-                                    });
-                                  }
-                                },
-                                child: Text(
-                                  Utils.formatCurrency(
-                                      Utils.stringConvertToDouble(
-                                          discountTextEditingController.text)),
-                                  style: textStyleLabel14,
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            )
-                          ]),
-                    ),
-                    SizedBox(
-                      height: 40,
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Expanded(
-                              child: Text("V.A.T (%)", style: textStyleLabel14),
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                final result = await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return MyDialogCalculatorInt(
-                                        value: int.tryParse(
-                                                vatTextEditingController
-                                                    .text) ??
-                                            0,
-                                        label: "V.A.T (%)",
-                                        min: 0,
-                                        max: 10);
-                                  },
-                                );
-                                if (result != null) {
-                                  setState(() {
-                                    print(result);
-                                    vatTextEditingController.text =
-                                        result.toString();
-                                  });
-                                }
-                              },
-                              child: Expanded(
-                                child: Text(
-                                  vatTextEditingController.text,
-                                  style: textStyleLabel14,
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            )
-                          ]),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text("THANH TOÁN",
-                                  style: textStylePriceBold16),
-                            ),
-                            Expanded(
-                              child: Text(
-                                "7,999,000",
-                                style: textStylePriceBold16,
-                                textAlign: TextAlign.right,
-                              ),
-                            )
-                          ]),
-                    ),
-                  ],
-                ),
-              ),
+
               Container(
                 color: backgroundColor,
                 margin: const EdgeInsets.symmetric(horizontal: 16),

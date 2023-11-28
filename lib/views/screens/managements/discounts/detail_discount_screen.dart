@@ -14,10 +14,10 @@ import 'package:myorder/views/widgets/textfields/text_field_label/text_field_str
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class DiscountDetailPage extends StatefulWidget {
-  final String discountId;
+  final Discount discount;
   const DiscountDetailPage({
     Key? key,
-    required this.discountId,
+    required this.discount,
   }) : super(key: key);
 
   @override
@@ -39,20 +39,8 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
   @override
   void initState() {
     super.initState();
-    loadDiscount();
-  }
-
-  Future<void> loadDiscount() async {
-    final Discount result =
-        await discountController.getDiscountById(widget.discountId);
-    if (result.discount_id != "") {
-      setState(() {
-        discount = result;
-        nameController.text = discount.name;
-        discountPriceController.text =
-            Utils.formatCurrency(discount.discount_price);
-      });
-    }
+    nameController.text = widget.discount.name;
+    discountPriceController.text = widget.discount.discount_price.toString();
   }
 
   final TextEditingController nameController = TextEditingController();
@@ -119,16 +107,19 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                         isRequire: true,
                       ),
                       MyTextFieldPrice(
-                          textEditingController: discountPriceController,
-                          label: 'Số tiền muốn giảm',
-                          placeholder: 'Nhập số tiền...',
-                          min: MIN_PRICE,
-                          max: MAX_PRICE,
-                          isRequire: true, textAlignRight: false,)
+                        textEditingController: discountPriceController,
+                        label: 'Số tiền muốn giảm',
+                        placeholder: 'Nhập số tiền...',
+                        min: MIN_PRICE,
+                        max: MAX_PRICE,
+                        isRequire: true,
+                        textAlignRight: false,
+                        defaultValue: Utils.stringConvertToDouble(
+                            discountPriceController.text),
+                      )
                     ],
                   ),
                 ),
-                
                 SizedBox(
                   height: 50,
                   child: Row(
@@ -182,7 +173,9 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                                   'Tên vat phải từ $minlength2 đến $maxlength50 ký tự.',
                                   StylishDialogType.ERROR);
                             } else if (!Utils.isValidRangeTextEditController(
-                                discountPriceController,MIN_PRICE, MAX_PRICE)) {
+                                discountPriceController,
+                                MIN_PRICE,
+                                MAX_PRICE)) {
                               discountPriceController.text =
                                   Utils.convertTextFieldPrice(
                                       discountPriceController.text);
@@ -193,7 +186,8 @@ class _DiscountDetailPageState extends State<DiscountDetailPage> {
                                   'Số tiền phải từ ${Utils.convertTextFieldPrice('$MIN_PRICE')} đến ${Utils.convertTextFieldPrice('$MAX_PRICE')}',
                                   StylishDialogType.ERROR);
                             } else {
-                              discountController.createDiscount(
+                              discountController.updateDiscount(
+                                widget.discount.discount_id,
                                 nameController.text,
                                 discountPriceController.text,
                               );

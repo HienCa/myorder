@@ -12,8 +12,14 @@ import 'package:stylish_dialog/stylish_dialog.dart';
 
 class MyCalculator extends StatefulWidget {
   final double priceDefault;
+  final int min;
+  final int max;
 
-  const MyCalculator({super.key, required this.priceDefault});
+  const MyCalculator(
+      {super.key,
+      required this.priceDefault,
+      required this.min,
+      required this.max});
 
   @override
   State<MyCalculator> createState() => _MyCalculatorState();
@@ -36,10 +42,11 @@ class _MyCalculatorState extends State<MyCalculator> {
 
   ok() {
     double formattedResult = Utils.stringConvertToDouble(result);
-    if (formattedResult >= MIN_PRICE) {
+    if (formattedResult >= widget.min) {
       Utils.myPopResult(context, result);
     } else {
-      Utils.showStylishDialog(context, "THÔNG BÁO!", 'Giá tiền phải lớn hơn $MIN_PRICE', StylishDialogType.INFO);
+      Utils.showStylishDialog(context, "THÔNG BÁO!",
+          'Giá tiền phải lớn hơn ${widget.min}', StylishDialogType.INFO);
       // Utils.myPopResult(widget.context2, '0');
     }
     print('Giá trị đã nhập là: $result');
@@ -80,10 +87,12 @@ class _MyCalculatorState extends State<MyCalculator> {
       }
       print(priceTextEditController.text);
       if (priceTextEditController.text.isNotEmpty) {
-        if (double.tryParse(priceTextEditController.text)! > 100000000) {
-          priceTextEditController.text = '100000000';
+        if (double.tryParse(priceTextEditController.text)! > widget.max) {
+          priceTextEditController.text = widget.max.toString();
           result = Utils.formatCurrency(
               double.tryParse(priceTextEditController.text));
+          Utils.showStylishDialog(
+              context, "THÔNG BÁO", "Đã đạt tối đa", StylishDialogType.INFO);
         } else {
           result = Utils.formatCurrency(
               double.tryParse(priceTextEditController.text));

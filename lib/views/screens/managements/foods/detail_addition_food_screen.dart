@@ -367,7 +367,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
         unitOptions = units;
         selectedUnitValue = unitList.firstWhere(
           (unit) => unit.unit_id == widget.food.unit_id,
-          orElse: () => Unit(unit_id: "", name: "", active: 1),
+          orElse: () => Unit(unit_id: "", name: "", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: ''),
         );
       });
     });
@@ -402,7 +402,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
 
   // get units
   List<Unit> unitOptions = List.empty();
-  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1);
+  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: '');
   bool isErrorTextUnitId = false;
   Unit? selectedUnitValue;
   List<Unit> unitList = [];

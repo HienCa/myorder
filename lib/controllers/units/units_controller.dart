@@ -21,14 +21,21 @@ class UnitController extends GetxController {
         if (userData != null && userData is Map<String, dynamic>) {
           String unit_id = userData['unit_id'] ?? '';
           String name = userData['name'] ?? '';
+          String unit_id_conversion = userData['unit_id_conversion'] ?? '';
+          String unit_name_conversion = userData['unit_name_conversion'] ?? '';
 
           int active = userData['active'] ?? 1;
-          return model.Unit(unit_id: unit_id, name: name, active: active);
+          int value_conversion = userData['value_conversion'] ?? 1;
+          return model.Unit(
+              unit_id: unit_id,
+              name: name,
+              active: active,
+              value_conversion: value_conversion, unit_id_conversion: unit_id_conversion, unit_name_conversion: unit_name_conversion);
         }
       }
     } catch (e) {
       print('Error fetching user data: $e');
-      return Unit(unit_id: unit_id, name: "", active: 1);
+      return Unit(unit_id: unit_id, name: "", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: '');
     }
   }
 
@@ -67,10 +74,11 @@ class UnitController extends GetxController {
     }
   }
 
-
-
   void createUnit(
     String name,
+    String unit_id_conversion,
+    String unit_name_conversion,
+    int value_conversion,
   ) async {
     try {
       if (name.isNotEmpty) {
@@ -80,6 +88,7 @@ class UnitController extends GetxController {
           unit_id: id,
           name: name.trim(),
           active: 1,
+          value_conversion: value_conversion, unit_id_conversion: unit_id_conversion, unit_name_conversion: unit_name_conversion,
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('units');
@@ -115,10 +124,17 @@ class UnitController extends GetxController {
   updateUnit(
     String unit_id,
     String name,
+    int value_conversion,
+    String unit_id_conversion,
+    String unit_name_conversion,
+
   ) async {
     try {
       await firestore.collection('units').doc(unit_id).update({
         "name": name.trim(),
+        "value_conversion": value_conversion,
+        "unit_id_conversion": unit_id_conversion,
+        "unit_name_conversion": unit_name_conversion,
       });
       // Get.snackbar(
       //   'THÀNH CÔNG!',

@@ -7,6 +7,7 @@ class RecipeDetail {
   String ingredient_id;
   String name;
   double quantity;
+  String unit_id;
   String unit_name;
   bool isSelected = false;
   double? new_quantity;
@@ -17,12 +18,14 @@ class RecipeDetail {
     required this.ingredient_id,
     required this.quantity,
     required this.unit_name,
+    required this.unit_id,
   });
   RecipeDetail.empty()
       : recipe_detail_id = '',
       name = '',
       ingredient_id = '',
         quantity = 0,
+        unit_id = '',
         unit_name = '';
 
   Map<String, dynamic> toJson() => {
@@ -31,6 +34,7 @@ class RecipeDetail {
         "ingredient_id": ingredient_id,
         "quantity": quantity,
         "unit_name": unit_name,
+        "unit_id": unit_id,
       };
 
   static RecipeDetail fromSnap(DocumentSnapshot snap) {
@@ -41,6 +45,7 @@ class RecipeDetail {
       ingredient_id: snapshot['ingredient_id'] ?? "",
       quantity: snapshot['quantity'] ?? 0,
       unit_name: snapshot['unit_name'] ?? "",
+      unit_id: snapshot['unit_id'] ?? "",
     );
   }
 }

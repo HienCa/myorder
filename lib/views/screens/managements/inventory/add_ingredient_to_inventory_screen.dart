@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/models/ingredient.dart';
@@ -161,7 +162,7 @@ class _AddIngredientToInventoryScreenState
                                 itemBuilder: (context, index) {
                                   Ingredient ingredient =
                                       widget.listIngredient[index];
-                                  
+
                                   return SizedBox(
                                     height: 50,
                                     child: Row(children: [
@@ -260,7 +261,9 @@ class _AddIngredientToInventoryScreenState
                                               builder: (BuildContext context) {
                                                 return MyCalculator(
                                                     priceDefault:
-                                                        ingredient.price ?? 0);
+                                                        ingredient.price ?? 0,
+                                                    min: 0,
+                                                    max: MAX_PRICE);
                                               },
                                             );
                                             if (result != null) {

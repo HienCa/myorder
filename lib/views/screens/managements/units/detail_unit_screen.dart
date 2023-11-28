@@ -6,17 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/models/unit.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_number.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class UnitDetailPage extends StatefulWidget {
-  final String unitId;
+  final Unit unit;
   const UnitDetailPage({
     Key? key,
-    required this.unitId,
+    required this.unit,
   }) : super(key: key);
 
   @override
@@ -32,27 +35,28 @@ class _UnitDetailPageState extends State<UnitDetailPage> {
   bool isErrorTextName = false;
 
   UnitController unitController = Get.put(UnitController());
-  late Unit unit;
   @override
   void initState() {
     super.initState();
-    loadUnit();
+
+    valueConversationController.text = widget.unit.value_conversion.toString();
+    nameController.text = widget.unit.name;
+    unitIdConversionController.text = widget.unit.unit_id_conversion;
+    nameValueConversationController.text = widget.unit.unit_name_conversion;
   }
 
-  Future<void> loadUnit() async {
-    final Unit result = await unitController.getUnitById(widget.unitId);
-    if (result.unit_id != "") {
-      setState(() {
-        unit = result;
-        nameController.text = unit.name;
-      });
-    }
-  }
+  final TextEditingController unitIdConversionController =
+      TextEditingController();
 
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController nameValueConversationController =
+      TextEditingController();
+  final TextEditingController valueConversationController =
+      TextEditingController();
   @override
   void dispose() {
     nameController.dispose();
+    valueConversationController.dispose();
 
     super.dispose();
   }
@@ -109,6 +113,73 @@ class _UnitDetailPageState extends State<UnitDetailPage> {
                         max: maxlength50,
                         isRequire: true,
                       ),
+                      MyTextFieldNumber(
+                        textController: valueConversationController,
+                        label: 'Giá trị quy đổi',
+                        placeholder: '',
+                        isReadOnly: false,
+                        max: MAX_PRICE,
+                        min: 1,
+                        isRequire: false,
+                      ),
+                      marginTop10,
+                      InkWell(
+                        onTap: () async {
+                          Unit result = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return MyDialogSelect(
+                                  lable: "DANH SÁCH ĐƠN VỊ",
+                                  list:
+                                      Utils.filterActive(unitController.units),
+                                  keyNameSearch: "name");
+                            },
+                          );
+                          if (result.unit_id != "") {
+                            setState(() {
+                              nameValueConversationController.text =
+                                  result.name;
+                              unitIdConversionController.text = result.unit_id;
+                            });
+                          }
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Đơn vị quy đổi',
+                                    style: textStyleLabel16,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 50,
+                              padding: const EdgeInsets.only(left: 8),
+                              decoration: BoxDecoration(
+                                  borderRadius: borderContainer8,
+                                  border:
+                                      Border.all(color: borderColor, width: 1)),
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    nameValueConversationController.text,
+                                    style: textStyleInput,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -152,9 +223,13 @@ class _UnitDetailPageState extends State<UnitDetailPage> {
                           else
                             {
                               unitController.updateUnit(
-                                unit.unit_id,
-                                nameController.text,
-                              ),
+                                  widget.unit.unit_id,
+                                  nameController.text,
+                                  int.tryParse(
+                                          valueConversationController.text) ??
+                                      1,
+                                  unitIdConversionController.text,
+                                  nameValueConversationController.text),
                               Utils.myPopSuccess(context)
                             }
                         },

@@ -105,7 +105,7 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.87,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   child: Obx(() {
                     return ListView.builder(
                         itemCount: discountController.discounts.length,
@@ -118,7 +118,7 @@ class _ManagementDiscountsPageState extends State<ManagementDiscountsPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => DiscountDetailPage(
-                                            discountId: discount.discount_id,
+                                            discount: discount,
                                           )));
                               if (result == 'success') {
                                 Utils.showStylishDialog(

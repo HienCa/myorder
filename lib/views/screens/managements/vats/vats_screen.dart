@@ -104,7 +104,7 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.87,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   child: Obx(() {
                     return ListView.builder(
                         itemCount: vatController.vats.length,
@@ -117,7 +117,7 @@ class _ManagementVatsPageState extends State<ManagementVatsPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => VatDetailPage(
-                                            vatId: vat.vat_id,
+                                            vat: vat,
                                           )));
                               if (result == 'success') {
                                 Utils.showStylishDialog(

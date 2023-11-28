@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/inventory/inventory_detail.dart';
+import 'package:myorder/views/screens/managements/inventory/inventory_detail_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 enum Inventory { Import, Export }

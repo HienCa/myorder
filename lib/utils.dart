@@ -383,6 +383,15 @@ class Utils {
     }
     return fliteredList;
   }
+  static List<dynamic> filterActive(List<dynamic> list) {
+    List<dynamic> fliteredList = [];
+    for (var item in list) {
+      if (item.active == ACTIVE) {
+        fliteredList.add(item);
+      }
+    }
+    return fliteredList;
+  }
   static List<Ingredient> filterIngredientSelected(List<Ingredient> list) {
     List<Ingredient> fliteredList = [];
     for (var item in list) {

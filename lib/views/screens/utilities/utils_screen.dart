@@ -9,7 +9,7 @@ import 'package:myorder/views/screens/managements/discounts/discounts_screen.dar
 import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
 import 'package:myorder/views/screens/managements/foods/foods_screen.dart';
 import 'package:myorder/views/screens/managements/ingredients/ingredients_screen.dart';
-import 'package:myorder/views/screens/managements/inventory/inventory.dart';
+import 'package:myorder/views/screens/managements/inventory/inventory_screen.dart';
 import 'package:myorder/views/screens/managements/units/units_screen.dart';
 import 'package:myorder/views/screens/managements/vats/vats_screen.dart';
 import 'package:myorder/views/screens/quantity_foods_order/quantity_foods_order_screen.dart';

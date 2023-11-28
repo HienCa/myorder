@@ -95,9 +95,9 @@ class RecipeController extends GetxController {
           if (ingredient.isSelected == true) {
             String id = Utils.generateUUID();
             CollectionReference usersCollection = FirebaseFirestore.instance
-                .collection('foods')
+                .collection('foods') 
                 .doc(food_id)
-                .collection("recipes");
+                .collection("recipes"); 
             RecipeDetail recipeDetail = ingredient.recipeDetail!;
             recipeDetail.recipe_detail_id = id;
             await usersCollection.doc(id).set(recipeDetail.toJson());
@@ -175,4 +175,66 @@ class RecipeController extends GetxController {
       );
     }
   }
+
+  //KHO
+  /*
+  THIẾT LẬP SỐ LƯỢNG CẦN PHỤC VỤ TRONG NGÀY
+  TIẾN HÀNH NHẬP KHO THEO SỐ LƯỢNG MÓN DỰA THEO CÔNG THỨC (THAM KHẢO)
+
+  
+  VD MÌ CÀY
+  Cách nấu Mì cay kim chi thập cẩm
+  GÓI MỲ 1gói/vắt
+  THỊT BÒ 20gram
+  Tôm 2con
+  Nấm kim châm 20g
+  Kim chi 20g
+  Mực 3khoanh
+  Cá viên 2 viên cắt đôi
+  Xúc xích Đức 2 lát cắt xéo 1/2 cây
+  Ớt cấp độ 1 thìa cho 1 cấp độ
+  Nước dùng 500ml
+  Cải tím 20g
+  Ngò gai tùy khẩu vị
+  Húng quế tùy khẩu vị
+
+Cách thực hiện:
+Bước 1: Cho các nguyên liệu bao gồm Mì Ramen, Tôm, Mực, Cá Viên, Xúc Xích Đức, Ớt chia cấp độ (1 cấp bằng 1 thìa cà phê) vào thố mì cay size 8, rồi cho tầm 500 ml lít nước dùng vào và đun sôi tầm 4 phút.
+Bước 2: Đun sôi các nguyên liệu tới tầm 3,35 phút thì bạn cho kim chi, thịt bò, sắp nấm kim châm, rau cải tím, ngò lên trên bề mặt
+Bước 3: Mang ra cho khách hàng thưởng thức khi còn sôi sục (Có thể ăn kèm với rau húng quế)
+
+Cách nấu Mì cay kim chi hải sản
+Mì Ramen (1 vắt)
+Tôm (2 con)
+Mực (3 khoanh)
+Cá viên (2 viên)
+Nấm kim châm (20gr)
+Ớt cấp độ (mỗi thìa một cấp độ)
+Nước dùng (500ml)
+Rau cải tím (20g)
+Rau húng quế, ngò gai (đủ dùng)
+
+Cách thực hiện:
+Bước 1: Cho nguyên liệu gồm Mì Ramen, Tôm, Mực, Cá Viên, Ớt cấp độ tùy cấp vào thố mì cay size 8 cùng nước dùng, đun sôi khoảng 4 phút.
+Bước 2: Đợi các nguyên liệu đun sôi sau tầm 3,5 phút, sắp xếp các loại rau, nấm kim châm, ngò gai lên bề mặt nồi mì để sôi 30 giây, đậy nắp lại.
+Bước 3: Tắt bếp và mang ra cho khách dùng 
+
+Cách nấu Mì cay kim chi bò
+
+Mì Ramen: (1 vắt)
+Bò: (30gr)
+Xúc xích Đức: (3 lát cắt xéo)
+Cá viên: (2 viên)
+Nấm kim châm: (20g)
+Ớt cấp độ: (Mỗi thìa một cấp độ)
+Kim chi: (20gr)
+Nước dùng: (500ml)
+Rau cải tím: (20gr)
+Rau húng quế, ngò gai: (đủ dùng)
+
+Cách thực hiện:
+Bước 1: Cho Mì Ramen, Xúc Xích, Cá Viên, Ớt cấp độ tùy cấp vào thố mì cay size 8 cùng với nước dùng tầm 500ml rồi đun sôi trong vòng khoảng 4 phút.
+Bước 2: Sau khi các nguyên liệu trước đã sôi tầm 3,5 phút thì bạn cho thịt bò vào, rồi lần lượt sắp các loại rau lên bề mặt, đậy nắp chờ sôi thêm 30 giây rồi tắt bếp.
+Bước 3: Mang thố mì cay ra cho khách hàng thưởng thức (Có thể ăn kèm với rau húng quế)
+   */
 }

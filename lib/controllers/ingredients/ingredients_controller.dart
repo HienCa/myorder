@@ -96,7 +96,8 @@ class IngredientController extends GetxController {
                   ingredient_id: ingredient.ingredient_id,
                   quantity: 1,
                   unit_name: "",
-                  name: ingredient.name);
+                  name: ingredient.name,
+                  unit_id: '');
 
               // if (ingredient.is_weight == ACTIVE) {
               //   recipeDetail.quantity = 0.1;
@@ -111,7 +112,9 @@ class IngredientController extends GetxController {
                 final userData = unit.data();
                 if (userData != null && userData is Map<String, dynamic>) {
                   String unit_name = userData['name'] ?? '';
+                  String unit_id = userData['unit_id'] ?? '';
                   ingredient.recipeDetail!.unit_name = unit_name;
+                  ingredient.recipeDetail!.unit_id = unit_id;
                 }
               }
               retValue.add(ingredient);
@@ -137,7 +140,8 @@ class IngredientController extends GetxController {
                 ingredient_id: ingredient.ingredient_id,
                 quantity: 1,
                 unit_name: "",
-                name: ingredient.name);
+                name: ingredient.name,
+                unit_id: '');
             ingredient.recipeDetail = recipeDetail;
             // if (ingredient.is_weight == ACTIVE) {
             recipeDetail.quantity = 0.1;
@@ -151,7 +155,9 @@ class IngredientController extends GetxController {
               final userData = unit.data();
               if (userData != null && userData is Map<String, dynamic>) {
                 String unit_name = userData['name'] ?? '';
+                String unit_id = userData['unit_id'] ?? '';
                 ingredient.recipeDetail!.unit_name = unit_name;
+                ingredient.recipeDetail!.unit_id = unit_id;
               }
             }
             retVal.add(ingredient);
@@ -182,7 +188,8 @@ class IngredientController extends GetxController {
                   ingredient_id: ingredient.ingredient_id,
                   quantity: 1,
                   unit_name: "",
-                  name: ingredient.name);
+                  name: ingredient.name,
+                  unit_id: '');
 
               // if (ingredient.is_weight == ACTIVE) {
               //   recipeDetail.quantity = 0.1;
@@ -197,7 +204,9 @@ class IngredientController extends GetxController {
                 final userData = unit.data();
                 if (userData != null && userData is Map<String, dynamic>) {
                   String unit_name = userData['name'] ?? '';
+                  String unit_id = userData['unit_id'] ?? '';
                   ingredient.recipeDetail!.unit_name = unit_name;
+                  ingredient.recipeDetail!.unit_id = unit_id;
                 }
               }
 
@@ -224,7 +233,8 @@ class IngredientController extends GetxController {
                 ingredient_id: ingredient.ingredient_id,
                 quantity: 1,
                 unit_name: "",
-                name: ingredient.name);
+                name: ingredient.name,
+                unit_id: '');
             ingredient.recipeDetail = recipeDetail;
             // if (ingredient.is_weight == ACTIVE) {
             recipeDetail.quantity = 0.1;
@@ -238,7 +248,9 @@ class IngredientController extends GetxController {
               final userData = unit.data();
               if (userData != null && userData is Map<String, dynamic>) {
                 String unit_name = userData['name'] ?? '';
+                String unit_id = userData['unit_id'] ?? '';
                 ingredient.recipeDetail!.unit_name = unit_name;
+                ingredient.recipeDetail!.unit_id = unit_id;
               }
             }
             retVal.add(ingredient);

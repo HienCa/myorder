@@ -10,7 +10,6 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/models/discount.dart';
 import 'package:myorder/utils.dart';
 
-
 class DiscountController extends GetxController {
   getDiscountById(String discount_id) async {
     try {
@@ -32,7 +31,8 @@ class DiscountController extends GetxController {
       }
     } catch (e) {
       print('Error fetching user data: $e');
-      return Discount(discount_id: discount_id, name: "", active: 1, discount_price: 0);
+      return Discount(
+          discount_id: discount_id, name: "", active: 1, discount_price: 0);
     }
   }
 
@@ -74,20 +74,22 @@ class DiscountController extends GetxController {
   final Rx<List<Discount>> _activeDiscounts = Rx<List<Discount>>([]);
   List<Discount> get activeDiscounts => _activeDiscounts.value;
   getActiveDiscounts() async {
-
-      _activeDiscounts.bindStream(
-        firestore.collection('discounts').where('active', isEqualTo: ACTIVE).snapshots().map(
-          (QuerySnapshot query) {
-            List<Discount> retValue = [];
-            for (var element in query.docs) {
-              retValue.add(Discount.fromSnap(element));
-              print(element);
-            }
-            return retValue;
-          },
-        ),
-      );
-    
+    _activeDiscounts.bindStream(
+      firestore
+          .collection('discounts')
+          .where('active', isEqualTo: ACTIVE)
+          .snapshots()
+          .map(
+        (QuerySnapshot query) {
+          List<Discount> retValue = [];
+          for (var element in query.docs) {
+            retValue.add(Discount.fromSnap(element));
+            print(element);
+          }
+          return retValue;
+        },
+      ),
+    );
   }
 
   void createDiscount(
@@ -108,12 +110,12 @@ class DiscountController extends GetxController {
             FirebaseFirestore.instance.collection('discounts');
 
         await usersCollection.doc(id).set(discount.toJson());
-        Get.snackbar(
-          'THÀNH CÔNG!',
-          'Thêm discount mới thành công!',
-          backgroundColor: backgroundSuccessColor,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'THÀNH CÔNG!',
+        //   'Thêm discount mới thành công!',
+        //   backgroundColor: backgroundSuccessColor,
+        //   colorText: Colors.white,
+        // );
       } else {
         Get.snackbar(
           'Error!',
@@ -145,12 +147,12 @@ class DiscountController extends GetxController {
         "name": name.trim().toUpperCase(),
         "discount_price": double.tryParse(discount_price) ?? 0,
       });
-      Get.snackbar(
-        'THÀNH CÔNG!',
-        'Cập nhật thông tin thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   'THÀNH CÔNG!',
+      //   'Cập nhật thông tin thành công!',
+      //   backgroundColor: backgroundSuccessColor,
+      //   colorText: Colors.white,
+      // );
       update();
     } catch (e) {
       Get.snackbar(

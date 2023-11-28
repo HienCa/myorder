@@ -104,7 +104,7 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                 ),
                 marginTop10,
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.87,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   child: Obx(() {
                     return ListView.builder(
                         itemCount: unitController.units.length,
@@ -117,7 +117,7 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => UnitDetailPage(
-                                            unitId: unit.unit_id,
+                                            unit: unit,
                                           )));
                               if (result == 'success') {
                                 Utils.showStylishDialog(

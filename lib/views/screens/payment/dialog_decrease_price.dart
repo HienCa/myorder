@@ -190,7 +190,7 @@ class _CustomDialogDecreasePriceState extends State<CustomDialogDecreasePrice> {
                               builder: (BuildContext context) {
                                 return MyCalculator(
                                   priceDefault: Utils.stringConvertToDouble(
-                                      priceTextEditController.text),
+                                      priceTextEditController.text), min: 0, max: MAX_PRICE
                                 );
                               },
                             );

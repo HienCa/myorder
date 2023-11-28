@@ -83,7 +83,7 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
 
   // get units
   List<Unit> unitOptions = List.empty();
-  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1);
+  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: '');
   bool isErrorTextUnitId = false;
   Unit? selectedUnitValue;
   List<Unit> unitList = [];
