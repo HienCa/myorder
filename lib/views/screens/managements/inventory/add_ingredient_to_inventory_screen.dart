@@ -130,7 +130,9 @@ class _AddIngredientToInventoryScreenState
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     // Text("18", style: textStyleGreen14),
-                                    // marginRight5,
+                                    marginRight20,
+                                    marginRight10,
+                                    marginRight5,
                                     Text("Mặt hàng", style: textStyleLabel14),
                                   ],
                                 )),

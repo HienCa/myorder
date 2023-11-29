@@ -10,6 +10,7 @@ import 'package:myorder/views/screens/managements/employees/employees_screen.dar
 import 'package:myorder/views/screens/managements/foods/foods_screen.dart';
 import 'package:myorder/views/screens/managements/ingredients/ingredients_screen.dart';
 import 'package:myorder/views/screens/managements/inventory/inventory_screen.dart';
+import 'package:myorder/views/screens/managements/suppliers/suppliers_screen.dart';
 import 'package:myorder/views/screens/managements/units/units_screen.dart';
 import 'package:myorder/views/screens/managements/vats/vats_screen.dart';
 import 'package:myorder/views/screens/quantity_foods_order/quantity_foods_order_screen.dart';
@@ -116,6 +117,22 @@ class UtilsPage extends StatelessWidget {
                           leading: Icon(Icons.ad_units, color: iconColor),
                           title:
                               Text("KHO", style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManagementSupplierPage()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.ad_units, color: iconColor),
+                          title:
+                              Text("Nhà cung cấp", style: textStyleBlackRegular),
                           trailing: Icon(Icons.arrow_forward_ios_outlined,
                               color: iconColor),
                         ),
