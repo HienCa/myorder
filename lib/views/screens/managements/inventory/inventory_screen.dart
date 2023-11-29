@@ -3,7 +3,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
+import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/inventory/inventory_detail_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -24,6 +27,9 @@ class InventoryScreen extends StatefulWidget {
 class _InventoryScreenState extends State<InventoryScreen> {
   bool isSearch = false;
   TextEditingController searchTextEditingController = TextEditingController();
+  SupplierController supplierController = Get.put(SupplierController());
+  UnitController unitController = Get.put(UnitController());
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +47,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
     //datetime
     fromDateString = Utils.formatDatetime(DateTime.now());
     toDateString = Utils.formatDatetime(DateTime.now());
+    supplierController.getSuppliers("");
+    unitController.getUnits("");
   }
 
   bool isImport = true;
@@ -161,7 +169,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const InventoryDetailScreen()));
+                              builder: (context) =>
+                                  const InventoryDetailScreen()));
                       if (result == 'success') {
                         Utils.showStylishDialog(
                             context,
@@ -602,15 +611,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                        
-                                                Text("15/06/2023 17:42", 
+                                                Text("15/06/2023 17:42",
                                                     style: textStyleLabel14),
                                                 Text(
                                                   "PNK001",
                                                   style: textStyleLabel14,
                                                 ),
-                                               
-
                                               ],
                                             )),
                                         Text("7,000,000",

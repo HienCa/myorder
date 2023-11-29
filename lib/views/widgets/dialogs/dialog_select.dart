@@ -58,13 +58,24 @@ class _MyDialogSelectState extends State<MyDialogSelect> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       marginRight20,
-                      marginRight10,
                       const Spacer(),
-                      Text(
-                        widget.lable.toUpperCase(),
-                        style: textStyleWhiteBold20,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        child: Marquee(
+                          direction: Axis.horizontal,
+                          textDirection: TextDirection.ltr,
+                          animationDuration: const Duration(seconds: 1),
+                          backDuration: const Duration(milliseconds: 4000),
+                          pauseDuration: const Duration(milliseconds: 1000),
+                          directionMarguee: DirectionMarguee.TwoDirection,
+                          child: Text(
+                            widget.lable.toUpperCase(),
+                            style: textStyleWhiteBold20,
+                          ),
+                        ),
                       ),
                       const Spacer(),
+                      marginRight10,
                       const MyCloseIcon(heightWidth: 30, sizeIcon: 16),
                     ],
                   ),
@@ -119,47 +130,25 @@ class _MyDialogSelectState extends State<MyDialogSelect> {
                         onTap: () {
                           //Trả về 1 model đã chọn
                           Utils.myPopResult(context, filteredList[index]);
-
-                          //VD
-                          //   onTap: () async {
-                          //   Unit result = await showDialog(
-                          //     context: context,
-                          //     builder: (BuildContext context) {
-                          //       return MyDialogSelect(
-                          //           lable: "DANH SÁCH ĐƠN VỊ",
-                          //           list:
-                          //               Utils.filterActive(unitController.units),
-                          //           keyNameSearch: "name");
-                          //     },
-                          //   );
-                          //   if (result.unit_id != "") {
-                          //     setState(() {
-                          //       nameValueConversationController.text =
-                          //           result.name;
-                          //       unitIdConversionController.text = result.unit_id;
-                          //     });
-                          //   }
-                          // },
                         },
-                        child: ListTile(
-                          title: Row(
-                            children: [
-                              Marquee(
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Marquee(
                                 direction: Axis.horizontal,
                                 textDirection: TextDirection.ltr,
                                 animationDuration: const Duration(seconds: 1),
-                                backDuration:
-                                    const Duration(milliseconds: 4000),
-                                pauseDuration:
-                                    const Duration(milliseconds: 1000),
+                                backDuration: const Duration(milliseconds: 4000),
+                                pauseDuration: const Duration(milliseconds: 1000),
                                 directionMarguee: DirectionMarguee.TwoDirection,
                                 child: Text(
                                   filteredList[index].name ?? "",
                                   style: textStyleNameBlackRegular,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            deviderColor1
+                          ],
                         ),
                       );
                     },

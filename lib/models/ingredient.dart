@@ -14,6 +14,7 @@ class Ingredient {
   RecipeDetail? recipeDetail;
   double? price = 0;
   double? quantity = 0;
+  String? unit_name = "";
   Ingredient({
     required this.ingredient_id,
     required this.unit_id,

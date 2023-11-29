@@ -149,7 +149,7 @@ const textStyleOrderTitleBold16 =
 //===============================
 
 //PRIMARY
-var textStyleGreen14 = TextStyle(fontSize: 14, color: greenColor600);
+var textStyleGreen14 = TextStyle(fontSize: 14, color: redColor600);
 const textStyleOrange14 = TextStyle(fontSize: 14, color: colorPrice);
 const textStylePrimary14 = TextStyle(fontSize: 14, color: primaryColor);
 const textStylePrimary16 = TextStyle(fontSize: 16, color: primaryColor);
@@ -368,6 +368,7 @@ const marginBottom30 = SizedBox(height: 30);
 const marginRight5 = SizedBox(width: 5);
 const marginRight10 = SizedBox(width: 10);
 const marginRight20 = SizedBox(width: 20);
+const marginRight30 = SizedBox(width: 30);
 
 const sizeIconLarge = 30;
 const sizeIconSmall = 20;

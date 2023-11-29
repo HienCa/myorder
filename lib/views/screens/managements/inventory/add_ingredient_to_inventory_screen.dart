@@ -7,10 +7,13 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
+import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/models/ingredient.dart';
+import 'package:myorder/models/unit.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
 
 class AddIngredientToInventoryScreen extends StatefulWidget {
   final List<Ingredient> listIngredientSelected;
@@ -27,6 +30,12 @@ class AddIngredientToInventoryScreen extends StatefulWidget {
 
 class _AddIngredientToInventoryScreenState
     extends State<AddIngredientToInventoryScreen> {
+  UnitController unitController = Get.put(UnitController());
+
+  final TextEditingController unitIdConversionController =
+      TextEditingController();
+  final TextEditingController nameValueConversationController =
+      TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -133,7 +142,20 @@ class _AddIngredientToInventoryScreenState
                                     marginRight20,
                                     marginRight10,
                                     marginRight5,
-                                    Text("Mặt hàng", style: textStyleLabel14),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text("Mặt hàng",
+                                            style: textStyleLabel14),
+                                        Text(
+                                          "Đơn vị",
+                                          style: textStyleLabel14,
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 )),
                             Expanded(
@@ -184,44 +206,74 @@ class _AddIngredientToInventoryScreenState
                                       marginRight5,
                                       Expanded(
                                           flex: 4,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Marquee(
-                                                direction: Axis.horizontal,
-                                                textDirection:
-                                                    TextDirection.ltr,
-                                                animationDuration:
-                                                    const Duration(seconds: 1),
-                                                backDuration: const Duration(
-                                                    milliseconds: 4000),
-                                                pauseDuration: const Duration(
-                                                    milliseconds: 1000),
-                                                directionMarguee:
-                                                    DirectionMarguee
-                                                        .TwoDirection,
-                                                child: Text(ingredient.name,
-                                                    style:
-                                                        textStyleFoodNameBold16,
-                                                    textAlign: TextAlign.left),
-                                              ),
-                                              marginRight5,
-                                              Row(
-                                                children: [
-                                                  Text("7000",
-                                                      style: textStyleGreen14),
-                                                  marginRight5,
-                                                  const Text("|",
-                                                      style: textStyleLabel14),
-                                                  marginRight5,
-                                                  Text("Kg",
-                                                      style: textStyleGreen14),
-                                                ],
-                                              ),
-                                            ],
+                                          child: InkWell(
+                                            onTap: () async {
+                                              Unit result = await showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return MyDialogSelect(
+                                                      lable: "DANH SÁCH ĐƠN VỊ",
+                                                      list: Utils.filterActive(
+                                                          unitController.units),
+                                                      keyNameSearch: "name");
+                                                },
+                                              );
+                                              if (result.unit_id != "") {
+                                                setState(() {
+                                                  ingredient.unit_name =
+                                                      result.name;
+                                                  unitIdConversionController
+                                                      .text = result.unit_id;
+                                                  nameValueConversationController
+                                                      .text = result.name;
+                                                });
+                                              }
+                                            },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Marquee(
+                                                  direction: Axis.horizontal,
+                                                  textDirection:
+                                                      TextDirection.ltr,
+                                                  animationDuration:
+                                                      const Duration(
+                                                          seconds: 1),
+                                                  backDuration: const Duration(
+                                                      milliseconds: 4000),
+                                                  pauseDuration: const Duration(
+                                                      milliseconds: 1000),
+                                                  directionMarguee:
+                                                      DirectionMarguee
+                                                          .TwoDirection,
+                                                  child: Text(ingredient.name,
+                                                      style:
+                                                          textStyleFoodNameBold16,
+                                                      textAlign:
+                                                          TextAlign.left),
+                                                ),
+                                                marginRight5,
+                                                Row(
+                                                  children: [
+                                                    ingredient.unit_name != ""
+                                                        ? Text(
+                                                            ingredient
+                                                                    .unit_name ??
+                                                                "",
+                                                            style:
+                                                                textStyleGreen14)
+                                                        : Text(
+                                                            "Chọn đơn vị nhập",
+                                                            style:
+                                                                textStyleGreen14),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           )),
                                       Expanded(
                                         flex: 2,

@@ -8,13 +8,17 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
+import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/models/ingredient.dart';
+import 'package:myorder/models/supplier.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/inventory/add_ingredient_to_inventory_screen.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string_select.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class InventoryDetailScreen extends StatefulWidget {
@@ -25,12 +29,19 @@ class InventoryDetailScreen extends StatefulWidget {
 }
 
 class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
+  TextEditingController nameSupplierTextEditingController =
+      TextEditingController();
+  TextEditingController supplierIdTextEditingController =
+      TextEditingController();
+
   TextEditingController noteTextEditingController = TextEditingController();
   TextEditingController discountTextEditingController = TextEditingController();
   TextEditingController vatTextEditingController = TextEditingController();
   IngredientController ingredientController = Get.put(IngredientController());
 
   List<Ingredient> listIngredient = [];
+  SupplierController supplierController = Get.put(SupplierController());
+
   @override
   void initState() {
     super.initState();
@@ -78,7 +89,36 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
           color: backgroundColor,
           child: Column(
             children: [
-              // marginTop10,
+              marginTop10,
+              InkWell(
+                  onTap: () async {
+                    Supplier result = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return MyDialogSelect(
+                            lable: "DANH SÁCH NHÀ CUNG CẤP",
+                            list: Utils.filterActive(
+                                supplierController.suppliers),
+                            keyNameSearch: "name");
+                      },
+                    );
+                    if (result.supplier_id != "") {
+                      setState(() {
+                        nameSupplierTextEditingController.text = result.name;
+                        supplierIdTextEditingController.text =
+                            result.supplier_id;
+                      });
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: MyTextFieldStringSelecte(
+                        textController: nameSupplierTextEditingController,
+                        label: "Nhà cung cấp",
+                        placeholder: "",
+                        isRequire: true),
+                  )),
+
               Container(
                 margin: const EdgeInsets.all(0),
                 child: Container(
@@ -144,10 +184,15 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return MyCalculator(
-                                          priceDefault:
-                                              Utils.stringConvertToDouble(
-                                                  discountTextEditingController
-                                                      .text), min: 0, max: Utils.getSumPriceQuantity2(listIngredient).toInt(),);
+                                        priceDefault:
+                                            Utils.stringConvertToDouble(
+                                                discountTextEditingController
+                                                    .text),
+                                        min: 0,
+                                        max: Utils.getSumPriceQuantity2(
+                                                listIngredient)
+                                            .toInt(),
+                                      );
                                     },
                                   );
                                   if (result != null) {
@@ -385,8 +430,11 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return MyCalculator(
-                                                    priceDefault:
-                                                        ingredient.price ?? 0, min: 0, max: MAX_PRICE,);
+                                                  priceDefault:
+                                                      ingredient.price ?? 0,
+                                                  min: 0,
+                                                  max: MAX_PRICE,
+                                                );
                                               },
                                             );
                                             if (result != null) {
@@ -483,7 +531,11 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                       ),
                       Expanded(
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            if(supplierIdTextEditingController.text != ""){
+                              
+                            }
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               color: greenColor50,
