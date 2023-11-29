@@ -14,6 +14,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddIngredientToInventoryScreen extends StatefulWidget {
   final List<Ingredient> listIngredientSelected;
@@ -44,8 +45,7 @@ class _AddIngredientToInventoryScreenState
       // Tìm kiếm phần tử tương ứng trong danh sách ingredients
       Ingredient? foundIngredient = widget.listIngredientSelected.firstWhere(
           (ingredient) => ingredient.ingredient_id == item.ingredient_id,
-          orElse: () =>
-              Ingredient(ingredient_id: "", unit_id: "", name: "", active: 0));
+          orElse: () => Ingredient(ingredient_id: "", name: "", active: 0));
 
       // Nếu tìm thấy, thiết lập giá trị
       if (foundIngredient.ingredient_id != "") {
@@ -269,7 +269,7 @@ class _AddIngredientToInventoryScreenState
                                                         : Text(
                                                             "Chọn đơn vị nhập",
                                                             style:
-                                                                textStyleGreen14),
+                                                                textStyleRed14),
                                                   ],
                                                 ),
                                               ],
@@ -393,12 +393,25 @@ class _AddIngredientToInventoryScreenState
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              print(Utils.filterSelected(widget.listIngredient)
-                                  .length);
-                              Utils.myPopResult(
-                                  context,
-                                  Utils.filterIngredientSelected(
-                                      widget.listIngredient));
+                              List<dynamic> list =
+                                  Utils.filterSelected(widget.listIngredient);
+
+                              print(list.length);
+                              bool isCheckUnit = true;
+                              for (int i = 0; i < list.length; i++) {
+                                if (list[i].unit_id != "") {
+                                  isCheckUnit = false;
+                                }
+                              }
+                              if (isCheckUnit) {
+                                Utils.myPopResult(context, list);
+                              } else {
+                                Utils.showStylishDialog(
+                                    context,
+                                    "THÔNG BÁO",
+                                    "Vui lòng kiểm tra lại tất cả đơn vị nhập",
+                                    StylishDialogType.INFO);
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(

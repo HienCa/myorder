@@ -73,7 +73,7 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
       });
     });
 
-    textUnitIdController.text = widget.ingredient!.unit_id;
+    // textUnitIdController.text = widget.ingredient!.unit_id;
   }
 
   final TextEditingController textSearchUnitController =
@@ -212,152 +212,8 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
                         max: maxlength255,
                         isRequire: true,
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 5),
-                        height: 50,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    'Đơn vị:',
-                                    style: textStyleInput,
-                                  ),
-                                  marginRight10,
-                                  const Text(
-                                    '(*)',
-                                    style: textStyleErrorInput,
-                                  ),
-                                  Expanded(
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton2<Unit>(
-                                        isExpanded: true,
-                                        hint: Text(
-                                          'Tìm kiếm đơn vị tính',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Theme.of(context).hintColor,
-                                          ),
-                                        ),
-                                        items: unitList
-                                            .map((item) => DropdownMenuItem(
-                                                  value: item,
-                                                  child: Text(
-                                                    item.name,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                        value: selectedUnitValue,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedUnitValue = value;
-                                            print(
-                                                "Unit selected: ${selectedUnitValue!.unit_id}");
-                                            if (selectedUnitValue!.unit_id !=
-                                                "") {
-                                              isErrorTextUnitId = false;
-                                              textUnitIdController.text =
-                                                  selectedUnitValue!.unit_id;
-                                            } else {
-                                              isErrorTextUnitId = true;
-                                            }
-                                          });
-                                        },
-                                        buttonStyleData: const ButtonStyleData(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                          height: 40,
-                                          width: 200,
-                                        ),
-                                        dropdownStyleData:
-                                            const DropdownStyleData(
-                                          maxHeight: 200,
-                                        ),
-                                        menuItemStyleData:
-                                            const MenuItemStyleData(
-                                          height: 40,
-                                        ),
-                                        dropdownSearchData: DropdownSearchData(
-                                          searchController:
-                                              textSearchUnitController,
-                                          searchInnerWidgetHeight: 50,
-                                          searchInnerWidget: Container(
-                                            height: 50,
-                                            padding: const EdgeInsets.only(
-                                              top: 8,
-                                              bottom: 4,
-                                              right: 8,
-                                              left: 8,
-                                            ),
-                                            child: TextFormField(
-                                              expands: true,
-                                              maxLines: null,
-                                              controller:
-                                                  textSearchUnitController,
-                                              decoration: InputDecoration(
-                                                isDense: true,
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 10,
-                                                  vertical: 8,
-                                                ),
-                                                hintText: 'Tìm kiếm đơn vị...',
-                                                hintStyle: const TextStyle(
-                                                    fontSize: 12),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          searchMatchFn: (item, searchValue) {
-                                            print("Search Value: $searchValue");
-
-                                            return item.value!.name
-                                                .toLowerCase()
-                                                .toString()
-                                                .contains(
-                                                    searchValue.toLowerCase());
-                                          },
-                                        ),
-                                        //This to clear the search value when you close the menu
-                                        onMenuStateChange: (isOpen) {
-                                          if (!isOpen) {
-                                            textSearchUnitController.clear();
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // ListTile(
-                      //   leading: Theme(
-                      //     data: ThemeData(unselectedWidgetColor: primaryColor),
-                      //     child: Checkbox(
-                      //       value: isCheckWeight,
-                      //       onChanged: (bool? value) {
-                      //         setState(() {
-                      //           isCheckWeight = value!;
-                      //         });
-                      //       },
-                      //       activeColor: primaryColor,
-                      //     ),
-                      //   ),
-                      //   title: const Text(
-                      //     "Bán theo khối lượng",
-                      //     style: textStylePriceBold16,
-                      //   ),
-                      // ),
+                      
+                      
                       SizedBox(
                         height: 50,
                         child: Row(
@@ -406,7 +262,8 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
                                               // isCheckWeight == true
                                               //     ? ACTIVE
                                               //     : DEACTIVE,
-                                              textUnitIdController.text),
+                                              // textUnitIdController.text
+                                              ),
                                           Utils.myPopResult(context, "update")
                                         }
                                       else
@@ -417,7 +274,8 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
                                               // isCheckWeight == true
                                               //     ? ACTIVE
                                               //     : DEACTIVE,
-                                              textUnitIdController.text),
+                                              // textUnitIdController.text
+                                              ),
                                           Utils.myPopResult(context, "add")
                                         }
                                     }

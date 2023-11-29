@@ -149,7 +149,8 @@ const textStyleOrderTitleBold16 =
 //===============================
 
 //PRIMARY
-var textStyleGreen14 = TextStyle(fontSize: 14, color: redColor600);
+var textStyleRed14 = TextStyle(fontSize: 14, color: redColor600);
+var textStyleGreen14 = TextStyle(fontSize: 14, color: greenColor600);
 const textStyleOrange14 = TextStyle(fontSize: 14, color: colorPrice);
 const textStylePrimary14 = TextStyle(fontSize: 14, color: primaryColor);
 const textStylePrimary16 = TextStyle(fontSize: 16, color: primaryColor);

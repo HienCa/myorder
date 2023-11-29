@@ -58,16 +58,17 @@ class IngredientController extends GetxController {
           String ingredient_id = data['ingredient_id'] ?? "";
           String name = data['name'] ?? "";
           String image = data['image'] ?? "";
-          String unit_id = data['unit_id'] ?? "";
+          // String unit_id = data['unit_id'] ?? "";
           // int is_weight = data['is_weight'] ?? 0;
           int active = data['active'] ?? 0;
           return Ingredient(
-              ingredient_id: ingredient_id,
-              name: name,
-              image: image,
-              // is_weight: is_weight,
-              active: active,
-              unit_id: unit_id);
+            ingredient_id: ingredient_id,
+            name: name,
+            image: image,
+            // is_weight: is_weight,
+            active: active,
+            // unit_id: unit_id
+          );
         }
       }
     } catch (e) {
@@ -265,7 +266,7 @@ class IngredientController extends GetxController {
     String name,
     File? image,
     // int is_weight,
-    String unit_id,
+    // String unit_id,
   ) async {
     try {
       if (name.isNotEmpty) {
@@ -281,7 +282,7 @@ class IngredientController extends GetxController {
           image: downloadUrl,
           // is_weight: is_weight,
           active: 1,
-          unit_id: unit_id,
+          // unit_id: unit_id,
         );
         CollectionReference ingredientsCollection =
             FirebaseFirestore.instance.collection('ingredients');
@@ -314,7 +315,7 @@ class IngredientController extends GetxController {
     String name,
     File? newImage,
     // int is_weight,
-    String unit_id,
+    // String unit_id,
   ) async {
     String downloadUrl = "";
     try {
@@ -326,7 +327,7 @@ class IngredientController extends GetxController {
         await firestore.collection('ingredients').doc(ingredient_id).update({
           // "is_weight": is_weight,
           "name": name.trim(),
-          "unit_id": unit_id.trim(),
+          // "unit_id": unit_id.trim(),
           "image": downloadUrl,
         });
       } else {
@@ -335,7 +336,7 @@ class IngredientController extends GetxController {
         await firestore.collection('ingredients').doc(ingredient_id).update({
           "name": name.trim(),
           // "is_weight": is_weight,
-          "unit_id": unit_id.trim(),
+          // "unit_id": unit_id.trim(),
         });
       }
 
