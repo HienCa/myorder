@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names, avoid_print, use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -10,9 +10,12 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/models/ingredient.dart';
+import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/models/supplier.dart';
+import 'package:myorder/models/warehouse_receipt_detail.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/inventory/add_ingredient_to_inventory_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/add_ingredient_to_warehouse_receipt_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/dialogs/dialog_create_warehouse_receipt.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
@@ -21,14 +24,15 @@ import 'package:myorder/views/widgets/textfields/text_field_label/text_field_str
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string_select.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
-class InventoryDetailScreen extends StatefulWidget {
-  const InventoryDetailScreen({super.key});
+class WarehouseDetailScreen extends StatefulWidget {
+  final WarehouseReceipt? warehouseReceipt;
 
+  const WarehouseDetailScreen({super.key, this.warehouseReceipt});
   @override
-  State<InventoryDetailScreen> createState() => _InventoryDetailScreenState();
+  State<WarehouseDetailScreen> createState() => _WarehouseDetailScreenState();
 }
 
-class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
+class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
   TextEditingController nameSupplierTextEditingController =
       TextEditingController();
   TextEditingController supplierIdTextEditingController =
@@ -47,8 +51,45 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
     super.initState();
     listIngredient = [];
     ingredientController.getIngredients("");
-    discountTextEditingController.text = '0';
-    vatTextEditingController.text = '0';
+
+    //setup warehouseReceipt
+    if (widget.warehouseReceipt != null) {
+      //update
+      discountTextEditingController.text =
+          Utils.formatCurrency(widget.warehouseReceipt?.discount ?? 0);
+
+      vatTextEditingController.text =
+          widget.warehouseReceipt?.vat.toString() ?? "0";
+
+      noteTextEditingController.text = widget.warehouseReceipt?.note ?? "";
+
+      supplierIdTextEditingController.text =
+          widget.warehouseReceipt?.supplier_id ?? "";
+
+      nameSupplierTextEditingController.text =
+          widget.warehouseReceipt?.supplier_name ?? "";
+
+      //thiết lập danh sách mặt hàng của phiếu
+      List<Ingredient> listIngredientFromReceipt = [];
+      for (WarehouseRecceiptDetail warehouseRecceiptDetail
+          in widget.warehouseReceipt?.warehouseRecceiptDetails ?? []) {
+        Ingredient ingredient = Ingredient(
+            ingredient_id: warehouseRecceiptDetail.ingredient_id,
+            name: warehouseRecceiptDetail.ingredient_name,
+            active: 1);
+        ingredient.price = warehouseRecceiptDetail.price;
+        ingredient.quantity = warehouseRecceiptDetail.quantity;
+        ingredient.new_quantity = warehouseRecceiptDetail.new_quantity;
+        ingredient.unit_id = warehouseRecceiptDetail.unit_id;
+        ingredient.unit_name = warehouseRecceiptDetail.unit_name;
+
+        listIngredientFromReceipt.add(ingredient);
+      }
+      listIngredient = listIngredientFromReceipt;
+    } else {
+      discountTextEditingController.text = '0';
+      vatTextEditingController.text = '0';
+    }
   }
 
   double getTotal() {
@@ -69,7 +110,10 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
           leading: InkWell(
               onTap: () => {Navigator.pop(context)},
               child: const Icon(Icons.arrow_back_ios)),
-          title: const Center(child: Text("TẠO PHIẾU NHẬP KHO")),
+          title: Center(
+              child: Text(widget.warehouseReceipt == null
+                  ? "TẠO PHIẾU NHẬP KHO"
+                  : "THÔNG TIN PHIẾU NHẬP")),
           actions: [
             Container(
               margin: const EdgeInsets.only(right: 10),
@@ -287,21 +331,28 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         height: 50,
                         child: Row(children: [
                           Expanded(
-                              flex: 4,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text("18", style: textStyleLabel14),
-                                  marginRight5,
-                                  Text("Mặt hàng", style: textStyleLabel14),
-                                ],
-                              )),
-                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text("Mặt hàng ",
+                                        style: textStyleLabel14),
+                                    Text('(${listIngredient.length})',
+                                        style: textStyleGreen14),
+                                  ],
+                                ),
+                                const Text("Đơn vị", style: textStyleLabel14),
+                              ],
+                            ),
+                          ),
+                          const Expanded(
                             flex: 2,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -312,13 +363,13 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                               ],
                             ),
                           ),
-                          Expanded(
+                          const Expanded(
                             flex: 3,
                             child: Center(
                               child: Text("Đơn giá", style: textStyleLabel14),
                             ),
                           ),
-                          Expanded(
+                          const Expanded(
                             flex: 3,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -333,7 +384,7 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                       //DANH SÁCH NGUYÊN LIỆU CỦA PHIẾU NHẬP KHO
                       SingleChildScrollView(
                         child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.35,
+                            height: MediaQuery.of(context).size.height * 0.25,
                             child: ListView.builder(
                                 itemCount: listIngredient.length,
                                 itemBuilder: (context, index) {
@@ -370,13 +421,9 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                                               marginRight5,
                                               Row(
                                                 children: [
-                                                  Text("7000",
-                                                      style: textStyleGreen14),
-                                                  marginRight5,
-                                                  const Text("|",
-                                                      style: textStyleLabel14),
-                                                  marginRight5,
-                                                  Text("Kg",
+                                                  Text(
+                                                      ingredient.unit_name ??
+                                                          "",
                                                       style: textStyleGreen14),
                                                 ],
                                               ),
@@ -531,9 +578,60 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                       ),
                       Expanded(
                         child: InkWell(
-                          onTap: () {
-                            if(supplierIdTextEditingController.text != ""){
-                              
+                          onTap: () async {
+                            if (supplierIdTextEditingController.text == "") {
+                              Utils.showStylishDialog(
+                                  context,
+                                  "THÔNG BÁO",
+                                  "Nhà cung cấp chưa được chọn!",
+                                  StylishDialogType.INFO);
+                            } else if (listIngredient.isEmpty) {
+                              Utils.showStylishDialog(
+                                  context,
+                                  "THÔNG BÁO",
+                                  "Vui lòng thêm các mặt hàng cần nhập!",
+                                  StylishDialogType.INFO);
+                            } else {
+                              int vatPercent =
+                                  int.tryParse(vatTextEditingController.text) ??
+                                      0;
+                              double discountPrice =
+                                  Utils.stringConvertToDouble(
+                                      discountTextEditingController.text);
+
+                              WarehouseReceipt warehouseReceipt = WarehouseReceipt(
+                                warehouse_receipt_id: "",
+                                warehouse_receipt_code: "",
+                                employee_id: "",
+                                employee_name: "",
+                                created_at: Timestamp.now(),
+                                note: noteTextEditingController.text.trim(),
+                                vat: vatPercent,
+                                discount: discountPrice,
+                                status: 1,
+                                active: 1,
+                                supplier_id:
+                                    supplierIdTextEditingController.text,
+                                supplier_name: nameSupplierTextEditingController
+                                    .text
+                                    .trim(),
+                              );
+                              final result = await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialogCreateWarehouseReceipt(
+                                      warehouseReceipt: warehouseReceipt,
+                                      listIngredient: listIngredient);
+                                },
+                              );
+                              if (result == 'success') {
+                                // Utils.showStylishDialog(
+                                //     context,
+                                //     "THÀNH CÔNG!",
+                                //     "Tạo phiếu nhập kho thành công!",
+                                //     StylishDialogType.SUCCESS);
+                                Utils.myPopSuccess(context);
+                              }
                             }
                           },
                           child: Container(
@@ -544,13 +642,16 @@ class _InventoryDetailScreenState extends State<InventoryDetailScreen> {
                             margin: const EdgeInsets.all(8),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 14),
-                            child: const Row(
+                            child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  FaIcon(FontAwesomeIcons.plus,
+                                  const FaIcon(FontAwesomeIcons.check,
                                       color: colorSuccess, size: 16),
                                   marginRight5,
-                                  Text("TẠO PHIẾU",
+                                  Text(
+                                      widget.warehouseReceipt == null
+                                          ? "TẠO PHIẾU"
+                                          : "CẬP NHẬT",
                                       style: textStyleSuccessBold16),
                                 ]),
                           ),

@@ -2,8 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Inventory {
-  String inventory_id;
+class WarehouseExport {
+  String warehouse_export_id;
   String code;
   String employee_id;
   String employee_name;
@@ -14,8 +14,8 @@ class Inventory {
   double discount;
   int active;
 
-  Inventory({
-    required this.inventory_id,
+  WarehouseExport({
+    required this.warehouse_export_id,
     required this.code,
     required this.employee_id,
     required this.employee_name,
@@ -28,7 +28,7 @@ class Inventory {
   });
 
   Map<String, dynamic> toJson() => {
-        "inventory_id": inventory_id,
+        "warehouse_export_id": warehouse_export_id,
         "code": code,
         "employee_id": employee_id,
         "employee_name": employee_name,
@@ -40,11 +40,11 @@ class Inventory {
         "status": status,
       };
 
-  static Inventory fromSnap(DocumentSnapshot snap) {
+  static WarehouseExport fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
-    return Inventory(
-      inventory_id: snapshot['inventory_id'],
+    return WarehouseExport(
+      warehouse_export_id: snapshot['warehouse_export_id'],
       code: snapshot['code'],
       employee_id: snapshot['employee_id'],
       employee_name: snapshot['employee_name'],

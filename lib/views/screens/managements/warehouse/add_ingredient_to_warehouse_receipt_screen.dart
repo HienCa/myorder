@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/unit.dart';
@@ -52,6 +51,8 @@ class _AddIngredientToInventoryScreenState
         foundIngredient.isSelected = true;
         foundIngredient.quantity = item.quantity;
         foundIngredient.price = item.price;
+        foundIngredient.unit_id = item.unit_id;
+        foundIngredient.unit_name = item.unit_name;
       }
     }
   }
@@ -223,6 +224,8 @@ class _AddIngredientToInventoryScreenState
                                                 setState(() {
                                                   ingredient.unit_name =
                                                       result.name;
+                                                  ingredient.unit_id =
+                                                      result.unit_id;
                                                   unitIdConversionController
                                                       .text = result.unit_id;
                                                   nameValueConversationController
@@ -393,23 +396,29 @@ class _AddIngredientToInventoryScreenState
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              List<dynamic> list =
-                                  Utils.filterSelected(widget.listIngredient);
-
-                              print(list.length);
+                              List<Ingredient> list =
+                                  Utils.filterIngredientSelected(
+                                      widget.listIngredient);
+                              String listUnitName = "";
+                              print(
+                                  "Số lượng mặt hàng đã chọn: ${list.length}");
                               bool isCheckUnit = true;
                               for (int i = 0; i < list.length; i++) {
-                                if (list[i].unit_id != "") {
+                                //kiểm tra đã chọn đươn vị nhập kho hay chưa?
+                                if (list[i].unit_id == null) {
                                   isCheckUnit = false;
+                                  listUnitName =
+                                      "$listUnitName, ${list[i].name}";
                                 }
                               }
                               if (isCheckUnit) {
                                 Utils.myPopResult(context, list);
                               } else {
+                                listUnitName = listUnitName.substring(1);
                                 Utils.showStylishDialog(
                                     context,
                                     "THÔNG BÁO",
-                                    "Vui lòng kiểm tra lại tất cả đơn vị nhập",
+                                    "Vui lòng chọn đơn vị nhập cho: $listUnitName",
                                     StylishDialogType.INFO);
                               }
                             },

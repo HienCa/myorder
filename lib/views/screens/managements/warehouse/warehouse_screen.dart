@@ -1,14 +1,15 @@
 // ignore_for_file: constant_identifier_names, avoid_print, use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
+import 'package:myorder/controllers/warehouse_receipts/warehouse_receipt_controller.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/inventory/inventory_detail_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/warehouse_receipt_detail_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 enum Inventory { Import, Export }
@@ -29,6 +30,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
   TextEditingController searchTextEditingController = TextEditingController();
   SupplierController supplierController = Get.put(SupplierController());
   UnitController unitController = Get.put(UnitController());
+  WarehouseReceiptController warehouseReceiptController =
+      Get.put(WarehouseReceiptController());
 
   @override
   void initState() {
@@ -49,6 +52,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     toDateString = Utils.formatDatetime(DateTime.now());
     supplierController.getSuppliers("");
     unitController.getUnits("");
+    warehouseReceiptController.getWarehouseReceipts("");
   }
 
   bool isImport = true;
@@ -170,12 +174,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const InventoryDetailScreen()));
+                                  const WarehouseDetailScreen()));
                       if (result == 'success') {
                         Utils.showStylishDialog(
                             context,
                             'THÀNH CÔNG!',
-                            'Thêm mới vat thành công!',
+                            'Thêm phiếu nhập thành công!',
                             StylishDialogType.SUCCESS);
                       }
                     },
@@ -430,27 +434,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            //Tìm kiếm
-                            // Container(
-                            //   height: 40,
-                            //   width: isSearch ? 200 : 40,
-                            //   // margin: const EdgeInsets.all(4),
-                            //   decoration: BoxDecoration(
-                            //     color: grayColor100,
-                            //     borderRadius: BorderRadius.circular(20),
-                            //   ),
-                            //   child: IconButton(
-                            //     onPressed: () {
-                            //       setState(() {
-                            //         isSearch = true;
-                            //       });
-                            //     },
-                            //     icon: const FaIcon(
-                            //         FontAwesomeIcons.magnifyingGlass,
-                            //         color: grayColor,
-                            //         size: 16),
-                            //   ),
-                            // ),
                             Container(
                               height: 40,
                               width: 150,
@@ -514,7 +497,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
                             const FaIcon(FontAwesomeIcons.arrowsLeftRight,
                                 color: grayColor, size: 16),
                             marginRight10,
-
                             Expanded(
                                 child: InkWell(
                               onTap: () {
@@ -549,198 +531,278 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 ),
 
                 Expanded(
-                  child: Container(
-                    // height: 60,
-                    color: grayColor100,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: backgroundColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 4, right: 4, top: 4),
-                                  child: Container(
-                                      decoration: const BoxDecoration(
-                                        color: colorCancel,
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(10),
-                                            topLeft: Radius.circular(10)),
+                  child: Obx(() {
+                    return ListView.builder(
+                        itemCount:
+                            warehouseReceiptController.warehouseReceipts.length,
+                        itemBuilder: (context, index) {
+                          final warehouseReceipt = warehouseReceiptController
+                              .warehouseReceipts[index];
+
+                          return InkWell(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          WarehouseDetailScreen(
+                                            warehouseReceipt: warehouseReceipt,
+                                          )));
+                              if (result == 'success') {
+                                Utils.showStylishDialog(
+                                    context,
+                                    'THÀNH CÔNG!',
+                                    'Cập nhật vat thành công!',
+                                    StylishDialogType.SUCCESS);
+                              }
+                            },
+                            child: Container(
+                              // height: 60,
+                              color: grayColor100,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: backgroundColor,
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      height: 40,
-                                      child: const Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                      child: Column(
                                         children: [
-                                          FaIcon(
-                                              FontAwesomeIcons.clockRotateLeft,
-                                              color: secondColor,
-                                              size: 16),
-                                          marginRight5,
-                                          Text("CHỜ XÁC NHẬN",
-                                              style: textStyleWhiteBold16),
-                                        ],
-                                      )),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: backgroundColor,
-                                    ),
-                                    height: 50,
-                                    child: const Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      // mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                            flex: 1,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text("15/06/2023 17:42",
-                                                    style: textStyleLabel14),
-                                                Text(
-                                                  "PNK001",
-                                                  style: textStyleLabel14,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 4, right: 4, top: 4),
+                                            child: Container(
+                                                decoration: const BoxDecoration(
+                                                  color: colorCancel,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  10),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  10)),
                                                 ),
-                                              ],
-                                            )),
-                                        Text("7,000,000",
-                                            style: textStyleLabel16),
-                                      ],
-                                    ),
-                                  ),
+                                                height: 40,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    const FaIcon(
+                                                        FontAwesomeIcons
+                                                            .clockRotateLeft,
+                                                        color: secondColor,
+                                                        size: 16),
+                                                    marginRight5,
+                                                    warehouseReceipt.status ==
+                                                            WAREHOUSE_STATUS_WAITING
+                                                        ? Text(
+                                                            WAREHOUSE_STATUS_WAITING_STRING,
+                                                            style:
+                                                                textStyleWhiteBold16)
+                                                        : const Text(""),
+                                                    warehouseReceipt.status ==
+                                                            WAREHOUSE_STATUS_FINISH
+                                                        ? Text(
+                                                            WAREHOUSE_STATUS_FINISH_STRING,
+                                                            style:
+                                                                textStyleWhiteBold16)
+                                                        : const Text(""),
+                                                  ],
+                                                )),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 16, right: 16),
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: backgroundColor,
+                                              ),
+                                              height: 50,
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                // mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                      flex: 1,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                              Utils.formatTimestamp(
+                                                                  warehouseReceipt
+                                                                      .created_at),
+                                                              style:
+                                                                  textStyleLabel14),
+                                                          Text(
+                                                            warehouseReceipt
+                                                                .warehouse_receipt_code,
+                                                            style:
+                                                                textStyleLabel14,
+                                                          ),
+                                                        ],
+                                                      )),
+                                                  Text(
+                                                      Utils.getFormatedTotalAmountFromVatDiscount(
+                                                          Utils.getSumPriceQuantity2(
+                                                              warehouseReceipt
+                                                                      .warehouseRecceiptDetails ??
+                                                                  []),
+                                                          warehouseReceipt.vat,
+                                                          warehouseReceipt
+                                                              .discount),
+                                                      style: textStyleLabel16),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 16, right: 16),
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: backgroundColor,
+                                              ),
+                                              height: 40,
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  const Expanded(
+                                                      flex: 1,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text("Tổng mặt hàng",
+                                                              style:
+                                                                  textStyleLabel14),
+                                                        ],
+                                                      )),
+                                                  Text(
+                                                      "${warehouseReceipt.warehouseRecceiptDetails?.length ?? "0"}",
+                                                      style: textStyleLabel16),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 16, right: 16),
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: backgroundColor,
+                                              ),
+                                              margin: const EdgeInsets.only(
+                                                  top: 10, bottom: 10),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  const Expanded(
+                                                      flex: 1,
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .userPen,
+                                                              color: grayColor,
+                                                              size: 16),
+                                                          marginRight5,
+                                                          Text("Nhân viên tạo",
+                                                              style:
+                                                                  textStyleLabel14),
+                                                        ],
+                                                      )),
+                                                  Expanded(
+                                                      child: Text(
+                                                    warehouseReceipt
+                                                        .employee_name,
+                                                    style: textStyleLabel16,
+                                                    softWrap: true,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                  )),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 16, right: 16),
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: backgroundColor,
+                                              ),
+                                              margin: const EdgeInsets.only(
+                                                  top: 10, bottom: 10),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  const Expanded(
+                                                      flex: 1,
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .clipboard,
+                                                              color: grayColor,
+                                                              size: 16),
+                                                          marginRight5,
+                                                          Text("Ghi chú",
+                                                              style:
+                                                                  textStyleLabel14),
+                                                        ],
+                                                      )),
+                                                  Expanded(
+                                                      child: Text(
+                                                    warehouseReceipt.note,
+                                                    style: textStyleLabel16,
+                                                    softWrap: true,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                  )),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: backgroundColor,
-                                    ),
-                                    height: 40,
-                                    child: const Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                            flex: 1,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text("Tổng mặt hàng",
-                                                    style: textStyleLabel14),
-                                              ],
-                                            )),
-                                        Text("18", style: textStyleLabel16),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: backgroundColor,
-                                    ),
-                                    margin: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: const Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                            flex: 1,
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                FaIcon(FontAwesomeIcons.userPen,
-                                                    color: grayColor, size: 16),
-                                                marginRight5,
-                                                Text("Nhân viên tạo",
-                                                    style: textStyleLabel14),
-                                              ],
-                                            )),
-                                        Expanded(
-                                            child: Text(
-                                          "Chủ nhà hàng",
-                                          style: textStyleLabel16,
-                                          softWrap: true,
-                                          overflow: TextOverflow.visible,
-                                        )),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: backgroundColor,
-                                    ),
-                                    margin: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: const Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                            flex: 1,
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                FaIcon(
-                                                    FontAwesomeIcons.clipboard,
-                                                    color: grayColor,
-                                                    size: 16),
-                                                marginRight5,
-                                                Text("Ghi chú",
-                                                    style: textStyleLabel14),
-                                              ],
-                                            )),
-                                        Expanded(
-                                            child: Text(
-                                          "Yêu cầu này nọ sdfsdf dfgdefg sedfsdfgs sdgsdfsdf",
-                                          style: textStyleLabel16,
-                                          softWrap: true,
-                                          overflow: TextOverflow.visible,
-                                        )),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                          );
+                        });
+                  }),
                 )
               ],
             ),

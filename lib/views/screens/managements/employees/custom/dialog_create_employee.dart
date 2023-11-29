@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -308,7 +310,7 @@ class _CustomDialogCreateEmployeeeState
                 height: 10,
               ),
               Container(
-                margin: EdgeInsets.only(left: 10),
+                margin: const EdgeInsets.only(left: 10),
                 height: 30,
                 child: Row(
                   children: [

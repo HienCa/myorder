@@ -383,6 +383,7 @@ class Utils {
     }
     return fliteredList;
   }
+
   static List<dynamic> filterActive(List<dynamic> list) {
     List<dynamic> fliteredList = [];
     for (var item in list) {
@@ -392,6 +393,7 @@ class Utils {
     }
     return fliteredList;
   }
+
   static List<Ingredient> filterIngredientSelected(List<Ingredient> list) {
     List<Ingredient> fliteredList = [];
     for (var item in list) {
@@ -522,6 +524,44 @@ class Utils {
     return total;
   }
 
+  //Tính tổng tiền sau khi trừ thuế và giảm giá từ TextEditingController
+  static double getTotalAmountFromTextEditingControllerVatDiscount(
+      TextEditingController vatTextEditingController,
+      TextEditingController discountTextEditingController,
+      List<dynamic> list) {
+    double totalAmount = Utils.getSumPriceQuantity2(list);
+    int vatPercent = int.tryParse(vatTextEditingController.text) ?? 0;
+    double discountPrice =
+        Utils.stringConvertToDouble(discountTextEditingController.text);
+
+    double totalVat = totalAmount * vatPercent / 100;
+    return totalAmount + totalVat - discountPrice;
+  }
+
+  //Tính tổng tiền sau khi trừ thuế và giảm giá
+  static double getTotalAmountFromVatDiscount(
+      double totalAmount, int vatPercent, double discountPrice) {
+    double totalVat = totalAmount * vatPercent / 100;
+    return totalAmount + totalVat - discountPrice;
+  }
+
+  //Tính tổng tiền sau khi trừ thuế và giảm giá đã format tiền tệ
+  static String getFormatedTotalAmountFromVatDiscount(
+      double totalAmount, int vatPercent, double discountPrice) {
+    double totalVat = totalAmount * vatPercent / 100;
+    return formatCurrency(totalAmount + totalVat - discountPrice);
+  }
+
+  static String generateInvoiceCode(String prefix) {
+    // Lấy ngày giờ hiện tại
+    DateTime now = DateTime.now();
+    // Định dạng chuỗi ngày tháng năm giây khắc
+    String formattedDate = DateFormat('ddMMHHyyyymmss').format(now);
+    // Tạo mã phiếu từ chuỗi đã định dạng
+    String invoiceCode = '${prefix}_$formattedDate';
+    return invoiceCode;
+  }
+
   //Tính tổng tiền theo total_amount
   static double getSumPriceQuantity(List<dynamic> list) {
     double total = 0;
@@ -537,9 +577,7 @@ class Utils {
   static double getSumPriceQuantity2(List<dynamic> list) {
     double total = 0;
     for (var item in list) {
-     
-        total += (item.price * item.quantity);
-      
+      total += (item.price * item.quantity);
     }
     return total;
   }

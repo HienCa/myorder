@@ -15,6 +15,8 @@ class Ingredient {
   double? price = 0;
   double? quantity = 0;
   String? unit_name = "";
+  double? new_quantity;
+
   Ingredient({
     required this.ingredient_id,
     // required this.unit_id,
@@ -23,6 +25,7 @@ class Ingredient {
     // required this.is_weight ,
     required this.active,
   });
+ 
   Ingredient.empty()
       : ingredient_id = '',
         name = '',
@@ -51,4 +54,8 @@ class Ingredient {
       active: snapshot['active'],
     );
   }
+
+
+
+ 
 }
