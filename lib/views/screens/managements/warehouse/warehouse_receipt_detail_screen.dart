@@ -15,7 +15,7 @@ import 'package:myorder/models/supplier.dart';
 import 'package:myorder/models/warehouse_receipt_detail.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/warehouse/add_ingredient_to_warehouse_receipt_screen.dart';
-import 'package:myorder/views/screens/managements/warehouse/dialogs/dialog_create_warehouse_receipt.dart';
+import 'package:myorder/views/screens/managements/warehouse/dialogs/dialog_create_update_warehouse_receipt.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
@@ -43,14 +43,13 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
   TextEditingController vatTextEditingController = TextEditingController();
   IngredientController ingredientController = Get.put(IngredientController());
 
-  List<Ingredient> listIngredient = [];
+  List<Ingredient> listIngredientSelected = [];
   SupplierController supplierController = Get.put(SupplierController());
 
   @override
   void initState() {
     super.initState();
-    listIngredient = [];
-    ingredientController.getIngredients("");
+    listIngredientSelected = [];
 
     //setup warehouseReceipt
     if (widget.warehouseReceipt != null) {
@@ -71,21 +70,34 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
 
       //thiết lập danh sách mặt hàng của phiếu
       List<Ingredient> listIngredientFromReceipt = [];
-      for (WarehouseRecceiptDetail warehouseRecceiptDetail
-          in widget.warehouseReceipt?.warehouseRecceiptDetails ?? []) {
-        Ingredient ingredient = Ingredient(
-            ingredient_id: warehouseRecceiptDetail.ingredient_id,
-            name: warehouseRecceiptDetail.ingredient_name,
-            active: 1);
-        ingredient.price = warehouseRecceiptDetail.price;
-        ingredient.quantity = warehouseRecceiptDetail.quantity;
-        ingredient.new_quantity = warehouseRecceiptDetail.new_quantity;
-        ingredient.unit_id = warehouseRecceiptDetail.unit_id;
-        ingredient.unit_name = warehouseRecceiptDetail.unit_name;
 
-        listIngredientFromReceipt.add(ingredient);
+      for (WarehouseReceiptDetail warehouseRecceiptDetail
+          in widget.warehouseReceipt?.warehouseRecceiptDetails ?? []) {
+        // Tìm kiếm phần tử tương ứng trong danh sách ingredients
+        Ingredient? foundIngredient = ingredientController.ingredients
+            .firstWhere(
+                (ingredient) =>
+                    ingredient.ingredient_id ==
+                    warehouseRecceiptDetail.ingredient_id,
+                orElse: () =>
+                    Ingredient(ingredient_id: "", name: "", active: 0));
+
+        // Nếu tìm thấy, thiết lập giá trị
+        if (foundIngredient.ingredient_id != "") {
+          Ingredient ingredient = Ingredient(
+              ingredient_id: warehouseRecceiptDetail.ingredient_id,
+              name: warehouseRecceiptDetail.ingredient_name,
+              active: 1);
+          ingredient.price = warehouseRecceiptDetail.price;
+          ingredient.quantity = warehouseRecceiptDetail.quantity;
+          ingredient.new_quantity = warehouseRecceiptDetail.new_quantity;
+          ingredient.unit_id = warehouseRecceiptDetail.unit_id;
+          ingredient.unit_name = warehouseRecceiptDetail.unit_name;
+          ingredient.isSelected = true;
+          listIngredientFromReceipt.add(ingredient);
+        }
       }
-      listIngredient = listIngredientFromReceipt;
+      listIngredientSelected = listIngredientFromReceipt;
     } else {
       discountTextEditingController.text = '0';
       vatTextEditingController.text = '0';
@@ -93,7 +105,7 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
   }
 
   double getTotal() {
-    double totalAmount = Utils.getSumPriceQuantity2(listIngredient);
+    double totalAmount = Utils.getSumPriceQuantity2(listIngredientSelected);
     int vatPercent = int.tryParse(vatTextEditingController.text) ?? 0;
     double discountPrice =
         Utils.stringConvertToDouble(discountTextEditingController.text);
@@ -205,8 +217,8 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                             ),
                             Expanded(
                               child: Text(
-                                Utils.formatCurrency(
-                                    Utils.getSumPriceQuantity2(listIngredient)),
+                                Utils.formatCurrency(Utils.getSumPriceQuantity2(
+                                    listIngredientSelected)),
                                 style: textStyleLabel14,
                                 textAlign: TextAlign.right,
                               ),
@@ -234,7 +246,7 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                                                     .text),
                                         min: 0,
                                         max: Utils.getSumPriceQuantity2(
-                                                listIngredient)
+                                                listIngredientSelected)
                                             .toInt(),
                                       );
                                     },
@@ -344,7 +356,7 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                                   children: [
                                     const Text("Mặt hàng ",
                                         style: textStyleLabel14),
-                                    Text('(${listIngredient.length})',
+                                    Text('(${listIngredientSelected.length})',
                                         style: textStyleGreen14),
                                   ],
                                 ),
@@ -386,9 +398,10 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                         child: SizedBox(
                             height: MediaQuery.of(context).size.height * 0.25,
                             child: ListView.builder(
-                                itemCount: listIngredient.length,
+                                itemCount: listIngredientSelected.length,
                                 itemBuilder: (context, index) {
-                                  Ingredient ingredient = listIngredient[index];
+                                  Ingredient ingredient =
+                                      listIngredientSelected[index];
                                   return SizedBox(
                                     height: 50,
                                     child: Row(children: [
@@ -540,19 +553,28 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () async {
+                            // print(listIngredientSelected[0].quantity);
+                            // print(listIngredientSelected[0].isSelected);
+                            // print(listIngredientSelected[0].ingredient_id);
+                            // print(listIngredientSelected[0].name);
+                            // print(listIngredientSelected[0].new_quantity);
                             List<Ingredient> result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         AddIngredientToInventoryScreen(
                                           listIngredientSelected:
-                                              listIngredient,
+                                              listIngredientSelected,
                                           listIngredient:
                                               ingredientController.ingredients,
+                                          isUpdate:
+                                              widget.warehouseReceipt != null
+                                                  ? true
+                                                  : false,
                                         )));
                             if (result.isNotEmpty) {
                               setState(() {
-                                listIngredient = result;
+                                listIngredientSelected = result;
                               });
                             }
                           },
@@ -585,7 +607,7 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                                   "THÔNG BÁO",
                                   "Nhà cung cấp chưa được chọn!",
                                   StylishDialogType.INFO);
-                            } else if (listIngredient.isEmpty) {
+                            } else if (listIngredientSelected.isEmpty) {
                               Utils.showStylishDialog(
                                   context,
                                   "THÔNG BÁO",
@@ -599,38 +621,63 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                                   Utils.stringConvertToDouble(
                                       discountTextEditingController.text);
 
-                              WarehouseReceipt warehouseReceipt = WarehouseReceipt(
-                                warehouse_receipt_id: "",
-                                warehouse_receipt_code: "",
-                                employee_id: "",
-                                employee_name: "",
-                                created_at: Timestamp.now(),
-                                note: noteTextEditingController.text.trim(),
-                                vat: vatPercent,
-                                discount: discountPrice,
-                                status: 1,
-                                active: 1,
-                                supplier_id:
-                                    supplierIdTextEditingController.text,
-                                supplier_name: nameSupplierTextEditingController
-                                    .text
-                                    .trim(),
-                              );
-                              final result = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialogCreateWarehouseReceipt(
-                                      warehouseReceipt: warehouseReceipt,
-                                      listIngredient: listIngredient);
-                                },
-                              );
-                              if (result == 'success') {
-                                // Utils.showStylishDialog(
-                                //     context,
-                                //     "THÀNH CÔNG!",
-                                //     "Tạo phiếu nhập kho thành công!",
-                                //     StylishDialogType.SUCCESS);
-                                Utils.myPopSuccess(context);
+                              if (widget.warehouseReceipt == null) {
+                                WarehouseReceipt warehouseReceipt =
+                                    WarehouseReceipt(
+                                  warehouse_receipt_id: "",
+                                  warehouse_receipt_code: "",
+                                  employee_id: "",
+                                  employee_name: "",
+                                  created_at: Timestamp.now(),
+                                  note: noteTextEditingController.text.trim(),
+                                  vat: vatPercent,
+                                  discount: discountPrice,
+                                  status: 1,
+                                  active: 1,
+                                  supplier_id:
+                                      supplierIdTextEditingController.text,
+                                  supplier_name:
+                                      nameSupplierTextEditingController.text
+                                          .trim(),
+                                );
+                                //Tạo mới
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialogCreateWarehouseReceipt(
+                                        warehouseReceipt: warehouseReceipt,
+                                        listIngredientSelected:
+                                            listIngredientSelected);
+                                  },
+                                );
+                                if (result == 'add') {
+                                  Utils.myPopSuccess(context);
+                                }
+                              } else {
+                               
+                                //Cập nhật
+                                widget.warehouseReceipt?.vat = vatPercent;
+                                widget.warehouseReceipt?.discount =
+                                    discountPrice;
+                                widget.warehouseReceipt?.supplier_id =
+                                    supplierIdTextEditingController.text;
+                                widget.warehouseReceipt?.supplier_name =
+                                    nameSupplierTextEditingController.text
+                                        .trim();
+
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialogCreateWarehouseReceipt(
+                                        warehouseReceipt:
+                                            widget.warehouseReceipt!,
+                                        listIngredientSelected:
+                                            listIngredientSelected);
+                                  },
+                                );
+                                if (result == 'update') {
+                                  Utils.myPopSuccess(context);
+                                }
                               }
                             }
                           },

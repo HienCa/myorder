@@ -2,7 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class WarehouseRecceiptDetail {
+class WarehouseReceiptDetail {
   String warehouse_receipt_detail_id;
   String ingredient_id;
   String ingredient_name;
@@ -12,7 +12,7 @@ class WarehouseRecceiptDetail {
   String unit_id;
   String unit_name;
 
-  WarehouseRecceiptDetail({
+  WarehouseReceiptDetail({
     required this.warehouse_receipt_detail_id,
     required this.ingredient_id,
     required this.ingredient_name,
@@ -32,10 +32,10 @@ class WarehouseRecceiptDetail {
         "unit_name": unit_name,
       };
 
-  static WarehouseRecceiptDetail fromSnap(DocumentSnapshot snap) {
+  static WarehouseReceiptDetail fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
-    return WarehouseRecceiptDetail(
+    return WarehouseReceiptDetail(
       warehouse_receipt_detail_id: snapshot['warehouse_receipt_detail_id'],
       ingredient_id: snapshot['ingredient_id'],
       ingredient_name: snapshot['ingredient_name'],

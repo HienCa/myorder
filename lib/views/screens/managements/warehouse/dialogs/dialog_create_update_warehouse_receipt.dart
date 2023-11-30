@@ -11,11 +11,11 @@ import 'package:myorder/utils.dart';
 
 class CustomDialogCreateWarehouseReceipt extends StatefulWidget {
   final WarehouseReceipt warehouseReceipt;
-  final List<Ingredient> listIngredient;
+  final List<Ingredient> listIngredientSelected;
   const CustomDialogCreateWarehouseReceipt({
     Key? key,
     required this.warehouseReceipt,
-    required this.listIngredient,
+    required this.listIngredientSelected,
   }) : super(key: key);
 
   @override
@@ -33,16 +33,20 @@ class _CustomDialogCreateWarehouseReceiptState
   WarehouseReceiptController warehouseReceiptController =
       Get.put(WarehouseReceiptController());
   String code = "";
-  List<WarehouseRecceiptDetail> warehouseRecceiptDetails = [];
+  List<WarehouseReceiptDetail> warehouseRecceiptDetails = [];
   @override
   void initState() {
     super.initState();
     //mã phiếu
-    code = Utils.generateInvoiceCode("PNK");
+    if (widget.warehouseReceipt.warehouse_receipt_id != "") {
+      code = widget.warehouseReceipt.warehouse_receipt_code;
+    } else {
+      code = Utils.generateInvoiceCode("PNK");
+    }
 
     //chuyển đổi ingredient -> warehouseRecceiptDetail
-    for (Ingredient ingredient in widget.listIngredient) {
-      WarehouseRecceiptDetail warehouseRecceiptDetail = WarehouseRecceiptDetail(
+    for (Ingredient ingredient in widget.listIngredientSelected) {
+      WarehouseReceiptDetail warehouseRecceiptDetail = WarehouseReceiptDetail(
         warehouse_receipt_detail_id: "",
         ingredient_id: ingredient.ingredient_id,
         quantity: ingredient.quantity ?? 0,
@@ -85,7 +89,9 @@ class _CustomDialogCreateWarehouseReceiptState
                     ListTile(
                       title: Center(
                         child: Text(
-                          "Mã phiếu '$code' sẽ được tạo?",
+                          widget.warehouseReceipt.warehouse_receipt_id == ""
+                              ? "Mã phiếu '$code' sẽ được tạo?"
+                              : "Phiếu '$code' sẽ được cập nhật?",
                           style: textStyleBlackRegular,
                         ),
                       ),
@@ -117,12 +123,29 @@ class _CustomDialogCreateWarehouseReceiptState
                           InkWell(
                             onTap: () => {
                               //mã phiếu
-                              widget.warehouseReceipt.warehouse_receipt_code =
-                                  code,
-                              warehouseReceiptController.createWarehouseReceipt(
-                                  widget.warehouseReceipt,
-                                  warehouseRecceiptDetails),
-                              Utils.myPopSuccess(context)
+                              if (widget
+                                      .warehouseReceipt.warehouse_receipt_id ==
+                                  "")
+                                {
+                                  print("add"),
+
+                                  widget.warehouseReceipt
+                                      .warehouse_receipt_code = code,
+                                  warehouseReceiptController
+                                      .createWarehouseReceipt(
+                                          widget.warehouseReceipt,
+                                          warehouseRecceiptDetails),
+                                  Utils.myPopResult(context, 'add')
+                                }
+                              else
+                                {
+                                  print("update"),
+                                  warehouseReceiptController
+                                      .updateWarehouseReceipt(
+                                          widget.warehouseReceipt,
+                                          warehouseRecceiptDetails),
+                                  Utils.myPopResult(context, 'update')
+                                }
                             },
                             child: Container(
                               height: 50,

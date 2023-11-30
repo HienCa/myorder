@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/controllers/warehouse_receipts/warehouse_receipt_controller.dart';
@@ -32,10 +33,14 @@ class _InventoryScreenState extends State<InventoryScreen> {
   UnitController unitController = Get.put(UnitController());
   WarehouseReceiptController warehouseReceiptController =
       Get.put(WarehouseReceiptController());
+  IngredientController ingredientController = Get.put(IngredientController());
 
   @override
   void initState() {
     super.initState();
+
+    ingredientController.getIngredients("");
+
     isImport = true;
     isExport = false;
 
@@ -393,7 +398,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                       ),
                                       Container(
                                         decoration: BoxDecoration(
-                                          color: colorCancel,
+                                          color: isFinish
+                                              ? colorSuccess
+                                              : colorCancel,
                                           borderRadius:
                                               BorderRadius.circular(5),
                                         ),
@@ -552,8 +559,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                 Utils.showStylishDialog(
                                     context,
                                     'THÀNH CÔNG!',
-                                    'Cập nhật vat thành công!',
+                                    'Cập nhật phiếu nhập kho thành công!',
                                     StylishDialogType.SUCCESS);
+                                // ingredientController.getIngredients("");
                               }
                             },
                             child: Container(
@@ -574,10 +582,22 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                             padding: const EdgeInsets.only(
                                                 left: 4, right: 4, top: 4),
                                             child: Container(
-                                                decoration: const BoxDecoration(
-                                                  color: colorCancel,
+                                                decoration: BoxDecoration(
+                                                  color: warehouseReceipt
+                                                              .status ==
+                                                          WAREHOUSE_STATUS_WAITING
+                                                      ? colorWarning
+                                                      : warehouseReceipt
+                                                                  .status ==
+                                                              WAREHOUSE_STATUS_FINISH
+                                                          ? colorSuccess
+                                                          : warehouseReceipt
+                                                                      .status ==
+                                                                  WAREHOUSE_STATUS_CANCEL
+                                                              ? colorCancel
+                                                              : colorSuccess,
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                           topRight:
                                                               Radius.circular(
                                                                   10),

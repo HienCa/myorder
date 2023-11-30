@@ -32,7 +32,7 @@ class WarehouseReceiptController extends GetxController {
                   .doc(warehouseReceipt.warehouse_receipt_id)
                   .collection('warehouseReceiptDetails');
 
-              List<WarehouseRecceiptDetail> warehouseRecceiptDetails =
+              List<WarehouseReceiptDetail> warehouseRecceiptDetails =
                   []; //danh sách chi tiết
               var warehouseReceiptDetailCollectionQuery =
                   await warehouseReceiptDetailCollection.get();
@@ -40,9 +40,8 @@ class WarehouseReceiptController extends GetxController {
                   in warehouseReceiptDetailCollectionQuery.docs) {
                 // chi tiết phiếu nhấp
 
-                WarehouseRecceiptDetail warehouseRecceiptDetail =
-                    WarehouseRecceiptDetail.fromSnap(
-                        warehouseReceiptDetailData);
+                WarehouseReceiptDetail warehouseRecceiptDetail =
+                    WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
 
                 warehouseRecceiptDetail.new_quantity =
                     warehouseRecceiptDetail.quantity;
@@ -77,7 +76,7 @@ class WarehouseReceiptController extends GetxController {
                 .doc(warehouseReceipt.warehouse_receipt_id)
                 .collection('warehouseReceiptDetails');
 
-            List<WarehouseRecceiptDetail> warehouseRecceiptDetails =
+            List<WarehouseReceiptDetail> warehouseRecceiptDetails =
                 []; //danh sách chi tiết
             var warehouseReceiptDetailCollectionQuery =
                 await warehouseReceiptDetailCollection.get();
@@ -85,8 +84,8 @@ class WarehouseReceiptController extends GetxController {
                 in warehouseReceiptDetailCollectionQuery.docs) {
               // chi tiết phiếu nhấp
 
-              WarehouseRecceiptDetail warehouseRecceiptDetail =
-                  WarehouseRecceiptDetail.fromSnap(warehouseReceiptDetailData);
+              WarehouseReceiptDetail warehouseRecceiptDetail =
+                  WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
 
               warehouseRecceiptDetail.new_quantity =
                   warehouseRecceiptDetail.quantity;
@@ -129,7 +128,7 @@ class WarehouseReceiptController extends GetxController {
 
   void createWarehouseReceipt(
     WarehouseReceipt warehouseReceipt,
-    List<WarehouseRecceiptDetail> warehouseRecceiptDetails,
+    List<WarehouseReceiptDetail> warehouseRecceiptDetails,
   ) async {
     try {
       if (warehouseRecceiptDetails.isNotEmpty) {
@@ -158,7 +157,7 @@ class WarehouseReceiptController extends GetxController {
         await usersCollection.doc(id).set(warehouseReceipt.toJson());
 
         //Detail
-        for (WarehouseRecceiptDetail warehouseRecceiptDetail
+        for (WarehouseReceiptDetail warehouseRecceiptDetail
             in warehouseRecceiptDetails) {
           String idDetail = Utils.generateUUID();
           warehouseRecceiptDetail.warehouse_receipt_detail_id = idDetail;
@@ -191,21 +190,31 @@ class WarehouseReceiptController extends GetxController {
   }
 
   updateWarehouseReceipt(
-    String warehouseReceipt_id,
-    List<WarehouseRecceiptDetail> warehouseRecceiptDetails,
+    WarehouseReceipt warehouseRecceipt,
+    List<WarehouseReceiptDetail> newWarehouseRecceiptDetails,
   ) async {
     try {
-      for (WarehouseRecceiptDetail warehouseRecceiptDetail
-          in warehouseRecceiptDetails) {
-        if (warehouseRecceiptDetail.new_quantity !=
-            warehouseRecceiptDetail.quantity) {
-          await firestore
-              .collection("warehouseReceipts")
-              .doc(warehouseReceipt_id)
-              .collection("warehouseReceiptDetails")
-              .doc(warehouseRecceiptDetail.warehouse_receipt_detail_id)
-              .set(warehouseRecceiptDetail.toJson());
-        }
+      for (WarehouseReceiptDetail warehouseRecceiptDetail
+          in warehouseRecceipt.warehouseRecceiptDetails ?? []) {
+        await firestore
+            .collection("warehouseReceipts")
+            .doc(warehouseRecceipt.warehouse_receipt_id)
+            .collection("warehouseReceiptDetails")
+            .doc(warehouseRecceiptDetail.warehouse_receipt_detail_id)
+            .delete();
+      }
+      //MỚI
+      for (WarehouseReceiptDetail warehouseRecceiptDetail
+          in newWarehouseRecceiptDetails) {
+        String idDetail = Utils.generateUUID();
+        warehouseRecceiptDetail.warehouse_receipt_detail_id = idDetail;
+
+        await firestore
+            .collection("warehouseReceipts")
+            .doc(warehouseRecceipt.warehouse_receipt_id)
+            .collection("warehouseReceiptDetails")
+            .doc(idDetail)
+            .set(warehouseRecceiptDetail.toJson());
       }
 
       update();

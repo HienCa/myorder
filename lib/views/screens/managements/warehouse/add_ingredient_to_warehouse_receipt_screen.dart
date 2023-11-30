@@ -16,12 +16,14 @@ import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddIngredientToInventoryScreen extends StatefulWidget {
+  final bool isUpdate;
   final List<Ingredient> listIngredientSelected;
   final List<Ingredient> listIngredient;
   const AddIngredientToInventoryScreen(
       {super.key,
       required this.listIngredient,
-      required this.listIngredientSelected});
+      required this.listIngredientSelected,
+      required this.isUpdate});
 
   @override
   State<AddIngredientToInventoryScreen> createState() =>
@@ -40,19 +42,38 @@ class _AddIngredientToInventoryScreenState
   void initState() {
     super.initState();
 
-    for (Ingredient item in widget.listIngredient) {
-      // Tìm kiếm phần tử tương ứng trong danh sách ingredients
-      Ingredient? foundIngredient = widget.listIngredientSelected.firstWhere(
-          (ingredient) => ingredient.ingredient_id == item.ingredient_id,
-          orElse: () => Ingredient(ingredient_id: "", name: "", active: 0));
+    if (widget.isUpdate) {
+      //Cập nhật
+      for (Ingredient item in widget.listIngredient) {
+        Ingredient? foundIngredient = widget.listIngredientSelected.firstWhere(
+            (ingredient) => ingredient.ingredient_id == item.ingredient_id,
+            orElse: () => Ingredient(ingredient_id: "", name: "", active: 0));
 
-      // Nếu tìm thấy, thiết lập giá trị
-      if (foundIngredient.ingredient_id != "") {
-        foundIngredient.isSelected = true;
-        foundIngredient.quantity = item.quantity;
-        foundIngredient.price = item.price;
-        foundIngredient.unit_id = item.unit_id;
-        foundIngredient.unit_name = item.unit_name;
+        // Nếu tìm thấy, thiết lập giá trị
+        if (foundIngredient.ingredient_id != "") {
+          item.isSelected = true;
+          item.quantity = foundIngredient.quantity;
+          item.price = foundIngredient.price;
+          item.unit_id = foundIngredient.unit_id;
+          item.unit_name = foundIngredient.unit_name;
+        } 
+      }
+    } else {
+      //Tạo mới phiếu
+      for (Ingredient item in widget.listIngredient) {
+        // Tìm kiếm phần tử tương ứng trong danh sách ingredients
+        Ingredient? foundIngredient = widget.listIngredientSelected.firstWhere(
+            (ingredient) => ingredient.ingredient_id == item.ingredient_id,
+            orElse: () => Ingredient(ingredient_id: "", name: "", active: 0));
+
+        // Nếu tìm thấy, thiết lập giá trị
+        if (foundIngredient.ingredient_id != "") {
+          foundIngredient.isSelected = true;
+          foundIngredient.quantity = item.quantity;
+          foundIngredient.price = item.price;
+          foundIngredient.unit_id = item.unit_id;
+          foundIngredient.unit_name = item.unit_name;
+        }
       }
     }
   }

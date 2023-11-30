@@ -16,7 +16,7 @@ class WarehouseReceipt {
   int status;
   double discount;
   int active;
-  List<WarehouseRecceiptDetail>? warehouseRecceiptDetails;
+  List<WarehouseReceiptDetail>? warehouseRecceiptDetails;
 
   WarehouseReceipt({
     required this.warehouse_receipt_id,
