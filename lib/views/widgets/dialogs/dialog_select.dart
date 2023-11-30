@@ -5,7 +5,6 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
-import 'package:stylish_dialog/stylish_dialog.dart';
 
 class MyDialogSelect extends StatefulWidget {
   final String lable;

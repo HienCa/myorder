@@ -7,6 +7,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
+import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/models/price_percent.dart';
 import 'package:myorder/views/screens/managements/dashboard/take_away/take_away_screen.dart';
 import 'package:myorder/views/screens/recipe/recipe_food_detail_screen.dart';
@@ -24,6 +25,7 @@ class RecipesScreen extends StatefulWidget {
 
 class _RecipesScreenState extends State<RecipesScreen> {
   FoodController foodController = Get.put(FoodController());
+  UnitController unitController = Get.put(UnitController());
 
   String keySearch = "";
   int categoryCodeSelected = 0;
@@ -41,6 +43,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
     // Filter Food
     categoryCodeSelected = CATEGORY_FOOD;
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    unitController.getUnits("");
 
     isFood = true;
     isDrink = false;
@@ -48,7 +51,6 @@ class _RecipesScreenState extends State<RecipesScreen> {
 
     //Lây thông tin đơn hàng
     foodController.getfoods(keySearch, DEACTIVE);
-
   }
 
   //Giảm giá

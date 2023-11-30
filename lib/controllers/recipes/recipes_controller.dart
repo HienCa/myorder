@@ -57,6 +57,7 @@ class RecipeController extends GetxController {
             for (var element in query.docs) {
               RecipeDetail recipeDetail = RecipeDetail.fromSnap(element);
               recipeDetail.new_quantity = recipeDetail.quantity;
+              recipeDetail.new_unit_id = recipeDetail.unit_id;
               retValue.add(recipeDetail);
             }
             return retValue;
@@ -94,9 +95,9 @@ class RecipeController extends GetxController {
           if (ingredient.isSelected == true) {
             String id = Utils.generateUUID();
             CollectionReference usersCollection = FirebaseFirestore.instance
-                .collection('foods') 
+                .collection('foods')
                 .doc(food_id)
-                .collection("recipes"); 
+                .collection("recipes");
             RecipeDetail recipeDetail = ingredient.recipeDetail!;
             recipeDetail.recipe_detail_id = id;
             await usersCollection.doc(id).set(recipeDetail.toJson());
@@ -128,7 +129,8 @@ class RecipeController extends GetxController {
     try {
       if (food_id.isNotEmpty) {
         for (RecipeDetail recipeDetail in recipeDetails) {
-          if (recipeDetail.quantity != recipeDetail.new_quantity) {
+          if (recipeDetail.quantity != recipeDetail.new_quantity ||
+              recipeDetail.unit_id != recipeDetail.new_unit_id) {
             await firestore
                 .collection('foods')
                 .doc(food_id)
@@ -136,6 +138,9 @@ class RecipeController extends GetxController {
                 .doc(recipeDetail.recipe_detail_id)
                 .update({
               "quantity": recipeDetail.new_quantity,
+              "unit_id": recipeDetail.new_unit_id,
+              "unit_name": recipeDetail.unit_name,
+              "unit_value_conversion": recipeDetail.unit_value_conversion,
             });
           }
         }

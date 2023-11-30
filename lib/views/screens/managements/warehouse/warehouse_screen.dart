@@ -35,6 +35,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       Get.put(WarehouseReceiptController());
   IngredientController ingredientController = Get.put(IngredientController());
 
+  int warehouseStatus = WAREHOUSE_STATUS_WAITING;
   @override
   void initState() {
     super.initState();
@@ -58,6 +59,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
     supplierController.getSuppliers("");
     unitController.getUnits("");
     warehouseReceiptController.getWarehouseReceipts("");
+
+    //trạng thái phiếu nhập kho
+    warehouseStatus = WAREHOUSE_STATUS_FINISH;
   }
 
   bool isImport = true;
@@ -91,18 +95,21 @@ class _InventoryScreenState extends State<InventoryScreen> {
           isWaiting = true;
           isMain = false;
           isFinish = false;
+          warehouseStatus = WAREHOUSE_STATUS_FINISH;
         });
       case SubInventory.Main:
         setState(() {
           isWaiting = false;
           isMain = true;
           isFinish = false;
+          warehouseStatus = WAREHOUSE_STATUS_FINISH;
         });
       case SubInventory.Finish:
         setState(() {
           isWaiting = false;
           isMain = false;
           isFinish = true;
+          warehouseStatus = WAREHOUSE_STATUS_FINISH;
         });
 
       default:
@@ -455,7 +462,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
                               child: TextField(
                                 controller: searchTextEditingController,
                                 onChanged: (value) {
-                                  setState(() {});
+                                  setState(() {
+                                    warehouseReceiptController
+                                        .getWarehouseReceipts(value);
+                                  });
                                 },
                                 style: const TextStyle(color: grayColor),
                                 decoration: const InputDecoration(
@@ -546,7 +556,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           final warehouseReceipt = warehouseReceiptController
                               .warehouseReceipts[index];
 
-                          return InkWell(
+                          return warehouseStatus == warehouseReceipt.status ? InkWell(
                             onTap: () async {
                               final result = await Navigator.push(
                                   context,
@@ -595,7 +605,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                                                       .status ==
                                                                   WAREHOUSE_STATUS_CANCEL
                                                               ? colorCancel
-                                                              : colorSuccess,
+                                                              : greenColor200,
                                                   borderRadius:
                                                       const BorderRadius.only(
                                                           topRight:
@@ -668,7 +678,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                                             warehouseReceipt
                                                                 .warehouse_receipt_code,
                                                             style:
-                                                                textStyleLabel14,
+                                                                textStylePrimary14,
                                                           ),
                                                         ],
                                                       )),
@@ -681,7 +691,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                                           warehouseReceipt.vat,
                                                           warehouseReceipt
                                                               .discount),
-                                                      style: textStyleLabel16),
+                                                      style:
+                                                          textStylePrimaryBold16),
                                                 ],
                                               ),
                                             ),
@@ -758,7 +769,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                                       child: Text(
                                                     warehouseReceipt
                                                         .employee_name,
-                                                    style: textStyleLabel16,
+                                                    style: textStylePrimary14,
                                                     softWrap: true,
                                                     overflow:
                                                         TextOverflow.visible,
@@ -804,7 +815,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                                   Expanded(
                                                       child: Text(
                                                     warehouseReceipt.note,
-                                                    style: textStyleLabel16,
+                                                    style:
+                                                        textStyleLabelOrange16,
                                                     softWrap: true,
                                                     overflow:
                                                         TextOverflow.visible,
@@ -820,7 +832,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                 ),
                               ),
                             ),
-                          );
+                          ) : const SizedBox();
                         });
                   }),
                 )

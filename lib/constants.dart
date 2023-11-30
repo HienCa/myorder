@@ -67,7 +67,11 @@ const grayColor = Colors.grey;
 var greenColor50 = Colors.green[50];
 var greenColor100 = Colors.green[100];
 var greenColor200 = Colors.green[200];
+var greenColor400 = Colors.green[400];
 var greenColor600 = Colors.green[600];
+const greenColor = Color(0xFFE2F3ED);
+const greenColorText = Color(0xFF2F9672);
+
 
 var redColor50 = Colors.red[50];
 var redColor100 = Colors.red[100];
@@ -123,6 +127,9 @@ const textStyleLabel8 = TextStyle(fontSize: 8, color: Colors.grey);
 const textStyleLabel14 = TextStyle(fontSize: 14, color: Colors.grey);
 const textStyleLabel16 = TextStyle(fontSize: 16, color: Colors.grey);
 const textStyleLabel20 = TextStyle(fontSize: 20, color: Colors.grey);
+
+
+const textStyleLabelOrange16 = TextStyle(fontSize: 16, color: colorWarning);
 
 //APPBAR
 const textStyleAppBar20 =

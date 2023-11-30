@@ -486,6 +486,16 @@ class Utils {
     // Không có đối tượng nào được chọn
     return false;
   }
+  static bool isAnyQuantityOrUnitChanged(List<dynamic> list) {
+    for (var item in list) {
+      if (item.quantity != item.new_quantity || item.unit_id != item.new_unit_id) {
+        // Có ít nhất một đối tượng đã được chọn
+        return true;
+      }
+    }
+    // Không có đối tượng nào được chọn
+    return false;
+  }
 
   static bool isAnyFoodCooking(List<OrderDetail> foods) {
     for (var food in foods) {

@@ -3,7 +3,6 @@
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -83,7 +82,13 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
 
   // get units
   List<Unit> unitOptions = List.empty();
-  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: '');
+  Unit unitFirstOption = Unit(
+      unit_id: "",
+      name: "titleUnit",
+      active: 1,
+      value_conversion: 1,
+      unit_id_conversion: '',
+      unit_name_conversion: '');
   bool isErrorTextUnitId = false;
   Unit? selectedUnitValue;
   List<Unit> unitList = [];
@@ -212,8 +217,6 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
                         max: maxlength255,
                         isRequire: true,
                       ),
-                      
-                      
                       SizedBox(
                         height: 50,
                         child: Row(
@@ -256,26 +259,26 @@ class _AddUpdateIngredientPageState extends State<AddUpdateIngredientPage> {
                                       if (widget.ingredient != null)
                                         {
                                           ingredientController.updateIngredient(
-                                              widget.ingredient!.ingredient_id,
-                                              nameController.text,
-                                              _pickedImage.value,
-                                              // isCheckWeight == true
-                                              //     ? ACTIVE
-                                              //     : DEACTIVE,
-                                              // textUnitIdController.text
-                                              ),
+                                            widget.ingredient!.ingredient_id,
+                                            nameController.text,
+                                            _pickedImage.value,
+                                            // isCheckWeight == true
+                                            //     ? ACTIVE
+                                            //     : DEACTIVE,
+                                            // textUnitIdController.text
+                                          ),
                                           Utils.myPopResult(context, "update")
                                         }
                                       else
                                         {
                                           ingredientController.createIngredient(
-                                              nameController.text,
-                                              _pickedImage.value,
-                                              // isCheckWeight == true
-                                              //     ? ACTIVE
-                                              //     : DEACTIVE,
-                                              // textUnitIdController.text
-                                              ),
+                                            nameController.text,
+                                            _pickedImage.value,
+                                            // isCheckWeight == true
+                                            //     ? ACTIVE
+                                            //     : DEACTIVE,
+                                            // textUnitIdController.text
+                                          ),
                                           Utils.myPopResult(context, "add")
                                         }
                                     }

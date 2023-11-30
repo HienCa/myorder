@@ -5,7 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Ingredient {
   String ingredient_id;
   String name;
-  // String unit_id;
+  String? unit_id;
+  String? unit_name;
   String? image;
   // int is_weight;
   int active;

@@ -9,14 +9,17 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/controllers/recipes/recipes_controller.dart';
+import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/models/food.dart';
 import 'package:myorder/models/recipe_detail.dart';
+import 'package:myorder/models/unit.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/recipe/dialogs/dialog_confirm_add_recipe_detail.dart';
 import 'package:myorder/views/screens/recipe/dialogs/dialog_confirm_delete_recipe_detail.dart';
 import 'package:myorder/views/screens/recipe/dialogs/dialog_confirm_update_quantity_recipe_detail;.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -35,6 +38,7 @@ class RecipeDetailScreen extends StatefulWidget {
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   RecipeController recipeController = Get.put(RecipeController());
   IngredientController ingredientController = Get.put(IngredientController());
+  UnitController unitController = Get.put(UnitController());
 
   String keySearch = "";
 
@@ -278,7 +282,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                   Marquee(
                                                       direction:
                                                           Axis.horizontal,
-                                                      // textDirection: TextDirection.ltr,
+                                                      textDirection: TextDirection
+                                                          .ltr,
                                                       animationDuration:
                                                           const Duration(
                                                               seconds: 1),
@@ -437,7 +442,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                         int index) {
                                                   var recipeDetail =
                                                       list[index];
-
                                                   return SingleChildScrollView(
                                                     child: Slidable(
                                                         key: const ValueKey(0),
@@ -619,13 +623,62 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                               //ĐƠN VỊ
                                                               Expanded(
                                                                   flex: 1,
-                                                                  child: Center(
-                                                                    child: Text(
-                                                                      recipeDetail
-                                                                          .recipeDetail!
-                                                                          .unit_name,
-                                                                      style:
-                                                                          textStyleLabel8,
+                                                                  child:
+                                                                      InkWell(
+                                                                    onTap:
+                                                                        () async {
+                                                                      Unit
+                                                                          result =
+                                                                          await showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return MyDialogSelect(
+                                                                              lable: "DANH SÁCH ĐƠN VỊ",
+                                                                              list: Utils.filterActive(unitController.units),
+                                                                              keyNameSearch: "name");
+                                                                        },
+                                                                      );
+                                                                      if (result
+                                                                              .unit_id !=
+                                                                          "") {
+                                                                        setState(
+                                                                            () {
+                                                                          recipeDetail
+                                                                              .recipeDetail!
+                                                                              .unit_name = result.name;
+                                                                          recipeDetail
+                                                                              .recipeDetail!
+                                                                              .unit_id = result.unit_id;
+                                                                          recipeDetail
+                                                                              .recipeDetail!
+                                                                              .unit_value_conversion = result.value_conversion;
+                                                                          print(recipeDetail
+                                                                              .recipeDetail!
+                                                                              .unit_id);
+                                                                        });
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        Center(
+                                                                      child: Marquee(
+                                                                          direction: Axis.horizontal,
+                                                                          textDirection: TextDirection.ltr,
+                                                                          animationDuration: const Duration(seconds: 1),
+                                                                          backDuration: const Duration(milliseconds: 4000),
+                                                                          pauseDuration: const Duration(milliseconds: 1000),
+                                                                          directionMarguee: DirectionMarguee.TwoDirection,
+                                                                          child: RichText(
+                                                                              text: TextSpan(
+                                                                            children: [
+                                                                              TextSpan(
+                                                                                text: recipeDetail.recipeDetail!.unit_name,
+                                                                                style: textStyleLabel8,
+                                                                              ),
+                                                                            ],
+                                                                          ))),
                                                                     ),
                                                                   )),
                                                             ],
@@ -879,12 +932,60 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                                             //ĐƠN VỊ
                                                             Expanded(
                                                                 flex: 1,
-                                                                child: Center(
-                                                                  child: Text(
-                                                                    recipeDetail
-                                                                        .unit_name,
-                                                                    style:
-                                                                        textStyleLabel8,
+                                                                child: InkWell(
+                                                                  onTap:
+                                                                      () async {
+                                                                    Unit
+                                                                        result =
+                                                                        await showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return MyDialogSelect(
+                                                                            lable:
+                                                                                "DANH SÁCH ĐƠN VỊ",
+                                                                            list:
+                                                                                Utils.filterActive(unitController.units),
+                                                                            keyNameSearch: "name");
+                                                                      },
+                                                                    );
+                                                                    if (result
+                                                                            .unit_id !=
+                                                                        "") {
+                                                                      setState(
+                                                                          () {
+                                                                        recipeDetail.unit_name =
+                                                                            result.name;
+                                                                        recipeDetail.new_unit_id =
+                                                                            result.unit_id;
+                                                                        recipeDetail.unit_value_conversion =
+                                                                            result.value_conversion;
+                                                                        print(recipeDetail
+                                                                            .unit_id);
+                                                                        print(recipeDetail
+                                                                            .new_unit_id);
+                                                                      });
+                                                                    }
+                                                                  },
+                                                                  child: Center(
+                                                                    child: Marquee(
+                                                                        direction: Axis.horizontal,
+                                                                        textDirection: TextDirection.ltr,
+                                                                        animationDuration: const Duration(seconds: 1),
+                                                                        backDuration: const Duration(milliseconds: 4000),
+                                                                        pauseDuration: const Duration(milliseconds: 1000),
+                                                                        directionMarguee: DirectionMarguee.TwoDirection,
+                                                                        child: RichText(
+                                                                            text: TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: recipeDetail.unit_name,
+                                                                              style: textStyleLabel8,
+                                                                            ),
+                                                                          ],
+                                                                        ))),
                                                                   ),
                                                                 )),
                                                           ],
@@ -944,6 +1045,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                       setState(() {
                                         Utils.unSelectedAll(
                                             ingredientController.ingredients);
+                                        ingredientController
+                                            .getIngredientsOfFood(keySearch);
                                       });
                                     }
                                   }
@@ -983,7 +1086,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               InkWell(
                                 onTap: () async {
                                   //CẬP NHẬT SỐ LƯỢNG NGUYÊN LIỆU CỦA MÓN
-                                  if (Utils.isAnyQuantityChanged(
+                                  if (Utils.isAnyQuantityOrUnitChanged(
                                       recipeController.recipeOfFood)) {
                                     final result = await showDialog(
                                       context: context,
@@ -997,7 +1100,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                       Utils.showStylishDialog(
                                           context,
                                           'THÀNH CÔNG',
-                                          'Cập nhật số lượng nguyên liệu của món ${widget.food.name} thành công!',
+                                          'Cập nhật nguyên liệu của món ${widget.food.name} thành công!',
                                           StylishDialogType.SUCCESS);
                                       setState(() {
                                         Utils.unSelectedAll(
@@ -1011,10 +1114,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                     height: 40,
                                     iconColor: secondColor,
                                     icon: FontAwesomeIcons.check,
-                                    backgroundColor: Utils.isAnyQuantityChanged(
-                                            recipeController.recipeOfFood)
-                                        ? colorSuccess
-                                        : grayColor,
+                                    backgroundColor:
+                                        Utils.isAnyQuantityOrUnitChanged(
+                                                recipeController.recipeOfFood)
+                                            ? colorSuccess
+                                            : grayColor,
                                     textStyle: const TextStyle(
                                       color: secondColor,
                                       fontSize: 10,
