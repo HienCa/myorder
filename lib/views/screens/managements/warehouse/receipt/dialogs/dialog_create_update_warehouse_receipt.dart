@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/warehouse_receipts/warehouse_receipt_controller.dart';
+import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
 import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/models/warehouse_receipt_detail.dart';

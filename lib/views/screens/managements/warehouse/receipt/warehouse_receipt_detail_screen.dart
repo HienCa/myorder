@@ -14,8 +14,8 @@ import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/models/supplier.dart';
 import 'package:myorder/models/warehouse_receipt_detail.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/warehouse/add_ingredient_to_warehouse_receipt_screen.dart';
-import 'package:myorder/views/screens/managements/warehouse/dialogs/dialog_create_update_warehouse_receipt.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/add_ingredient_to_warehouse_receipt_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/dialogs/dialog_create_update_warehouse_receipt.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
@@ -24,15 +24,15 @@ import 'package:myorder/views/widgets/textfields/text_field_label/text_field_str
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string_select.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
-class WarehouseDetailScreen extends StatefulWidget {
+class WarehouseReceiptDetailScreen extends StatefulWidget {
   final WarehouseReceipt? warehouseReceipt;
 
-  const WarehouseDetailScreen({super.key, this.warehouseReceipt});
+  const WarehouseReceiptDetailScreen({super.key, this.warehouseReceipt});
   @override
-  State<WarehouseDetailScreen> createState() => _WarehouseDetailScreenState();
+  State<WarehouseReceiptDetailScreen> createState() => _WarehouseReceiptDetailScreenState();
 }
 
-class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
+class _WarehouseReceiptDetailScreenState extends State<WarehouseReceiptDetailScreen> {
   TextEditingController nameSupplierTextEditingController =
       TextEditingController();
   TextEditingController supplierIdTextEditingController =
@@ -562,7 +562,7 @@ class _WarehouseDetailScreenState extends State<WarehouseDetailScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        AddIngredientToInventoryScreen(
+                                        AddIngredientToWarehouseReceiptScreen(
                                           listIngredientSelected:
                                               listIngredientSelected,
                                           listIngredient:

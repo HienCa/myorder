@@ -377,7 +377,7 @@ const marginRight5 = SizedBox(width: 5);
 const marginRight10 = SizedBox(width: 10);
 const marginRight20 = SizedBox(width: 20);
 const marginRight30 = SizedBox(width: 30);
-
+const emptyBox =  SizedBox();
 const sizeIconLarge = 30;
 const sizeIconSmall = 20;
 

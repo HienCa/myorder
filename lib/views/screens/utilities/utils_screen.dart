@@ -111,7 +111,7 @@ class UtilsPage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const InventoryScreen()))
+                                      const WarehouseScreen()))
                         },
                         child: const ListTile(
                           leading: Icon(Icons.ad_units, color: iconColor),

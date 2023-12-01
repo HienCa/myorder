@@ -15,23 +15,23 @@ import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_dou
 import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
-class AddIngredientToInventoryScreen extends StatefulWidget {
+class AddIngredientToWarehouseExportScreen extends StatefulWidget {
   final bool isUpdate;
   final List<Ingredient> listIngredientSelected;
   final List<Ingredient> listIngredient;
-  const AddIngredientToInventoryScreen(
+  const AddIngredientToWarehouseExportScreen(
       {super.key,
       required this.listIngredient,
       required this.listIngredientSelected,
       required this.isUpdate});
 
   @override
-  State<AddIngredientToInventoryScreen> createState() =>
-      _AddIngredientToInventoryScreenState();
+  State<AddIngredientToWarehouseExportScreen> createState() =>
+      _AddIngredientToWarehouseExportScreenState();
 }
 
-class _AddIngredientToInventoryScreenState
-    extends State<AddIngredientToInventoryScreen> {
+class _AddIngredientToWarehouseExportScreenState
+    extends State<AddIngredientToWarehouseExportScreen> {
   UnitController unitController = Get.put(UnitController());
 
   final TextEditingController unitIdConversionController =
@@ -56,7 +56,7 @@ class _AddIngredientToInventoryScreenState
           item.price = foundIngredient.price;
           item.unit_id = foundIngredient.unit_id;
           item.unit_name = foundIngredient.unit_name;
-        } 
+        }
       }
     } else {
       //Tạo mới phiếu
@@ -183,8 +183,14 @@ class _AddIngredientToInventoryScreenState
                             Expanded(
                               flex: 2,
                               child: Center(
-                                  child:
-                                      Text("SL Nhập", style: textStyleLabel14)),
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("SL Xuất", style: textStyleLabel14),
+                                  Text("SL Tồn", style: textStyleLabel14),
+                                ],
+                              )),
                             ),
                             Expanded(
                               flex: 2,
@@ -281,21 +287,24 @@ class _AddIngredientToInventoryScreenState
                                                           TextAlign.left),
                                                 ),
                                                 marginRight5,
-                                                Row(
-                                                  children: [
-                                                    ingredient.unit_name != ""
-                                                        ? Text(
-                                                            ingredient
-                                                                    .unit_name ??
-                                                                "",
-                                                            style:
-                                                                textStyleGreen14)
-                                                        : Text(
-                                                            "Chọn đơn vị nhập",
-                                                            style:
-                                                                textStyleRed14),
-                                                  ],
-                                                ),
+                                                ingredient.isSelected == true
+                                                    ? Row(
+                                                        children: [
+                                                          ingredient.unit_name !=
+                                                                  ""
+                                                              ? Text(
+                                                                  ingredient
+                                                                          .unit_name ??
+                                                                      "",
+                                                                  style:
+                                                                      textStyleGreen14)
+                                                              : Text(
+                                                                  "Chọn đơn vị xuất",
+                                                                  style:
+                                                                      textStyleRed14),
+                                                        ],
+                                                      )
+                                                    : const SizedBox(),
                                               ],
                                             ),
                                           )),
@@ -321,11 +330,25 @@ class _AddIngredientToInventoryScreenState
                                             }
                                           },
                                           child: Center(
-                                            child: Text(
-                                              (ingredient.quantity ?? 0)
-                                                  .toString(),
-                                              style: textStyleOrange14,
-                                              textAlign: TextAlign.center,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  (ingredient.quantity ?? 0)
+                                                      .toString(),
+                                                  style: textStyleOrange14,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                Text(
+                                                  (ingredient.quantity ?? 0)
+                                                      .toString(),
+                                                  style: textStylePrimary14,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
@@ -425,7 +448,7 @@ class _AddIngredientToInventoryScreenState
                                   "Số lượng mặt hàng đã chọn: ${list.length}");
                               bool isCheckUnit = true;
                               for (int i = 0; i < list.length; i++) {
-                                //kiểm tra đã chọn đươn vị nhập kho hay chưa?
+                                //kiểm tra đã chọn đươn vị xuất kho hay chưa?
                                 if (list[i].unit_id == null) {
                                   isCheckUnit = false;
                                   listUnitName =
@@ -439,7 +462,7 @@ class _AddIngredientToInventoryScreenState
                                 Utils.showStylishDialog(
                                     context,
                                     "THÔNG BÁO",
-                                    "Vui lòng chọn đơn vị nhập cho: $listUnitName",
+                                    "Vui lòng chọn đơn vị xuất cho: $listUnitName",
                                     StylishDialogType.INFO);
                               }
                             },

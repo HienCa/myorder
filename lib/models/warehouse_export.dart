@@ -1,24 +1,30 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myorder/models/warehouse_export_detail.dart';
 
 class WarehouseExport {
   String warehouse_export_id;
-  String code;
+  String warehouse_export_code;
   String employee_id;
   String employee_name;
+  String supplier_id;
+  String supplier_name;
   Timestamp created_at;
   String note;
   int vat;
   int status;
   double discount;
   int active;
+  List<WarehouseExportDetail>? warehouseExportDetails;
 
   WarehouseExport({
     required this.warehouse_export_id,
-    required this.code,
+    required this.warehouse_export_code,
     required this.employee_id,
     required this.employee_name,
+    required this.supplier_id,
+    required this.supplier_name,
     required this.created_at,
     required this.note,
     required this.vat,
@@ -29,9 +35,11 @@ class WarehouseExport {
 
   Map<String, dynamic> toJson() => {
         "warehouse_export_id": warehouse_export_id,
-        "code": code,
+        "warehouse_export_code": warehouse_export_code,
         "employee_id": employee_id,
         "employee_name": employee_name,
+        "supplier_id": supplier_id,
+        "supplier_name": supplier_name,
         "created_at": created_at,
         "note": note,
         "vat": vat,
@@ -45,9 +53,11 @@ class WarehouseExport {
 
     return WarehouseExport(
       warehouse_export_id: snapshot['warehouse_export_id'],
-      code: snapshot['code'],
+      warehouse_export_code: snapshot['warehouse_export_code'],
       employee_id: snapshot['employee_id'],
       employee_name: snapshot['employee_name'],
+      supplier_id: snapshot['supplier_id'],
+      supplier_name: snapshot['supplier_name'],
       created_at: snapshot['created_at'],
       note: snapshot['note'],
       vat: snapshot['vat'],

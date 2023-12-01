@@ -1,6 +1,7 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
@@ -143,10 +144,38 @@ class _ManagementUnitsPageState extends State<ManagementUnitsPage> {
                                           const Duration(milliseconds: 1000),
                                       directionMarguee:
                                           DirectionMarguee.TwoDirection,
-                                      child: Text(
-                                        unit.name,
-                                        style: textStyleNameBlackRegular,
-                                      ),
+                                      child: unit.value_conversion != 1
+                                          ? Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  unit.name,
+                                                  style:
+                                                      textStyleNameBlackRegular,
+                                                ),
+                                                marginRight20,
+                                                const FaIcon(
+                                                    FontAwesomeIcons.shuffle,
+                                                    color: iconColor,
+                                                    size: 16),
+                                                marginRight20,
+                                                unit.value_conversion != 1
+                                                    ? Text(
+                                                        '${unit.value_conversion} ${unit.unit_name_conversion}',
+                                                        style:
+                                                            textStyleNameBlackRegular,
+                                                      )
+                                                    : const Text("")
+                                              ],
+                                            )
+                                          : Text(
+                                              unit.name,
+                                              style: textStyleNameBlackRegular,
+                                            ),
                                     ),
                                   ],
                                 ),
