@@ -42,6 +42,16 @@ class Utils {
     }
   }
 
+  //DATETIME
+  static String formatDateTime(DateTime? dateTime) {
+    if (dateTime != null) {
+      var formatter = DateFormat('dd/MM/yyyy');
+      return formatter.format(dateTime);
+    } else {
+      return '';
+    }
+  }
+
   static String formatTime(Timestamp? timestamp) {
     if (timestamp != null) {
       var dateTime = timestamp.toDate();
@@ -63,6 +73,10 @@ class Utils {
   }
 
   static Timestamp convertDatetimeToTimestamp(DateTime datetime) {
+    return Timestamp.fromDate(DateTime.parse(datetime.toString()));
+  }
+
+  static Timestamp convertDatetimeStringToTimestamp(String datetime) {
     return Timestamp.fromDate(DateTime.parse(datetime.toString()));
   }
 
@@ -116,6 +130,13 @@ class Utils {
     }
   }
 
+  static bool isTimestampInRange(
+      Timestamp timestampToCheck, DateTime startDate, DateTime endDate) {
+    DateTime dateTimeToCheck = timestampToCheck.toDate();
+    return dateTimeToCheck.isAfter(startDate) &&
+        dateTimeToCheck.isBefore(endDate);
+  }
+
   static bool isValidDateTime(String time, DateTime? startTime) {
     if (startTime != null && time != "") {
       final currentTime = DateTime.parse(time);
@@ -126,6 +147,10 @@ class Utils {
     } else {
       return false;
     }
+  }
+
+  static DateTime stringToDateTimeVN(String dateString) {
+    return DateTime.parse(dateString);
   }
 
   //Lọc món theo category_code
@@ -486,9 +511,11 @@ class Utils {
     // Không có đối tượng nào được chọn
     return false;
   }
+
   static bool isAnyQuantityOrUnitChanged(List<dynamic> list) {
     for (var item in list) {
-      if (item.quantity != item.new_quantity || item.unit_id != item.new_unit_id) {
+      if (item.quantity != item.new_quantity ||
+          item.unit_id != item.new_unit_id) {
         // Có ít nhất một đối tượng đã được chọn
         return true;
       }

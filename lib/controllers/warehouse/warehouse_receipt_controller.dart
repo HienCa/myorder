@@ -16,8 +16,15 @@ class WarehouseReceiptController extends GetxController {
   final Rx<List<WarehouseReceipt>> _warehouseReceipts =
       Rx<List<WarehouseReceipt>>([]);
   List<WarehouseReceipt> get warehouseReceipts => _warehouseReceipts.value;
-  getWarehouseReceipts(String keySearch) async {
+  getWarehouseReceipts(
+      String keySearch, DateTime? fromDate, DateTime? toDate) async {
     if (keySearch.isEmpty) {
+      // Query query = firestore.collection('warehouseReceipts');
+      // if (fromDate != null && toDate != null) {
+      //   query = query
+      //       .where('create_at', isGreaterThanOrEqualTo: fromDate)
+      //       .where('create_at', isLessThanOrEqualTo: toDate);
+      // }
       _warehouseReceipts.bindStream(
         firestore.collection('warehouseReceipts').snapshots().asyncMap(
           (QuerySnapshot query) async {
@@ -51,7 +58,14 @@ class WarehouseReceiptController extends GetxController {
               warehouseReceipt.warehouseRecceiptDetails =
                   warehouseRecceiptDetails;
 
-              retValue.add(warehouseReceipt);
+              if (fromDate != null && toDate != null) {
+                if (Utils.isTimestampInRange(
+                    warehouseReceipt.created_at, fromDate, toDate)) {
+                  retValue.add(warehouseReceipt);
+                }
+              } else {
+                retValue.add(warehouseReceipt);
+              }
             }
             return retValue;
           },
@@ -95,7 +109,14 @@ class WarehouseReceiptController extends GetxController {
             warehouseReceipt.warehouseRecceiptDetails =
                 warehouseRecceiptDetails;
 
-            retVal.add(warehouseReceipt);
+            if (fromDate != null && toDate != null) {
+              if (Utils.isTimestampInRange(
+                  warehouseReceipt.created_at, fromDate, toDate)) {
+                retVal.add(warehouseReceipt);
+              }
+            } else {
+              retVal.add(warehouseReceipt);
+            }
           }
         }
         return retVal;

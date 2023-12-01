@@ -58,12 +58,12 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
     isSearch = false;
 
     //datetime
-    fromDateString = Utils.formatDatetime(DateTime.now());
-    toDateString = Utils.formatDatetime(DateTime.now());
+    fromDateString = "dd/mm/yyyy";
+    toDateString = "dd/mm/yyyy";
     supplierController.getSuppliers("");
     unitController.getUnits("");
-    warehouseReceiptController.getWarehouseReceipts("");
-    warehouseExportController.getwarehouseExports("");
+    warehouseReceiptController.getWarehouseReceipts("", null, null);
+    warehouseExportController.getwarehouseExports("", null, null);
     //trạng thái phiếu nhập kho
     warehouseStatus = WAREHOUSE_STATUS_FINISH;
   }
@@ -485,11 +485,43 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                 onChanged: (value) {
                                   setState(() {
                                     if (isReceipt) {
-                                      warehouseReceiptController
-                                          .getWarehouseReceipts(value);
+                                      if (fromDateTextEditingController.text !=
+                                              "" &&
+                                          toDateTextEditingController.text !=
+                                              "") {
+                                        warehouseReceiptController
+                                            .getWarehouseReceipts(
+                                                value,
+                                                Utils.stringToDateTimeVN(
+                                                    fromDateTextEditingController
+                                                        .text),
+                                                Utils.stringToDateTimeVN(
+                                                    toDateTextEditingController
+                                                        .text));
+                                      } else {
+                                        warehouseReceiptController
+                                            .getWarehouseReceipts(
+                                                value, null, null);
+                                      }
                                     } else if (isExport) {
-                                      warehouseExportController
-                                          .getwarehouseExports(value);
+                                      if (fromDateTextEditingController.text !=
+                                              "" &&
+                                          toDateTextEditingController.text !=
+                                              "") {
+                                        warehouseReceiptController
+                                            .getWarehouseReceipts(
+                                                value,
+                                                Utils.stringToDateTimeVN(
+                                                    fromDateTextEditingController
+                                                        .text),
+                                                Utils.stringToDateTimeVN(
+                                                    toDateTextEditingController
+                                                        .text));
+                                      } else {
+                                        warehouseExportController
+                                            .getwarehouseExports(
+                                                value, null, null);
+                                      }
                                     }
                                   });
                                 },
@@ -560,7 +592,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                         color: grayColor, size: 16),
                                     marginRight5,
                                     Text(
-                                      fromDateString,
+                                      toDateString,
                                       style: textStyleGrey14,
                                     ),
                                   ],

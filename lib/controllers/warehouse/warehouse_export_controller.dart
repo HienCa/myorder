@@ -15,7 +15,8 @@ class WarehouseExportController extends GetxController {
   final Rx<List<WarehouseExport>> _warehouseExports =
       Rx<List<WarehouseExport>>([]);
   List<WarehouseExport> get warehouseExports => _warehouseExports.value;
-  getwarehouseExports(String keySearch) async {
+  getwarehouseExports(
+      String keySearch, DateTime? fromDate, DateTime? toDate) async {
     if (keySearch.isEmpty) {
       _warehouseExports.bindStream(
         firestore.collection('warehouseExports').snapshots().asyncMap(
@@ -47,10 +48,16 @@ class WarehouseExportController extends GetxController {
                 warehouseRecceiptDetails.add(warehouseRecceiptDetail);
               }
               //Danh sách mặt hàng đã xuất
-              warehouseExport.warehouseExportDetails =
-                  warehouseRecceiptDetails;
+              warehouseExport.warehouseExportDetails = warehouseRecceiptDetails;
 
-              retValue.add(warehouseExport);
+              if (fromDate != null && toDate != null) {
+                if (Utils.isTimestampInRange(
+                    warehouseExport.created_at, fromDate, toDate)) {
+                  retValue.add(warehouseExport);
+                }
+              } else {
+                retValue.add(warehouseExport);
+              }
             }
             return retValue;
           },
@@ -93,7 +100,14 @@ class WarehouseExportController extends GetxController {
             //Danh sách mặt hàng đã xuất
             warehouseExport.warehouseExportDetails = warehouseRecceiptDetails;
 
-            retVal.add(warehouseExport);
+            if (fromDate != null && toDate != null) {
+              if (Utils.isTimestampInRange(
+                  warehouseExport.created_at, fromDate, toDate)) {
+                retVal.add(warehouseExport);
+              }
+            } else {
+              retVal.add(warehouseExport);
+            }
           }
         }
         return retVal;
