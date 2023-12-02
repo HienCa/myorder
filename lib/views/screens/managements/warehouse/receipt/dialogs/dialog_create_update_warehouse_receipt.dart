@@ -54,6 +54,10 @@ class _CustomDialogCreateWarehouseReceiptState
         unit_id: ingredient.unit_id ?? '',
         ingredient_name: ingredient.name,
         unit_name: ingredient.unit_name ?? "",
+        quantity_in_stock:
+            ingredient.quantity ?? 0, //khi nhập thì sl tồn bằng sl mới nhập
+        expiration_date: ingredient.expiration_date,
+        batch_number: ingredient.batch_number ?? "",
       );
       warehouseRecceiptDetails.add(warehouseRecceiptDetail);
     }
@@ -128,7 +132,6 @@ class _CustomDialogCreateWarehouseReceiptState
                                   "")
                                 {
                                   print("add"),
-
                                   widget.warehouseReceipt
                                       .warehouse_receipt_code = code,
                                   warehouseReceiptController

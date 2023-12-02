@@ -75,7 +75,7 @@ class _MyTextFieldDateTimeState extends State<MyTextFieldDateTime> {
           Utils.showStylishDialog(
               context,
               'THÔNG BÁO',
-              'Thời gian phải lớn hơn ${Utils.formatDatetime(currentDate)}.',
+              'Thời gian phải lớn hơn ${Utils.formatDatetimeFull(currentDate)}.',
               StylishDialogType.ERROR);
         });
       }

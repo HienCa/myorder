@@ -1,6 +1,7 @@
 //Gía trị cố định của biến
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 //chung
+String RESTAURANT_NAME = "MỲ CAY HIỀN CA";
 int ACTIVE = 1; // HOẠT ĐỘNG
 int DEACTIVE = 0;
 // NGỪNG HOẠT ĐỘNG

@@ -11,8 +11,10 @@ import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_export_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/warehouse/export/warehouse_export_detail_screen.dart';
-import 'package:myorder/views/screens/managements/warehouse/receipt/warehouse_receipt_detail_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/export/update_warehouse_export_detail_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/export/create_warehouse_export_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/update_warehouse_receipt_detail_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/create_warehouse_receipt_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 enum Warehouse { Receipt, Export }
@@ -624,7 +626,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      WarehouseReceiptDetailScreen(
+                                                      UpdateWarehouseReceiptDetailScreen(
                                                         warehouseReceipt:
                                                             warehouseReceipt,
                                                       )));
@@ -974,7 +976,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      WarehouseExportDetailScreen(
+                                                      UpdateWarehouseExportDetailScreen(
                                                         warehouseExport:
                                                             warehouseExport,
                                                       )));

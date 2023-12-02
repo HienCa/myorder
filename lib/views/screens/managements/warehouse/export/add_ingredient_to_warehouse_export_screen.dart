@@ -172,9 +172,20 @@ class _AddIngredientToWarehouseExportScreenState
                                       children: [
                                         Text("Mặt hàng",
                                             style: textStyleLabel14),
-                                        Text(
-                                          "Đơn vị",
-                                          style: textStyleLabel14,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Đơn vị",
+                                              style: textStyleLabel14,
+                                            ),
+                                            marginRight5,
+                                            Text(
+                                              '(*)',
+                                              style: textStyleErrorInput,
+                                            )
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -187,7 +198,17 @@ class _AddIngredientToWarehouseExportScreenState
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text("SL Xuất", style: textStyleLabel14),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("SL Xuất", style: textStyleLabel14),
+                                      marginRight5,
+                                      Text(
+                                        '(*)',
+                                        style: textStyleErrorInput,
+                                      )
+                                    ],
+                                  ),
                                   Text("SL Tồn", style: textStyleLabel14),
                                 ],
                               )),

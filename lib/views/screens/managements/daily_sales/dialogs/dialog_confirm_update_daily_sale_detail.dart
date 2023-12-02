@@ -3,61 +3,33 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/warehouse/warehouse_export_controller.dart';
-import 'package:myorder/models/ingredient.dart';
-import 'package:myorder/models/warehouse_export.dart';
-import 'package:myorder/models/warehouse_export_detail.dart';
+import 'package:myorder/controllers/daily_sales/daily_sale_detail_controller.dart';
 
-import 'package:myorder/utils.dart';
-
-class CustomDialogCreateWarehouseExport extends StatefulWidget {
-  final WarehouseExport warehouseExport;
-  final List<Ingredient> listIngredientSelected;
-  const CustomDialogCreateWarehouseExport({
+class CustomDialogUpdateDailySaleDetail extends StatefulWidget {
+  final String dailySaleId;
+  const CustomDialogUpdateDailySaleDetail({
     Key? key,
-    required this.warehouseExport,
-    required this.listIngredientSelected,
+    required this.dailySaleId,
   }) : super(key: key);
 
   @override
-  State<CustomDialogCreateWarehouseExport> createState() =>
-      _CustomDialogCreateWarehouseExportState();
+  State<CustomDialogUpdateDailySaleDetail> createState() =>
+      _CustomDialogUpdateDailySaleDetailState();
 }
 
-class _CustomDialogCreateWarehouseExportState
-    extends State<CustomDialogCreateWarehouseExport> {
+class _CustomDialogUpdateDailySaleDetailState
+    extends State<CustomDialogUpdateDailySaleDetail> {
   @override
   void dispose() {
     super.dispose();
   }
 
-  WarehouseExportController warehouseExportController =
-      Get.put(WarehouseExportController());
-  String code = "";
-  List<WarehouseExportDetail> warehouseExportDetails = [];
+  DailySaleDetailController dailySaleDetailController =
+      Get.put(DailySaleDetailController());
+
   @override
   void initState() {
     super.initState();
-    //mã phiếu
-    if (widget.warehouseExport.warehouse_export_id != "") {
-      code = widget.warehouseExport.warehouse_export_id;
-    } else {
-      code = Utils.generateInvoiceCode("PXK");
-    }
-
-    //chuyển đổi ingredient -> warehouseRecceiptDetail
-    for (Ingredient ingredient in widget.listIngredientSelected) {
-      WarehouseExportDetail warehouseRecceiptDetail = WarehouseExportDetail(
-        warehouse_export_detail_id: "",
-        ingredient_id: ingredient.ingredient_id,
-        quantity: ingredient.quantity ?? 0,
-        price: ingredient.price ?? 0,
-        unit_id: ingredient.unit_id ?? '',
-        ingredient_name: ingredient.name,
-        unit_name: ingredient.unit_name ?? "",
-      );
-      warehouseExportDetails.add(warehouseRecceiptDetail);
-    }
   }
 
   @override
@@ -82,17 +54,15 @@ class _CustomDialogCreateWarehouseExportState
                   children: [
                     const Center(
                       child: Text(
-                        'PHIẾU XUẤT KHO',
+                        'THÊM NGUYÊN LIỆU CHẾ BIẾN',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
-                    ListTile(
+                    const ListTile(
                       title: Center(
                         child: Text(
-                          widget.warehouseExport.warehouse_export_id == ""
-                              ? "Mã phiếu '$code' sẽ được tạo?"
-                              : "Phiếu '$code' sẽ được cập nhật?",
+                          "Bạn có chắc chắn muốn thêm nguyên liệu này?",
                           style: textStyleBlackRegular,
                         ),
                       ),
@@ -123,28 +93,10 @@ class _CustomDialogCreateWarehouseExportState
                           ),
                           InkWell(
                             onTap: () => {
-                              //mã phiếu
-                              if (widget.warehouseExport.warehouse_export_id ==
-                                  "")
-                                {
-                                  print("add"),
-                                  widget.warehouseExport.warehouse_export_code =
-                                      code,
-                                  warehouseExportController
-                                      .createWarehouseExport(
-                                          widget.warehouseExport,
-                                          warehouseExportDetails),
-                                  Utils.myPopResult(context, 'add')
-                                }
-                              else
-                                {
-                                  print("update"),
-                                  warehouseExportController
-                                      .updateWarehouseExport(
-                                          widget.warehouseExport,
-                                          warehouseExportDetails),
-                                  Utils.myPopResult(context, 'update')
-                                }
+                              dailySaleDetailController.updatedailySaleDetail(
+                                  widget.dailySaleId,
+                                  dailySaleDetailController.dailySaleDetails),
+                              Navigator.pop(context, 'success')
                             },
                             child: Container(
                               height: 50,

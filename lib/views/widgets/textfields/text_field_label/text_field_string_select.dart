@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 
-class MyTextFieldStringSelecte extends StatefulWidget {
+class MyTextFieldStringOnTap extends StatefulWidget {
   final TextEditingController textController;
   final String label;
   final String placeholder;
 
   final bool isRequire;
 
-  const MyTextFieldStringSelecte({
+  const MyTextFieldStringOnTap({
     super.key,
     required this.textController,
     required this.label,
@@ -18,11 +18,11 @@ class MyTextFieldStringSelecte extends StatefulWidget {
   });
 
   @override
-  State<MyTextFieldStringSelecte> createState() =>
-      _MyTextFieldStringSelecteState();
+  State<MyTextFieldStringOnTap> createState() =>
+      _MyTextFieldStringOnTapState();
 }
 
-class _MyTextFieldStringSelecteState extends State<MyTextFieldStringSelecte> {
+class _MyTextFieldStringOnTapState extends State<MyTextFieldStringOnTap> {
   bool isInValid = false;
   @override
   Widget build(BuildContext context) {

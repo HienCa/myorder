@@ -7,6 +7,7 @@ class WarehouseExportDetail {
   String ingredient_id;
   String ingredient_name;
   double quantity;
+  double? quantity_in_stock;
   double? new_quantity;
   double price;
   String unit_id;

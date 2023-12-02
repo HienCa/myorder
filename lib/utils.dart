@@ -42,6 +42,23 @@ class Utils {
     }
   }
 
+  static Future<DateTime?> selectDate(BuildContext context) async {
+    final DateTime currentDate = DateTime.now();
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2200),
+    );
+
+    if (pickedDate == null) {
+      // Người dùng đã hủy bỏ chọn ngày
+      return null;
+    }
+
+    return pickedDate;
+  }
+
   //DATETIME
   static String formatDateTime(DateTime? dateTime) {
     if (dateTime != null) {
@@ -63,13 +80,28 @@ class Utils {
   }
 
   //DATETIME
-  static String formatDatetime(DateTime? datetime) {
+  static String formatDatetimeFull(DateTime? datetime) {
     if (datetime != null) {
       var formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
       return formatter.format(datetime);
     } else {
       return '';
     }
+  }
+  //ngày mai
+  static DateTime getTomorrow() {
+    DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
+    return tomorrow;
+  }
+  //Ngày + số lượng
+  static DateTime getDateTimeAddDay(int number) {
+    DateTime datetime = DateTime.now().add(Duration(days: number));
+    return datetime;
+  }
+  //Ngày +1
+  static DateTime getDateTimeAddOne(DateTime datetime) {
+    DateTime datetimeAdded = datetime.add(const Duration(days: 1));
+    return datetimeAdded;
   }
 
   static Timestamp convertDatetimeToTimestamp(DateTime datetime) {

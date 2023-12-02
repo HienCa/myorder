@@ -16,6 +16,8 @@ class Ingredient {
   double? quantity = 0;
   String? unit_name = "";
   double? new_quantity;
+  Timestamp? expiration_date;
+  String? batch_number = "";//số lô
 
   Ingredient({
     required this.ingredient_id,

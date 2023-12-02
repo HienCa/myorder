@@ -9,6 +9,7 @@ import 'package:myorder/views/screens/managements/discounts/discounts_screen.dar
 import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
 import 'package:myorder/views/screens/managements/foods/foods_screen.dart';
 import 'package:myorder/views/screens/managements/ingredients/ingredients_screen.dart';
+import 'package:myorder/views/screens/managements/daily_sales/daily_sales_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/warehouse_screen.dart';
 import 'package:myorder/views/screens/managements/suppliers/suppliers_screen.dart';
 import 'package:myorder/views/screens/managements/units/units_screen.dart';
@@ -105,6 +106,22 @@ class UtilsPage extends StatelessWidget {
                   decoration: const BoxDecoration(color: backgroundColor),
                   child: Column(
                     children: [
+                      InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManagementDailySalesScreen()))
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.ad_units, color: iconColor),
+                          title:
+                              Text("THIẾT LẬP SL", style: textStyleBlackRegular),
+                          trailing: Icon(Icons.arrow_forward_ios_outlined,
+                              color: iconColor),
+                        ),
+                      ),
                       InkWell(
                         onTap: () => {
                           Navigator.push(

@@ -13,6 +13,17 @@ import 'package:myorder/models/warehouse_receipt_detail.dart';
 import 'package:myorder/utils.dart';
 
 class WarehouseReceiptController extends GetxController {
+  /*
+  B1: Thiết lập số lượng món cho từng ngày
+  B2: Nhân viên kiểm tra kho, yêu cầu nhập kho nếu không đủ hàng cho ngày kế tiếp đã được thiết lập
+
+  //Hằng ngày
+  B1: Nhân viên sẽ xuất kho theo số lượng đã được ước lượng theo công thức từng món * số lượng cần phục vụ
+  //Cuối ngày
+  Nhân viên lập phiếu nhập kho, nhập lại vào kho những hàng còn thừa
+
+   */
+
   final Rx<List<WarehouseReceipt>> _warehouseReceipts =
       Rx<List<WarehouseReceipt>>([]);
   List<WarehouseReceipt> get warehouseReceipts => _warehouseReceipts.value;
@@ -121,6 +132,36 @@ class WarehouseReceiptController extends GetxController {
         }
         return retVal;
       }));
+    }
+  }
+
+  Future<List<WarehouseReceiptDetail>> getWarehouseReceiptDetails(
+      String warehouseReceiptId) async {
+    try {
+      var warehouseReceiptDetailCollection = FirebaseFirestore.instance
+          .collection('warehouseReceipts')
+          .doc(warehouseReceiptId)
+          .collection('warehouseReceiptDetails');
+
+      var warehouseReceiptDetailCollectionQuery =
+          await warehouseReceiptDetailCollection.get();
+
+      List<WarehouseReceiptDetail> warehouseReceiptDetails = [];
+
+      for (var warehouseReceiptDetailData
+          in warehouseReceiptDetailCollectionQuery.docs) {
+        WarehouseReceiptDetail warehouseReceiptDetail =
+            WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
+
+        warehouseReceiptDetail.new_quantity = warehouseReceiptDetail.quantity;
+        warehouseReceiptDetails.add(warehouseReceiptDetail);
+      }
+
+      return warehouseReceiptDetails;
+    } catch (error) {
+      // Xử lý lỗi nếu cần thiết
+      print('Error fetching warehouse receipt details: $error');
+      return [];
     }
   }
 

@@ -53,6 +53,8 @@ class WarehouseExportController extends GetxController {
               if (fromDate != null && toDate != null) {
                 if (Utils.isTimestampInRange(
                     warehouseExport.created_at, fromDate, toDate)) {
+                  //Lấy số lượng tồn
+
                   retValue.add(warehouseExport);
                 }
               } else {
@@ -112,6 +114,37 @@ class WarehouseExportController extends GetxController {
         }
         return retVal;
       }));
+    }
+  }
+
+  Future<List<WarehouseExportDetail>> getWarehouseExportDetails(
+      String warehouseExportId) async {
+    try {
+      var WarehouseExportDetailCollection = firestore
+          .collection('warehouseExports')
+          .doc(warehouseExportId)
+          .collection('warehouseExportDetails');
+
+      List<WarehouseExportDetail> warehouseRecceiptDetails =
+          []; //danh sách chi tiết
+      var WarehouseExportDetailCollectionQuery =
+          await WarehouseExportDetailCollection.get();
+      for (var WarehouseExportDetailData
+          in WarehouseExportDetailCollectionQuery.docs) {
+        // chi tiết phiếu xuất
+
+        WarehouseExportDetail warehouseRecceiptDetail =
+            WarehouseExportDetail.fromSnap(WarehouseExportDetailData);
+
+        warehouseRecceiptDetail.new_quantity = warehouseRecceiptDetail.quantity;
+        warehouseRecceiptDetails.add(warehouseRecceiptDetail);
+      }
+
+      return warehouseRecceiptDetails;
+    } catch (error) {
+      // Xử lý lỗi nếu cần thiết
+      print('Error fetching warehouse receipt details: $error');
+      return [];
     }
   }
 
