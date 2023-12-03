@@ -13,6 +13,7 @@ import 'package:myorder/views/screens/area/dialogs/dialog_confirm_table_booking.
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_order_detail.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_order_history.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:myorder/views/widgets/videos/rotate_phone.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
 enum DashBoardHome { Serving, Booking, Finish, TakeAway }
@@ -94,7 +95,7 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Utils.isLandscapeOrientation(context) ? Scaffold(
       body: Column(
         children: [
           Container(
@@ -580,6 +581,6 @@ class _DashboardHomeState extends State<DashboardHome> {
           })
         ],
       ),
-    );
+    ) : const RequiredRotatePhoneToLanscape();
   }
 }

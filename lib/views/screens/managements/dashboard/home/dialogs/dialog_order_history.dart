@@ -12,6 +12,7 @@ import 'package:myorder/models/order.dart';
 import 'package:myorder/utils.dart';
 
 import 'package:myorder/views/widgets/icons/icon_close.dart';
+import 'package:myorder/views/widgets/videos/rotate_phone.dart';
 
 class MyDialogOrderHistory extends StatefulWidget {
   final Order order;
@@ -46,7 +47,7 @@ class _MyDialogOrderHistoryState extends State<MyDialogOrderHistory> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return Utils.isLandscapeOrientation(context) ? Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
       ),
@@ -226,6 +227,12 @@ class _MyDialogOrderHistoryState extends State<MyDialogOrderHistory> {
           ),
         ),
       ),
-    );
+    ) : Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
+      ),
+      elevation: 5, // Độ nâng của bóng đổ
+      backgroundColor: grayColor200,
+      child: const RequiredRotatePhoneToLanscape());
   }
 }

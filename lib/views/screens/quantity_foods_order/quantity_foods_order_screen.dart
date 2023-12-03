@@ -95,21 +95,21 @@ class _ManagementQuantityFoodOrderPageState
                                   (index) => index).map((i) {
                                 return InkWell(
                                   onTap: () async {
-                                    final result = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return MyDialogUpdateQuantityFood(
-                                          food: foodController.foodAll[i],
-                                        );
-                                      },
-                                    );
-                                    if (result == "success") {
-                                      Utils.showStylishDialog(
-                                          context,
-                                          'THÀNH CÔNG!',
-                                          'Cập nhật số lượng thành công!',
-                                          StylishDialogType.ERROR);
-                                    }
+                                    // final result = await showDialog(
+                                    //   context: context,
+                                    //   builder: (BuildContext context) {
+                                    //     return MyDialogUpdateQuantityFood(
+                                    //       food: foodController.foodAll[i],
+                                    //     );
+                                    //   },
+                                    // );
+                                    // if (result == "success") {
+                                    //   Utils.showStylishDialog(
+                                    //       context,
+                                    //       'THÀNH CÔNG!',
+                                    //       'Cập nhật số lượng thành công!',
+                                    //       StylishDialogType.ERROR);
+                                    // }
                                   },
                                   child: Container(
                                       height: 180,

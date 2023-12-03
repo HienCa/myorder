@@ -6,6 +6,7 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/order_history/order_history_controller.dart';
 import 'package:myorder/models/chef_bar.dart';
+import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
@@ -574,6 +575,21 @@ class ChefBarOtherController extends GetxController {
                   '+ ${item.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING]\\n';
               print(
                   "${item.food!.name}: ${item.food_status}:FOOD_STATUS_IN_CHEF -> $FOOD_STATUS_COOKING: FOOD_STATUS_COOKING");
+
+              //Đã xác nhận chế biến thì trừ số lượng có thể order ngày hôm nay
+              //DAILY SALE
+              //thông tin món
+              DocumentSnapshot foodCollection =
+                  await firestore.collection('foods').doc(item.food_id).get();
+              if (foodCollection.exists) {
+                final foodData = foodCollection.data();
+                if (foodData != null && foodData is Map<String, dynamic>) {
+                  Food food = Food.fromSnap(foodCollection);
+                  await firestore.collection('foods').doc(food.food_id).update({
+                    "current_order_count": food.current_order_count - 1,
+                  });
+                }
+              }
             } else if (item.food_status == FOOD_STATUS_COOKING) {
               //ĐANG CHẾ BIẾN -> HOÀN THÀNH
               description +=

@@ -23,6 +23,7 @@ import 'package:myorder/views/widgets/textfields/text_field_icon/text_field_icon
 import 'package:myorder/views/widgets/textfields/text_field_icon/text_field_icon_number.dart';
 import 'package:myorder/views/widgets/textfields/text_field_icon/text_field_icon_phone.dart';
 import 'package:myorder/views/widgets/textfields/text_field_icon/text_field_icon_string.dart';
+import 'package:myorder/views/widgets/videos/rotate_phone.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
@@ -55,9 +56,12 @@ class _DashboardBookingState extends State<DashboardBooking> {
     super.dispose();
   }
 
+
+
   @override
   void initState() {
     super.initState();
+   
     // Filter Food
     categoryCodeSelected = CATEGORY_FOOD;
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
@@ -124,7 +128,7 @@ class _DashboardBookingState extends State<DashboardBooking> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Utils.isLandscapeOrientation(context) ? Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: grayColor200,
       body: Theme(
@@ -1365,6 +1369,9 @@ class _DashboardBookingState extends State<DashboardBooking> {
           ),
         ),
       ),
-    );
+    ) : const RequiredRotatePhoneToLanscape();
   }
+
+
+ 
 }

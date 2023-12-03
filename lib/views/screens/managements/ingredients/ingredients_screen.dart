@@ -24,7 +24,7 @@ class _ManagementIngredientsPageState extends State<ManagementIngredientsPage> {
   @override
   void initState() {
     super.initState();
-    // ingredientController.getIngredients("");
+    ingredientController.getIngredients("");
   }
 
   @override

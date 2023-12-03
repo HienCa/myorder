@@ -445,6 +445,7 @@ var defaultFoodImage40 = Image.asset(
   fit: BoxFit.cover,
 );
 const defaultFoodImageString = "assets/images/logofunnyfood.jpg";
+const defaultVideoRotatePhone = "assets/images/rotate-phone.mp4";
 
 //TABLE
 var tableImageServing =

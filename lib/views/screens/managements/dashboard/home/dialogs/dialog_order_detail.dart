@@ -23,6 +23,7 @@ import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
+import 'package:myorder/views/widgets/videos/rotate_phone.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
@@ -126,7 +127,7 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return Utils.isLandscapeOrientation(context) ? Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
       ),
@@ -2157,6 +2158,6 @@ class _MyDialogOrderDetailState extends State<MyDialogOrderDetail> {
           ),
         ),
       ),
-    );
+    ): const RequiredRotatePhoneToLanscape();
   }
 }
