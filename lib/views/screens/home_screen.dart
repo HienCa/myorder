@@ -51,9 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
           //kiểm tra xem đã thiết lập lịch cho hôm nay chưa
           if (await dailySalesController.isDailySalesByDateTime(now)) {
-          print("SETTING UP...");
+            print("SETTING UP...");
 
-          await myCacheManager.addToCache(DAILY_SALE_KEY, now.toString());
+            await myCacheManager.addToCache(DAILY_SALE_KEY, now.toString());
 
             //đã được set up
             dailySalesController.setUpDailySalesByDateTime(now);

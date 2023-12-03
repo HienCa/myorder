@@ -212,11 +212,22 @@ class _MyDialogCalculatorIntState extends State<MyDialogCalculatorInt> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           marginRight10,
-                          ButtonCalculator(
-                            item: '1',
-                            textEditingController: textEditingController,
-                            min: widget.min,
-                            max: widget.max,
+                          Expanded(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: transparentColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                boxShadow: [],
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "",
+                                  textAlign: TextAlign.center,
+                                  style: textStyleLabel16,
+                                ),
+                              ),
+                            ),
                           ),
                           marginRight10,
                           ButtonCalculator(
@@ -281,7 +292,7 @@ class _ButtonCalculatorState extends State<ButtonCalculator> {
 
             if (widget.item == 'AC') {
               widget.textEditingController.text = '';
-            } else if (widget.item == 'Tăng' ) {
+            } else if (widget.item == 'Tăng') {
               int value = int.tryParse(widget.textEditingController.text) ?? 0;
               value += 1;
               if (value >= 0 && value <= widget.max) {
@@ -299,6 +310,8 @@ class _ButtonCalculatorState extends State<ButtonCalculator> {
               }
             } else if (widget.item == 'Xong') {
               Utils.myPopResult(context, widget.textEditingController.text);
+            } else if (widget.item == '.') {
+              //không làm gì hết
             } else {
               //Là số bình thường
               int currentValue =
@@ -308,6 +321,9 @@ class _ButtonCalculatorState extends State<ButtonCalculator> {
               int newValue = currentValue * 10 + newItem;
               if (newValue <= widget.max) {
                 widget.textEditingController.text = newValue.toString();
+                if (newValue < widget.min) {
+                  widget.textEditingController.text = widget.min.toString();
+                }
               } else {
                 widget.textEditingController.text = widget.max.toString();
                 Utils.showStylishDialog(context, 'THÔNG BÁO',

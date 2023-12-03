@@ -13,6 +13,8 @@ import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddFoodToOrderPage extends StatefulWidget {
   final model.Table table;
@@ -189,7 +191,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                     itemBuilder: (context, index) {
                       return Container(
                         margin: const EdgeInsets.all(
-                            4), // Khoảng cách dưới dạng đệm
+                            2), // Khoảng cách dưới dạng đệm
 
                         decoration: foodController
                                     .foodsToOrder[index].isSelected ==
@@ -230,32 +232,36 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                             unselectedWidgetColor:
                                                 primaryColor),
                                         child: SizedBox(
-                                          width: 100,
+                                          width: 70,
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
-                                              Checkbox(
-                                                value: foodController
-                                                        .foodsToOrder[index]
-                                                        .isSelected ??
-                                                    false,
-                                                onChanged: (bool? value) {
-                                                  setState(() {
-                                                    foodController
-                                                        .foodsToOrder[index]
-                                                        .isSelected = value;
-                                                    //kiem tra xem co bat ky mon nao da duoc chon khong
-                                                    isAddFood =
-                                                        Utils.isAnyFoodSelected(
-                                                            foodController
-                                                                .foodsToOrder);
-                                                    print(
-                                                        "isChecked - $value: ${foodController.foodsToOrder[index].name}");
-                                                  });
-                                                },
-                                                activeColor: primaryColor,
+                                              SizedBox(
+                                                width: 10,
+                                                child: Checkbox(
+                                                  value: foodController
+                                                          .foodsToOrder[index]
+                                                          .isSelected ??
+                                                      false,
+                                                  onChanged: (bool? value) {
+                                                    setState(() {
+                                                      foodController
+                                                          .foodsToOrder[index]
+                                                          .isSelected = value;
+                                                      //kiem tra xem co bat ky mon nao da duoc chon khong
+                                                      isAddFood = Utils
+                                                          .isAnyFoodSelected(
+                                                              foodController
+                                                                  .foodsToOrder);
+                                                      print(
+                                                          "isChecked - $value: ${foodController.foodsToOrder[index].name}");
+                                                    });
+                                                  },
+                                                  activeColor: primaryColor,
+                                                ),
                                               ),
+                                              marginRight10,
                                               foodController.foodsToOrder[index]
                                                           .image !=
                                                       ""
@@ -314,10 +320,11 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                       foodController
                                                           .foodsToOrder[index]
                                                           .temporary_price_to_date)
-                                                  ? (foodController
-                                                              .foodsToOrder[
-                                                                  index]
-                                                              .price_with_temporary! >
+                                                  ? ((foodController
+                                                                  .foodsToOrder[
+                                                                      index]
+                                                                  .price_with_temporary ??
+                                                              0) >
                                                           0
                                                       ? const WidgetSpan(
                                                           child: Icon(
@@ -380,7 +387,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                               children: <TextSpan>[
                                                                 TextSpan(
                                                                   text:
-                                                                      "${Utils.formatCurrency(foodController.foodsToOrder[index].price + foodController.foodsToOrder[index].price_with_temporary!)} / ",
+                                                                      "${Utils.formatCurrency(foodController.foodsToOrder[index].price + (foodController.foodsToOrder[index].price_with_temporary ?? 0))} / ",
                                                                   style:
                                                                       textStyleTemporaryPriceDeActive16,
                                                                 ),
@@ -422,26 +429,27 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                   .isSelected ==
                                               true
                                           ? SizedBox(
-                                              width: 100,
+                                              width: 110,
                                               child: Row(
                                                 children: [
                                                   InkWell(
                                                     onTap: () {
-                                                      if (foodController
-                                                              .foodsToOrder[
-                                                                  index]
-                                                              .quantity! >
+                                                      if ((foodController
+                                                                  .foodsToOrder[
+                                                                      index]
+                                                                  .quantity ??
+                                                              0) >
                                                           1) {
                                                         setState(() {
                                                           foodController
-                                                                  .foodsToOrder[
-                                                                      index]
-                                                                  .quantity =
-                                                              foodController
+                                                              .foodsToOrder[
+                                                                  index]
+                                                              .quantity = (foodController
                                                                       .foodsToOrder[
                                                                           index]
-                                                                      .quantity! -
-                                                                  1;
+                                                                      .quantity ??
+                                                                  0) -
+                                                              1;
                                                         });
                                                       }
                                                     },
@@ -464,25 +472,85 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 5),
-                                                  Text(
-                                                      foodController
-                                                          .foodsToOrder[index]
-                                                          .quantity!
-                                                          .toString(),
-                                                      style:
-                                                          textStyleWhiteBold16),
-                                                  const SizedBox(width: 5),
+                                                  InkWell(
+                                                    onTap: () async {
+                                                      final result =
+                                                          await showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return MyDialogCalculatorInt(
+                                                              value: foodController
+                                                                      .foodsToOrder[
+                                                                          index]
+                                                                      .quantity ??
+                                                                  1,
+                                                              label: "SỐ LƯỢNG",
+                                                              min: 1,
+                                                              max: (foodController
+                                                                          .foodsToOrder[
+                                                                              index]
+                                                                          .current_order_count ??
+                                                                      0)
+                                                                  .toInt());
+                                                        },
+                                                      );
+                                                      if (result != null) {
+                                                        setState(() {
+                                                          print(result);
+                                                          foodController
+                                                                  .foodsToOrder[
+                                                                      index]
+                                                                  .quantity =
+                                                              int.parse(result);
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              6.0),
+                                                      child: Text(
+                                                          (foodController
+                                                                      .foodsToOrder[
+                                                                          index]
+                                                                      .quantity ??
+                                                                  1)
+                                                              .toString(),
+                                                          style:
+                                                              textStyleWhiteBold16),
+                                                    ),
+                                                  ),
                                                   InkWell(
                                                     onTap: () {
                                                       setState(() {
-                                                        foodController
-                                                            .foodsToOrder[index]
-                                                            .quantity = foodController
-                                                                .foodsToOrder[
-                                                                    index]
-                                                                .quantity! +
-                                                            1;
+                                                        if ((foodController
+                                                                    .foodsToOrder[
+                                                                        index]
+                                                                    .quantity ??
+                                                                0) <
+                                                            (foodController
+                                                                    .foodsToOrder[
+                                                                        index]
+                                                                    .current_order_count ??
+                                                                0)) {
+                                                          foodController
+                                                              .foodsToOrder[
+                                                                  index]
+                                                              .quantity = (foodController
+                                                                      .foodsToOrder[
+                                                                          index]
+                                                                      .quantity ??
+                                                                  0) +
+                                                              1;
+                                                        } else {
+                                                          Utils.showStylishDialog(
+                                                              context,
+                                                              "THÔNG BÁO",
+                                                              "Số lượng đã đạt tối đa",
+                                                              StylishDialogType
+                                                                  .INFO);
+                                                        }
                                                       });
                                                     },
                                                     child: Container(
@@ -770,7 +838,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                               text: foodController.foodsToOrder[index].addition_food_details[indexAddition].name,
                                                                               style: textStyleWhiteRegular16),
                                                                           (Utils.isDateTimeInRange(foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_from_date, foodController.foodsToOrder[index].addition_food_details[indexAddition].temporary_price_to_date)
-                                                                              ? (foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary! > 0
+                                                                              ? ((foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary ?? 0) > 0
                                                                                   ? const WidgetSpan(
                                                                                       child: Icon(
                                                                                         Icons.arrow_drop_up,
@@ -813,7 +881,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                                           style: DefaultTextStyle.of(context).style,
                                                                                           children: <TextSpan>[
                                                                                             TextSpan(
-                                                                                              text: "${Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price + foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary!)} / ",
+                                                                                              text: "${Utils.formatCurrency(foodController.foodsToOrder[index].addition_food_details[indexAddition].price + (foodController.foodsToOrder[index].addition_food_details[indexAddition].price_with_temporary ?? 0))} / ",
                                                                                               style: textStyleWhiteRegular16,
                                                                                             ),
                                                                                             TextSpan(
@@ -844,9 +912,9 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                             children: [
                                                                               InkWell(
                                                                                 onTap: () {
-                                                                                  if (foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity! > 1) {
+                                                                                  if ((foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity ?? 0) > 1) {
                                                                                     setState(() {
-                                                                                      foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity = foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity! - 1;
+                                                                                      foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity = (foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity ?? 0) - 1;
                                                                                     });
                                                                                   }
                                                                                 },
@@ -864,12 +932,12 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                                                                 ),
                                                                               ),
                                                                               const SizedBox(width: 5),
-                                                                              Text(foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity!.toString(), style: textStyleWhiteBold16),
+                                                                              Text((foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity ?? 0).toString(), style: textStyleWhiteBold16),
                                                                               const SizedBox(width: 5),
                                                                               InkWell(
                                                                                 onTap: () {
                                                                                   setState(() {
-                                                                                    foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity = foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity! + 1;
+                                                                                    foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity = (foodController.foodsToOrder[index].addition_food_details[indexAddition].quantity ?? 0) + 1;
                                                                                   });
                                                                                 },
                                                                                 child: Container(
@@ -929,17 +997,20 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                 //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
                                 Food foodDetail = Food.empty();
                                 foodDetail.name = foodOrder.name;
-                                foodDetail.food_combo_details = foodOrder.food_combo_details;
-                                foodDetail.addition_food_details = foodOrder.addition_food_details;
+                                foodDetail.food_combo_details =
+                                    foodOrder.food_combo_details;
+                                foodDetail.addition_food_details =
+                                    foodOrder.addition_food_details;
                                 OrderDetail orderDetail = OrderDetail(
                                     order_detail_id: "",
                                     price: Utils.isDateTimeInRange(
                                             foodOrder.temporary_price_from_date,
                                             foodOrder.temporary_price_to_date)
                                         ? (foodOrder.price +
-                                            foodOrder.price_with_temporary!)
+                                            (foodOrder.price_with_temporary ??
+                                                0))
                                         : foodOrder.price,
-                                    quantity: foodOrder.quantity!,
+                                    quantity: foodOrder.quantity ?? 0,
                                     food_status: FOOD_STATUS_IN_CHEF,
                                     food_id: foodOrder.food_id,
                                     is_gift: false,
@@ -975,9 +1046,11 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
                                             additionFood
                                                 .temporary_price_to_date)
                                         ? (additionFood.price +
-                                            additionFood.price_with_temporary!)
+                                                additionFood
+                                                    .price_with_temporary ??
+                                            0)
                                         : additionFood.price,
-                                    quantity: additionFood.quantity!,
+                                    quantity: additionFood.quantity ?? 0,
                                     food_status: FOOD_STATUS_IN_CHEF,
                                     food_id: additionFood.food_id,
                                     is_gift: false,

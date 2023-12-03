@@ -33,9 +33,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         home: Scaffold(
-          body: SafeArea(
-              child: SingleChildScrollView(
-            child: Column(
+          body: SafeArea(child: SingleChildScrollView(child: Obx(() {
+            return Column(
               children: [
                 //ĐƠN HÀNG HÔM NAY
                 SizedBox(
@@ -329,8 +328,8 @@ class _HomePageState extends State<HomePage> {
                       color: Color.fromARGB(255, 248, 246, 246)),
                 ),
               ],
-            ),
-          )),
+            );
+          }))),
         ));
   }
 }

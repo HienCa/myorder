@@ -182,9 +182,22 @@ class _MyDialogCalculator2State extends State<MyDialogCalculator2> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           marginRight10,
-                          ButtonCalculator(
-                            item: '1',
-                            textEditingController: textEditingController,
+                          Expanded(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: transparentColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                boxShadow: [],
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "",
+                                  textAlign: TextAlign.center,
+                                  style: textStyleLabel16,
+                                ),
+                              ),
+                            ),
                           ),
                           marginRight10,
                           ButtonCalculator(
@@ -258,6 +271,8 @@ class _ButtonCalculatorState extends State<ButtonCalculator> {
               }
             } else if (widget.item == 'Xong') {
               Utils.myPopResult(context, widget.textEditingController.text);
+            } else if (widget.item == '.') {
+              //không làm gì hết
             } else {
               //Là số bình thường
               double currentValue =

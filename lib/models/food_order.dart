@@ -27,6 +27,8 @@ class FoodOrder {
   List addition_food_ids = [];
   List<dynamic> addition_food_details = [];
   List<Food> listAddition = []; //món bán kèm
+  double? max_order_limit;
+  double? current_order_count;
   FoodOrder({
     required this.food_id,
     required this.name,
@@ -47,6 +49,8 @@ class FoodOrder {
     required this.food_combo_details,
     required this.addition_food_ids,
     required this.addition_food_details,
+    this.max_order_limit,
+    this.current_order_count,
   });
   FoodOrder.empty()
       : food_id = '',
@@ -109,6 +113,8 @@ class FoodOrder {
       food_combo_details: snapshot['food_combo_details'] ?? [],
       addition_food_ids: snapshot['addition_food_ids'],
       addition_food_details: snapshot['addition_food_details'] ?? [],
+      max_order_limit: snapshot['max_order_limit'] ?? 0,
+      current_order_count: snapshot['current_order_count'] ?? 0,
     );
   }
 }

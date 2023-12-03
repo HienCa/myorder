@@ -370,9 +370,10 @@ class FoodController extends GetxController {
             List<FoodOrder> retValue = [];
             for (var element in query.docs) {
               FoodOrder food = FoodOrder.fromSnap(element);
-              print(food.temporary_price_from_date);
-              print(food.temporary_price_to_date);
-              print("category_code: ${food.category_code}");
+              print("food.max_order_limit");
+              print(food.max_order_limit);
+              print(food.current_order_count);
+
 
               food.isSelected = false;
               food.quantity = 1;
