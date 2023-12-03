@@ -88,16 +88,19 @@ class Utils {
       return '';
     }
   }
+
   //ngày mai
   static DateTime getTomorrow() {
     DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
     return tomorrow;
   }
+
   //Ngày + số lượng
   static DateTime getDateTimeAddDay(int number) {
     DateTime datetime = DateTime.now().add(Duration(days: number));
     return datetime;
   }
+
   //Ngày +1
   static DateTime getDateTimeAddOne(DateTime datetime) {
     DateTime datetimeAdded = datetime.add(const Duration(days: 1));
@@ -110,6 +113,12 @@ class Utils {
 
   static Timestamp convertDatetimeStringToTimestamp(String datetime) {
     return Timestamp.fromDate(DateTime.parse(datetime.toString()));
+  }
+
+  static bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.day == date2.day &&
+        date1.month == date2.month &&
+        date1.year == date2.year;
   }
 
   //TIME BOOKING

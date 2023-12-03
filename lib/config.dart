@@ -185,3 +185,6 @@ void filterTime(int timeOption, DateTime startDate, DateTime endDate) {
 //discount
 const discountMin = 1000; //1,000
 const discountMax = 10000000; //10,000,000
+
+//KEY SharedPreferences
+const DAILY_SALE_KEY = "date_dailySale";

@@ -1026,6 +1026,8 @@ class FoodController extends GetxController {
     }
   }
 
+  
+
   // Block account
   updateToggleActive(
     String Food_id,

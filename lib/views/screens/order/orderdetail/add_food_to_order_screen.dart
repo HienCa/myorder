@@ -37,6 +37,7 @@ class _AddFoodToOrderPageState extends State<AddFoodToOrderPage> {
   FoodController foodController = Get.put(FoodController());
   CategoryController categoryController = Get.put(CategoryController());
   OrderController orderController = Get.put(OrderController());
+
   final TextEditingController slotTextEditingController =
       TextEditingController();
 

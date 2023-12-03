@@ -113,7 +113,7 @@ class _MyDialogCopyDailySaleState extends State<MyDialogCopyDailySale> {
                   //thêm mới
                   bool isExist = true;
                   isExist =
-                      await dailySalesController.searchDailySalesByDateTime(
+                      await dailySalesController.isDailySalesByDateTime(
                           Utils.convertDatetimeStringToTimestamp(
                                   dateApplyEditingController.text)
                               .toDate());

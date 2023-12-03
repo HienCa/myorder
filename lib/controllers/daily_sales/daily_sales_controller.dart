@@ -78,7 +78,7 @@ class DailySalesController extends GetxController {
     }
   }
 
-  Future<bool> searchDailySalesByDateTime(DateTime targetDateTime) async {
+  Future<bool> isDailySalesByDateTime(DateTime targetDateTime) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('dailySales')
@@ -93,6 +93,87 @@ class DailySalesController extends GetxController {
     } catch (error) {
       print('Lỗi khi truy vấn: $error');
       return false;
+    }
+  }
+
+  Future<void> setUpDailySalesByDateTime(DateTime targetDateTime) async {
+    //Tìm daily sale theo ngày hiện tại
+    //lấy thông tin chi tiết tất cả món của daily sale detail (đã có sẵn food_id và quantity)
+    //cập nhật quantity cho tất cả món
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('dailySales')
+          .where('date_apply', isEqualTo: Timestamp.fromDate(targetDateTime))
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        print("TỒN TẠI DAILY SALE");
+        DailySales dailySales = DailySales.fromSnap(querySnapshot.docs.first);
+
+        //thông tin chi tiết daily sale
+        var dailySaleDetailCollection = FirebaseFirestore.instance
+            .collection('dailySales')
+            .doc(dailySales.daily_sale_id)
+            .collection('dailySaleDetails');
+
+        var dailySaleDetailCollectionQuery =
+            await dailySaleDetailCollection.get();
+
+        for (var dailySaleDetailData in dailySaleDetailCollectionQuery.docs) {
+          DailySaleDetail dailySaleDetai =
+              DailySaleDetail.fromSnap(dailySaleDetailData);
+
+          //cập nhật số lượng tối đa có thể bán trong ngày theo daily sale
+          updateDailySaleForFood(dailySaleDetai.food_id,
+              dailySaleDetai.quantity_for_sell.toDouble());
+        }
+        print('ĐÃ HOÀN TẤT THIẾT LẬP DAILY SALE');
+      } else {}
+    } catch (error) {
+      print('Lỗi khi truy vấn: $error');
+    }
+  }
+
+  Future<void> reSetDailySale() async {
+    //cho về 0
+    try {
+      var foodCollection = FirebaseFirestore.instance.collection('foods');
+      var foodCollectionQuery = await foodCollection.get();
+
+      for (var food in foodCollectionQuery.docs) {
+        Food foodData = Food.fromSnap(food);
+        print(foodData.food_id);
+
+        await firestore.collection('foods').doc(foodData.food_id).update({
+          "max_order_limit": 0,
+          "current_order_count": 0,
+        });
+      }
+    } catch (error) {
+      print('Lỗi khi truy vấn: $error');
+    }
+  }
+
+  updateDailySaleForFood(
+    String food_id,
+    double max_order_limit,
+  ) async {
+    try {
+      if (food_id != "") {
+        await firestore.collection('foods').doc(food_id).update({
+          "max_order_limit": max_order_limit,
+          "current_order_count": max_order_limit,
+        });
+      }
+
+      update();
+    } catch (e) {
+      Get.snackbar(
+        'Cập nhật thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
     }
   }
 
