@@ -768,7 +768,7 @@ class _DashboardBookingState extends State<DashboardBooking> {
                                   child: MyTextFieldIconDateTime(
                                       textEditingController:
                                           timeTextEditingController,
-                                      placeholder: 'Thời gian đặt bàn',
+                                      placeholder: 'Thời gian nhận bàn',
                                       height: 30,
                                       isBorder: false),
                                 )

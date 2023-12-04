@@ -27,8 +27,8 @@ class FoodOrder {
   List addition_food_ids = [];
   List<dynamic> addition_food_details = [];
   List<Food> listAddition = []; //món bán kèm
-  double? max_order_limit;
-  double? current_order_count;
+  int? max_order_limit;
+  int? current_order_count;
   FoodOrder({
     required this.food_id,
     required this.name,

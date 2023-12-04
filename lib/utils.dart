@@ -90,6 +90,12 @@ class Utils {
   }
 
   //ngày mai
+  static DateTime getDateTimeNow() {
+    DateTime now = Timestamp.now().toDate();
+    now = DateTime(now.year, now.month, now.day, 0, 0, 0, 0);
+    return now;
+  }
+  //ngày mai
   static DateTime getTomorrow() {
     DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
     return tomorrow;

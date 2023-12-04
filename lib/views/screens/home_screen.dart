@@ -61,8 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
             dailySalesController.reSetDailySale();
             Utils.showStylishDialog(
                 context,
-                "LƯU Ý",
-                "QUÁN CHƯA THIẾT LẬP SỐ LƯỢNG BÁN CỦA CÁC MÓN ĂN",
+                "CẢNH BÁO",
+                "QUÁN CHƯA THIẾT LẬP SỐ LƯỢNG BÁN CỦA CÁC MÓN ĂN HÔM NAY.\n VUI LÒNG NHẮC QUẢN LÝ THIẾT LẬP NGAY!",
                 StylishDialogType.WARNING);
           }
         }
@@ -78,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
         dailySalesController.reSetDailySale();
         Utils.showStylishDialog(
             context,
-            "LƯU Ý",
-            "QUÁN CHƯA THIẾT LẬP SỐ LƯỢNG BÁN CỦA CÁC MÓN ĂN",
+            "CẢNH BÁO",
+            "QUÁN CHƯA THIẾT LẬP SỐ LƯỢNG BÁN CỦA CÁC MÓN ĂN HÔM NAY.\nVUI LÒNG NHẮC QUẢN LÝ THIẾT LẬP NGAY!",
             StylishDialogType.WARNING);
       }
     }

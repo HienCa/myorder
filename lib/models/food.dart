@@ -24,8 +24,8 @@ class Food {
   int is_addition_food;
 
   //quản lý số lượng món trong thời gian chỉ định
-  double max_order_limit;
-  double current_order_count;
+  int max_order_limit;
+  int current_order_count;
   Timestamp? quanity_start_date_time;
   Timestamp? quanity_end_date_time;
   Food({

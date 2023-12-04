@@ -33,6 +33,7 @@ class OrderdetailPage extends StatefulWidget {
 }
 
 class _OrderdetailPageState extends State<OrderdetailPage> {
+
   OrderController orderController = Get.put(OrderController());
   //Load trước danh sách vat và discount trước khi vào thanh toán (nếu không sẽ nhận về mảng rỗng vì get discounts và vats mà chưa từng gọi trong controller)
   DiscountController discountController = Get.put(DiscountController());
@@ -49,9 +50,6 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
 
     discountController.getActiveDiscounts();
     vatController.getActiveVats();
-
-    print("orderDetailOriginArray: $orderDetailOriginArray");
-    print("orderDetailOriginArray: ${orderDetailOriginArray.length}");
   }
 
   @override
@@ -158,6 +156,8 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    isAnyFoodCooking = Utils.isAnyFoodCooking(orderDetailOriginArray);
+
     return Scaffold(
         appBar: AppBar(
           leading: InkWell(
@@ -1388,6 +1388,7 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                         'BẾP/BAR',
                                         'Yêu cầu dừng chế biến thành công!',
                                         StylishDialogType.SUCCESS);
+                                    isAnyFoodCooking = false;
                                   });
                                 }
                               },
@@ -1488,15 +1489,17 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               InkWell(
                                 onTap: () => {
                                   // thêm món -> không phải món tặng
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AddFoodToOrderPage(
-                                                table: widget.order.table!,
-                                                booking: false,
-                                                isGift: false,
-                                              )))
+                                 
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddFoodToOrderPage(
+                                                  table: widget.order.table!,
+                                                  booking: false,
+                                                  isGift: false,
+                                                )))
+                                  
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(5),
@@ -1555,15 +1558,17 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               InkWell(
                                 onTap: () => {
                                   // là món tặng -> isGift = true
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AddGiftFoodToOrderPage(
-                                                table: widget.order.table!,
-                                                booking: false,
-                                                isGift: true,
-                                              )))
+                                 
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddGiftFoodToOrderPage(
+                                                  table: widget.order.table!,
+                                                  booking: false,
+                                                  isGift: true,
+                                                )))
+                                  
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(5),

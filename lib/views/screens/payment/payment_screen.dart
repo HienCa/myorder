@@ -829,7 +829,7 @@ class _PaymentPageState extends State<PaymentPage> {
                         ),
                         child: const Center(
                           child: Text(
-                            "IN HÓA ĐƠN VÀ TÍNH TIỀN",
+                            "XÁC NHẬN THANH TOÁN",
                             style: textStyleWhiteBold20,
                           ),
                         )),

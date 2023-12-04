@@ -93,7 +93,7 @@ class _MoveTablePageState extends State<MoveTablePage> {
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.55,
+                      height: MediaQuery.of(context).size.height * 0.65,
                       child: ResponsiveGridList(
                           desiredItemWidth: 100,
                           minSpacing: 10,

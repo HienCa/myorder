@@ -1,15 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/daily_sales/daily_sales_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
 import 'package:myorder/controllers/tables/tables_controller.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/area/dialogs/dialog_confirm_table_booking.dart';
 import 'package:myorder/views/screens/order/actions/merge/dialog_confirm_cancel_merge_table.dart';
 import 'package:myorder/views/screens/order/orderdetail/add_food_to_order_screen.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:myorder/models/table.dart' as model;
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class TableItem extends StatefulWidget {
   final String? areaIdSelected;
@@ -23,6 +28,7 @@ class _TableItemState extends State<TableItem> {
   int selectedIndex = 0;
   TableController tableController = Get.put(TableController());
   OrderController orderController = Get.put(OrderController());
+  DailySalesController dailySalesController = Get.put(DailySalesController());
 
   @override
   void initState() {
@@ -60,7 +66,7 @@ class _TableItemState extends State<TableItem> {
           minSpacing: 10,
           children: List.generate(tables.length, (index) => index).map((i) {
             return InkWell(
-              onTap: () {
+              onTap: () async {
                 if (tables[i].status == TABLE_STATUS_MERGED) {
                   //MERGE
                   showDialog(
@@ -83,15 +89,24 @@ class _TableItemState extends State<TableItem> {
                   );
                 } else {
                   //EMPTY AND SERVING
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AddFoodToOrderPage(
-                              table: tables[i],
-                              booking: true,
-                              isGift: false,
-                            )),
-                  );
+                  if (await dailySalesController
+                      .isDailySalesByDateTime(Utils.getDateTimeNow())) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddFoodToOrderPage(
+                                table: tables[i],
+                                booking: true,
+                                isGift: false,
+                              )),
+                    );
+                  } else {
+                    Utils.showStylishDialog(
+                        context, 
+                        "CẢNH BÁO",
+                        "QUÁN CHƯA THIẾT LẬP SỐ LƯỢNG BÁN CỦA CÁC MÓN ĂN HÔM NAY.\nVUI LÒNG NHẮC QUẢN LÝ THIẾT LẬP NGAY!",
+                        StylishDialogType.WARNING);
+                  }
                 }
               },
               child: Container(
