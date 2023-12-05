@@ -365,8 +365,8 @@ class _ManagementUpdateQuantityForSellScreenState
                                   context: context,
                                   builder: (BuildContext context) {
                                     return CustomDialogUpdateDailySaleDetail(
-                                        dailySaleId:
-                                            widget.dailySale.daily_sale_id);
+                                        dailySale:
+                                            widget.dailySale);
                                   },
                                 );
                                 if (result == 'success') {

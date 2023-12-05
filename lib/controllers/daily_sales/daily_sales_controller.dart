@@ -125,7 +125,7 @@ class DailySalesController extends GetxController {
 
           //cập nhật số lượng tối đa có thể bán trong ngày theo daily sale
           updateDailySaleForFood(dailySaleDetai.food_id,
-              dailySaleDetai.quantity_for_sell.toDouble());
+              dailySaleDetai.quantity_for_sell.toInt());
         }
         print('ĐÃ HOÀN TẤT THIẾT LẬP DAILY SALE');
       } else {}
@@ -142,7 +142,6 @@ class DailySalesController extends GetxController {
 
       for (var food in foodCollectionQuery.docs) {
         Food foodData = Food.fromSnap(food);
-        print(foodData.food_id);
 
         await firestore.collection('foods').doc(foodData.food_id).update({
           "max_order_limit": 0,
@@ -156,7 +155,7 @@ class DailySalesController extends GetxController {
 
   updateDailySaleForFood(
     String food_id,
-    double max_order_limit,
+    int max_order_limit,
   ) async {
     try {
       if (food_id != "") {
@@ -190,7 +189,6 @@ class DailySalesController extends GetxController {
           List<DailySales> retValue = [];
           for (var element in query.docs) {
             retValue.add(DailySales.fromSnap(element));
-            print(element);
           }
           return retValue;
         },
@@ -313,6 +311,9 @@ class DailySalesController extends GetxController {
               .collection('dailySaleDetails')
               .doc(idDetail)
               .set(dailySaleDetail.toJson());
+        }
+        if(Utils.isSameDateFromTimstamp(date_apply, Timestamp.now())){
+           setUpDailySalesByDateTime(date_apply.toDate());
         }
       } else {
         Get.snackbar(

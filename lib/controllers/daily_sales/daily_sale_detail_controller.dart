@@ -3,10 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Correct import for Fir
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/daily_sales/daily_sales_controller.dart';
 import 'package:myorder/models/daily_sales.dart';
 import 'package:myorder/models/food.dart';
+import 'package:myorder/utils.dart';
 
 class DailySaleDetailController extends GetxController {
+  DailySalesController dailySaleController = Get.put(DailySalesController());
   final Rx<List<DailySaleDetail>> _dailySaleDetails =
       Rx<List<DailySaleDetail>>([]);
   List<DailySaleDetail> get dailySaleDetails => _dailySaleDetails.value;
@@ -80,20 +83,24 @@ class DailySaleDetailController extends GetxController {
   }
 
   updatedailySaleDetail(
-      String dailySaleId, List<DailySaleDetail> dailySaleDetails) async {
+      DailySales dailySale, List<DailySaleDetail> dailySaleDetails) async {
     try {
       for (DailySaleDetail dailySaleDetail in dailySaleDetails) {
         if (dailySaleDetail.new_quantity_for_sell !=
             dailySaleDetail.quantity_for_sell) {
           await firestore
               .collection('dailySales')
-              .doc(dailySaleId)
+              .doc(dailySale.daily_sale_id)
               .collection('dailySaleDetails')
               .doc(dailySaleDetail.daily_sale_detail_id)
               .update({
             "quantity_for_sell": dailySaleDetail.new_quantity_for_sell,
           });
         }
+      }
+      if (Utils.isSameDateFromTimstamp(dailySale.date_apply, Timestamp.now())) {
+        dailySaleController
+            .setUpDailySalesByDateTime(dailySale.date_apply.toDate());
       }
 
       update();

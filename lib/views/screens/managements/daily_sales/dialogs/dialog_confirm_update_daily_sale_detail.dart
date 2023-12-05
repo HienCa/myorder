@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/daily_sales/daily_sale_detail_controller.dart';
+import 'package:myorder/models/daily_sales.dart';
 
 class CustomDialogUpdateDailySaleDetail extends StatefulWidget {
-  final String dailySaleId;
+  final DailySales dailySale;
   const CustomDialogUpdateDailySaleDetail({
     Key? key,
-    required this.dailySaleId,
+    required this.dailySale,
   }) : super(key: key);
 
   @override
@@ -94,7 +95,7 @@ class _CustomDialogUpdateDailySaleDetailState
                           InkWell(
                             onTap: () => {
                               dailySaleDetailController.updatedailySaleDetail(
-                                  widget.dailySaleId,
+                                  widget.dailySale,
                                   dailySaleDetailController.dailySaleDetails),
                               Navigator.pop(context, 'success')
                             },
