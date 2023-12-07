@@ -34,8 +34,7 @@ class _OrderPageState extends State<OrderPage> {
   void initState() {
     super.initState();
 
-    orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_SERVING);
-    orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_BOOKING);
+    orderController.getOrdersAllStatus(defaultEmployee, keySearch);
   }
 
   @override

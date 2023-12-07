@@ -33,6 +33,7 @@ class _TableItemState extends State<TableItem> {
   @override
   void initState() {
     super.initState();
+    orderController.getOrdersAllStatus(defaultEmployee, "");
   }
 
   //allArea-hienca mặc định lấy tất cả các table
@@ -102,7 +103,7 @@ class _TableItemState extends State<TableItem> {
                     );
                   } else {
                     Utils.showStylishDialog(
-                        context, 
+                        context,
                         "CẢNH BÁO",
                         "QUÁN CHƯA THIẾT LẬP SỐ LƯỢNG BÁN CỦA CÁC MÓN ĂN HÔM NAY.\nVUI LÒNG NHẮC QUẢN LÝ THIẾT LẬP NGAY!",
                         StylishDialogType.WARNING);

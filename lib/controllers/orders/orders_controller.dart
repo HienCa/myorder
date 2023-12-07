@@ -54,7 +54,7 @@ class OrderController extends GetxController {
   final Rx<List<model.Order>> _orders = Rx<List<model.Order>>([]);
   List<model.Order> get orders => _orders.value;
   getOrders(
-      String employeeIdSelected, String keySearch, int orderStatus) async {
+      String employeeIdSelected, String keySearch, int? orderStatus) async {
     if (keySearch.isEmpty && employeeIdSelected == defaultEmployee) {
       //lấy tất cả don hang
       print("lấy tất cả");
@@ -523,6 +523,614 @@ class OrderController extends GetxController {
           .collection('orders')
           .where("active", isEqualTo: ACTIVE)
           .where('order_status', isEqualTo: orderStatus)
+          .orderBy('name')
+          .snapshots()
+          .asyncMap((QuerySnapshot query) async {
+        List<model.Order> retVal = [];
+        for (var elem in query.docs) {
+          String name = elem['table_id'];
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            String order_id = elem["order_id"].toString();
+
+            model.Order order = model.Order.fromSnap(elem);
+
+            //Thông tin nhân viên phụ trách đơn hàng
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(order.employee_id)
+                .get();
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                order.employee_name = name;
+              }
+            }
+            print("Nhân viên order4: ${order.employee_name}");
+
+            // Truy vấn collection orderDetailArrayList
+            var orderDetailCollection = firestore
+                .collection('orders')
+                .doc(order_id)
+                .collection('orderDetails');
+
+            // Tính tổng số tiền cho đơn hàng
+            List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
+            var orderDetailQuery = await orderDetailCollection.get();
+            for (var doc in orderDetailQuery.docs) {
+              var orderDetail = OrderDetail.fromSnap(doc);
+
+              // lấy thông tin của món ăn
+              DocumentSnapshot foodCollection = await firestore
+                  .collection('foods')
+                  .doc(orderDetail.food_id)
+                  .get();
+              if (foodCollection.exists) {
+                final foodData = foodCollection.data();
+                if (foodData != null && foodData is Map<String, dynamic>) {
+                  modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                  orderDetail.food = food;
+                }
+              }
+
+              orderDetails.add(orderDetail);
+            }
+
+            order.order_details = orderDetails; // danh sách chi tiết đơn hàng
+            if (order.total_amount < 0) {
+              order.total_amount = 0;
+            }
+            // lấy tên bàn, tên bàn đã gộp
+            String table_id = elem['table_id'];
+            DocumentSnapshot tableCollection =
+                await firestore.collection('tables').doc(table_id).get();
+            if (tableCollection.exists) {
+              final tableData = tableCollection.data();
+              if (tableData != null && tableData is Map<String, dynamic>) {
+                String name = tableData['name'] ?? '';
+                int total_slot = tableData['total_slot'] ?? '';
+                int status = tableData['status'] ?? '';
+                int active = tableData['active'] ?? '';
+                String area_id = tableData['area_id'] ?? '';
+                order.table = table.Table(
+                    table_id: table_id,
+                    name: name,
+                    total_slot: total_slot,
+                    status: status,
+                    active: active,
+                    area_id: area_id);
+                print(name);
+              }
+              if (order.customer_time_booking != null &&
+                  order.order_status == ORDER_STATUS_BOOKING) {
+                //CHECK BOOKING
+                String idOrderHistory = Utils.generateUUID();
+                String description = '';
+                OrderHistory orderHistory = OrderHistory(
+                    history_id: idOrderHistory,
+                    order_id: order_id,
+                    employee_id: authController.user.uid,
+                    employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                    description: description,
+                    create_at: Timestamp.now());
+                if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                  if (order.table!.status == TABLE_STATUS_EMPTY) {
+                    // cập nhật trạng thái don hang empty -> serving
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_BOOKING, // đang booking
+                    });
+
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  } else {
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại.\\\n Bàn đã booking đang được phục vụ đơn hàng khác.';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
+                } else if (Utils.isAfterOneHourFromBookingTime(
+                        order.customer_time_booking) &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  //KIỂM TRA SAU GIỜ BOOKING 1H
+                  await firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "active": DEACTIVE,
+                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
+                  });
+                  // cập nhật trạng thái bàn empty -> trống
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_EMPTY, // đang trống
+                  });
+
+                  description =
+                      'Đơn hàng booking đã hủy (khách không tới quán)';
+                  orderHistory.description = description;
+                  orderHistoryController.createOrderHistory(orderHistory);
+                }
+              }
+            }
+            retVal.add(order);
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
+  getOrdersAllStatus(
+      String employeeIdSelected, String keySearch) async {
+    if (keySearch.isEmpty && employeeIdSelected == defaultEmployee) {
+      //lấy tất cả don hang
+      print("lấy tất cả");
+
+      _orders.bindStream(
+        firestore
+            .collection('orders')
+            .where("active", isEqualTo: ACTIVE)
+            .snapshots()
+            .asyncMap(
+          (QuerySnapshot query) async {
+            List<model.Order> retValue = [];
+            for (var element in query.docs) {
+              String order_id = element["order_id"].toString();
+
+              model.Order order = model.Order.fromSnap(element);
+
+              //Thông tin nhân viên phụ trách đơn hàng
+              DocumentSnapshot employeeCollection = await firestore
+                  .collection('employees')
+                  .doc(order.employee_id)
+                  .get();
+              if (employeeCollection.exists) {
+                final employeeData = employeeCollection.data();
+                if (employeeData != null &&
+                    employeeData is Map<String, dynamic>) {
+                  String name = employeeData['name'] ?? '';
+                  order.employee_name = name;
+                }
+              }
+              print("Nhân viên order1: ${order.employee_name}");
+
+              // Truy vấn collection orderDetailArrayList
+              var orderDetailCollection = firestore
+                  .collection('orders')
+                  .doc(order_id)
+                  .collection('orderDetails');
+
+              // Tính tổng số tiền cho đơn hàng
+              List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
+              var orderDetailQuery = await orderDetailCollection.get();
+              for (var doc in orderDetailQuery.docs) {
+                var orderDetail = OrderDetail.fromSnap(doc);
+                // lấy thông tin của món ăn
+                DocumentSnapshot foodCollection = await firestore
+                    .collection('foods')
+                    .doc(orderDetail.food_id)
+                    .get();
+                if (foodCollection.exists) {
+                  final foodData = foodCollection.data();
+                  if (foodData != null && foodData is Map<String, dynamic>) {
+                    modelFood.Food food =
+                        modelFood.Food.fromSnap(foodCollection);
+                    orderDetail.food = food;
+                  }
+                }
+                orderDetails.add(orderDetail);
+                //không tính món đã hủy
+              }
+
+              if (order.total_amount < 0) {
+                order.total_amount = 0;
+              }
+              order.order_details = orderDetails; // danh sách chi tiết đơn hàng
+              // lấy tên bàn, tên bàn đã gộp
+              String table_id = element['table_id'];
+              DocumentSnapshot tableCollection =
+                  await firestore.collection('tables').doc(table_id).get();
+              if (tableCollection.exists) {
+                final tableData = tableCollection.data();
+                if (tableData != null && tableData is Map<String, dynamic>) {
+                  String name = tableData['name'] ?? '';
+                  int total_slot = tableData['total_slot'] ?? '';
+                  int status = tableData['status'] ?? '';
+                  int active = tableData['active'] ?? '';
+                  String area_id = tableData['area_id'] ?? '';
+                  order.table = table.Table(
+                      table_id: table_id,
+                      name: name,
+                      total_slot: total_slot,
+                      status: status,
+                      active: active,
+                      area_id: area_id);
+                }
+              
+
+                //CHECK BOOKING
+                if (order.customer_time_booking != null &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  print('order.customer_time_booking != null');
+                  print(order.customer_time_booking != null);
+                  String idOrderHistory = Utils.generateUUID();
+                  String description = '';
+                  OrderHistory orderHistory = OrderHistory(
+                      history_id: idOrderHistory,
+                      order_id: order_id,
+                      employee_id: authController.user.uid,
+                      employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                      description: description,
+                      create_at: Timestamp.now());
+                  if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                    //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                    //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                    if (order.table!.status == TABLE_STATUS_EMPTY) {
+                      // cập nhật trạng thái don hang empty -> serving
+                      await firestore
+                          .collection('tables')
+                          .doc(table_id)
+                          .update({
+                        "status": TABLE_STATUS_BOOKING, // đang booking
+                      });
+
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    } else {
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại. Bàn đã booking đang được phục vụ đơn hàng khác.';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    }
+                  } else if (Utils.isAfterOneHourFromBookingTime(
+                          order.customer_time_booking) &&
+                      order.order_status == ORDER_STATUS_BOOKING) {
+                    //KIỂM TRA SAU GIỜ BOOKING 1H
+                    await firestore
+                        .collection('orders')
+                        .doc(order.order_id)
+                        .update({
+                      "active": DEACTIVE,
+                      "order_status": ORDER_STATUS_CANCEL, // đã hủy
+                    });
+                    // cập nhật trạng thái bàn empty -> trống
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_EMPTY, // đang trống
+                    });
+
+                    description =
+                        'Đơn hàng booking đã hủy (khách không tới quán)';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
+                }
+
+                //Tạo lịch sử đơn hàng
+              }
+
+              retValue.add(order);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (employeeIdSelected.isNotEmpty && keySearch.isEmpty) {
+      // chỉ theo nhan vien - không search
+      print("chỉ theo nhan vien - không search");
+
+      _orders.bindStream(
+        firestore
+            .collection('orders')
+            .where('employee_id', isEqualTo: employeeIdSelected)
+            .where("active", isEqualTo: ACTIVE)
+            .snapshots()
+            .asyncMap(
+          (QuerySnapshot query) async {
+            List<model.Order> retValue = [];
+            for (var element in query.docs) {
+              String order_id = element["order_id"].toString();
+
+              model.Order order = model.Order.fromSnap(element);
+
+              //Thông tin nhân viên phụ trách đơn hàng
+              DocumentSnapshot employeeCollection = await firestore
+                  .collection('employees')
+                  .doc(order.employee_id)
+                  .get();
+              if (employeeCollection.exists) {
+                final employeeData = employeeCollection.data();
+                if (employeeData != null &&
+                    employeeData is Map<String, dynamic>) {
+                  String name = employeeData['name'] ?? '';
+                  order.employee_name = name;
+                }
+              }
+              print("Nhân viên order2: ${order.employee_name}");
+
+              // Truy vấn collection orderDetailArrayList
+              var orderDetailCollection = firestore
+                  .collection('orders')
+                  .doc(order_id)
+                  .collection('orderDetails');
+
+              // Tính tổng số tiền cho đơn hàng
+              List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
+              var orderDetailQuery = await orderDetailCollection.get();
+              for (var doc in orderDetailQuery.docs) {
+                var orderDetail = OrderDetail.fromSnap(doc);
+                // lấy thông tin của món ăn
+                DocumentSnapshot foodCollection = await firestore
+                    .collection('foods')
+                    .doc(orderDetail.food_id)
+                    .get();
+                if (foodCollection.exists) {
+                  final foodData = foodCollection.data();
+                  if (foodData != null && foodData is Map<String, dynamic>) {
+                    modelFood.Food food =
+                        modelFood.Food.fromSnap(foodCollection);
+                    orderDetail.food = food;
+                  }
+                }
+                orderDetails.add(orderDetail);
+              }
+
+              order.order_details = orderDetails; // danh sách chi tiết đơn hàng
+              if (order.total_amount < 0) {
+                order.total_amount = 0;
+              }
+              // lấy tên bàn, tên bàn đã gộp
+              String table_id = element['table_id'];
+              DocumentSnapshot tableCollection =
+                  await firestore.collection('tables').doc(table_id).get();
+              if (tableCollection.exists) {
+                final tableData = tableCollection.data();
+                if (tableData != null && tableData is Map<String, dynamic>) {
+                  String name = tableData['name'] ?? '';
+                  int total_slot = tableData['total_slot'] ?? '';
+                  int status = tableData['status'] ?? '';
+                  int active = tableData['active'] ?? '';
+                  String area_id = tableData['area_id'] ?? '';
+                  order.table = table.Table(
+                      table_id: table_id,
+                      name: name,
+                      total_slot: total_slot,
+                      status: status,
+                      active: active,
+                      area_id: area_id);
+                  print(name);
+                }
+                if (order.customer_time_booking != null &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  //CHECK BOOKING
+                  print('order.customer_time_booking != null');
+                  print(order.customer_time_booking != null);
+                  String idOrderHistory = Utils.generateUUID();
+                  String description = '';
+                  OrderHistory orderHistory = OrderHistory(
+                      history_id: idOrderHistory,
+                      order_id: order_id,
+                      employee_id: authController.user.uid,
+                      employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                      description: description,
+                      create_at: Timestamp.now());
+                  if (Utils.isNearBookingTime(order.customer_time_booking)) {
+                    //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                    //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                    if (order.table!.status == TABLE_STATUS_EMPTY) {
+                      // cập nhật trạng thái don hang empty -> serving
+                      await firestore
+                          .collection('tables')
+                          .doc(table_id)
+                          .update({
+                        "status": TABLE_STATUS_BOOKING, // đang booking
+                      });
+
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    } else {
+                      description =
+                          'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại. Bàn đã booking đang được phục vụ đơn hàng khác.';
+                      orderHistory.description = description;
+                      orderHistoryController.createOrderHistory(orderHistory);
+                    }
+                  } else if (Utils.isAfterOneHourFromBookingTime(
+                          order.customer_time_booking) &&
+                      order.order_status == ORDER_STATUS_BOOKING) {
+                    //KIỂM TRA SAU GIỜ BOOKING 1H
+                    await firestore
+                        .collection('orders')
+                        .doc(order.order_id)
+                        .update({
+                      "active": DEACTIVE,
+                      "order_status": ORDER_STATUS_CANCEL, // đã hủy
+                    });
+                    // cập nhật trạng thái bàn empty -> trống
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_EMPTY, // đang trống
+                    });
+
+                    description =
+                        'Đơn hàng booking đã hủy (khách không tới quán)';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
+                  //Tạo lịch sử đơn hàng
+                }
+              }
+              retValue.add(order);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else if (employeeIdSelected.isNotEmpty &&
+        employeeIdSelected != defaultEmployee &&
+        keySearch.isNotEmpty) {
+      // theo nhan vien và có search
+      print("theo nhan vien và có search");
+
+      _orders.bindStream(firestore
+          .collection('orders')
+          .where('employee_id', isEqualTo: employeeIdSelected)
+          .where("active", isEqualTo: ACTIVE)
+          .snapshots()
+          .asyncMap((QuerySnapshot query) async {
+        List<model.Order> retVal = [];
+        for (var elem in query.docs) {
+          String table_id = elem['table_id'];
+          String name = elem['table_id'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+
+          if (name.contains(search)) {
+            String order_id = elem["order_id"].toString();
+
+            model.Order order = model.Order.fromSnap(elem);
+
+            //Thông tin nhân viên phụ trách đơn hàng
+            DocumentSnapshot employeeCollection = await firestore
+                .collection('employees')
+                .doc(order.employee_id)
+                .get();
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                order.employee_name = name;
+              }
+            }
+            print("Nhân viên order3: ${order.employee_name}");
+
+            // Truy vấn collection orderDetailArrayList
+            var orderDetailCollection = firestore
+                .collection('orders')
+                .doc(order_id)
+                .collection('orderDetails');
+
+            // Tính tổng số tiền cho đơn hàng
+            List<OrderDetail> orderDetails = []; //danh sách chi tiết đơn hàng
+            var orderDetailQuery = await orderDetailCollection.get();
+            for (var doc in orderDetailQuery.docs) {
+              var orderDetail = OrderDetail.fromSnap(doc);
+              // lấy thông tin của món ăn
+              DocumentSnapshot foodCollection = await firestore
+                  .collection('foods')
+                  .doc(orderDetail.food_id)
+                  .get();
+              if (foodCollection.exists) {
+                final foodData = foodCollection.data();
+                if (foodData != null && foodData is Map<String, dynamic>) {
+                  modelFood.Food food = modelFood.Food.fromSnap(foodCollection);
+                  orderDetail.food = food;
+                }
+              }
+              orderDetails.add(orderDetail);
+            }
+
+            order.order_details = orderDetails; // danh sách chi tiết đơn hàng
+            if (order.total_amount < 0) {
+              order.total_amount = 0;
+            }
+            // lấy tên bàn, tên bàn đã gộp
+            String table_id = elem['table_id'];
+            DocumentSnapshot tableCollection =
+                await firestore.collection('tables').doc(table_id).get();
+            if (tableCollection.exists) {
+              final tableData = tableCollection.data();
+              if (tableData != null && tableData is Map<String, dynamic>) {
+                String name = tableData['name'] ?? '';
+                int total_slot = tableData['total_slot'] ?? '';
+                int status = tableData['status'] ?? '';
+                int active = tableData['active'] ?? '';
+                String area_id = tableData['area_id'] ?? '';
+                order.table = table.Table(
+                    table_id: table_id,
+                    name: name,
+                    total_slot: total_slot,
+                    status: status,
+                    active: active,
+                    area_id: area_id);
+                print(name);
+              }
+              if (order.customer_time_booking != null) {
+                //CHECK BOOKING
+                String idOrderHistory = Utils.generateUUID();
+                String description = '';
+                OrderHistory orderHistory = OrderHistory(
+                    history_id: idOrderHistory,
+                    order_id: order_id,
+                    employee_id: authController.user.uid,
+                    employee_name: order.employee_name ?? 'Chủ nhà hàng',
+                    description: description,
+                    create_at: Timestamp.now());
+                if (order.customer_time_booking != null &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  //KIỂM TRA TRƯỚC GIỜ BOOKING 30P VÀ TRỄ 1H
+
+                  //- Nếu không EMPTY thì không cập nhật -> Yêu cầu nhân viên đổi bàn khác phù hợp -> xin lỗi khách -> sự bất tiện của quán
+                  if (order.table!.status == TABLE_STATUS_EMPTY) {
+                    // cập nhật trạng thái don hang empty -> serving
+                    await firestore.collection('tables').doc(table_id).update({
+                      "status": TABLE_STATUS_BOOKING, // đang booking
+                    });
+
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking]';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  } else {
+                    description =
+                        'Chuyển trạng thái đơn hàng [Bàn trống] -> [Bàn Booking] thất bại. Bàn đã booking đang được phục vụ đơn hàng khác.';
+                    orderHistory.description = description;
+                    orderHistoryController.createOrderHistory(orderHistory);
+                  }
+                } else if (Utils.isAfterOneHourFromBookingTime(
+                        order.customer_time_booking) &&
+                    order.order_status == ORDER_STATUS_BOOKING) {
+                  //KIỂM TRA SAU GIỜ BOOKING 1H
+                  await firestore
+                      .collection('orders')
+                      .doc(order.order_id)
+                      .update({
+                    "active": DEACTIVE,
+                    "order_status": ORDER_STATUS_CANCEL, // đã hủy
+                  });
+                  // cập nhật trạng thái bàn empty -> trống
+                  await firestore.collection('tables').doc(table_id).update({
+                    "status": TABLE_STATUS_EMPTY, // đang trống
+                  });
+
+                  description =
+                      'Đơn hàng booking đã hủy (khách không tới quán)';
+                  orderHistory.description = description;
+                  orderHistoryController.createOrderHistory(orderHistory);
+                }
+                //Tạo lịch sử đơn hàng
+              }
+            }
+
+            retVal.add(order);
+          }
+        }
+        return retVal;
+      }));
+    } else if (employeeIdSelected == defaultEmployee && keySearch.isNotEmpty) {
+      //tìm kiếm theo nhan vien
+      print("tìm kiếm theo nhan vien");
+      _orders.bindStream(firestore
+          .collection('orders')
+          .where("active", isEqualTo: ACTIVE)
           .orderBy('name')
           .snapshots()
           .asyncMap((QuerySnapshot query) async {

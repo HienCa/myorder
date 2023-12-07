@@ -55,7 +55,7 @@ class _CustomDialogUpdateDailySaleDetailState
                   children: [
                     const Center(
                       child: Text(
-                        'THÊM NGUYÊN LIỆU CHẾ BIẾN',
+                        'CẬP NHẬT LIỆU CHẾ BIẾN',
                         style: textStylePrimaryBold,
                       ),
                     ),
@@ -63,7 +63,7 @@ class _CustomDialogUpdateDailySaleDetailState
                     const ListTile(
                       title: Center(
                         child: Text(
-                          "Bạn có chắc chắn muốn thêm nguyên liệu này?",
+                          "Bạn có chắc chắn muốn cập nhật nguyên liệu này?",
                           style: textStyleBlackRegular,
                         ),
                       ),
