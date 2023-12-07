@@ -140,6 +140,7 @@ class OrderController extends GetxController {
                       active: active,
                       area_id: area_id);
                 }
+              
 
                 //CHECK BOOKING
                 if (order.customer_time_booking != null &&

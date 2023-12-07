@@ -14,7 +14,7 @@ import 'package:myorder/views/screens/order/actions/split/food/choose_target_tab
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
- 
+
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
 
@@ -35,6 +35,7 @@ class _OrderPageState extends State<OrderPage> {
     super.initState();
 
     orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_SERVING);
+    orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_BOOKING);
   }
 
   @override
