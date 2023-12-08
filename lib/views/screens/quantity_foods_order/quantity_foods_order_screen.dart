@@ -4,10 +4,7 @@ import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
-import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/quantity_foods_order/dialog_update_quantity_food.dart';
 import 'package:responsive_grid/responsive_grid.dart';
-import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementQuantityFoodOrderPage extends StatefulWidget {
   const ManagementQuantityFoodOrderPage({Key? key}) : super(key: key);

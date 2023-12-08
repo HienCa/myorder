@@ -48,21 +48,21 @@ class MyCacheManager {
 
     return null;
   }
-  
-  //Object
-  // Future<void> addToCache(String key, dynamic data) async {
+
+//  // Object
+  // Future<void> addObjectToCache(String key, dynamic data) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String jsonString = jsonEncode(data);
+  //   String jsonString = data;
   //   await prefs.setString(key, jsonString);
   // }
 
-  // Future<T?> getFromCache<T>(String key) async {
+  // Future<Employee?> getObjectFromCache<Employee>(String key) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? jsonString = prefs.getString(key);
+  //   Employee jsonString = Employee.fromSnap() ;
 
   //   if (jsonString != null) {
   //     // If the jsonString is not null, decode it and return the object
-  //     return jsonDecode(jsonString) as T;
+  //     return jsonString as Employee;
   //   }
 
   //   return null;

@@ -7,14 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/order_history/order_history_controller.dart';
 import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/order.dart' as model;
+import 'package:myorder/models/order_history.dart';
 import 'package:myorder/models/table.dart' as table;
 import 'package:myorder/models/food.dart' as modelFood;
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
 
 class BillController extends GetxController {
+  OrderHistoryController orderHistoryController =
+      Get.put(OrderHistoryController());
   //hóa đơn
   final Rx<List<Bill>> _bills = Rx<List<Bill>>([]);
   List<Bill> get bills => _bills.value;
@@ -515,6 +519,28 @@ class BillController extends GetxController {
           "status": TABLE_STATUS_EMPTY, // đã thanh toán
         });
       }
+      //Tạo lịch sử đơn hàng
+      String idOrderHistory = Utils.generateUUID();
+      //Thông tin nhân viên phụ trách đơn hàng
+      DocumentSnapshot employeeCollection = await firestore
+          .collection('employees')
+          .doc(authController.user.uid)
+          .get();
+      OrderHistory orderHistory = OrderHistory(
+          history_id: idOrderHistory,
+          order_id: order.order_id,
+          employee_id: authController.user.uid,
+          employee_name: '',
+          description: "Đã thanh toán đơn hàng.",
+          create_at: Timestamp.now());
+      if (employeeCollection.exists) {
+        final employeeData = employeeCollection.data();
+        if (employeeData != null && employeeData is Map<String, dynamic>) {
+          String name = employeeData['name'] ?? '';
+          orderHistory.employee_name = name;
+        }
+      }
+      orderHistoryController.createOrderHistory(orderHistory);
       Get.snackbar(
         'THANH TOÁN',
         'Thanh toán thành công!',
@@ -533,6 +559,4 @@ class BillController extends GetxController {
       );
     }
   }
-
-  
 }

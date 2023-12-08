@@ -7,6 +7,8 @@ import 'package:myorder/caches/caches.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/daily_sales/daily_sales_controller.dart';
+import 'package:myorder/controllers/employees/employees_controller.dart';
+import 'package:myorder/models/employee.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/custom_icon.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -20,27 +22,28 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DailySalesController dailySalesController = Get.put(DailySalesController());
+  EmployeeController employeeController = Get.put(EmployeeController());
+  MyCacheManager myCacheManager = MyCacheManager();
 
   @override
   void initState() {
     super.initState();
-    firstSetUp();
+    setDailySale(); //CACHE - THIẾT LẬP SỐ LƯỢNG BÁN TRONG NGÀY
+    setCurrentEmployee(); //CACHE - THÔNG TIN NHÂN VIÊN
   }
 
   int pageIdx = 0;
 
-  Future<void> firstSetUp() async {
+  Future<void> setDailySale() async {
     DateTime now = Timestamp.now().toDate();
     //vì daily sale ở firebase luôn 12h, vì chỉ chọn ngày
     now = DateTime(now.year, now.month, now.day, 0, 0, 0, 0);
     print(now);
-    MyCacheManager myCacheManager = MyCacheManager();
 
     //ngày đã áp dụng
-    if (await myCacheManager.isInCache(DAILY_SALE_KEY)) {
-
+    if (await myCacheManager.isInCache(CACHE_DAILY_SALE_KEY)) {
       String? dateDailySaleString =
-          await myCacheManager.getFromCache(DAILY_SALE_KEY);
+          await myCacheManager.getFromCache(CACHE_DAILY_SALE_KEY);
 
       if (dateDailySaleString != "") {
         DateTime dateDailySale = DateTime.parse(dateDailySaleString ?? "");
@@ -54,7 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
           if (await dailySalesController.isDailySalesByDateTime(now)) {
             print("SETTING UP...");
 
-            await myCacheManager.addToCache(DAILY_SALE_KEY, now.toString());
+            await myCacheManager.addToCache(
+                CACHE_DAILY_SALE_KEY, now.toString());
 
             //đã được set up
             dailySalesController.setUpDailySalesByDateTime(now);
@@ -73,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (await dailySalesController.isDailySalesByDateTime(now)) {
         //đã được set up
-        await myCacheManager.addToCache(DAILY_SALE_KEY, now.toString());
+        await myCacheManager.addToCache(CACHE_DAILY_SALE_KEY, now.toString());
 
         dailySalesController.setUpDailySalesByDateTime(now);
       } else {
@@ -84,6 +88,18 @@ class _HomeScreenState extends State<HomeScreen> {
             "QUÁN CHƯA THIẾT LẬP SỐ LƯỢNG BÁN CỦA CÁC MÓN ĂN HÔM NAY.\nVUI LÒNG NHẮC QUẢN LÝ THIẾT LẬP NGAY!",
             StylishDialogType.WARNING);
       }
+    }
+  }
+
+  Future<void> setCurrentEmployee() async {
+    try {
+      Employee currentEmployee =
+          await employeeController.getEmployeeById(authController.user.uid);
+      myCacheManager.addToCache(
+          CACHE_EMPLOYEE_ID_KEY, currentEmployee.employee_id);
+      myCacheManager.addToCache(CACHE_EMPLOYEE_NAME_KEY, currentEmployee.name);
+    } catch (e) {
+      print("Không tìm thấy thông tin nhân viên");
     }
   }
 

@@ -98,7 +98,6 @@ class EmployeeController extends GetxController {
           role: '',
           active: 1);
     }
-    print("gggggggggg");
   }
 
   final Rx<List<Employee>> _employees = Rx<List<Employee>>([]);

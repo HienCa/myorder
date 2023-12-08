@@ -1,6 +1,8 @@
 //Gía trị cố định của biến
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 //chung
+import 'package:myorder/caches/caches.dart';
+
 String RESTAURANT_NAME = "MỲ CAY HIỀN CA";
 int ACTIVE = 1; // HOẠT ĐỘNG
 int DEACTIVE = 0;
@@ -188,4 +190,7 @@ const discountMin = 1000; //1,000
 const discountMax = 10000000; //10,000,000
 
 //KEY SharedPreferences
-const DAILY_SALE_KEY = "date_dailySale";
+const CACHE_DAILY_SALE_KEY = "date_dailySale";
+MyCacheManager myCacheManager = MyCacheManager();
+const CACHE_EMPLOYEE_ID_KEY = "currentEmployeeId";
+const CACHE_EMPLOYEE_NAME_KEY = "currentEmployeeName";
