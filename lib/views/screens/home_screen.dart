@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     //ngày đã áp dụng
     if (await myCacheManager.isInCache(DAILY_SALE_KEY)) {
+
       String? dateDailySaleString =
           await myCacheManager.getFromCache(DAILY_SALE_KEY);
 
@@ -69,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } else {
       //kiểm tra xem đã thiết lập lịch cho hôm nay chưa
+
       if (await dailySalesController.isDailySalesByDateTime(now)) {
         //đã được set up
         await myCacheManager.addToCache(DAILY_SALE_KEY, now.toString());

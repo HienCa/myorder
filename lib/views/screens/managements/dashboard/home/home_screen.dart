@@ -43,7 +43,7 @@ class _DashboardHomeState extends State<DashboardHome> {
     isTakeAway = false;
 
     //Lấy đơn hàng
-    orderController.getOrders(defaultEmployee, keySearch, ORDER_STATUS_SERVING);
+    orderController.getOrdersAllStatus(defaultEmployee, keySearch);
   }
 
   bool isServing = true;

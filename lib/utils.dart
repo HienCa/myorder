@@ -90,7 +90,8 @@ class Utils {
   }
 
   //So sánh TIMESTAMP
-  static bool isSameDateFromTimstamp(Timestamp timestamp1, Timestamp timestamp2) {
+  static bool isSameDateFromTimstamp(
+      Timestamp timestamp1, Timestamp timestamp2) {
     // Chuyển đổi Timestamp thành DateTime
     DateTime date1 = timestamp1.toDate();
     DateTime date2 = timestamp2.toDate();
@@ -103,6 +104,12 @@ class Utils {
 
     // So sánh giá trị ngày tháng năm
     return startDateTime1.isAtSameMomentAs(startDateTime2);
+  }
+
+  static Timestamp getOnlyDateFromTimestamp(Timestamp timestamp) {
+    DateTime date = timestamp.toDate();
+    date = DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
+    return Timestamp.fromDate(date);
   }
 
   //ngày mai
@@ -929,6 +936,54 @@ class Utils {
 
     dialog.show();
     Future.delayed(const Duration(seconds: 2), () {
+      dialog.dismiss();
+    });
+  }
+
+  static void showStylishDialogSetTime(BuildContext context, String title,
+      String description, StylishDialogType style, int seconds) {
+    DialogController controller = DialogController(
+      listener: (status) {
+        if (status == DialogStatus.Showing) {
+          debugPrint("Dialog is showing");
+        } else if (status == DialogStatus.Changed) {
+          debugPrint("Dialog type changed");
+        } else if (status == DialogStatus.Dismissed) {
+          debugPrint("Dialog dismissed");
+        }
+      },
+    );
+    StylishDialog dialog = StylishDialog(
+      //sau 2s dismiss nên không cần nhấn bên ngoài dimiss sẽ gây ra lỗi
+      dismissOnTouchOutside: false,
+      context: context,
+      alertType: style,
+      style: DefaultStyle(),
+      controller: controller,
+      title: Text(
+        title,
+        style: textStylePlaceholder,
+      ),
+      content: Text(description, style: textStylePlaceholder),
+      // animationLoop: true,
+    );
+
+    // StylishDialog dialog = StylishDialog(
+    //  dismissOnTouchOutside: false,
+    //   context: context,
+    //   alertType: style,
+    //   style: Style1(),
+    //   controller: controller,
+    //   title: Text(
+    //     title,
+    //     style: textStylePlaceholder,
+    //   ),
+    //   content: Text(description, style: textStylePlaceholder),
+    //   // animationLoop: true,
+    // );
+
+    dialog.show();
+    Future.delayed(Duration(seconds: seconds), () {
       dialog.dismiss();
     });
   }

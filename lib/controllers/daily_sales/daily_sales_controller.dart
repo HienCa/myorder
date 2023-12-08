@@ -210,7 +210,7 @@ class DailySalesController extends GetxController {
             daily_sale_id: id,
             name: name,
             active: ACTIVE,
-            date_apply: date_apply);
+            date_apply: Utils.getOnlyDateFromTimestamp(date_apply));
 
         await firestore
             .collection('dailySales')
@@ -276,7 +276,7 @@ class DailySalesController extends GetxController {
             daily_sale_id: id,
             name: name,
             active: ACTIVE,
-            date_apply: date_apply);
+            date_apply: Utils.getOnlyDateFromTimestamp(date_apply));
 
         await firestore
             .collection('dailySales')
@@ -344,7 +344,7 @@ class DailySalesController extends GetxController {
     try {
       await firestore.collection('dailySales').doc(daily_sale_id).update({
         "name": name.trim().toUpperCase(),
-        "date_apply": date_apply,
+        "date_apply": Utils.getOnlyDateFromTimestamp(date_apply),
       });
 
       update();

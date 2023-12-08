@@ -558,7 +558,7 @@ class ChefBarOtherController extends GetxController {
         print(
             "=================$FOOD_STATUS_COOKING_STRING -> $FOOD_STATUS_FINISH_STRING=======================");
         //Cập nhật trạng thái món ăn theo foodStatus
-        String description = 'Cập nhật trạng thái món: "\\n"';
+        String description = 'Cập nhật trạng thái món: "\\\n"';
         for (OrderDetail item in orderDetailList) {
           if (item.isSelected) {
             if (item.food_status == FOOD_STATUS_IN_CHEF) {
@@ -572,7 +572,7 @@ class ChefBarOtherController extends GetxController {
                 "food_status": FOOD_STATUS_COOKING,
               });
               description +=
-                  '+ ${item.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING]\\n';
+                  '+ ${item.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING]\\\n';
               print(
                   "${item.food!.name}: ${item.food_status}:FOOD_STATUS_IN_CHEF -> $FOOD_STATUS_COOKING: FOOD_STATUS_COOKING");
 
@@ -710,7 +710,7 @@ class ChefBarOtherController extends GetxController {
         print(
             "=================$FOOD_STATUS_IN_CHEF_STRING -> $FOOD_STATUS_CANCEL_STRING=======================");
         //Cập nhật trạng thái món ăn theo foodStatus
-        String description = 'Quán yêu cầu hủy món:\\n';
+        String description = 'Quán yêu cầu hủy món:\\\n';
         for (OrderDetail item in orderDetailList) {
           if (item.isSelected) {
             if (item.food_status == FOOD_STATUS_IN_CHEF) {
@@ -831,7 +831,11 @@ class ChefBarOtherController extends GetxController {
         //Cập nhật trạng thái món ăn theo foodStatus
 
         if (orderDetail.isSelected) {
+          String description = 'Cập nhật trạng thái món: "\\\n"';
+
           if (orderDetail.food_status == FOOD_STATUS_IN_CHEF) {
+            description +=
+                '${orderDetail.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING]\\\n';
             //CHỜ CHẾ BIẾN -> ĐANG CHẾ BIẾN
             await firestore
                 .collection('orders')
@@ -845,6 +849,8 @@ class ChefBarOtherController extends GetxController {
             print(
                 "${orderDetail.food!.name}: ${orderDetail.food_status} -> $FOOD_STATUS_COOKING: FOOD_STATUS_COOKING");
           } else if (orderDetail.food_status == FOOD_STATUS_COOKING) {
+            description +=
+                '${orderDetail.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING]\\\n';
             //ĐANG CHẾ BIẾN -> HOÀN THÀNH
             await firestore
                 .collection('orders')
@@ -859,6 +865,29 @@ class ChefBarOtherController extends GetxController {
             print(
                 "${orderDetail.food!.name}: ${orderDetail.food_status} -> $FOOD_STATUS_FINISH:FOOD_STATUS_FINISH\n chef_bar_status: CHEF_BAR_STATUS_DEACTIVE");
           }
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: order_id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description;
+          orderHistoryController.createOrderHistory(orderHistory);
           update();
         }
       }
