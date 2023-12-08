@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/food.dart';
 import 'package:myorder/models/food_combo.dart';
 import 'package:myorder/models/food_order.dart';
@@ -631,6 +632,8 @@ class Utils {
     }
     return total;
   }
+
+ 
 
   //Tính tổng tiền sau khi trừ thuế và giảm giá từ TextEditingController
   static double getTotalAmountFromTextEditingControllerVatDiscount(

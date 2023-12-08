@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/order_history/order_history_controller.dart';
 import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/chef_bar.dart';
@@ -20,7 +21,7 @@ import 'package:myorder/utils.dart';
 class OrderController extends GetxController {
   OrderHistoryController orderHistoryController =
       Get.put(OrderHistoryController());
-
+  BillController billController = Get.put(BillController());
   //BOOKING
   /* 
     ************* TẠO ĐƠN HÀNG BOOKING
@@ -140,7 +141,6 @@ class OrderController extends GetxController {
                       active: active,
                       area_id: area_id);
                 }
-              
 
                 //CHECK BOOKING
                 if (order.customer_time_booking != null &&
@@ -665,8 +665,8 @@ class OrderController extends GetxController {
       }));
     }
   }
-  getOrdersAllStatus(
-      String employeeIdSelected, String keySearch) async {
+
+  getOrdersAllStatus(String employeeIdSelected, String keySearch) async {
     if (keySearch.isEmpty && employeeIdSelected == defaultEmployee) {
       //lấy tất cả don hang
       print("lấy tất cả");
@@ -751,7 +751,6 @@ class OrderController extends GetxController {
                       active: active,
                       area_id: area_id);
                 }
-              
 
                 //CHECK BOOKING
                 if (order.customer_time_booking != null &&
@@ -1987,7 +1986,9 @@ class OrderController extends GetxController {
           discount_amount: discount_amount,
           payment_at: now,
           order_code: order_code,
-          total_slot: 0, deposit_amount: 0);
+          total_slot: 0,
+          deposit_amount: 0,
+          order_status: ORDER_STATUS_PAID);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ
@@ -2294,6 +2295,15 @@ class OrderController extends GetxController {
             }
           }
           orderHistoryController.createOrderHistory(orderHistory);
+        }).then((_) async {
+          //Tạo bill
+          billController.createBill(
+              order,
+              order.order_code,
+              order.total_vat_amount,
+              order.total_discount_amount,
+              false,
+              context);
         });
 
         update();

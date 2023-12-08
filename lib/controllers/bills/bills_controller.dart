@@ -152,17 +152,6 @@ class BillController extends GetxController {
                   // bill.order!.discount_id = discount_id;
                   bill.order!.table_merge_ids = table_merge_ids;
                   bill.order!.table_merge_names = table_merge_names;
-
-                  print(bill.order!.employee_id);
-                  print(bill.order!.table_id);
-                  print(bill.order!.order_status);
-                  print(bill.order!.note);
-                  print(bill.order!.create_at);
-                  print(bill.order!.payment_at);
-                  // print(bill.order!.vat_id);
-                  // print(bill.order!.discount_id);
-                  print(bill.order!.table_merge_ids);
-                  print(bill.order!.table_merge_names);
                 }
               }
 
@@ -202,16 +191,6 @@ class BillController extends GetxController {
                 if (foodCollection.exists) {
                   final foodData = foodCollection.data();
                   if (foodData != null && foodData is Map<String, dynamic>) {
-                    // String food_name = foodData['name'] ?? '';
-                    // String category_id = foodData['category_id'] ?? '';
-                    // String image = foodData['image'] ?? '';
-
-                    // orderDetail.food = FoodOrderDetail(
-                    //     food_id: orderDetail.food_id,
-                    //     name: food_name,
-                    //     image: image,
-                    //     category_id: category_id);
-                    // print(food_name);
                     modelFood.Food food =
                         modelFood.Food.fromSnap(foodCollection);
                     orderDetail.food = food;
@@ -353,17 +332,6 @@ class BillController extends GetxController {
                   bill.order!.note = note;
                   bill.order!.create_at = create_at;
                   bill.order!.payment_at = payment_at;
-                  // bill.order!.vat_id = vat_id;
-                  // bill.order!.discount_id = discount_id;
-
-                  // print(bill.order!.employee_id);
-                  // print(bill.order!.table_id);
-                  // print(bill.order!.order_status);
-                  // print(bill.order!.note);
-                  // print(bill.order!.create_at);
-                  // print(bill.order!.payment_at);
-                  // print(bill.order!.vat_id);
-                  // print(bill.order!.discount_id);
                 }
               }
 
@@ -432,17 +400,6 @@ class BillController extends GetxController {
                   if (foodCollection.exists) {
                     final foodData = foodCollection.data();
                     if (foodData != null && foodData is Map<String, dynamic>) {
-                      // String food_name = foodData['name'] ?? '';
-                      // String image = foodData['image'] ?? '';
-                      // String category_id = foodData['category_id'] ?? '';
-
-                      // orderDetail.food = FoodOrderDetail(
-                      //     food_id: orderDetail.food_id,
-                      //     name: food_name,
-                      //     image: image,
-                      //     category_id: category_id);
-                      // print(food_name);
-
                       modelFood.Food food =
                           modelFood.Food.fromSnap(foodCollection);
                       orderDetail.food = food;
@@ -465,7 +422,7 @@ class BillController extends GetxController {
   // tao hóa đơn
 
   void createBill(model.Order order, String order_code, double? vat_amount,
-      double? discount_amount, BuildContext context) async {
+      double? discount_amount, bool isPaid, BuildContext context) async {
     try {
       String id = Utils.generateUUID();
 
@@ -484,7 +441,8 @@ class BillController extends GetxController {
           payment_at: now,
           order_code: order_code,
           total_slot: order.total_slot,
-          deposit_amount: order.deposit_amount);
+          deposit_amount: order.deposit_amount,
+          order_status: ORDER_STATUS_CANCEL);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ
@@ -519,7 +477,6 @@ class BillController extends GetxController {
             .update({
           "status": TABLE_STATUS_EMPTY, // đã thanh toán
         });
-        print("gopsssssss");
       }
       //Tạo lịch sử đơn hàng
       String idOrderHistory = Utils.generateUUID();
@@ -543,12 +500,14 @@ class BillController extends GetxController {
         }
       }
       orderHistoryController.createOrderHistory(orderHistory);
-      Get.snackbar(
-        'THANH TOÁN',
-        'Thanh toán thành công!',
-        backgroundColor: backgroundSuccessColor,
-        colorText: Colors.white,
-      );
+      if (isPaid) {
+        Get.snackbar(
+          'THANH TOÁN',
+          'Thanh toán thành công!',
+          backgroundColor: backgroundSuccessColor,
+          colorText: Colors.white,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',

@@ -1,5 +1,5 @@
 //Gía trị cố định của biến
-// ignore_for_file: non_constant_identifier_names, constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names, camel_case_types
 //chung
 import 'package:myorder/caches/caches.dart';
 
@@ -134,6 +134,20 @@ final List<String> TIME_OPTION = <String>[
   '3 năm gần nhất',
   'Tất cả các năm',
 ];
+
+enum TIME_OPTION_ENUM {
+  TODAY,
+  YESTERDAY,
+  THIS_WEEK,
+  THIS_MONTH,
+  LAST_MONTH,
+  LAST_THREE_MONTHS,
+  THIS_YEAR,
+  LAST_YEAR,
+  LAST_THREE_YEARS,
+  ALL_YEARS,
+}
+
 
 void filterTime(int timeOption, DateTime startDate, DateTime endDate) {
   DateTime now = DateTime.now();

@@ -651,7 +651,7 @@ class _OrderPageState extends State<OrderPage> {
                                                                                       ),
                                                                                       InkWell(
                                                                                         onTap: () async {
-                                                                                          var isCheckStatusFood = orderController.orders[index].order_details.any((element) => element.food_status != FOOD_STATUS_IN_CHEF);
+                                                                                          var isCheckStatusFood = orderController.orders[index].order_details.any((element) => (element.food_status != FOOD_STATUS_IN_CHEF && element.food_status != FOOD_STATUS_CANCEL));
                                                                                           print("isCheckStatusFood: $isCheckStatusFood");
                                                                                           if (isCheckStatusFood) {
                                                                                             //muốn hủy bàn thì tất cả các món phải ở trạng thái chờ chế biến.
@@ -794,13 +794,13 @@ class _OrderPageState extends State<OrderPage> {
                                                         Utils.showErrorFlushbar(
                                                             context,
                                                             'Thông báo',
-                                                            'Chỉ có thể hủy bàn khi tất cả món ăn ở trạng thái CHỜ CHẾ BIẾN');
+                                                            'Chỉ có thể hủy bàn khi các món ăn ở trạng thái CHỜ CHẾ BIẾN HOẶC ĐÃ HỦY');
                                                       } else if (result ==
                                                           'PAID') {
                                                         Utils.showErrorFlushbar(
                                                             context,
                                                             'THANH TOÁN',
-                                                            'Đã hoàn tất đơn hàng thanh công!');
+                                                            'Đã hoàn tất đơn hàng thành công!');
                                                       } else if (result ==
                                                           "DEFAULT") {}
 

@@ -8,6 +8,7 @@ class Bill {
   String bill_id;
   String order_id;
   String order_code;
+  int order_status;
   model.Order? order = model.Order.empty();
   List<OrderDetail> order_details = [];
   int total_slot;
@@ -29,6 +30,7 @@ class Bill {
     required this.discount_amount,
     required this.payment_at,
     required this.deposit_amount,
+    required this.order_status,
   });
 
   Bill.empty()
@@ -42,6 +44,7 @@ class Bill {
         vat_amount = 0.0,
         discount_amount = 0.0,
         deposit_amount = 0,
+        order_status = 0,
         payment_at = Timestamp.now();
 
   Map<String, dynamic> toJson() => {
@@ -55,6 +58,7 @@ class Bill {
         "discount_amount": discount_amount,
         "payment_at": payment_at,
         "deposit_amount": deposit_amount,
+        "order_status": order_status,
       };
 
   static Bill fromSnap(DocumentSnapshot snap) {
@@ -71,6 +75,7 @@ class Bill {
       discount_amount: snapshot['discount_amount'],
       payment_at: snapshot['payment_at'],
       deposit_amount: snapshot['deposit_amount'],
+      order_status: snapshot['order_status'],
     );
   }
 }

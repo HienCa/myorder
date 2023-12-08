@@ -794,7 +794,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                           orderController
                                               .orderDetail.total_vat_amount,
                                           orderController.orderDetail
-                                              .total_discount_amount,
+                                              .total_discount_amount,true,
                                           context),
                                       Utils.myPopSuccess(context)
                                     },

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/reports/reports_controller.dart';
+import 'package:myorder/models/bill.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
 
@@ -15,12 +16,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   ReportController reportController = Get.put(ReportController());
+  BillController billController = Get.put(BillController());
   @override
   void initState() {
     super.initState();
     reportController.getReportServingOrders();
     reportController.getBills();
     reportController.getNumberOfCanceledOrders();
+    billController.getBills(0, ""); // HÔM NAY
+  }
+
+  double getDepositAmount(List<Bill> list) {
+    double totalDeposit = 0;
+    for (Bill bill in list) {
+      totalDeposit += bill.deposit_amount;
+    }
+    return totalDeposit;
   }
 
   @override
@@ -91,9 +102,22 @@ class _HomePageState extends State<HomePage> {
                         style: textStyleTitleGrayBold20),
                   ),
                 ),
-                const ListTile(
-                  title: Text("Tiền mặt", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+                ListTile(
+                  title: const Text("Tiền mặt",
+                      style: textStyleTitleGrayRegular16),
+                  trailing: Text(
+                      Utils.formatCurrency(
+                          Utils.getSumTotalAmount(billController.bills)),
+                      style: textStyleTrailingPrimaryRegular16),
+                ),
+
+                ListTile(
+                  title:
+                      const Text("Đặt cọc", style: textStyleTitleGrayRegular16),
+                  trailing: Text(
+                      Utils.formatCurrency(
+                          getDepositAmount(billController.bills)),
+                      style: textStyleTrailingPrimaryRegular16),
                 ),
                 // const ListTile(
                 //   title: Text("Thẻ", style: textStyleTitleGrayRegular16),
@@ -113,10 +137,6 @@ class _HomePageState extends State<HomePage> {
                 //   title: Text("Bán hàng", style: textStyleTitleGrayRegular16),
                 //   trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
                 // ),
-                const ListTile(
-                  title: Text("Đặt cọc", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
-                ),
                 Container(
                   height: 10,
                   decoration: const BoxDecoration(

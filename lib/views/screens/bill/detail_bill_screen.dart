@@ -42,7 +42,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
         ),
         title: Center(
             child: Text(
-          "#${widget.bill.bill_id} - ${widget.bill.order!.table!.name}",
+          "HÓA ĐƠN BÀN ${widget.bill.order!.table!.name}",
           style: const TextStyle(color: secondColor),
         )),
         actions: [
