@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/reports/reports_controller.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
@@ -94,24 +95,24 @@ class _HomePageState extends State<HomePage> {
                   title: Text("Tiền mặt", style: textStyleTitleGrayRegular16),
                   trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
                 ),
-                const ListTile(
-                  title: Text("Thẻ", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
-                ),
-                const ListTile(
-                  title:
-                      Text("Chuyển khoản", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
-                ),
-                const ListTile(
-                  title:
-                      Text("Sử dụng điểm", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
-                ),
-                const ListTile(
-                  title: Text("Bán hàng", style: textStyleTitleGrayRegular16),
-                  trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
-                ),
+                // const ListTile(
+                //   title: Text("Thẻ", style: textStyleTitleGrayRegular16),
+                //   trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+                // ),
+                // const ListTile(
+                //   title:
+                //       Text("Chuyển khoản", style: textStyleTitleGrayRegular16),
+                //   trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+                // ),
+                // const ListTile(
+                //   title:
+                //       Text("Sử dụng điểm", style: textStyleTitleGrayRegular16),
+                //   trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+                // ),
+                // const ListTile(
+                //   title: Text("Bán hàng", style: textStyleTitleGrayRegular16),
+                //   trailing: Text("0", style: textStyleTrailingPrimaryRegular16),
+                // ),
                 const ListTile(
                   title: Text("Đặt cọc", style: textStyleTitleGrayRegular16),
                   trailing: Text("0", style: textStyleTrailingPrimaryRegular16),

@@ -1987,7 +1987,7 @@ class OrderController extends GetxController {
           discount_amount: discount_amount,
           payment_at: now,
           order_code: order_code,
-          total_slot: 0);
+          total_slot: 0, deposit_amount: 0);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ

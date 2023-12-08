@@ -16,6 +16,8 @@ class Bill {
   double vat_amount;
   double discount_amount;
   Timestamp payment_at;
+  double deposit_amount = 0;
+
   Bill({
     required this.bill_id,
     required this.order_id,
@@ -26,6 +28,7 @@ class Bill {
     required this.vat_amount,
     required this.discount_amount,
     required this.payment_at,
+    required this.deposit_amount,
   });
 
   Bill.empty()
@@ -38,6 +41,7 @@ class Bill {
         total_estimate_amount = 0.0,
         vat_amount = 0.0,
         discount_amount = 0.0,
+        deposit_amount = 0,
         payment_at = Timestamp.now();
 
   Map<String, dynamic> toJson() => {
@@ -50,6 +54,7 @@ class Bill {
         "vat_amount": vat_amount,
         "discount_amount": discount_amount,
         "payment_at": payment_at,
+        "deposit_amount": deposit_amount,
       };
 
   static Bill fromSnap(DocumentSnapshot snap) {
@@ -65,6 +70,7 @@ class Bill {
       vat_amount: snapshot['vat_amount'],
       discount_amount: snapshot['discount_amount'],
       payment_at: snapshot['payment_at'],
+      deposit_amount: snapshot['deposit_amount'],
     );
   }
 }

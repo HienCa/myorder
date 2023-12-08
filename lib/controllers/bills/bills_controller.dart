@@ -483,7 +483,8 @@ class BillController extends GetxController {
           discount_amount: discount_amount ?? 0,
           payment_at: now,
           order_code: order_code,
-          total_slot: order.total_slot);
+          total_slot: order.total_slot,
+          deposit_amount: order.deposit_amount);
       bill.total_estimate_amount =
           bill.total_amount - bill.vat_amount + bill.discount_amount;
       //tối thiểu là 0đ
@@ -518,6 +519,7 @@ class BillController extends GetxController {
             .update({
           "status": TABLE_STATUS_EMPTY, // đã thanh toán
         });
+        print("gopsssssss");
       }
       //Tạo lịch sử đơn hàng
       String idOrderHistory = Utils.generateUUID();

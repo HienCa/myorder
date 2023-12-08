@@ -785,6 +785,9 @@ class _PaymentPageState extends State<PaymentPage> {
                                   ),
                                   InkWell(
                                     onTap: () async => {
+                                      orderController
+                                              .orderDetail.table_merge_ids =
+                                          widget.order.table_merge_ids,
                                       billController.createBill(
                                           orderController.orderDetail,
                                           widget.order.order_code,
