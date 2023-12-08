@@ -1,16 +1,24 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:marquee_widget/marquee_widget.dart';
+import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 
 class PieChartSample3 extends StatefulWidget {
-  const PieChartSample3({super.key});
+  final List<DataItemPieChart> data;
+
+  const PieChartSample3({Key? key, required this.data}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => PieChartSample3State();
 }
 
-class PieChartSample3State extends State {
+class PieChartSample3State extends State<PieChartSample3> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   int touchedIndex = 0;
 
   @override
@@ -19,122 +27,103 @@ class PieChartSample3State extends State {
       aspectRatio: 1,
       child: AspectRatio(
         aspectRatio: 1,
-        child: PieChart(
-          PieChartData(
-            pieTouchData: PieTouchData(
-              touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                setState(() {
-                  if (!event.isInterestedForInteractions ||
-                      pieTouchResponse == null ||
-                      pieTouchResponse.touchedSection == null) {
-                    touchedIndex = -1;
-                    return;
-                  }
-                  touchedIndex =
-                      pieTouchResponse.touchedSection!.touchedSectionIndex;
-                });
-              },
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: PieChart(
+                PieChartData(
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex = pieTouchResponse
+                            .touchedSection!.touchedSectionIndex;
+                      });
+                    },
+                  ),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 0,
+                  sections: showingSections(),
+                ),
+              ),
             ),
-            borderData: FlBorderData(
-              show: false,
-            ),
-            sectionsSpace: 0,
-            centerSpaceRadius: 0,
-            sections: showingSections(),
-          ),
+            marginTop20,
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                  itemCount: widget.data.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      dense: true,
+                      title: Row(
+                        children: [
+                          Container(
+                              color: widget.data[index].color,
+                              height: 20,
+                              width: 20),
+                          marginRight5,
+                          Marquee(
+                            direction: Axis.horizontal,
+                            textDirection: TextDirection.ltr,
+                            animationDuration: const Duration(seconds: 1),
+                            backDuration: const Duration(milliseconds: 4000),
+                            pauseDuration: const Duration(milliseconds: 1000),
+                            directionMarguee: DirectionMarguee.TwoDirection,
+                            child: Text(
+                              widget.data[index].title,
+                              style: textStyleLabel14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Text(
+                        widget.data[index].value.toInt().toString(),
+                        style: textStyleLabel14,
+                      ),
+                    );
+                  }),
+            )
+          ],
         ),
       ),
     );
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
+    return List.generate(widget.data.length, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 20.0 : 16.0;
       final radius = isTouched ? 110.0 : 100.0;
       final widgetSize = isTouched ? 55.0 : 40.0;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
 
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: AppColors.contentColorBlue,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/ophthalmology-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 1:
-          return PieChartSectionData(
-            color: AppColors.contentColorYellow,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/librarian-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 2:
-          return PieChartSectionData(
-            color: AppColors.contentColorPurple,
-            value: 16,
-            title: '16%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/fitness-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 3:
-          return PieChartSectionData(
-            color: AppColors.contentColorGreen,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/worker-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: AppColors.contentColorBlack,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        default:
-          throw Exception('Oh no');
-      }
+      return PieChartSectionData(
+        color: widget.data[i].color,
+        value: widget.data[i].value.toDouble(),
+        title: widget.data[i].title,
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: const Color(0xffffffff),
+          shadows: shadows,
+        ),
+        badgeWidget: _Badge(
+          widget.data[i].icon,
+          size: widgetSize,
+          borderColor: AppColors.contentColorBlack,
+        ),
+        badgePositionPercentageOffset: .98,
+      );
     });
   }
 }
@@ -170,12 +159,37 @@ class _Badge extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.all(size * .15),
+      padding: const EdgeInsets.all(2),
       child: Center(
-        child: SvgPicture.asset(
-          svgAsset,
-        ),
+        child: svgAsset != ""
+            ? CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.black,
+                backgroundImage: NetworkImage(svgAsset),
+              )
+            : CircleAvatar(
+                child: Image.asset(
+                  defaultFoodImageString,
+                  width: 20,
+                  height: 20,
+                ),
+              ),
       ),
     );
   }
+}
+
+class DataItemPieChart {
+  Color color;
+  double value;
+  String title;
+  String icon;
+  String id;
+
+  DataItemPieChart(
+      {required this.color,
+      required this.value,
+      required this.title,
+      required this.id,
+      required this.icon});
 }

@@ -1,19 +1,23 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 import 'dart:math' as math;
+
 class BarChartSample7 extends StatefulWidget {
-  BarChartSample7({super.key});
+  final List<BarData> data;
+  const BarChartSample7({super.key, required this.data});
 
   final shadowColor = const Color(0xFFCCCCCC);
-  final dataList = [
-    const _BarData(AppColors.contentColorYellow, 18, 18),
-    const _BarData(AppColors.contentColorGreen, 17, 8),
-    const _BarData(AppColors.contentColorOrange, 10, 15),
-    const _BarData(AppColors.contentColorPink, 2.5, 5),
-    const _BarData(AppColors.contentColorBlue, 2, 2.5),
-    const _BarData(AppColors.contentColorRed, 2, 2),
-  ];
+  // final dataList = [
+  //   const _BarData(AppColors.contentColorYellow, 18, 0),
+  //   const _BarData(AppColors.contentColorGreen, 17, 8),
+  //   const _BarData(AppColors.contentColorOrange, 10, 15),
+  //   const _BarData(AppColors.contentColorPink, 2.5, 5),
+  //   const _BarData(AppColors.contentColorBlue, 2, 2.5),
+  //   const _BarData(AppColors.contentColorRed, 2, 2),
+  // ];
 
   @override
   State<BarChartSample7> createState() => _BarChartSample7State();
@@ -87,7 +91,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
                       child: _IconWidget(
-                        color: widget.dataList[index].color,
+                        color: widget.data[index].color,
                         isSelected: touchedGroupIndex == index,
                       ),
                     );
@@ -105,7 +109,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                 strokeWidth: 1,
               ),
             ),
-            barGroups: widget.dataList.asMap().entries.map((e) {
+            barGroups: widget.data.asMap().entries.map((e) {
               final index = e.key;
               final data = e.value;
               return generateBarGroup(
@@ -165,8 +169,8 @@ class _BarChartSample7State extends State<BarChartSample7> {
   }
 }
 
-class _BarData {
-  const _BarData(this.color, this.value, this.shadowValue);
+class BarData {
+  const BarData(this.color, this.value, this.shadowValue);
   final Color color;
   final double value;
   final double shadowValue;

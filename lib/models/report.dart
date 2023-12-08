@@ -15,7 +15,7 @@ class Report {
         total_amount = 0.0; // Provide a default value for total_amount
 
   Map<String, dynamic> toJson() => {
-        "vat_id": quantity,
+        "quantity": quantity,
         "total_amount": total_amount,
       };
 

@@ -1,3 +1,5 @@
+// ignore_for_file: library_prefixes
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
@@ -5,7 +7,10 @@ import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/reports/reports_controller.dart';
 import 'package:myorder/models/bill.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/home/chart/bar_chart_sample2.dart';
+import 'package:myorder/views/screens/home/chart/bar_chart_sample7.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
+// import 'package:pie_chart/pie_chart.dart' as PieChart;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   ReportController reportController = Get.put(ReportController());
   BillController billController = Get.put(BillController());
+  Map<String, double> dataMap = {};
   @override
   void initState() {
     super.initState();
@@ -24,6 +30,7 @@ class _HomePageState extends State<HomePage> {
     reportController.getBills();
     reportController.getNumberOfCanceledOrders();
     billController.getBills(0, ""); // HÔM NAY
+    reportController.getReportPieChartFoodSales();
   }
 
   double getDepositAmount(List<Bill> list) {
@@ -304,12 +311,12 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 //CHỌN LỊCH BÁO CÁO DOANH THU - CHI PHÍ - LỢI NHUẬN
-                const SizedBox(
+                Container(
                   // height: 240,
-                  height: 640,
+                 margin: const EdgeInsets.all(0),
                   child: Column(
                     children: [
-                      ListTile(
+                      const ListTile(
                         leading: Icon(
                           Icons.bookmark,
                           color: iconColor,
@@ -319,34 +326,35 @@ class _HomePageState extends State<HomePage> {
                         subtitle: Text("100,000,000",
                             style: textStyleSubTitlePrimaryRegular20),
                       ),
-                      ListTile(
+                      const ListTile(
                         title: Text("Doanh thu",
                             style: textStyleTrailingPrimaryRegular16),
                         trailing: Text("999,000,000",
                             style: textStyleTrailingPrimaryRegular16),
                       ),
-                      ListTile(
+                      const ListTile(
                         title: Text("Chi phí",
                             style: textStyleTrailingCostRegular16),
                         trailing: Text("100,000,000",
                             style: textStyleTrailingCostRegular16),
                       ),
-                      ListTile(
+                      const ListTile(
                         title: Text("Lợi nhuận",
                             style: textStyleTrailingProfitRegular16),
                         trailing: Text("800,000,000",
                             style: textStyleTrailingProfitRegular16),
                       ),
-                      PieChartSample3()
+                      PieChartSample3(
+                        data: reportController.reportPieChartFoodSales,
+                      ),
+                      PieChartSample3(
+                        data: reportController.reportPieChartFoodSales,
+                      ),
+                      BarChartSample2(),
+                      BarChartSample7(data: reportController.reportFoodSales.listDataBarChart,)
+
                     ],
                   ),
-                ),
-
-                //line char
-                Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
                 ),
               ],
             );
