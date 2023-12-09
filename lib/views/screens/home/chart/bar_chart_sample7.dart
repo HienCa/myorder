@@ -2,6 +2,8 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:myorder/constants.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 import 'dart:math' as math;
 
@@ -10,14 +12,6 @@ class BarChartSample7 extends StatefulWidget {
   const BarChartSample7({super.key, required this.data});
 
   final shadowColor = const Color(0xFFCCCCCC);
-  // final dataList = [
-  //   const _BarData(AppColors.contentColorYellow, 18, 0),
-  //   const _BarData(AppColors.contentColorGreen, 17, 8),
-  //   const _BarData(AppColors.contentColorOrange, 10, 15),
-  //   const _BarData(AppColors.contentColorPink, 2.5, 5),
-  //   const _BarData(AppColors.contentColorBlue, 2, 2.5),
-  //   const _BarData(AppColors.contentColorRed, 2, 2),
-  // ];
 
   @override
   State<BarChartSample7> createState() => _BarChartSample7State();
@@ -53,7 +47,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.only(left: 10, right: 20),
       child: AspectRatio(
         aspectRatio: 1.4,
         child: BarChart(
@@ -73,10 +67,10 @@ class _BarChartSample7State extends State<BarChartSample7> {
                 drawBelowEverything: true,
                 sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 30,
+                  reservedSize: 80,
                   getTitlesWidget: (value, meta) {
                     return Text(
-                      value.toInt().toString(),
+                      Utils.formatCurrency(value),
                       textAlign: TextAlign.left,
                     );
                   },
@@ -93,6 +87,8 @@ class _BarChartSample7State extends State<BarChartSample7> {
                       child: _IconWidget(
                         color: widget.data[index].color,
                         isSelected: touchedGroupIndex == index,
+                        image: widget.data[index].image,
+                        label: widget.data[index].label,
                       ),
                     );
                   },
@@ -119,7 +115,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                 data.shadowValue,
               );
             }).toList(),
-            maxY: 20,
+            maxY: widget.data.map((data) => data.value).reduce(math.max),
             barTouchData: BarTouchData(
               enabled: true,
               handleBuiltInTouches: false,
@@ -133,7 +129,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                   int rodIndex,
                 ) {
                   return BarTooltipItem(
-                    rod.toY.toString(),
+                    Utils.formatCurrency(rod.toY),
                     TextStyle(
                       fontWeight: FontWeight.bold,
                       color: rod.color,
@@ -170,19 +166,26 @@ class _BarChartSample7State extends State<BarChartSample7> {
 }
 
 class BarData {
-  const BarData(this.color, this.value, this.shadowValue);
+  const BarData(
+      this.color, this.value, this.shadowValue, this.image, this.label);
   final Color color;
   final double value;
   final double shadowValue;
+  final String image;
+  final String label;
 }
 
 class _IconWidget extends ImplicitlyAnimatedWidget {
   const _IconWidget({
+    required this.label,
+    required this.image,
     required this.color,
     required this.isSelected,
   }) : super(duration: const Duration(milliseconds: 300));
   final Color color;
   final bool isSelected;
+  final String image;
+  final String label;
 
   @override
   ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() =>
@@ -199,11 +202,25 @@ class _IconWidgetState extends AnimatedWidgetBaseState<_IconWidget> {
     return Transform(
       transform: Matrix4.rotationZ(rotation).scaled(scale, scale),
       origin: const Offset(14, 14),
-      child: Icon(
-        widget.isSelected ? Icons.face_retouching_natural : Icons.face,
-        color: widget.color,
-        size: 28,
-      ),
+      child: widget.image != ""
+          ? Tooltip(
+              message: widget.label,
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.black,
+                backgroundImage: NetworkImage(widget.image),
+              ),
+            )
+          : Tooltip(
+              message: widget.label,
+              child: CircleAvatar(
+                child: Image.asset(
+                  defaultFoodImageString,
+                  width: 20,
+                  height: 20,
+                ),
+              ),
+            ),
     );
   }
 

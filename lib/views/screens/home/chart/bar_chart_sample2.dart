@@ -1,10 +1,22 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:myorder/models/charts/data_chart.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 import 'package:myorder/views/screens/home/chart/color_extensions.dart';
 
 class BarChartSample2 extends StatefulWidget {
-  BarChartSample2({super.key});
+  // final MyDataBarChart data;
+  final List<BarChartGroupData> data;
+  final double maxY;
+  final String title;
+  final List<String> bottomTitle;
+  BarChartSample2(
+      {super.key,
+      required this.data,
+      required this.maxY,
+      required this.title,
+      required this.bottomTitle});
   final Color leftBarColor = AppColors.contentColorYellow;
   final Color rightBarColor = AppColors.contentColorRed;
   final Color avgColor =
@@ -20,6 +32,16 @@ class BarChartSample2State extends State<BarChartSample2> {
   late List<BarChartGroupData> showingBarGroups;
 
   int touchedGroupIndex = -1;
+  List<BarChartGroupData> convertListToBarChartGroupData(MyDataBarChart data) {
+    return data.values.asMap().entries.map((entry) {
+      final int x = entry.key;
+      final double y1 = entry.value;
+      // Thay đổi giá trị y2 tùy thuộc vào logic của bạn
+      final double y2 = y1 * 1.5; // Ví dụ: y2 là y1 nhân 1.5
+
+      return makeGroupData(x, 100, 0);
+    }).toList();
+  }
 
   @override
   void initState() {
@@ -32,15 +54,9 @@ class BarChartSample2State extends State<BarChartSample2> {
     final barGroup6 = makeGroupData(5, 19, 1.5);
     final barGroup7 = makeGroupData(6, 10, 1.5);
 
-    final items = [
-      barGroup1,
-      barGroup2,
-      barGroup3,
-      barGroup4,
-      barGroup5,
-      barGroup6,
-      barGroup7,
-    ];
+    // final items = convertListToBarChartGroupData(widget.data);
+    final items = widget.data;
+    // final items = [barGroup1,barGroup1];
 
     rawBarGroups = items;
 
@@ -63,17 +79,17 @@ class BarChartSample2State extends State<BarChartSample2> {
                 const SizedBox(
                   width: 38,
                 ),
-                const Text(
-                  'Transactions',
-                  style: TextStyle(color: Colors.white, fontSize: 22),
+                Text(
+                  widget.title,
+                  style: const TextStyle(color: Colors.red, fontSize: 22),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
-                const Text(
-                  'state',
-                  style: TextStyle(color: Color(0xff77839a), fontSize: 16),
-                ),
+                // const SizedBox(
+                //   width: 4,
+                // ),
+                // const Text(
+                //   'state',
+                //   style: TextStyle(color: Color(0xff77839a), fontSize: 16),
+                // ),
               ],
             ),
             const SizedBox(
@@ -82,7 +98,7 @@ class BarChartSample2State extends State<BarChartSample2> {
             Expanded(
               child: BarChart(
                 BarChartData(
-                  maxY: 20,
+                  maxY: widget.maxY,
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
                       tooltipBgColor: Colors.grey,
@@ -148,7 +164,7 @@ class BarChartSample2State extends State<BarChartSample2> {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 28,
+                        reservedSize: 50,
                         interval: 1,
                         getTitlesWidget: leftTitles,
                       ),
@@ -179,11 +195,25 @@ class BarChartSample2State extends State<BarChartSample2> {
     );
     String text;
     if (value == 0) {
-      text = '1K';
-    } else if (value == 10) {
-      text = '5K';
-    } else if (value == 19) {
-      text = '10K';
+      text = '0K';
+    } else if (value < 100000) {
+      text = '${Utils.formatCurrency(value)}K';
+    }else if (value == 200000) {
+      text = '200K';
+    } else if (value == 500000) {
+      text = '500K';
+    } else if (value == 800000) {
+      text = '800K';
+    } else if (value == 1000000) {
+      text = '1Tr';
+    } else if (value == 2000000) {
+      text = '2Tr';
+    } else if (value == 3000000) {
+      text = '3Tr';
+    } else if (value == 4000000) {
+      text = '4Tr';
+    } else if (value == 10000000) {
+      text = '1Tỉ';
     } else {
       return Container();
     }
@@ -195,7 +225,7 @@ class BarChartSample2State extends State<BarChartSample2> {
   }
 
   Widget bottomTitles(double value, TitleMeta meta) {
-    final titles = <String>['Mn', 'Te', 'Wd', 'Tu', 'Fr', 'St', 'Su'];
+    final titles = widget.bottomTitle;
 
     final Widget text = Text(
       titles[value.toInt()],
@@ -223,11 +253,11 @@ class BarChartSample2State extends State<BarChartSample2> {
           color: widget.leftBarColor,
           width: width,
         ),
-        BarChartRodData(
-          toY: y2,
-          color: widget.rightBarColor,
-          width: width,
-        ),
+        // BarChartRodData(
+        //   toY: y2,
+        //   color: widget.rightBarColor,
+        //   width: width,
+        // ),
       ],
     );
   }

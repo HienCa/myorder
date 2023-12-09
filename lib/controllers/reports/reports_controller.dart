@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/bill.dart';
+import 'package:myorder/models/category.dart';
 import 'package:myorder/models/charts/chart_model.dart';
 import 'package:myorder/models/charts/data_chart.dart';
 import 'package:myorder/models/food.dart';
@@ -114,8 +115,11 @@ class ReportController extends GetxController {
     });
   }
 
-  final Rx<DataChart> _reportFoodSales =
-      Rx<DataChart>(DataChart(listDataPieChart: [], listDataBarChart: []));
+  final Rx<DataChart> _reportFoodSales = Rx<DataChart>(DataChart(
+      listDataPieChart: [],
+      listDataBarChartFood: [],
+      listDataBarChartCategory: [],
+      myDataBarChart: MyDataBarChart.empty()));
   DataChart get reportFoodSales => _reportFoodSales.value;
 
   getReportFoodSales() async {
@@ -131,16 +135,44 @@ class ReportController extends GetxController {
           .snapshots()
           .asyncMap(
         (QuerySnapshot query) async {
-          List<BarData> listDataBarChart = [];
+          List<BarData> listDataBarChartFood = [];
+          List<BarData> listDataBarChartCategory = [];
 
-          DataChart dataChart =
-              DataChart(listDataPieChart: [], listDataBarChart: []);
-          List<ChartModel> listChartModel = [];
+          DataChart dataChart = DataChart(
+              listDataPieChart: [],
+              listDataBarChartFood: [],
+              listDataBarChartCategory: [],
+              myDataBarChart: MyDataBarChart.empty());
+          List<ChartModel> listChartModelCategory = [];
+          MyDataBarChart myDataBarChart =
+              MyDataBarChart.empty(); //bar_chart_sample2
 
+          //category===================
+          var categoryCollection = FirebaseFirestore.instance
+              .collection('categories')
+              .where("active", isEqualTo: ACTIVE);
+          var categoryCollectionQuery = await categoryCollection.get();
+
+          for (var categoryData in categoryCollectionQuery.docs) {
+            Category category = Category.fromSnap(categoryData);
+
+            ChartModel chartModelItem = ChartModel(
+                id: category.category_code.toString(),
+                total_amount: 0,
+                title: category.name,
+                quantity: 0,
+                price: 0,
+                color: Utils.generateRandomColor(),
+                image: "");
+            listChartModelCategory.add(chartModelItem);
+          }
+
+          //food===================
+          List<ChartModel> listChartModelFood = [];
           var foodCollection = FirebaseFirestore.instance
               .collection('foods')
               .where("active", isEqualTo: ACTIVE);
-          //food
+
           var foodCollectionQuery = await foodCollection.get();
           for (var foodlData in foodCollectionQuery.docs) {
             Food food = Food.fromSnap(foodlData);
@@ -151,8 +183,9 @@ class ReportController extends GetxController {
                 title: food.name,
                 quantity: 0,
                 price: 0,
-                color: Utils.generateRandomColor());
-            listChartModel.add(chartModelItem);
+                color: Utils.generateRandomColor(),
+                image: food.image ?? "");
+            listChartModelFood.add(chartModelItem);
           }
 
           for (var element in query.docs) {
@@ -168,22 +201,54 @@ class ReportController extends GetxController {
             var orderDetailQuery = await orderDetailCollection.get();
             for (var doc in orderDetailQuery.docs) {
               var orderDetail = OrderDetail.fromSnap(doc);
+
+              //FOOD
               double barDataTotalAmount = 0;
-              for (ChartModel food in listChartModel) {
-                if (orderDetail.food_id == food.id) {
-                  food.total_amount +=
+              String foodName = "";
+              String foodImage = "";
+
+              for (ChartModel chartModel in listChartModelFood) {
+                if (orderDetail.food_id == chartModel.id) {
+                  chartModel.total_amount +=
                       (orderDetail.quantity * orderDetail.price);
-                  food.quantity += 1;
-                  barDataTotalAmount = food.total_amount;
+                  chartModel.quantity += 1;
+                  barDataTotalAmount = chartModel.total_amount;
+                  foodName = chartModel.title;
+                  foodImage = chartModel.image;
                 }
               }
-              BarData barData =
-                  BarData(Utils.generateRandomColor(), barDataTotalAmount, 0);
-              listDataBarChart.add(barData);
+              BarData barDataFood = BarData(Utils.generateRandomColor(),
+                  barDataTotalAmount, 0, foodImage, foodName);
+              listDataBarChartFood.add(barDataFood);
+              myDataBarChart.bottom_titles.add(foodName);
+              myDataBarChart.values.add(barDataTotalAmount);
+
+              //CATEGORY
+              double barDataTotalAmountOfCategory = 0;
+              String categoryName = "";
+              for (ChartModel chartModel in listChartModelCategory) {
+                print("orderDetail.category_code.toString()");
+                print(orderDetail.category_code.toString());
+                print(chartModel.id);
+                if (orderDetail.category_code.toString() == chartModel.id) {
+                  print("jjj");
+                  chartModel.total_amount +=
+                      (orderDetail.quantity * orderDetail.price);
+                  barDataTotalAmountOfCategory = chartModel.total_amount;
+                  chartModel.quantity += 1;
+                  categoryName = chartModel.title;
+                }
+              }
+              BarData barDataCategory = BarData(Utils.generateRandomColor(),
+                  barDataTotalAmountOfCategory, 0, "", categoryName);
+              listDataBarChartCategory.add(barDataCategory);
             }
           }
           dataChart.listDataPieChart = [];
-          dataChart.listDataBarChart = listDataBarChart;
+          dataChart.listDataBarChartFood = listDataBarChartFood;
+          dataChart.listDataBarChartCategory = listDataBarChartCategory;
+          dataChart.myDataBarChart = myDataBarChart;
+          myDataBarChart.title = "Thống kê số lượng bán";
           return dataChart;
         },
       ),

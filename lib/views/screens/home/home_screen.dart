@@ -1,14 +1,17 @@
 // ignore_for_file: library_prefixes
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/reports/reports_controller.dart';
 import 'package:myorder/models/bill.dart';
+import 'package:myorder/models/charts/data_chart.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/home/chart/bar_chart_sample2.dart';
 import 'package:myorder/views/screens/home/chart/bar_chart_sample7.dart';
+import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
 // import 'package:pie_chart/pie_chart.dart' as PieChart;
 
@@ -31,6 +34,46 @@ class _HomePageState extends State<HomePage> {
     reportController.getNumberOfCanceledOrders();
     billController.getBills(0, ""); // HÔM NAY
     reportController.getReportPieChartFoodSales();
+    reportController.getReportFoodSales();
+    data = convertListToBarChartGroupData(
+        reportController.reportFoodSales.myDataBarChart);
+    bottomTitles =
+        reportController.reportFoodSales.myDataBarChart.bottom_titles;
+    // myDataBarChart = reportController.reportFoodSales.myDataBarChart;
+  }
+
+  // MyDataBarChart myDataBarChart = MyDataBarChart(
+  //     title: "Thống kê", left_titles: [], bottom_titles: [], values: []);
+  List<BarChartGroupData> data = [];
+  List<String> leftTitles = [];
+  List<String> bottomTitles = [];
+  List<BarChartGroupData> convertListToBarChartGroupData(MyDataBarChart data) {
+    return data.values.asMap().entries.map((entry) {
+      final int x = entry.key;
+      final double y1 = entry.value;
+      final double y2 = y1 * 1.5;
+
+      return makeGroupData(x, y1, 0);
+    }).toList();
+  }
+
+  BarChartGroupData makeGroupData(int x, double y1, double y2) {
+    return BarChartGroupData(
+      barsSpace: 4,
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y1,
+          color: AppColors.contentColorYellow,
+          width: 7,
+        ),
+        // BarChartRodData(
+        //   toY: y2,
+        //   color: widget.rightBarColor,
+        //   width: width,
+        // ),
+      ],
+    );
   }
 
   double getDepositAmount(List<Bill> list) {
@@ -309,14 +352,88 @@ class _HomePageState extends State<HomePage> {
                   decoration: const BoxDecoration(
                       color: Color.fromARGB(255, 248, 246, 246)),
                 ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO MÓN",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop10,
+                      BarChartSample7(
+                        data: reportController.reportFoodSales.listDataBarChartFood,
+                      ),
+                      marginTop10,
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO DANH MỤC",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop10,
+                      BarChartSample7(
+                        data: reportController.reportFoodSales.listDataBarChartCategory,
+                      ),
+                      marginTop10,
+                    ],
+                  ),
+                ),
+
+                Container(
+                  height: 10,
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 248, 246, 246)),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO MÓN",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop30,
+                      PieChartSample3(
+                        data: reportController.reportPieChartFoodSales,
+                      ),
+                    ],
+                  ),
+                ),
 
                 //CHỌN LỊCH BÁO CÁO DOANH THU - CHI PHÍ - LỢI NHUẬN
                 Container(
                   // height: 240,
-                 margin: const EdgeInsets.all(0),
-                  child: Column(
+                  margin: const EdgeInsets.all(0),
+                  child: const Column(
                     children: [
-                      const ListTile(
+                      ListTile(
                         leading: Icon(
                           Icons.bookmark,
                           color: iconColor,
@@ -326,33 +443,31 @@ class _HomePageState extends State<HomePage> {
                         subtitle: Text("100,000,000",
                             style: textStyleSubTitlePrimaryRegular20),
                       ),
-                      const ListTile(
+                      ListTile(
                         title: Text("Doanh thu",
                             style: textStyleTrailingPrimaryRegular16),
                         trailing: Text("999,000,000",
                             style: textStyleTrailingPrimaryRegular16),
                       ),
-                      const ListTile(
+                      ListTile(
                         title: Text("Chi phí",
                             style: textStyleTrailingCostRegular16),
                         trailing: Text("100,000,000",
                             style: textStyleTrailingCostRegular16),
                       ),
-                      const ListTile(
+                      ListTile(
                         title: Text("Lợi nhuận",
                             style: textStyleTrailingProfitRegular16),
                         trailing: Text("800,000,000",
                             style: textStyleTrailingProfitRegular16),
                       ),
-                      PieChartSample3(
-                        data: reportController.reportPieChartFoodSales,
-                      ),
-                      PieChartSample3(
-                        data: reportController.reportPieChartFoodSales,
-                      ),
-                      BarChartSample2(),
-                      BarChartSample7(data: reportController.reportFoodSales.listDataBarChart,)
 
+                      // BarChartSample2(
+                      //   data: data,
+                      //   maxY: 20,
+                      //   title: 'Thống kê số lượng bán',
+                      //   bottomTitle: bottomTitles,
+                      // ),
                     ],
                   ),
                 ),

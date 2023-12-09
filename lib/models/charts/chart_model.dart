@@ -7,6 +7,7 @@ class ChartModel {
   int quantity;
   final Color color;
   String id;
+  String image;
   double total_amount;
 
   ChartModel({
@@ -16,6 +17,7 @@ class ChartModel {
     required this.quantity,
     required this.price,
     required this.color,
+    required this.image,
   });
 }
 
