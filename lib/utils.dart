@@ -26,6 +26,13 @@ enum TypeToast {
   NORMAL,
 }
 
+class TimeOption {
+  DateTime startDate;
+  DateTime endDate;
+
+  TimeOption({required this.startDate, required this.endDate});
+}
+
 //Các phương phức hay dùng
 class Utils {
   //SCREEN
@@ -34,6 +41,102 @@ class Utils {
   }
 
   //DATETIME
+
+  static TimeOption getTimeOption(int index) {
+    DateTime now = DateTime.now();
+    DateTime startDate;
+    DateTime endDate;
+    TimeOption timeOption = TimeOption(
+        startDate: DateTime(now.year, now.month, now.day),
+        endDate: DateTime(now.year, now.month, now.day, 23, 59, 59, 999));
+    switch (index) {
+      case 0: //hôm nay
+        print("Thời gian: hôm nay");
+
+        startDate = DateTime(now.year, now.month, now.day);
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+        break;
+      case 1: //hôm qua
+        print("Thời gian: hôm qua");
+
+        startDate = DateTime(now.year, now.month, now.day - 1);
+        endDate = DateTime(now.year, now.month, now.day - 1, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 2: //tuần này
+        print("Thời gian: tuần này");
+
+        startDate = now.subtract(Duration(days: now.weekday - 1));
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 3: //tháng này
+        print("Thời gian: tháng này");
+
+        startDate = DateTime(now.year, now.month, 1);
+        endDate = DateTime(now.year, now.month + 1, 0, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 4: //tháng trước
+        print("Thời gian: tháng trước");
+
+        startDate = DateTime(now.year, now.month - 1, 1);
+        endDate = DateTime(now.year, now.month, 0, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 5: //3 tháng gần nhất
+        print("Thời gian: 3 năm gần nhất");
+
+        startDate = DateTime(now.year, now.month - 2, now.day);
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 6: //năm nay
+        print("Thời gian: 3 năm gần nhất");
+
+        startDate = DateTime(now.year, 1, 1);
+        endDate = DateTime(now.year, 12, 31, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 7: //năm trước
+        print("Thời gian: năm trước");
+
+        startDate = DateTime(now.year - 1, 1, 1);
+        endDate = DateTime(now.year - 1, 12, 31, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 8: //3 năm gần nhất
+        print("Thời gian: 3 năm gần nhất");
+
+        startDate = DateTime(now.year - 2, now.month, now.day);
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      case 9: //tất cả các năm
+        print("Thời gian: tất cả các năm");
+
+        startDate = DateTime(1970, 1, 1);
+        // endDate = DateTime(2100, 12, 31, 23, 59, 59, 999);
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+        timeOption = TimeOption(startDate: startDate, endDate: endDate);
+
+        break;
+      default:
+        return timeOption;
+    }
+    return timeOption;
+  }
+
   static String formatTimestamp(Timestamp? timestamp) {
     if (timestamp != null) {
       var dateTime = timestamp.toDate();
@@ -654,6 +757,7 @@ class Utils {
     double totalVat = totalAmount * vatPercent / 100;
     return totalAmount + totalVat - discountPrice;
   }
+
 
   //Tính tổng tiền sau khi trừ thuế và giảm giá đã format tiền tệ
   static String getFormatedTotalAmountFromVatDiscount(

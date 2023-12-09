@@ -796,6 +796,7 @@ class ReportController extends GetxController {
   //===========================================================================
   //PIE CHART
 
+  //TỔNG
   final Rx<DataPieChart> _reportPieChartFoodSales = Rx<DataPieChart>(
     DataPieChart(
       listDataPieChartCategory: [],
@@ -879,6 +880,89 @@ class ReportController extends GetxController {
     );
   }
 
+  final Rx<List<DataItemPieChart>> _reportPieChartAll =
+      Rx<List<DataItemPieChart>>([]);
+
+  List<DataItemPieChart> get reportPieChartAll => _reportPieChartAll.value;
+
+  getReportPieChartAll(DateTime startOfDay, DateTime endOfDay) async {
+    _reportPieChartAll.bindStream(
+      firestore
+          .collection('orders')
+          .where('order_status', isEqualTo: ORDER_STATUS_PAID)
+          // .where('payment_at', isGreaterThanOrEqualTo: startOfDay)
+          // .where('payment_at', isLessThanOrEqualTo: endOfDay)
+          .snapshots()
+          .asyncMap(
+        (QuerySnapshot query) async {
+          List<DataItemPieChart> listDataPieChartCategory = [];
+
+          Map<DateTime, double> dailyTotal = {};
+
+          for (var element in query.docs) {
+            model.Order order = model.Order.fromSnap(element);
+            DateTime datetime = order.create_at.toDate();
+            datetime = DateTime(
+              datetime.year,
+              datetime.month,
+              datetime.day,
+              0,
+              0,
+              0,
+              0,
+            );
+
+            // var orderDetailCollection = firestore
+            //     .collection('orders')
+            //     .doc(order.order_id)
+            //     .collection('orderDetails');
+            // var orderDetailQuery = await orderDetailCollection.get();
+            double total = 0;
+            // for (var doc in orderDetailQuery.docs) {
+            //   var orderDetail = OrderDetail.fromSnap(doc);
+
+            //   if (orderDetail.food_status == FOOD_STATUS_FINISH) {
+            //     total += (orderDetail.quantity * orderDetail.price);
+            //     print(order.order_id);
+            //     print(total);
+            // print("ggggggg");
+
+            //   }
+            // }
+
+            // total =
+            //     total + order.total_vat_amount - order.total_discount_amount;
+            total = order.total_amount;
+            print(total);
+            print("yyyyyy");
+
+            // print(order.total_vat_amount);
+            // print(order.total_discount_amount);
+
+            if (dailyTotal.containsKey(datetime)) {
+              dailyTotal[datetime] = dailyTotal[datetime]! + total;
+            } else {
+              dailyTotal[datetime] = total;
+
+              DataItemPieChart dataItemPieChart = DataItemPieChart(
+                color: Utils.generateRandomColor(),
+                value: total,
+                title: Utils.formatDateTime(order.payment_at?.toDate()),
+                icon: "",
+                id: "",
+              );
+              listDataPieChartCategory.add(dataItemPieChart);
+            }
+          }
+          listDataPieChartCategory.sort((a, b) => b.value.compareTo(a.value));
+
+          return listDataPieChartCategory;
+        },
+      ),
+    );
+  }
+
+  //CATEGORY
   final Rx<List<DataItemPieChart>> _reportPieChartCategory =
       Rx<List<DataItemPieChart>>([]);
 

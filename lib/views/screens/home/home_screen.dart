@@ -3,13 +3,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/bills/bills_controller.dart';
 import 'package:myorder/controllers/reports/reports_controller.dart';
 import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/charts/data_chart.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/home/chart/bar_chart_sample2.dart';
 import 'package:myorder/views/screens/home/chart/bar_chart_sample7.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
@@ -33,13 +33,11 @@ class _HomePageState extends State<HomePage> {
     reportController.getBills();
     reportController.getNumberOfCanceledOrders();
     billController.getBills(0, ""); // HÔM NAY
-    reportController.getReportPieChartFoodSales();
     reportController.getReportFoodSales();
     data = convertListToBarChartGroupData(
         reportController.reportFoodSales.myDataBarChart);
     bottomTitles =
         reportController.reportFoodSales.myDataBarChart.bottom_titles;
-    // myDataBarChart = reportController.reportFoodSales.myDataBarChart;
 
     //BAR CHART==============
     final now = DateTime.now();
@@ -48,13 +46,14 @@ class _HomePageState extends State<HomePage> {
     reportController.getReportBarChartFood(startOfDay, endOfDay);
     reportController.getReportBarChartTable(startOfDay, endOfDay);
     reportController.getReportBarChartCategory(startOfDay, endOfDay);
+
+    //PIE CHART
+    reportController.getReportPieChartAll(startOfDay, endOfDay);//tổng
     reportController.getReportPieChartCategory(startOfDay, endOfDay);
     reportController.getReportPieChartFood(startOfDay, endOfDay);
     reportController.getReportPieChartTable(startOfDay, endOfDay);
   }
 
-  // MyDataBarChart myDataBarChart = MyDataBarChart(
-  //     title: "Thống kê", left_titles: [], bottom_titles: [], values: []);
   List<BarChartGroupData> data = [];
   List<String> leftTitles = [];
   List<String> bottomTitles = [];
@@ -62,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     return data.values.asMap().entries.map((entry) {
       final int x = entry.key;
       final double y1 = entry.value;
-      final double y2 = y1 * 1.5;
+      // final double y2 = y1 * 1.5;
 
       return makeGroupData(x, y1, 0);
     }).toList();
@@ -83,6 +82,7 @@ class _HomePageState extends State<HomePage> {
         //   color: widget.rightBarColor,
         //   width: width,
         // ),
+        //LÀ CỘT THỨ 2
       ],
     );
   }
@@ -95,6 +95,16 @@ class _HomePageState extends State<HomePage> {
     return totalDeposit;
   }
 
+  int selectedIndexBarChartCategory = 0;
+  int selectedIndexBarChartFood = 0;
+  int selectedIndexBarChartTable = 0;
+  int selectedIndexPieChartCategory = 0;
+  int selectedIndexPieChartFood = 0;
+  int selectedIndexPieChartTable = 0;
+  int selectedIndexPieChart = 0;
+  int selectedIndexBarChart = 0;
+
+  List options = TIME_OPTION;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -274,7 +284,58 @@ class _HomePageState extends State<HomePage> {
                               style: textStyleTitleGrayBold20),
                         ),
                       ),
-                      marginTop10,
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: kDefaultPadding / 2),
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndexBarChartFood = index;
+                                reportController.getReportBarChartFood(
+                                    Utils.getTimeOption(index).startDate,
+                                    Utils.getTimeOption(index).endDate);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(
+                                left: kDefaultPadding,
+                                // At end item it add extra 20 right  padding
+                                right: index == options.length - 1
+                                    ? kDefaultPadding
+                                    : 0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
+                              decoration: BoxDecoration(
+                                  color: index == selectedIndexBarChartFood
+                                      ? primaryColor
+                                      : textWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: index == selectedIndexBarChartFood
+                                      ? Border.all(
+                                          width: 5, color: primaryColor)
+                                      : Border.all(
+                                          width: 1, color: primaryColor)),
+                              child: Text(
+                                options[index],
+                                style: index == selectedIndexBarChartFood
+                                    ? const TextStyle(
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold)
+                                    : const TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      marginTop20,
                       BarChartSample7(
                         data: reportController.reportBarChartFood,
                         isImage: true,
@@ -322,7 +383,58 @@ class _HomePageState extends State<HomePage> {
                               style: textStyleTitleGrayBold20),
                         ),
                       ),
-                      marginTop10,
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: kDefaultPadding / 2),
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndexBarChartCategory = index;
+                                reportController.getReportBarChartCategory(
+                                    Utils.getTimeOption(index).startDate,
+                                    Utils.getTimeOption(index).endDate);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(
+                                left: kDefaultPadding,
+                                // At end item it add extra 20 right  padding
+                                right: index == options.length - 1
+                                    ? kDefaultPadding
+                                    : 0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
+                              decoration: BoxDecoration(
+                                  color: index == selectedIndexBarChartCategory
+                                      ? primaryColor
+                                      : textWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: index == selectedIndexBarChartCategory
+                                      ? Border.all(
+                                          width: 5, color: primaryColor)
+                                      : Border.all(
+                                          width: 1, color: primaryColor)),
+                              child: Text(
+                                options[index],
+                                style: index == selectedIndexBarChartCategory
+                                    ? const TextStyle(
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold)
+                                    : const TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      marginTop20,
                       BarChartSample7(
                         data: reportController.reportBarChartCategory,
                         isImage: false,
@@ -352,6 +464,57 @@ class _HomePageState extends State<HomePage> {
                               style: textStyleTitleGrayBold20),
                         ),
                       ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: kDefaultPadding / 2),
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndexPieChartCategory = index;
+                                reportController.getReportPieChartCategory(
+                                    Utils.getTimeOption(index).startDate,
+                                    Utils.getTimeOption(index).endDate);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(
+                                left: kDefaultPadding,
+                                // At end item it add extra 20 right  padding
+                                right: index == options.length - 1
+                                    ? kDefaultPadding
+                                    : 0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
+                              decoration: BoxDecoration(
+                                  color: index == selectedIndexPieChartCategory
+                                      ? primaryColor
+                                      : textWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: index == selectedIndexPieChartCategory
+                                      ? Border.all(
+                                          width: 5, color: primaryColor)
+                                      : Border.all(
+                                          width: 1, color: primaryColor)),
+                              child: Text(
+                                options[index],
+                                style: index == selectedIndexPieChartCategory
+                                    ? const TextStyle(
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold)
+                                    : const TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       marginTop30,
                       PieChartSample3(
                         data: reportController.reportPieChartCategory,
@@ -372,6 +535,57 @@ class _HomePageState extends State<HomePage> {
                           ),
                           title: Text("DOANH THU THEO MÓN",
                               style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: kDefaultPadding / 2),
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndexPieChartFood = index;
+                                reportController.getReportPieChartFood(
+                                    Utils.getTimeOption(index).startDate,
+                                    Utils.getTimeOption(index).endDate);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(
+                                left: kDefaultPadding,
+                                // At end item it add extra 20 right  padding
+                                right: index == options.length - 1
+                                    ? kDefaultPadding
+                                    : 0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
+                              decoration: BoxDecoration(
+                                  color: index == selectedIndexPieChartFood
+                                      ? primaryColor
+                                      : textWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: index == selectedIndexPieChartFood
+                                      ? Border.all(
+                                          width: 5, color: primaryColor)
+                                      : Border.all(
+                                          width: 1, color: primaryColor)),
+                              child: Text(
+                                options[index],
+                                style: index == selectedIndexPieChartFood
+                                    ? const TextStyle(
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold)
+                                    : const TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       marginTop30,
@@ -396,6 +610,57 @@ class _HomePageState extends State<HomePage> {
                               style: textStyleTitleGrayBold20),
                         ),
                       ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: kDefaultPadding / 2),
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndexPieChartTable = index;
+                                reportController.getReportPieChartTable(
+                                    Utils.getTimeOption(index).startDate,
+                                    Utils.getTimeOption(index).endDate);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(
+                                left: kDefaultPadding,
+                                // At end item it add extra 20 right  padding
+                                right: index == options.length - 1
+                                    ? kDefaultPadding
+                                    : 0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
+                              decoration: BoxDecoration(
+                                  color: index == selectedIndexPieChartTable
+                                      ? primaryColor
+                                      : textWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: index == selectedIndexPieChartTable
+                                      ? Border.all(
+                                          width: 5, color: primaryColor)
+                                      : Border.all(
+                                          width: 1, color: primaryColor)),
+                              child: Text(
+                                options[index],
+                                style: index == selectedIndexPieChartTable
+                                    ? const TextStyle(
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold)
+                                    : const TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       marginTop30,
                       PieChartSample3(
                         data: reportController.reportPieChartTable,
@@ -403,108 +668,81 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-//DOANH THU HÔM QUA
-                const SizedBox(
-                  height: 60,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.bookmark,
-                      color: iconColor,
-                    ),
-                    title: Text("DOANH THU HÔM QUA",
-                        style: textStyleTitleGrayBold20),
-                    subtitle:
-                        Text("0", style: textStyleSubTitlePrimaryRegular20),
-                  ),
-                ),
-
-                //line char
+                //DOANH THU TỔNG
                 Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
-                ),
-
-                //DOANH THU TUẦN NÀY
-                const SizedBox(
-                  height: 60,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.bookmark,
-                      color: iconColor,
-                    ),
-                    title: Text("DOANH THU TUẦN NÀY",
-                        style: textStyleTitleGrayBold20),
-                    subtitle:
-                        Text("0", style: textStyleSubTitlePrimaryRegular20),
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU TỔNG",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: kDefaultPadding / 2),
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndexPieChart = index;
+                                reportController.getReportPieChartAll(
+                                    Utils.getTimeOption(index).startDate,
+                                    Utils.getTimeOption(index).endDate);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(
+                                left: kDefaultPadding,
+                                // At end item it add extra 20 right  padding
+                                right: index == options.length - 1
+                                    ? kDefaultPadding
+                                    : 0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
+                              decoration: BoxDecoration(
+                                  color: index == selectedIndexPieChart
+                                      ? primaryColor
+                                      : textWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: index == selectedIndexPieChart
+                                      ? Border.all(
+                                          width: 5, color: primaryColor)
+                                      : Border.all(
+                                          width: 1, color: primaryColor)),
+                              child: Text(
+                                options[index],
+                                style: index == selectedIndexPieChart
+                                    ? const TextStyle(
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold)
+                                    : const TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      marginTop30,
+                      PieChartSample3(
+                        data: reportController.reportPieChartAll,
+                      ),
+                    ],
                   ),
                 ),
 
-                //line char
-                Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
-                ),
-
-                //DOANH THU THÁNG NÀY
-                const SizedBox(
-                  height: 60,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.bookmark,
-                      color: iconColor,
-                    ),
-                    title: Text("DOANH THU THÁNG NÀY",
-                        style: textStyleTitleGrayBold20),
-                    subtitle:
-                        Text("0", style: textStyleSubTitlePrimaryRegular20),
-                  ),
-                ),
-
-                //line char
-                Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
-                ),
-
-                //DOANH THU 3 THÁNG GẦN NHẤT
-                const SizedBox(
-                  height: 60,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.bookmark,
-                      color: iconColor,
-                    ),
-                    title: Text("DOANH THU 3 THÁNG GẦN NHẤT",
-                        style: textStyleTitleGrayBold20),
-                    subtitle:
-                        Text("0", style: textStyleSubTitlePrimaryRegular20),
-                  ),
-                ),
-
-                //line char
-                Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
-                ),
-
-                //DOANH THU NĂM NAY
-                const SizedBox(
-                  height: 60,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.bookmark,
-                      color: iconColor,
-                    ),
-                    title: Text("DOANH THU NĂM NAY",
-                        style: textStyleTitleGrayBold20),
-                    subtitle:
-                        Text("0", style: textStyleSubTitlePrimaryRegular20),
-                  ),
-                ),
                 //CHỌN LỊCH BÁO CÁO DOANH THU - CHI PHÍ - LỢI NHUẬN
                 Container(
                   // height: 240,
