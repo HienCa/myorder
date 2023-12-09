@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 
 class PieChartSample3 extends StatefulWidget {
@@ -86,7 +87,7 @@ class PieChartSample3State extends State<PieChartSample3> {
                         ],
                       ),
                       trailing: Text(
-                        widget.data[index].value.toInt().toString(),
+                        Utils.formatCurrency(widget.data[index].value),
                         style: textStyleLabel14,
                       ),
                     );
@@ -117,11 +118,13 @@ class PieChartSample3State extends State<PieChartSample3> {
           color: const Color(0xffffffff),
           shadows: shadows,
         ),
-        badgeWidget: _Badge(
-          widget.data[i].icon,
-          size: widgetSize,
-          borderColor: AppColors.contentColorBlack,
-        ),
+        badgeWidget: widget.data[i].icon != ""
+            ? _Badge(
+                widget.data[i].icon,
+                size: widgetSize,
+                borderColor: AppColors.contentColorBlack,
+              )
+            : const SizedBox(),
         badgePositionPercentageOffset: .98,
       );
     });
@@ -130,11 +133,11 @@ class PieChartSample3State extends State<PieChartSample3> {
 
 class _Badge extends StatelessWidget {
   const _Badge(
-    this.svgAsset, {
+    this.image, {
     required this.size,
     required this.borderColor,
   });
-  final String svgAsset;
+  final String image;
   final double size;
   final Color borderColor;
 
@@ -161,11 +164,11 @@ class _Badge extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(2),
       child: Center(
-        child: svgAsset != ""
+        child: image != ""
             ? CircleAvatar(
                 radius: 25,
                 backgroundColor: Colors.black,
-                backgroundImage: NetworkImage(svgAsset),
+                backgroundImage: NetworkImage(image),
               )
             : CircleAvatar(
                 child: Image.asset(

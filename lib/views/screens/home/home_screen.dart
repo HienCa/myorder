@@ -40,6 +40,17 @@ class _HomePageState extends State<HomePage> {
     bottomTitles =
         reportController.reportFoodSales.myDataBarChart.bottom_titles;
     // myDataBarChart = reportController.reportFoodSales.myDataBarChart;
+
+    //BAR CHART==============
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+    reportController.getReportBarChartFood(startOfDay, endOfDay);
+    reportController.getReportBarChartTable(startOfDay, endOfDay);
+    reportController.getReportBarChartCategory(startOfDay, endOfDay);
+    reportController.getReportPieChartCategory(startOfDay, endOfDay);
+    reportController.getReportPieChartFood(startOfDay, endOfDay);
+    reportController.getReportPieChartTable(startOfDay, endOfDay);
   }
 
   // MyDataBarChart myDataBarChart = MyDataBarChart(
@@ -243,7 +254,156 @@ class _HomePageState extends State<HomePage> {
                       color: Color.fromARGB(255, 248, 246, 246)),
                 ),
 
-                //DOANH THU HÔM QUA
+                Container(
+                  height: 10,
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 248, 246, 246)),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO MÓN",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop10,
+                      BarChartSample7(
+                        data: reportController.reportBarChartFood,
+                        isImage: true,
+                      ),
+                      marginTop10,
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO BÀN",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop10,
+                      BarChartSample7(
+                        data: reportController.reportBarChartTable,
+                        isImage: false,
+                      ),
+                      marginTop10,
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO DANH MỤC",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop10,
+                      BarChartSample7(
+                        data: reportController.reportBarChartCategory,
+                        isImage: false,
+                      ),
+                      marginTop10,
+                    ],
+                  ),
+                ),
+
+                Container(
+                  height: 10,
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 248, 246, 246)),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU DANH MỤC",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop30,
+                      PieChartSample3(
+                        data: reportController.reportPieChartCategory,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO MÓN",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop30,
+                      PieChartSample3(
+                        data: reportController.reportPieChartFood,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("DOANH THU THEO BÀN",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      marginTop30,
+                      PieChartSample3(
+                        data: reportController.reportPieChartTable,
+                      ),
+                    ],
+                  ),
+                ),
+//DOANH THU HÔM QUA
                 const SizedBox(
                   height: 60,
                   child: ListTile(
@@ -345,88 +505,6 @@ class _HomePageState extends State<HomePage> {
                         Text("0", style: textStyleSubTitlePrimaryRegular20),
                   ),
                 ),
-
-                //line char
-                Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 5),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 50,
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.bookmark,
-                            color: iconColor,
-                          ),
-                          title: Text("DOANH THU THEO MÓN",
-                              style: textStyleTitleGrayBold20),
-                        ),
-                      ),
-                      marginTop10,
-                      BarChartSample7(
-                        data: reportController.reportFoodSales.listDataBarChartFood,
-                      ),
-                      marginTop10,
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 5),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 50,
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.bookmark,
-                            color: iconColor,
-                          ),
-                          title: Text("DOANH THU THEO DANH MỤC",
-                              style: textStyleTitleGrayBold20),
-                        ),
-                      ),
-                      marginTop10,
-                      BarChartSample7(
-                        data: reportController.reportFoodSales.listDataBarChartCategory,
-                      ),
-                      marginTop10,
-                    ],
-                  ),
-                ),
-
-                Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 5),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 50,
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.bookmark,
-                            color: iconColor,
-                          ),
-                          title: Text("DOANH THU THEO MÓN",
-                              style: textStyleTitleGrayBold20),
-                        ),
-                      ),
-                      marginTop30,
-                      PieChartSample3(
-                        data: reportController.reportPieChartFoodSales,
-                      ),
-                    ],
-                  ),
-                ),
-
                 //CHỌN LỊCH BÁO CÁO DOANH THU - CHI PHÍ - LỢI NHUẬN
                 Container(
                   // height: 240,

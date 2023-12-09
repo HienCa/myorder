@@ -9,7 +9,8 @@ import 'dart:math' as math;
 
 class BarChartSample7 extends StatefulWidget {
   final List<BarData> data;
-  const BarChartSample7({super.key, required this.data});
+  final bool isImage;
+  const BarChartSample7({super.key, required this.data, required this.isImage});
 
   final shadowColor = const Color(0xFFCCCCCC);
 
@@ -84,12 +85,20 @@ class _BarChartSample7State extends State<BarChartSample7> {
                     final index = value.toInt();
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
-                      child: _IconWidget(
-                        color: widget.data[index].color,
-                        isSelected: touchedGroupIndex == index,
-                        image: widget.data[index].image,
-                        label: widget.data[index].label,
-                      ),
+                      child: widget.isImage
+                          ? _IconWidget(
+                              color: widget.data[index].color,
+                              isSelected: touchedGroupIndex == index,
+                              image: widget.data[index].image,
+                              label: widget.data[index].label,
+                            )
+                          : Tooltip(
+                              message: widget.data[index].label,
+                              child: Text(
+                                widget.data[index].label,
+                                style: textStyleLabel14,
+                              ),
+                            ),
                     );
                   },
                 ),
@@ -166,13 +175,14 @@ class _BarChartSample7State extends State<BarChartSample7> {
 }
 
 class BarData {
-  const BarData(
-      this.color, this.value, this.shadowValue, this.image, this.label);
+  BarData(this.color, this.value, this.shadowValue, this.image, this.label,
+      this.id);
   final Color color;
-  final double value;
+  late double value;
   final double shadowValue;
   final String image;
   final String label;
+  final String id;
 }
 
 class _IconWidget extends ImplicitlyAnimatedWidget {

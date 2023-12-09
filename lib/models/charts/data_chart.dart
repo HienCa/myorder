@@ -7,12 +7,16 @@ class DataChart {
   List<DataItemPieChart> listDataPieChart = [];
   List<BarData> listDataBarChartFood = [];
   List<BarData> listDataBarChartCategory = [];
+  List<BarData> listDataBarChartTable = [];
+  List<BarData> listDataBarChartArea = [];
   MyDataBarChart myDataBarChart;
   DataChart({
     required this.listDataPieChart,
     required this.listDataBarChartFood,
     required this.listDataBarChartCategory,
     required this.myDataBarChart,
+    required this.listDataBarChartTable,
+    required this.listDataBarChartArea,
   });
 }
 
@@ -47,4 +51,18 @@ class MyDataBarChart {
         bottom_titles = [],
         right_titles = [],
         values = [];
+}
+
+
+class DataPieChart {
+  List<DataItemPieChart> listDataPieChartCategory = [];
+  List<DataItemPieChart> listDataBarChartFood = [];
+  List<DataItemPieChart> listDataBarChartTable = [];
+  List<DataItemPieChart> listDataBarChartArea = [];
+  DataPieChart({
+    required this.listDataPieChartCategory,
+    required this.listDataBarChartFood,
+    required this.listDataBarChartTable,
+    required this.listDataBarChartArea,
+  });
 }
