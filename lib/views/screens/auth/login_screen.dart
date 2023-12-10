@@ -17,6 +17,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: MediaQuery.of(context).size.height,
         alignment: Alignment.center,
         child: SingleChildScrollView(
           child: Column(
@@ -113,7 +114,8 @@ class LoginScreen extends StatelessWidget {
                       _emailController.text,
                       _passwordController.text,
                     ),
-                    profileController.updateUserId(authController.user.uid)// update current user
+                    profileController.updateUserId(
+                        authController.user.uid) // update current user
                   },
                   child: const Center(
                     child: Text(

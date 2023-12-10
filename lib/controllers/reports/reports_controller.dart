@@ -782,6 +782,8 @@ class ReportController extends GetxController {
               if (item.id == barData.id) {
                 item.value += barData.value;
 
+                print('======');
+
                 isAdded = true;
                 break;
               }
@@ -1254,8 +1256,6 @@ class ReportController extends GetxController {
           }
 
           for (var element in query.docs) {
-            print("NAMEMMMMMMMMMMMMMMMMMMMMMM");
-
             model.Order order = model.Order.fromSnap(element);
             String name = "";
             String image = "";
@@ -1287,8 +1287,6 @@ class ReportController extends GetxController {
             }
           }
           listDataPieChart.sort((a, b) => b.value.compareTo(a.value));
-          print("UUUU");
-          print(listDataPieChart.length);
 
           return listDataPieChart;
         },

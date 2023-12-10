@@ -134,8 +134,16 @@ class _HomePageState extends State<HomePage> {
                       Icons.bookmark,
                       color: iconColor,
                     ),
-                    title: const Text("ĐƠN HÀNG HÔM NAY",
-                        style: textStyleTitleGrayBold20),
+                    title: InkWell(
+                      onTap: () {
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const MyPhone()));
+                      },
+                      child: const Text("ĐƠN HÀNG HÔM NAY",
+                          style: textStyleTitleGrayBold20),
+                    ),
                     subtitle: Text(
                         "${reportController.reportBills.quantity + reportController.reportServingOrder.quantity + reportController.reportCancelOrder.quantity}",
                         style: textStyleSubTitlePrimaryRegular20),
@@ -706,7 +714,7 @@ class _HomePageState extends State<HomePage> {
                                 selectedIndexBarChartEmployee = index;
                                 reportController.getReportBarChartEmployee(
                                     Utils.getTimeOption(index).startDate,
-                                    Utils.getTimeOption(index).endDate); 
+                                    Utils.getTimeOption(index).endDate);
 
                                 reportController.getReportPieChartEmployee(
                                     Utils.getTimeOption(index).startDate,
