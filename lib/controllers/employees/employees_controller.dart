@@ -29,12 +29,11 @@ class EmployeeController extends GetxController {
     _pickedImage = Rx<File?>(File(pickedImage!.path));
   }
 
-  // upload to firebase storage
+  
   Future<String> _uploadToStorage(File image) async {
-    Reference ref = firebaseStorage
-        .ref()
-        .child('profilePics')
-        .child(firebaseAuth.currentUser!.uid);
+    String fileName =
+        '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+    Reference ref = firebaseStorage.ref().child('profilePics/$fileName');
 
     UploadTask uploadTask = ref.putFile(image);
     TaskSnapshot snap = await uploadTask;

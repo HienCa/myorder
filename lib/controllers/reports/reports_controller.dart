@@ -10,6 +10,7 @@ import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/category.dart';
 import 'package:myorder/models/charts/chart_model.dart';
 import 'package:myorder/models/charts/data_chart.dart';
+import 'package:myorder/models/employee.dart';
 import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/order.dart' as model;
@@ -411,6 +412,62 @@ class ReportController extends GetxController {
   //===========================================================================
   //BAR CHART
   //CATEGORY
+  final Rx<List<BarData>> _reportBarChart = Rx<List<BarData>>([]);
+  List<BarData> get reportBarChart => _reportBarChart.value;
+
+  getReportBarChartAll(DateTime startOfDay, DateTime endOfDay) async {
+    _reportBarChart.bindStream(
+      firestore
+          .collection('orders')
+          .where('order_status', isEqualTo: ORDER_STATUS_PAID)
+          .where('payment_at', isGreaterThanOrEqualTo: startOfDay)
+          .where('payment_at', isLessThanOrEqualTo: endOfDay)
+          .snapshots()
+          .asyncMap(
+        (QuerySnapshot query) async {
+          List<BarData> listDataBarChart = [];
+
+          for (var element in query.docs) {
+            model.Order order = model.Order.fromSnap(element);
+            DateTime datetime = order.create_at.toDate();
+            datetime = DateTime(
+              datetime.year,
+              datetime.month,
+              datetime.day,
+              0,
+              0,
+              0,
+              0,
+            );
+            BarData barData = BarData(
+              Utils.generateRandomColor(),
+              order.total_amount,
+              0,
+              "",
+              Utils.formatDateTime(order.create_at.toDate()),
+              Utils.formatDateTime(order.create_at.toDate()),
+            );
+
+            bool isAdded = false;
+            for (BarData item in listDataBarChart) {
+              if (item.id == barData.id) {
+                item.value += barData.value;
+                isAdded = true;
+                break;
+              }
+            }
+            if (!isAdded) {
+              listDataBarChart.add(barData);
+            }
+          }
+
+          return listDataBarChart;
+        },
+      ),
+    );
+  }
+
+  //CATEGORY
   final Rx<List<BarData>> _reportBarChartCategory = Rx<List<BarData>>([]);
   List<BarData> get reportBarChartCategory => _reportBarChartCategory.value;
 
@@ -697,100 +754,62 @@ class ReportController extends GetxController {
   }
 
   // //AREA
-  // final Rx<List<BarData>> _reportBarChartArea = Rx<List<BarData>>([]);
-  // List<BarData> get reportBarChartArea => _reportBarChartArea.value;
 
-  // getReportBarChartArea(DateTime startOfDay, DateTime endOfDay) async {
-  //   // final now = DateTime.now();
-  //   // final startOfDay = DateTime(now.year, now.month, now.day);
-  //   // final endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
-  //   _reportBarChartTable.bindStream(
-  //     firestore
-  //         .collection('orders')
-  //         .where('order_status', isEqualTo: ORDER_STATUS_PAID)
-  //         .where('payment_at', isGreaterThanOrEqualTo: startOfDay)
-  //         .where('payment_at', isLessThanOrEqualTo: endOfDay)
-  //         .snapshots()
-  //         .asyncMap(
-  //       (QuerySnapshot query) async {
-  //         List<ChartModel> listChartModelTable = [];
-  //         List<BarData> listDataBarChartTable = [];
+  //EMPLOYEE
+  final Rx<List<BarData>> _reportBarChartEmployee = Rx<List<BarData>>([]);
+  List<BarData> get reportBarChartEmployee => _reportBarChartEmployee.value;
 
-  //         // TABLE
-  //         var areaCollection = FirebaseFirestore.instance
-  //             .collection('areas')
-  //             .where("active", isEqualTo: ACTIVE);
-  //         var areaCollectionQuery = await areaCollection.get();
-  //         for (var areaData in areaCollectionQuery.docs) {
-  //           Area area = Area.fromSnap(areaData);
+  getReportBarChartEmployee(DateTime startOfDay, DateTime endOfDay) async {
+    _reportBarChartEmployee.bindStream(
+      firestore
+          .collection('orders')
+          .where('order_status', isEqualTo: ORDER_STATUS_PAID)
+          .where('payment_at', isGreaterThanOrEqualTo: startOfDay)
+          .where('payment_at', isLessThanOrEqualTo: endOfDay)
+          .snapshots()
+          .asyncMap(
+        (QuerySnapshot query) async {
+          List<BarData> listDataBarChart = [];
 
-  //           ChartModel chartModelItem = ChartModel(
-  //               id: area.area_id,
-  //               total_amount: 0,
-  //               title: area.name,
-  //               quantity: 0,
-  //               price: 0,
-  //               color: Utils.generateRandomColor(),
-  //               image: "");
-  //           listChartModelTable.add(chartModelItem);
-  //         }
+          for (var element in query.docs) {
+            model.Order order = model.Order.fromSnap(element);
 
-  //         for (var element in query.docs) {
-  //           model.Order order = model.Order.fromSnap(element);
+            BarData barData = BarData(Utils.generateRandomColor(),
+                order.total_amount, 0, "", "", order.employee_id);
 
-  //           var orderDetailCollection = firestore
-  //               .collection('orders')
-  //               .doc(order.order_id)
-  //               .collection('orderDetails');
+            bool isAdded = false;
+            for (BarData item in listDataBarChart) {
+              if (item.id == barData.id) {
+                item.value += barData.value;
 
-  //           var orderDetailQuery = await orderDetailCollection.get();
-
-  //           for (var doc in orderDetailQuery.docs) {
-  //             var orderDetail = OrderDetail.fromSnap(doc);
-
-  //             double barDataTotalAmountOfTable = 0;
-  //             String name = "";
-  //             String areaId = "";
-  //             // int totalQuantity = 0;
-  //             for (ChartModel chartModel in listChartModelTable) {
-  //               if (chartModel.id == order.table_id) {
-  //                 chartModel.total_amount +=
-  //                     (orderDetail.quantity * orderDetail.price);
-  //                 chartModel.quantity += 1;
-  //                 // totalQuantity += orderDetail.quantity;
-  //                 barDataTotalAmountOfTable = chartModel.total_amount;
-  //                 name = chartModel.title;
-  //                 areaId = chartModel.id;
-  //                 break;
-  //               }
-  //             }
-  //             bool isAdded = false;
-  //             for (BarData item in listDataBarChartTable) {
-  //               if (item.id == order.table_id) {
-  //                 isAdded = true;
-  //                 item.value += (orderDetail.quantity * orderDetail.price);
-  //               }
-  //             }
-  //             // chưa add
-  //             if (!isAdded) {
-  //               BarData barData = BarData(
-  //                 Utils.generateRandomColor(),
-  //                 barDataTotalAmountOfTable,
-  //                 0,
-  //                 "",
-  //                 name,
-  //                 areaId,
-  //               );
-  //               listDataBarChartTable.add(barData);
-  //             }
-  //           }
-  //         }
-  //         return listDataBarChartTable;
-  //       },
-  //     ),
-  //   );
-  // }
-
+                isAdded = true;
+                break;
+              }
+            }
+            if (!isAdded) {
+              listDataBarChart.add(barData);
+            }
+          }
+          listDataBarChart.sort((a, b) => b.value.compareTo(a.value));
+          for (BarData item in listDataBarChart) {
+            DocumentSnapshot employeeCollection =
+                await firestore.collection('employees').doc(item.id).get();
+            if (employeeCollection.exists) {
+              final employeeData = employeeCollection.data();
+              if (employeeData != null &&
+                  employeeData is Map<String, dynamic>) {
+                String name = employeeData['name'] ?? '';
+                String avatar = employeeData['avatar'] ?? '';
+                item.label = name;
+                item.image = avatar;
+              }
+            }
+          }
+          return listDataBarChart;
+        },
+      ),
+    );
+  }
   //===========================================================================
   //===========================================================================
   //===========================================================================
@@ -890,14 +909,12 @@ class ReportController extends GetxController {
       firestore
           .collection('orders')
           .where('order_status', isEqualTo: ORDER_STATUS_PAID)
-          // .where('payment_at', isGreaterThanOrEqualTo: startOfDay)
-          // .where('payment_at', isLessThanOrEqualTo: endOfDay)
+          .where('payment_at', isGreaterThanOrEqualTo: startOfDay)
+          .where('payment_at', isLessThanOrEqualTo: endOfDay)
           .snapshots()
           .asyncMap(
         (QuerySnapshot query) async {
-          List<DataItemPieChart> listDataPieChartCategory = [];
-
-          Map<DateTime, double> dailyTotal = {};
+          List<DataItemPieChart> listDataPieChart = [];
 
           for (var element in query.docs) {
             model.Order order = model.Order.fromSnap(element);
@@ -911,52 +928,30 @@ class ReportController extends GetxController {
               0,
               0,
             );
+            DataItemPieChart dataItemPieChart = DataItemPieChart(
+              color: Utils.generateRandomColor(),
+              value: order.total_amount,
+              title: Utils.formatDateTime(order.create_at.toDate()),
+              icon: "",
+              id: Utils.formatDateTime(order.create_at.toDate()),
+            );
 
-            // var orderDetailCollection = firestore
-            //     .collection('orders')
-            //     .doc(order.order_id)
-            //     .collection('orderDetails');
-            // var orderDetailQuery = await orderDetailCollection.get();
-            double total = 0;
-            // for (var doc in orderDetailQuery.docs) {
-            //   var orderDetail = OrderDetail.fromSnap(doc);
+            bool isAdded = false;
+            for (DataItemPieChart item in listDataPieChart) {
+              if (item.id == dataItemPieChart.id) {
+                item.value += dataItemPieChart.value;
 
-            //   if (orderDetail.food_status == FOOD_STATUS_FINISH) {
-            //     total += (orderDetail.quantity * orderDetail.price);
-            //     print(order.order_id);
-            //     print(total);
-            // print("ggggggg");
-
-            //   }
-            // }
-
-            // total =
-            //     total + order.total_vat_amount - order.total_discount_amount;
-            total = order.total_amount;
-            print(total);
-            print("yyyyyy");
-
-            // print(order.total_vat_amount);
-            // print(order.total_discount_amount);
-
-            if (dailyTotal.containsKey(datetime)) {
-              dailyTotal[datetime] = dailyTotal[datetime]! + total;
-            } else {
-              dailyTotal[datetime] = total;
-
-              DataItemPieChart dataItemPieChart = DataItemPieChart(
-                color: Utils.generateRandomColor(),
-                value: total,
-                title: Utils.formatDateTime(order.payment_at?.toDate()),
-                icon: "",
-                id: "",
-              );
-              listDataPieChartCategory.add(dataItemPieChart);
+                isAdded = true;
+                break;
+              }
+            }
+            if (!isAdded) {
+              listDataPieChart.add(dataItemPieChart);
             }
           }
-          listDataPieChartCategory.sort((a, b) => b.value.compareTo(a.value));
+          listDataPieChart.sort((a, b) => b.value.compareTo(a.value));
 
-          return listDataPieChartCategory;
+          return listDataPieChart;
         },
       ),
     );
@@ -1216,6 +1211,84 @@ class ReportController extends GetxController {
             }
           }
           listDataPieChart.sort((a, b) => b.value.compareTo(a.value));
+
+          return listDataPieChart;
+        },
+      ),
+    );
+  }
+
+  //EMPLOYEE
+  final Rx<List<DataItemPieChart>> _reportPieChartEmployee =
+      Rx<List<DataItemPieChart>>([]);
+
+  List<DataItemPieChart> get reportPieChartEmployee =>
+      _reportPieChartEmployee.value;
+
+  getReportPieChartEmployee(DateTime startOfDay, DateTime endOfDay) async {
+    _reportPieChartEmployee.bindStream(
+      firestore
+          .collection('orders')
+          .where('order_status', isEqualTo: ORDER_STATUS_PAID)
+          .where('payment_at', isGreaterThanOrEqualTo: startOfDay)
+          .where('payment_at', isLessThanOrEqualTo: endOfDay)
+          .snapshots()
+          .asyncMap(
+        (QuerySnapshot query) async {
+          List<DataItemPieChart> listDataPieChart = [];
+          var collection = FirebaseFirestore.instance
+              .collection('employees')
+              .where("active", isEqualTo: ACTIVE);
+          var collectionQuery = await collection.get();
+          for (var data in collectionQuery.docs) {
+            Employee employee = Employee.fromSnap(data);
+
+            DataItemPieChart pieData = DataItemPieChart(
+                color: Utils.generateRandomColor(),
+                value: 0,
+                title: employee.name,
+                id: employee.employee_id,
+                icon: employee.avatar ?? "");
+            listDataPieChart.add(pieData);
+            print(employee.name);
+          }
+
+          for (var element in query.docs) {
+            print("NAMEMMMMMMMMMMMMMMMMMMMMMM");
+
+            model.Order order = model.Order.fromSnap(element);
+            String name = "";
+            String image = "";
+            for (DataItemPieChart chartModel in listDataPieChart) {
+              if (order.employee_id == chartModel.id) {
+                chartModel.value += order.total_amount;
+                name = chartModel.title;
+                image = chartModel.icon;
+                break;
+              }
+            }
+
+            bool isAdded = false;
+            for (DataItemPieChart item in listDataPieChart) {
+              if (item.id == order.employee_id) {
+                isAdded = true;
+                item.value += order.total_amount;
+              }
+            }
+            // chưa add
+            if (!isAdded) {
+              DataItemPieChart barData = DataItemPieChart(
+                  color: Utils.generateRandomColor(),
+                  value: order.total_amount,
+                  title: name,
+                  id: order.employee_id,
+                  icon: image);
+              listDataPieChart.add(barData);
+            }
+          }
+          listDataPieChart.sort((a, b) => b.value.compareTo(a.value));
+          print("UUUU");
+          print(listDataPieChart.length);
 
           return listDataPieChart;
         },

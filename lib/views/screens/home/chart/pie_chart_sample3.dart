@@ -24,6 +24,18 @@ class PieChartSample3State extends State<PieChartSample3> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.data.isEmpty) {
+      return SizedBox(
+        height: 400,
+        width: 400,
+        child: Center(
+          child: Tooltip(
+            message: "Chưa có dữ liệu cho mốc thời gian này!",
+            child: CircleAvatar(radius: 300, child: noDataImage),
+          ),
+        ),
+      );
+    }
     return AspectRatio(
       aspectRatio: 1,
       child: AspectRatio(
@@ -58,41 +70,46 @@ class PieChartSample3State extends State<PieChartSample3> {
               ),
             ),
             marginTop20,
-            SizedBox(
-              height: 200,
-              child: ListView.builder(
-                  itemCount: widget.data.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      dense: true,
-                      title: Row(
-                        children: [
-                          Container(
-                              color: widget.data[index].color,
-                              height: 20,
-                              width: 20),
-                          marginRight5,
-                          Marquee(
-                            direction: Axis.horizontal,
-                            textDirection: TextDirection.ltr,
-                            animationDuration: const Duration(seconds: 1),
-                            backDuration: const Duration(milliseconds: 4000),
-                            pauseDuration: const Duration(milliseconds: 1000),
-                            directionMarguee: DirectionMarguee.TwoDirection,
-                            child: Text(
-                              widget.data[index].title,
+            widget.data.isNotEmpty
+                ? SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                        itemCount: widget.data.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            dense: true,
+                            title: Row(
+                              children: [
+                                Container(
+                                    color: widget.data[index].color,
+                                    height: 20,
+                                    width: 20),
+                                marginRight5,
+                                Marquee(
+                                  direction: Axis.horizontal,
+                                  textDirection: TextDirection.ltr,
+                                  animationDuration: const Duration(seconds: 1),
+                                  backDuration:
+                                      const Duration(milliseconds: 4000),
+                                  pauseDuration:
+                                      const Duration(milliseconds: 1000),
+                                  directionMarguee:
+                                      DirectionMarguee.TwoDirection,
+                                  child: Text(
+                                    widget.data[index].title,
+                                    style: textStyleLabel14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: Text(
+                              Utils.formatCurrency(widget.data[index].value),
                               style: textStyleLabel14,
                             ),
-                          ),
-                        ],
-                      ),
-                      trailing: Text(
-                        Utils.formatCurrency(widget.data[index].value),
-                        style: textStyleLabel14,
-                      ),
-                    );
-                  }),
-            )
+                          );
+                        }),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),

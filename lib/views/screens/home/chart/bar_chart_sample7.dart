@@ -9,8 +9,9 @@ import 'dart:math' as math;
 
 class BarChartSample7 extends StatefulWidget {
   final List<BarData> data;
-  final bool isImage;
-  const BarChartSample7({super.key, required this.data, required this.isImage});
+  final bool isShowImage;
+  const BarChartSample7(
+      {super.key, required this.data, required this.isShowImage});
 
   final shadowColor = const Color(0xFFCCCCCC);
 
@@ -47,6 +48,19 @@ class _BarChartSample7State extends State<BarChartSample7> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.data.isEmpty) {
+      return Container(
+        color: backgroundColor,
+        height: 400,
+        width: 400,
+        child: Center(
+          child: Tooltip(
+            message: "Chưa có dữ liệu cho mốc thời gian này!",
+            child: CircleAvatar(radius: 400, child: noDataImage),
+          ),
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 20),
       child: AspectRatio(
@@ -85,7 +99,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                     final index = value.toInt();
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
-                      child: widget.isImage
+                      child: widget.isShowImage
                           ? _IconWidget(
                               color: widget.data[index].color,
                               isSelected: touchedGroupIndex == index,
@@ -180,8 +194,8 @@ class BarData {
   final Color color;
   late double value;
   final double shadowValue;
-  final String image;
-  final String label;
+  late String image;
+  late String label;
   final String id;
 }
 
