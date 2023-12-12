@@ -126,7 +126,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          dailysalesImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
@@ -142,14 +142,14 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                             marginRight20,
                             Expanded(
                               child: Tooltip(
-                                message: "Quản lý kho",
+                                message: "Quản lý khu nhân viên",
                                 child: InkWell(
                                   onTap: () => {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const WarehouseScreen()))
+                                                const ManagementEmployeesPage()))
                                   },
                                   child: Container(
                                     decoration: const BoxDecoration(
@@ -160,12 +160,12 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          staffImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
                                         ),
-                                        const Text("KHO",
+                                        const Text("NHÂN VIÊN",
                                             style: textStyleLabel16)
                                       ],
                                     ),
@@ -204,7 +204,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          menuImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
@@ -220,14 +220,14 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                             marginRight20,
                             Expanded(
                               child: Tooltip(
-                                message: "Quản lý danh mục",
+                                message: "Quản Lý Khu Vực",
                                 child: InkWell(
                                   onTap: () => {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const ManagementCategoriesPage()))
+                                                const ManagementAreaTablePage()))
                                   },
                                   child: Container(
                                     decoration: const BoxDecoration(
@@ -238,12 +238,12 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          tableImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
                                         ),
-                                        const Text("DANH MỤC",
+                                        const Text("KHU VỰC / BÀN",
                                             style: textStyleLabel16)
                                       ],
                                     ),
@@ -264,14 +264,14 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                             marginRight20,
                             Expanded(
                               child: Tooltip(
-                                message: "Quản lý đơn vị",
+                                message: "Quản lý kho",
                                 child: InkWell(
                                   onTap: () => {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const ManagementUnitsPage()))
+                                                const WarehouseScreen()))
                                   },
                                   child: Container(
                                     decoration: const BoxDecoration(
@@ -282,12 +282,12 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          warehouseImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
                                         ),
-                                        const Text("ĐƠN VỊ",
+                                        const Text("KHO",
                                             style: textStyleLabel16)
                                       ],
                                     ),
@@ -316,7 +316,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          ingredient2ImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
@@ -360,7 +360,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          supplierImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
@@ -394,7 +394,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          recipe1ImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
@@ -420,14 +420,14 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                             marginRight20,
                             Expanded(
                               child: Tooltip(
-                                message: "Quản Lý Khu Vực",
+                                message: "Quản lý danh mục",
                                 child: InkWell(
                                   onTap: () => {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const ManagementAreaTablePage()))
+                                                const ManagementCategoriesPage()))
                                   },
                                   child: Container(
                                     decoration: const BoxDecoration(
@@ -438,12 +438,12 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          categoryImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
                                         ),
-                                        const Text("KHU VỰC / BÀN",
+                                        const Text("DANH MỤC",
                                             style: textStyleLabel16)
                                       ],
                                     ),
@@ -454,14 +454,14 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                             marginRight20,
                             Expanded(
                               child: Tooltip(
-                                message: "Quản lý khu nhân viên",
+                                message: "Quản lý đơn vị",
                                 child: InkWell(
                                   onTap: () => {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const ManagementEmployeesPage()))
+                                                const ManagementUnitsPage()))
                                   },
                                   child: Container(
                                     decoration: const BoxDecoration(
@@ -472,12 +472,12 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          unitImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
                                         ),
-                                        const Text("NHÂN VIÊN",
+                                        const Text("ĐƠN VỊ",
                                             style: textStyleLabel16)
                                       ],
                                     ),
@@ -516,7 +516,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          discountImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,
@@ -550,7 +550,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                                     child: Column(
                                       children: [
                                         Image.asset(
-                                          defaultFoodImageString,
+                                          vatImageString,
                                           width: 150,
                                           height: 150,
                                           fit: BoxFit.cover,

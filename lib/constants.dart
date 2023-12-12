@@ -455,6 +455,23 @@ const defaultFoodImageString = "assets/images/logofunnyfood.jpg";
 const defaultLogoImageString = "assets/images/logo.jpg";
 const defaultVideoRotatePhone = "assets/images/rotate-phone.mp4";
 
+//MANAGE
+const menuImageString = "assets/images/menu.jpg";
+const staffImageString = "assets/images/staff.jpg";
+const ingredientImageString = "assets/images/ingredient.jpg";
+const ingredient2ImageString = "assets/images/ingredient2.jpg";
+const supplierImageString = "assets/images/supplier.jpg";
+const recipe1ImageString = "assets/images/recipe1.jpg";
+const recipe2ImageString = "assets/images/recipe2.jpg";
+const tableImageString = "assets/images/table.jpg";
+const categoryImageString = "assets/images/category.jpg";
+const discountImageString = "assets/images/discount.jpg";
+const vatImageString = "assets/images/vat.jpg";
+const warehouseImageString = "assets/images/warehouse.jpg";
+const dailysalesImageString = "assets/images/dailysales.jpg";
+const unitImageString = "assets/images/unit.jpg";
+
+
 //TABLE
 var tableImageServing =
     Image.asset("assets/images/icon-table-simple-serving.jpg");

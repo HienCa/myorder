@@ -143,6 +143,7 @@ class _UtilsPageState extends State<UtilsPage> {
                                 color: iconColor),
                           ),
                         ),
+                        deviderColor1,
                         InkWell(
                           onTap: () => {
                             Navigator.push(
@@ -158,6 +159,7 @@ class _UtilsPageState extends State<UtilsPage> {
                                 color: iconColor),
                           ),
                         ),
+                        deviderColor1,
                         InkWell(
                           onTap: () => {
                             Navigator.push(
@@ -174,6 +176,7 @@ class _UtilsPageState extends State<UtilsPage> {
                                 color: iconColor),
                           ),
                         ),
+                        deviderColor1,
                         InkWell(
                           onTap: () => {
                             Navigator.push(
@@ -190,6 +193,7 @@ class _UtilsPageState extends State<UtilsPage> {
                                 color: iconColor),
                           ),
                         ),
+                        deviderColor1,
                         InkWell(
                           onTap: () => {
                             Navigator.push(
