@@ -98,7 +98,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                 ),
                 child: Column(
                   children: [
-                    marginTop10,
+                    marginTop20,
                     Container(
                         margin: const EdgeInsets.all(0),
                         child: Row(
@@ -566,7 +566,7 @@ class _UtilsManagePageState extends State<UtilsManagePage> {
                             marginRight20,
                           ],
                         )),
-                    marginTop10,
+                    marginTop20,
                   ],
                 ),
               ),
