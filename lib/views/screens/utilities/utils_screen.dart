@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myorder/caches/caches.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/bill/bills_screen.dart';
 import 'package:myorder/views/screens/managements/area_table/area_table_screen.dart';
@@ -18,8 +20,45 @@ import 'package:myorder/views/screens/quantity_foods_order/quantity_foods_order_
 import 'package:myorder/views/screens/recipe/recipe_food_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
 
-class UtilsPage extends StatelessWidget {
+class UtilsPage extends StatefulWidget {
   const UtilsPage({super.key});
+
+  @override
+  State<UtilsPage> createState() => _UtilsPageState();
+}
+
+class _UtilsPageState extends State<UtilsPage> {
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  String roleString = "";
+  String employeeName = "";
+  Future<void> getCurrentUser() async {
+    MyCacheManager myCacheManager = MyCacheManager();
+
+    String? dateDailySaleString =
+        await myCacheManager.getFromCache(CACHE_EMPLOYEE_ROLE_KEY);
+    String? name = await myCacheManager.getFromCache(CACHE_EMPLOYEE_NAME_KEY);
+
+    int role = int.tryParse(dateDailySaleString ?? ROLE_STAFF.toString()) ?? 0;
+    setState(() {
+      employeeName = name ?? "Nhân viên mới";
+      roleString = role == ROLE_CUSTOMER
+          ? ROLE_CUSTOMER_STRING
+          : role == ROLE_STAFF
+              ? ROLE_STAFF_STRING
+              : role == ROLE_MANAGER
+                  ? ROLE_MANAGER_STRING
+                  : role == ROLE_CASHIER
+                      ? ROLE_CASHIER_STRING
+                      : role == ROLE_OWNER
+                          ? ROLE_OWNER_STRING
+                          : ROLE_STAFF_STRING;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +96,22 @@ class UtilsPage extends StatelessWidget {
                             shape: BoxShape.circle,
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: AssetImage("assets/images/logo.jpg"),
+                              image: AssetImage(defaultLogoImageString),
                             ),
                           ),
                         ),
                         const SizedBox(width: 10),
-                        const Expanded(
-                          child: Text(
-                            "Chủ nhà hàng",
+                        Expanded(
+                            child: ListTile(
+                          title: Text(
+                            employeeName,
                             style: textStyleBlackBold,
                           ),
-                        ),
+                          subtitle: Text(
+                            roleString,
+                            style: textStyleGrey14,
+                          ),
+                        )),
                         const Icon(Icons.settings,
                             color: iconColorPrimary, size: 30),
                       ],
@@ -116,8 +160,8 @@ class UtilsPage extends StatelessWidget {
                         },
                         child: const ListTile(
                           leading: Icon(Icons.ad_units, color: iconColor),
-                          title:
-                              Text("THIẾT LẬP SL", style: textStyleBlackRegular),
+                          title: Text("THIẾT LẬP SL",
+                              style: textStyleBlackRegular),
                           trailing: Icon(Icons.arrow_forward_ios_outlined,
                               color: iconColor),
                         ),
@@ -132,8 +176,7 @@ class UtilsPage extends StatelessWidget {
                         },
                         child: const ListTile(
                           leading: Icon(Icons.ad_units, color: iconColor),
-                          title:
-                              Text("KHO", style: textStyleBlackRegular),
+                          title: Text("KHO", style: textStyleBlackRegular),
                           trailing: Icon(Icons.arrow_forward_ios_outlined,
                               color: iconColor),
                         ),
@@ -148,8 +191,8 @@ class UtilsPage extends StatelessWidget {
                         },
                         child: const ListTile(
                           leading: Icon(Icons.ad_units, color: iconColor),
-                          title:
-                              Text("Nhà cung cấp", style: textStyleBlackRegular),
+                          title: Text("Nhà cung cấp",
+                              style: textStyleBlackRegular),
                           trailing: Icon(Icons.arrow_forward_ios_outlined,
                               color: iconColor),
                         ),
@@ -159,8 +202,7 @@ class UtilsPage extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const RecipesScreen()))
+                                  builder: (context) => const RecipesScreen()))
                         },
                         child: const ListTile(
                           leading: Icon(Icons.ad_units, color: iconColor),
@@ -363,36 +405,6 @@ class UtilsPage extends StatelessWidget {
                   ),
                 ),
                 marginTop10,
-                Container(
-                  decoration: const BoxDecoration(color: backgroundColor),
-                  child: const Column(
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.bar_chart, color: iconColor),
-                        title: Text("Phân tích Doanh Thu",
-                            style: textStyleBlackRegular),
-                        trailing: Icon(Icons.arrow_forward_ios_outlined,
-                            color: iconColor),
-                      ),
-                      Divider(),
-                      ListTile(
-                        leading: Icon(Icons.pie_chart, color: iconColor),
-                        title: Text("Thống kê Kinh Doanh",
-                            style: textStyleBlackRegular),
-                        trailing: Icon(Icons.arrow_forward_ios_outlined,
-                            color: iconColor),
-                      ),
-                      Divider(),
-                      ListTile(
-                        leading: Icon(Icons.waterfall_chart, color: iconColor),
-                        title: Text("Báo cáo Kinh Doanh",
-                            style: textStyleBlackRegular),
-                        trailing: Icon(Icons.arrow_forward_ios_outlined,
-                            color: iconColor),
-                      ),
-                    ],
-                  ),
-                ),
                 marginTop30,
                 InkWell(
                   onTap: () => {authController.signOut()},

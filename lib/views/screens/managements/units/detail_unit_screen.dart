@@ -29,7 +29,7 @@ class UnitDetailPage extends StatefulWidget {
 class _UnitDetailPageState extends State<UnitDetailPage> {
   var isActive = true;
   String? selectedImagePath;
-  final List<String> roleOptions = ROLE_OPTION;
+
   String? errorTextName = "";
 
   bool isErrorTextName = false;

@@ -32,7 +32,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
   var isActive = true;
   String? selectedImagePath;
   final Rx<File?> _pickedImage = Rx<File?>(null);
-  final List<String> roleOptions = ROLE_OPTION;
+
   String? errorTextName = "";
   String? errorTextRole = "";
   String? errorTextCCCD = "";
@@ -65,7 +65,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
         email: '',
         password: '',
         address: '',
-        role: '',
+        role: 1,
         active: 1);
   }
 
@@ -82,7 +82,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
         birthdayController.text = employee.birthday;
         genderController.text = employee.gender;
         addressController.text = employee.address;
-        roleController.text = employee.role;
+        roleController.text = employee.role.toString();
         if (employee.gender == MALE) {
           isMaleSelected = true;
           isFemaleSelected = false;
@@ -568,11 +568,9 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
                                           phoneController.text,
                                           emailController.text,
                                           "00000000",
-                                          "city",
-                                          "district",
-                                          "ward",
+                                         
                                           addressController.text,
-                                          roleController.text),
+                                           (int.parse(roleController.text) )),
                                       Utils.showStylishDialog(
                                           context,
                                           'THÀNH CÔNG',

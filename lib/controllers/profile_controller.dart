@@ -52,11 +52,9 @@ class ProfileController extends GetxController {
           String phone = userData['phone'] ?? '';
           String email = userData['email'] ?? '';
           String password = userData['password'] ?? '';
-          String city = userData['city'] ?? '';
-          String district = userData['district'] ?? '';
-          String ward = userData['ward'] ?? '';
+       
           String address = userData['address'] ?? '';
-          String role = userData['role'] ?? '';
+          int role = userData['role'] ?? '';
           int active = userData['active'] ?? 1;
 
           return model.Employee(
@@ -69,9 +67,7 @@ class ProfileController extends GetxController {
           phone: phone,
           email: email,
           password: password,
-          city: city,
-          district: district,
-          ward: ward,
+         
           address: address,
           role: role,
           active: active,

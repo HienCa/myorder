@@ -10,92 +10,72 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/employees/employees_controller.dart';
 import 'package:myorder/models/employee.dart';
+import 'package:myorder/models/role.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_email.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_number_length.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_phone.dart';
 import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string_select.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
-class EmployeeDetailPage extends StatefulWidget {
-  final String employeeId;
-  const EmployeeDetailPage({
+class StaffDetailPage extends StatefulWidget {
+  final Employee employee;
+  const StaffDetailPage({
     Key? key,
-    required this.employeeId,
+    required this.employee,
   }) : super(key: key);
 
   @override
-  State<EmployeeDetailPage> createState() => _EmployeeDetailPageState();
+  State<StaffDetailPage> createState() => _StaffDetailPageState();
 }
 
-class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
+class _StaffDetailPageState extends State<StaffDetailPage> {
   var isActive = true;
   String? selectedImagePath;
   final Rx<File?> _pickedImage = Rx<File?>(null);
-  final List<String> roleOptions = ROLE_OPTION;
-  String? errorTextName = "";
-  String? errorTextRole = "";
-  String? errorTextCCCD = "";
-  String? errorTextPhone = "";
-  String? errorTextEmail = "";
-  String? errorTextAddress = "";
-
-  bool isErrorTextName = false;
-  bool isErrorTextRole = false;
-  bool isErrorTextCCCD = false;
-  bool isErrorTextPhone = false;
-  bool isErrorTextEmail = false;
-  bool isErrorTextAddress = false;
 
   bool isMaleSelected = true;
   bool isFemaleSelected = false;
 
   EmployeeController employeeController = Get.put(EmployeeController());
-  late Employee employee;
+
   @override
   void initState() {
     super.initState();
-    employee = Employee(
-        employee_id: '',
-        name: '',
-        cccd: '',
-        gender: '',
-        birthday: '',
-        phone: '',
-        email: '',
-        password: '',
-        address: '',
-        role: '',
-        active: 1);
-  }
+    String roleString = widget.employee.role == ROLE_CUSTOMER
+        ? ROLE_CUSTOMER_STRING
+        : widget.employee.role == ROLE_STAFF
+            ? ROLE_STAFF_STRING
+            : widget.employee.role == ROLE_MANAGER
+                ? ROLE_MANAGER_STRING
+                : widget.employee.role == ROLE_CASHIER
+                    ? ROLE_CASHIER_STRING
+                    : widget.employee.role == ROLE_OWNER
+                        ? ROLE_OWNER_STRING
+                        : ROLE_STAFF_STRING;
+    roleController.text = roleString;
+    nameController.text = widget.employee.name;
+    cccdController.text = widget.employee.cccd;
+    birthdayController.text = widget.employee.birthday;
+    phoneController.text = widget.employee.phone;
+    addressController.text = widget.employee.address;
+    genderController.text = widget.employee.gender;
+    emailController.text = widget.employee.email;
 
-  Future<void> loadEmployee() async {
-    final Employee result =
-        await employeeController.getEmployeeById(widget.employeeId);
-    if (result.employee_id != "") {
-      setState(() {
-        employee = result;
-        nameController.text = employee.name;
-        cccdController.text = employee.cccd;
-        phoneController.text = employee.phone;
-        emailController.text = employee.email;
-        birthdayController.text = employee.birthday;
-        genderController.text = employee.gender;
-        addressController.text = employee.address;
-        roleController.text = employee.role;
-        if (employee.gender == MALE) {
-          isMaleSelected = true;
-          isFemaleSelected = false;
-        } else {
-          isMaleSelected = false;
-          isFemaleSelected = true;
-        }
-      });
+    if (widget.employee.gender == MALE) {
+      isMaleSelected = true;
+      isFemaleSelected = false;
+    } else {
+      isMaleSelected = false;
+      isFemaleSelected = true;
     }
   }
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController roleController = TextEditingController();
+  final TextEditingController roleIdController = TextEditingController();
   final TextEditingController cccdController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController birthdayController = TextEditingController();
@@ -155,23 +135,6 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (employee.employee_id == "") {
-      loadEmployee();
-
-      return Scaffold(
-        backgroundColor: backgroundColor,
-        appBar: AppBar(
-          leading: InkWell(
-              onTap: () => {Navigator.pop(context)},
-              child: const Icon(Icons.arrow_back_ios)),
-          title: const Center(child: Text("CẬP NHẬT NHÂN VIÊN")),
-          backgroundColor: primaryColor,
-        ),
-        body: const Center(
-          child: CircularProgressIndicator(), // Display a loading indicator.
-        ),
-      );
-    }
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -240,7 +203,7 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
                                     onTap: () async {
                                       await pickImage();
                                     },
-                                    child: employee.avatar != ""
+                                    child: widget.employee.avatar != ""
                                         ? CircleAvatar(
                                             radius: 55,
                                             backgroundColor: primaryColor,
@@ -249,7 +212,7 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
                                               backgroundColor:
                                                   Colors.transparent,
                                               backgroundImage: NetworkImage(
-                                                  employee.avatar!),
+                                                  widget.employee.avatar!),
                                             ),
                                           )
                                         : CircleAvatar(
@@ -291,68 +254,34 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
                         isRequire: true,
                       ),
                       marginTop10,
-                      Container(
-                        margin: const EdgeInsets.only(left: 10),
-                        height: 50,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        'Chức vụ',
-                                        style: textStyleLabel16,
-                                      ),
-                                      marginRight10,
-                                      Text(
-                                        '(*)',
-                                        style: textStyleErrorInput,
-                                      )
-                                    ],
-                                  ),
-                                  marginRight20,
-                                  Expanded(
-                                      child: DropdownMenu<String>(
-                                    controller: roleController,
-                                    initialSelection: roleOptions.first,
-                                    onSelected: (String? value) {
-                                      // This is called when the user selects an item.
-                                      setState(() {
-                                        if (value != null) {
-                                          if (value != "titleRole") {
-                                            setState(() {
-                                              roleController.text = value;
-                                              print(roleController.text);
-                                              isErrorTextRole = false;
-                                            });
-                                          }
-                                        }
-                                      });
-                                    },
-                                    dropdownMenuEntries: [
-                                      const DropdownMenuEntry<String>(
-                                        value: "titleRole",
-                                        label: "Chọn chức vụ",
-                                      ),
-                                      ...roleOptions
-                                          .map<DropdownMenuEntry<String>>(
-                                              (String value) {
-                                        return DropdownMenuEntry<String>(
-                                          value: value,
-                                          label: value,
-                                        );
-                                      }).toList(),
-                                    ],
-                                    textStyle: textStyleInput,
-                                  )),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      InkWell(
+                          onTap: () async {
+                            Role result = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return MyDialogSelect(
+                                    lable: "DANH SÁCH CHỨC VỤ",
+                                    list: LIST_ROLE_OPTION,
+                                    keyNameSearch: "name");
+                              },
+                            );
+
+                            if (result.role_id >= 0) {
+                              setState(() {
+                                roleController.text = result.name;
+                                roleIdController.text =
+                                    result.role_id.toString();
+                              });
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: MyTextFieldStringOnTap(
+                                textController: roleController,
+                                label: "Chức vụ",
+                                placeholder: "",
+                                isRequire: true),
+                          )),
                       marginTop20,
                       Container(
                         margin: const EdgeInsets.only(left: 10),
@@ -591,9 +520,9 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
                                   else
                                     {
                                       employeeController.updateEmployee(
-                                          employee.employee_id,
+                                          widget.employee.employee_id,
                                           nameController.text,
-                                          employee.avatar,
+                                          widget.employee.avatar,
                                           _pickedImage.value,
                                           cccdController.text,
                                           genderController.text,
@@ -601,11 +530,8 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
                                           phoneController.text,
                                           emailController.text,
                                           "00000000",
-                                          "city",
-                                          "district",
-                                          "ward",
                                           addressController.text,
-                                          roleController.text),
+                                          (int.parse(roleIdController.text))),
                                       Utils.myPopSuccess(context)
                                     }
                                 },

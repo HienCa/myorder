@@ -97,7 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
           await employeeController.getEmployeeById(authController.user.uid);
       myCacheManager.addToCache(
           CACHE_EMPLOYEE_ID_KEY, currentEmployee.employee_id);
+
       myCacheManager.addToCache(CACHE_EMPLOYEE_NAME_KEY, currentEmployee.name);
+      myCacheManager.addToCache(CACHE_EMPLOYEE_ROLE_KEY, currentEmployee.role);
     } catch (e) {
       print("Không tìm thấy thông tin nhân viên");
     }

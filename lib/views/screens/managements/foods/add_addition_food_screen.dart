@@ -39,7 +39,7 @@ class _AddAdditionFoodPageState extends State<AddAdditionFoodPage> {
   var isActive = true;
   String? selectedImagePath;
   final Rx<File?> _pickedImage = Rx<File?>(null);
-  final List<String> roleOptions = ROLE_OPTION;
+
 
   String? errorTextTemporaryPriceFromDate = "";
   String? errorTextTemporaryPriceToDate = "";

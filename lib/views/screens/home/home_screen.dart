@@ -279,11 +279,6 @@ class _HomePageState extends State<HomePage> {
                       color: Color.fromARGB(255, 248, 246, 246)),
                 ),
 
-                Container(
-                  height: 10,
-                  decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 248, 246, 246)),
-                ),
                 //DANH MỤC
                 Container(
                   margin: const EdgeInsets.only(left: 5),
@@ -366,7 +361,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   margin: const EdgeInsets.only(left: 5),
                   child: Column(
-                    children: [
+                    children: [ 
                       // const SizedBox(
                       //   height: 50,
                       //   child: ListTile(

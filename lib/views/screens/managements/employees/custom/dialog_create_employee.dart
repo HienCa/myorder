@@ -8,7 +8,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/employees/employees_controller.dart';
+import 'package:myorder/models/role.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_select.dart';
+import 'package:myorder/views/widgets/textfields/text_field_label/text_field_string_select.dart';
 
 class CustomDialogCreateEmployeee extends StatefulWidget {
   const CustomDialogCreateEmployeee({Key? key}) : super(key: key);
@@ -25,7 +28,7 @@ class _CustomDialogCreateEmployeeeState
   var isActive = true;
   String? selectedImagePath;
   final Rx<File?> _pickedImage = Rx<File?>(null);
-  final List<String> roleOptions = ROLE_OPTION;
+
   String? errorTextName = "";
   String? errorTextRole = "";
   String? errorTextCCCD = "";
@@ -51,6 +54,7 @@ class _CustomDialogCreateEmployeeeState
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController roleController = TextEditingController();
+  final TextEditingController roleIdController = TextEditingController();
   final TextEditingController cccdController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController birthdayController = TextEditingController();
@@ -217,57 +221,32 @@ class _CustomDialogCreateEmployeeeState
                             })
                           }
                       }),
-              Container(
-                margin: const EdgeInsets.only(left: 10),
-                height: 50,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Chức vụ:',
-                            style: textStyleInput,
-                          ),
-                          Expanded(
-                              child: DropdownMenu<String>(
-                            controller: roleController,
-                            initialSelection: roleOptions.first,
-                            onSelected: (String? value) {
-                              // This is called when the user selects an item.
-                              setState(() {
-                                if (value != null) {
-                                  if (value != "titleRole") {
-                                    setState(() {
-                                      roleController.text = value;
-                                      print(roleController.text);
-                                      isErrorTextRole = false;
-                                    });
-                                  }
-                                }
-                              });
-                            },
-                            dropdownMenuEntries: [
-                              const DropdownMenuEntry<String>(
-                                value: "titleRole",
-                                label: "Chọn chức vụ",
-                              ),
-                              ...roleOptions.map<DropdownMenuEntry<String>>(
-                                  (String value) {
-                                return DropdownMenuEntry<String>(
-                                  value: value,
-                                  label: value,
-                                );
-                              }).toList(),
-                            ],
-                            textStyle: textStyleInput,
-                          )),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              InkWell(
+                  onTap: () async {
+                    Role result = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return MyDialogSelect(
+                            lable: "DANH SÁCH CHỨC VỤ",
+                            list: LIST_ROLE_OPTION,
+                            keyNameSearch: "name");
+                      },
+                    );
+                    if (result.role_id != "") {
+                      setState(() {
+                        roleController.text = result.name;
+                        roleIdController.text = result.role_id.toString();
+                      });
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: MyTextFieldStringOnTap(
+                        textController: roleController,
+                        label: "Chức vụ",
+                        placeholder: "",
+                        isRequire: true),
+                  )),
               const SizedBox(
                 height: 10,
               ),
@@ -535,11 +514,8 @@ class _CustomDialogCreateEmployeeeState
                                   phoneController.text,
                                   emailController.text,
                                   "00000000",
-                                  "city",
-                                  "district",
-                                  "ward",
                                   addressController.text,
-                                  roleController.text),
+                                  int.tryParse(roleIdController.text) ?? 1),
                               Navigator.pop(context)
                             }
                           else

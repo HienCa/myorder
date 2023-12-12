@@ -26,7 +26,7 @@ class CategoryDetailPage extends StatefulWidget {
 class _CategoryDetailPageState extends State<CategoryDetailPage> {
   var isActive = true;
   String? selectedImagePath;
-  final List<String> roleOptions = ROLE_OPTION;
+
   String? errorTextName = "";
 
   bool isErrorTextName = false;

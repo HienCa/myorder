@@ -27,7 +27,7 @@ class VatDetailPage extends StatefulWidget {
 class _VatDetailPageState extends State<VatDetailPage> {
   var isActive = true;
   String? selectedImagePath;
-  final List<String> roleOptions = ROLE_OPTION;
+
   String? errorTextName = "";
   String? errorTextVatPercent = "";
 

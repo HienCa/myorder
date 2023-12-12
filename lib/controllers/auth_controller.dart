@@ -58,7 +58,16 @@ class AuthController extends GetxController {
 
   // registering the user
   void registerUser(
-      String username, File? image, String cccd, String gender, String birthday, String phone, String email, String password, String city, String district, String ward, String address, String role) async {
+      String username,
+      File? image,
+      String cccd,
+      String gender,
+      String birthday,
+      String phone,
+      String email,
+      String password,
+      String address,
+      int role) async {
     try {
       if (username.isNotEmpty &&
           email.isNotEmpty &&
@@ -70,9 +79,9 @@ class AuthController extends GetxController {
           password: password,
         );
         String downloadUrl = await _uploadToStorage(image);
-        
+
         model.Employee employee = model.Employee(
-           employee_id: cred.user!.uid,
+          employee_id: cred.user!.uid,
           name: username,
           avatar: downloadUrl,
           cccd: cccd,
@@ -81,9 +90,6 @@ class AuthController extends GetxController {
           phone: phone,
           email: email,
           password: password,
-          city: city,
-          district: district,
-          ward: ward,
           address: address,
           role: role,
           active: 1,

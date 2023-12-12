@@ -2,6 +2,7 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names, camel_case_types
 //chung
 import 'package:myorder/caches/caches.dart';
+import 'package:myorder/models/role.dart';
 
 String RESTAURANT_NAME = "MỲ CAY HIỀN CA";
 int ACTIVE = 1; // HOẠT ĐỘNG
@@ -116,12 +117,6 @@ const minlength1 = 1;
 const minlength2 = 2;
 const minlength0 = 0;
 
-final List<String> ROLE_OPTION = <String>[
-  'Nhân viên',
-  'Quản lý',
-  'Thu ngân',
-  'Chủ nhà hàng'
-];
 final List<String> TIME_OPTION = <String>[
   'Hôm nay',
   'Hôm qua',
@@ -147,7 +142,6 @@ enum TIME_OPTION_ENUM {
   LAST_THREE_YEARS,
   ALL_YEARS,
 }
-
 
 void filterTime(int timeOption, DateTime startDate, DateTime endDate) {
   DateTime now = DateTime.now();
@@ -203,8 +197,29 @@ void filterTime(int timeOption, DateTime startDate, DateTime endDate) {
 const discountMin = 1000; //1,000
 const discountMax = 10000000; //10,000,000
 
+//ROLE
+
+var LIST_ROLE_OPTION = [
+  Role(role_id: ROLE_CUSTOMER, name: ROLE_CUSTOMER_STRING),
+  Role(role_id: ROLE_STAFF, name: ROLE_STAFF_STRING),
+  Role(role_id: ROLE_MANAGER, name: ROLE_MANAGER_STRING),
+  Role(role_id: ROLE_CASHIER, name: ROLE_CASHIER_STRING),
+  Role(role_id: ROLE_OWNER, name: ROLE_OWNER_STRING),
+];
+const int ROLE_CUSTOMER = 1;
+const int ROLE_STAFF = 2;
+const int ROLE_MANAGER = 3;
+const int ROLE_CASHIER = 4;
+const int ROLE_OWNER = 5;
+const String ROLE_CUSTOMER_STRING = "Khách hàng";
+const String ROLE_STAFF_STRING = "Nhân viên phục vụ";
+const String ROLE_MANAGER_STRING = "Quản lý";
+const String ROLE_CASHIER_STRING = "Thu Ngân";
+const String ROLE_OWNER_STRING = "Chủ quán";
+
 //KEY SharedPreferences
 const CACHE_DAILY_SALE_KEY = "date_dailySale";
 MyCacheManager myCacheManager = MyCacheManager();
 const CACHE_EMPLOYEE_ID_KEY = "currentEmployeeId";
 const CACHE_EMPLOYEE_NAME_KEY = "currentEmployeeName";
+const CACHE_EMPLOYEE_ROLE_KEY = "currentEmployeeRole";

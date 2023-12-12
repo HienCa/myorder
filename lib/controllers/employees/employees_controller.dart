@@ -10,8 +10,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/models/Employee.dart';
+
 import 'package:myorder/models/employee.dart' as model;
+import 'package:myorder/models/employee.dart';
 
 class EmployeeController extends GetxController {
   late Rx<User?> _user;
@@ -57,11 +58,9 @@ class EmployeeController extends GetxController {
           String phone = userData['phone'] ?? '';
           String email = userData['email'] ?? '';
           String password = userData['password'] ?? '';
-          String city = userData['city'] ?? '';
-          String district = userData['district'] ?? '';
-          String ward = userData['ward'] ?? '';
+         
           String address = userData['address'] ?? '';
-          String role = userData['role'] ?? '';
+          int role = userData['role'] ?? 1;
           int active = userData['active'] ?? 1;
           return model.Employee(
             employee_id: employee_id,
@@ -73,9 +72,7 @@ class EmployeeController extends GetxController {
             phone: phone,
             email: email,
             password: password,
-            city: city,
-            district: district,
-            ward: ward,
+          
             address: address,
             role: role,
             active: active,
@@ -94,7 +91,7 @@ class EmployeeController extends GetxController {
           email: '',
           password: '',
           address: '',
-          role: '',
+          role: ROLE_STAFF,
           active: 1);
     }
   }
@@ -144,11 +141,9 @@ class EmployeeController extends GetxController {
       String phone,
       String email,
       String password,
-      String city,
-      String district,
-      String ward,
+      
       String address,
-      String role) async {
+      int role) async {
     try {
       if (name.isNotEmpty &&
           email.isNotEmpty &&
@@ -156,8 +151,8 @@ class EmployeeController extends GetxController {
           gender.isNotEmpty &&
           birthday.isNotEmpty &&
           phone.isNotEmpty &&
-          address.isNotEmpty &&
-          role.isNotEmpty) {
+          address.isNotEmpty
+        ) {
         UserCredential cred = await firebaseAuth.createUserWithEmailAndPassword(
           email: email.trim(),
           password: password,
@@ -178,11 +173,9 @@ class EmployeeController extends GetxController {
           phone: phone.trim(),
           email: email.trim(),
           password: password.trim(),
-          city: city.trim(),
-          district: district.trim(),
-          ward: ward.trim(),
+        
           address: address.trim(),
-          role: role.trim(),
+          role: role,
           active: 1,
         );
         CollectionReference usersCollection =
@@ -227,11 +220,9 @@ class EmployeeController extends GetxController {
       String phone,
       String email,
       String password,
-      String city,
-      String district,
-      String ward,
+     
       String address,
-      String role) async {
+      int role) async {
     // var doc = await firestore.collection('employees').doc(employee_id).get();
     String downloadUrl = "";
     try {
@@ -253,15 +244,12 @@ class EmployeeController extends GetxController {
           "phone": phone.trim(),
           "email": email.trim(),
           "password": password.trim(),
-          "city": city.trim(),
-          "district": district.trim(),
-          "ward": ward.trim(),
+        
           "address": address.trim(),
-          "role": role.trim(),
+          "role": role,
         });
       } else {
         print("NO Image Selected");
-        print("employee_id $employee_id");
 
         // Cập nhật tên và URL hình đại diện vào tài liệu người dùng
         await firestore.collection('employees').doc(employee_id).update({
@@ -273,11 +261,9 @@ class EmployeeController extends GetxController {
           "phone": phone.trim(),
           "email": email.trim(),
           "password": password.trim(),
-          "city": city.trim(),
-          "district": district.trim(),
-          "ward": ward.trim(),
+          
           "address": address.trim(),
-          "role": role.trim(),
+          "role": role,
         });
       }
       // Get.snackbar(

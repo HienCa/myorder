@@ -20,22 +20,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
   // final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   ProfileController profileController = Get.put(ProfileController());
-  late model.Employee currentUser =
-      model.Employee(employee_id: "",
-        name: "",
-        avatar: "",
-        cccd: "",
-        gender: "",
-        birthday: "",
-        phone: "",
-        email: "",
-        password: "",
-        city: "",
-        district: "",
-        ward: "",
-        address: "",
-        role: "",
-        active: 1,);
+  late model.Employee currentUser = model.Employee(
+    employee_id: "",
+    name: "",
+    avatar: "",
+    cccd: "",
+    gender: "",
+    birthday: "",
+    phone: "",
+    email: "",
+    password: "",
+    address: "",
+    role: 1,
+    active: 1,
+  );
 
   @override
   void initState() {
@@ -221,7 +219,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           profileController.profilePhoto),
                       Navigator.pop(context),
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ProfilePage(employeeId: widget.uid),
+                        builder: (context) =>
+                            ProfilePage(employeeId: widget.uid),
                       )),
                     },
                     child: Container(

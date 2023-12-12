@@ -117,8 +117,8 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                               final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => EmployeeDetailPage(
-                                          employeeId: employee.employee_id)));
+                                      builder: (context) =>
+                                          StaffDetailPage(employee: employee)));
                               if (result == 'success') {
                                 Utils.showStylishDialog(
                                     context,
@@ -165,7 +165,18 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                                 ),
                                 subtitle: RichText(
                                   text: TextSpan(
-                                    text: employee.role,
+                                    text: employee.role == ROLE_CUSTOMER
+                                        ? ROLE_CUSTOMER_STRING
+                                        : employee.role == ROLE_STAFF
+                                            ? ROLE_STAFF_STRING
+                                            : employee.role == ROLE_MANAGER
+                                                ? ROLE_MANAGER_STRING
+                                                : employee.role == ROLE_CASHIER
+                                                    ? ROLE_CASHIER_STRING
+                                                    : employee.role ==
+                                                            ROLE_OWNER
+                                                        ? ROLE_OWNER_STRING
+                                                        : ROLE_STAFF_STRING,
                                     style: const TextStyle(
                                         color: Colors
                                             .black), // Đặt kiểu cho văn bản
