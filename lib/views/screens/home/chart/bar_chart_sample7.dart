@@ -56,7 +56,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
         child: Center(
           child: Tooltip(
             message: "Chưa có dữ liệu cho mốc thời gian này!",
-            child: CircleAvatar(radius: 400, child: noDataImage),
+            child: noDataImage,
           ),
         ),
       );

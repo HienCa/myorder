@@ -3,22 +3,11 @@ import 'package:myorder/caches/caches.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/bill/bills_screen.dart';
-import 'package:myorder/views/screens/managements/area_table/area_table_screen.dart';
-import 'package:myorder/views/screens/managements/categories/categories_screen.dart';
 import 'package:myorder/views/screens/managements/chef_bar/chef_bar_other_screen.dart';
 import 'package:myorder/views/screens/managements/dashboard/dashboard_screen.dart';
-import 'package:myorder/views/screens/managements/discounts/discounts_screen.dart';
-import 'package:myorder/views/screens/managements/employees/employees_screen.dart';
-import 'package:myorder/views/screens/managements/foods/foods_screen.dart';
-import 'package:myorder/views/screens/managements/ingredients/ingredients_screen.dart';
-import 'package:myorder/views/screens/managements/daily_sales/daily_sales_screen.dart';
-import 'package:myorder/views/screens/managements/warehouse/warehouse_screen.dart';
-import 'package:myorder/views/screens/managements/suppliers/suppliers_screen.dart';
-import 'package:myorder/views/screens/managements/units/units_screen.dart';
-import 'package:myorder/views/screens/managements/vats/vats_screen.dart';
 import 'package:myorder/views/screens/quantity_foods_order/quantity_foods_order_screen.dart';
-import 'package:myorder/views/screens/recipe/recipe_food_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
+import 'package:myorder/views/screens/utilities/utils_manage_screen.dart';
 
 class UtilsPage extends StatefulWidget {
   const UtilsPage({super.key});
@@ -65,364 +54,179 @@ class _UtilsPageState extends State<UtilsPage> {
     return SafeArea(
         child: SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              color: backgroundColorGray,
-            ),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(color: backgroundColor),
-                  height: 90,
-                  child: InkWell(
-                    onTap: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SettingsPage()))
-                    },
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          margin: const EdgeInsets.all(
-                              5), // Tùy chỉnh margin để căn chỉnh
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage(defaultLogoImageString),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.9,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                color: backgroundColorGray,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(color: backgroundColor),
+                    height: 90,
+                    child: InkWell(
+                      onTap: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SettingsPage()))
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            margin: const EdgeInsets.all(
+                                5), // Tùy chỉnh margin để căn chỉnh
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage(defaultLogoImageString),
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                              child: ListTile(
+                            title: Text(
+                              employeeName,
+                              style: textStyleBlackBold,
+                            ),
+                            subtitle: Text(
+                              roleString,
+                              style: textStyleGrey14,
+                            ),
+                          )),
+                          const Icon(Icons.settings,
+                              color: iconColorPrimary, size: 30),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(color: backgroundColor),
+                    child: const Column(
+                      children: [
+                        ListTile(
+                          leading:
+                              Text("Địa chỉ:", style: textStyleBlackRegular),
+                          title: Text("2001 / Bình Mỹ / Củ Chi / TP.HCM",
+                              style: textStyleBlackRegular),
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                            child: ListTile(
-                          title: Text(
-                            employeeName,
-                            style: textStyleBlackBold,
-                          ),
-                          subtitle: Text(
-                            roleString,
-                            style: textStyleGrey14,
-                          ),
-                        )),
-                        const Icon(Icons.settings,
-                            color: iconColorPrimary, size: 30),
                       ],
                     ),
                   ),
-                ),
-                Container(
-                  decoration: const BoxDecoration(color: backgroundColor),
-                  child: const Column(
-                    children: [
-                      ListTile(
-                        leading: Text("Địa chỉ:", style: textStyleBlackRegular),
-                        title: Text("2001 / Bình Mỹ / Củ Chi / TP.HCM",
-                            style: textStyleBlackRegular),
-                      ),
-                    ],
+                  marginTop10,
+                  Container(
+                    decoration: const BoxDecoration(color: backgroundColor),
+                    child: Column(
+                      children: [
+                        InkWell(
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const UtilsManagePage()))
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.ad_units, color: iconColor),
+                            title:
+                                Text("Quản Lý", style: textStyleBlackRegular),
+                            trailing: Icon(Icons.arrow_forward_ios_outlined,
+                                color: iconColor),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const MyDashBoard()))
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.ad_units, color: iconColor),
+                            title: Text("Dash Board",
+                                style: textStyleBlackRegular),
+                            trailing: Icon(Icons.arrow_forward_ios_outlined,
+                                color: iconColor),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ManagementQuantityFoodOrderPage()))
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.ad_units, color: iconColor),
+                            title: Text("Số Lượng Bán Hôm Nay",
+                                style: textStyleBlackRegular),
+                            trailing: Icon(Icons.arrow_forward_ios_outlined,
+                                color: iconColor),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ManagementChefBarOtherPage()))
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.ad_units, color: iconColor),
+                            title:
+                                Text("BẾP/BAR", style: textStyleBlackRegular),
+                            trailing: Icon(Icons.arrow_forward_ios_outlined,
+                                color: iconColor),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const BillPage()))
+                          },
+                          child: const ListTile(
+                            leading: Icon(Icons.receipt_long, color: iconColor),
+                            title: Text("Hóa Đơn Đã Thanh Toán",
+                                style: textStyleBlackRegular),
+                            trailing: Icon(Icons.arrow_forward_ios_outlined,
+                                color: iconColor),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                marginTop10,
-                Container(
-                  decoration: const BoxDecoration(color: backgroundColor),
-                  child: const Column(
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.print, color: iconColor),
-                        title: Text("Thiết lập máy in",
-                            style: textStyleBlackRegular),
-                        trailing: Icon(Icons.arrow_forward_ios_outlined,
-                            color: iconColor),
-                      ),
-                    ],
-                  ),
-                ),
-                marginTop10,
-                Container(
-                  decoration: const BoxDecoration(color: backgroundColor),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementDailySalesScreen()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("THIẾT LẬP SL",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const WarehouseScreen()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("KHO", style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementSupplierPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("Nhà cung cấp",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const RecipesScreen()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title:
-                              Text("CÔNG THỨC", style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementIngredientsPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title:
-                              Text("NGUYÊN LIỆU", style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementQuantityFoodOrderPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("SÓ LƯỢNG MÓN",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MyDashBoard()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title:
-                              Text("DASH BOARD", style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementChefBarOtherPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("BẾP/BAR", style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementDiscountsPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("Quản lý giảm giá",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementVatsPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("Quản lý vats",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementCategoriesPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("Quản lý danh mục",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementUnitsPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.ad_units, color: iconColor),
-                          title: Text("Quản lý đơn vị",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementEmployeesPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.people, color: iconColor),
-                          title: Text("Quản lý nhân viên",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementAreaTablePage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.chair_alt, color: iconColor),
-                          title: Text("Quản lý khu vực / bàn",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManagementFoodsPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.menu_book, color: iconColor),
-                          title: Text("Quản lý thực đơn",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const BillPage()))
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.receipt_long, color: iconColor),
-                          title: Text("Quản lý hóa đơn",
-                              style: textStyleBlackRegular),
-                          trailing: Icon(Icons.arrow_forward_ios_outlined,
-                              color: iconColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                marginTop10,
-                marginTop30,
-                InkWell(
-                  onTap: () => {authController.signOut()},
-                  child: Container(
-                    height: buttonHeight,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: primaryColor),
-                    child: const Center(
-                        child: Text("ĐĂNG XUẤT", style: buttonStyleBlackBold)),
-                  ),
-                ),
-                marginBottom30
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            const Spacer(),
+            InkWell(
+              onTap: () => {authController.signOut()},
+              child: Container(
+                height: buttonHeight,
+                width: MediaQuery.of(context).size.width * 0.9,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    color: primaryColor),
+                child: const Center(
+                    child: Text("ĐĂNG XUẤT", style: buttonStyleBlackBold)),
+              ),
+            ),
+            marginTop10
+          ],
+        ),
       ),
     ));
   }

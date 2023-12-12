@@ -105,7 +105,7 @@ class _ManagementEmployeesPageState extends State<ManagementEmployeesPage> {
                 ),
                 marginTop10,
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.87,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   child: Obx(() {
                     return ListView.builder(
                         itemCount: employeeController.employees.length,

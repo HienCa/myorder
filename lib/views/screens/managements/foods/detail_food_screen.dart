@@ -301,13 +301,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         Utils.formatCurrency(widget.food.price_with_temporary!)
             .replaceAll(RegExp(r'-'), '');
 
-    print(priceController.text);
-    print(temporaryWithPriceController.text);
 
     //giá thời vụ
-    print(widget.food.price_with_temporary);
-    print(widget.food.price);
-    print("widget.food.price");
+ 
     if (widget.food.price_with_temporary.toString().startsWith('-')) {
       isCheckDecrease = true;
       print('Giảm giá');
@@ -328,8 +324,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       // gán ngày giờ thời vụ mặc định
       pickedFromDateTime = widget.food.temporary_price_from_date!.toDate();
       pickedToDateTime = widget.food.temporary_price_to_date!.toDate();
-      print('widget.food.temporary_percent');
-      print(widget.food.temporary_percent);
+
       //vô hiệu hóa textfield
 
       if (widget.food.temporary_percent != 0) {
@@ -353,8 +348,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         print("bỏ check percent - check price");
       }
     }
-    print("first");
-    print(widget.food.temporary_percent != 0);
+
 
     getCategoriesActive().then((categories) {
       setState(() {
