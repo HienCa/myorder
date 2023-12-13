@@ -10,6 +10,7 @@ import 'package:myorder/controllers/reports/reports_controller.dart';
 import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/charts/data_chart.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/auth/phone.dart';
 import 'package:myorder/views/screens/home/chart/bar_chart_sample7.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
@@ -136,10 +137,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: InkWell(
                       onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => const MyPhone()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPhone()));
                       },
                       child: const Text("ĐƠN HÀNG HÔM NAY",
                           style: textStyleTitleGrayBold20),
@@ -362,68 +363,7 @@ class _HomePageState extends State<HomePage> {
                   margin: const EdgeInsets.only(left: 5),
                   child: Column(
                     children: [ 
-                      // const SizedBox(
-                      //   height: 50,
-                      //   child: ListTile(
-                      //     leading: Icon(
-                      //       Icons.bookmark,
-                      //       color: iconColor,
-                      //     ),
-                      //     title: Text("DOANH THU DANH MỤC",
-                      //         style: textStyleTitleGrayBold20),
-                      //   ),
-                      // ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(
-                      //       vertical: kDefaultPadding / 2),
-                      //   height: 35,
-                      //   child: ListView.builder(
-                      //     scrollDirection: Axis.horizontal,
-                      //     itemCount: options.length,
-                      //     itemBuilder: (context, index) => GestureDetector(
-                      //       onTap: () {
-                      //         setState(() {
-                      //           selectedIndexPieChartCategory = index;
-                      //           reportController.getReportPieChartCategory(
-                      //               Utils.getTimeOption(index).startDate,
-                      //               Utils.getTimeOption(index).endDate);
-                      //         });
-                      //       },
-                      //       child: Container(
-                      //         alignment: Alignment.center,
-                      //         margin: EdgeInsets.only(
-                      //           left: kDefaultPadding,
-                      //           // At end item it add extra 20 right  padding
-                      //           right: index == options.length - 1
-                      //               ? kDefaultPadding
-                      //               : 0,
-                      //         ),
-                      //         padding: const EdgeInsets.symmetric(
-                      //             horizontal: kDefaultPadding),
-                      //         decoration: BoxDecoration(
-                      //             color: index == selectedIndexPieChartCategory
-                      //                 ? primaryColor
-                      //                 : textWhiteColor,
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             border: index == selectedIndexPieChartCategory
-                      //                 ? Border.all(
-                      //                     width: 5, color: primaryColor)
-                      //                 : Border.all(
-                      //                     width: 1, color: primaryColor)),
-                      //         child: Text(
-                      //           options[index],
-                      //           style: index == selectedIndexPieChartCategory
-                      //               ? const TextStyle(
-                      //                   color: textWhiteColor,
-                      //                   fontWeight: FontWeight.bold)
-                      //               : const TextStyle(
-                      //                   color: primaryColor,
-                      //                   fontWeight: FontWeight.normal),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      
                       marginTop30,
                       PieChartSample3(
                         data: reportController.reportPieChartCategory,
@@ -520,68 +460,7 @@ class _HomePageState extends State<HomePage> {
                   margin: const EdgeInsets.only(left: 5),
                   child: Column(
                     children: [
-                      // const SizedBox(
-                      //   height: 50,
-                      //   child: ListTile(
-                      //     leading: Icon(
-                      //       Icons.bookmark,
-                      //       color: iconColor,
-                      //     ),
-                      //     title: Text("DOANH THU THEO MÓN",
-                      //         style: textStyleTitleGrayBold20),
-                      //   ),
-                      // ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(
-                      //       vertical: kDefaultPadding / 2),
-                      //   height: 35,
-                      //   child: ListView.builder(
-                      //     scrollDirection: Axis.horizontal,
-                      //     itemCount: options.length,
-                      //     itemBuilder: (context, index) => GestureDetector(
-                      //       onTap: () {
-                      //         setState(() {
-                      //           selectedIndexPieChartFood = index;
-                      //           reportController.getReportPieChartFood(
-                      //               Utils.getTimeOption(index).startDate,
-                      //               Utils.getTimeOption(index).endDate);
-                      //         });
-                      //       },
-                      //       child: Container(
-                      //         alignment: Alignment.center,
-                      //         margin: EdgeInsets.only(
-                      //           left: kDefaultPadding,
-                      //           // At end item it add extra 20 right  padding
-                      //           right: index == options.length - 1
-                      //               ? kDefaultPadding
-                      //               : 0,
-                      //         ),
-                      //         padding: const EdgeInsets.symmetric(
-                      //             horizontal: kDefaultPadding),
-                      //         decoration: BoxDecoration(
-                      //             color: index == selectedIndexPieChartFood
-                      //                 ? primaryColor
-                      //                 : textWhiteColor,
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             border: index == selectedIndexPieChartFood
-                      //                 ? Border.all(
-                      //                     width: 5, color: primaryColor)
-                      //                 : Border.all(
-                      //                     width: 1, color: primaryColor)),
-                      //         child: Text(
-                      //           options[index],
-                      //           style: index == selectedIndexPieChartFood
-                      //               ? const TextStyle(
-                      //                   color: textWhiteColor,
-                      //                   fontWeight: FontWeight.bold)
-                      //               : const TextStyle(
-                      //                   color: primaryColor,
-                      //                   fontWeight: FontWeight.normal),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      
                       marginTop30,
                       PieChartSample3(
                         data: reportController.reportPieChartFood,
@@ -765,68 +644,7 @@ class _HomePageState extends State<HomePage> {
                   margin: const EdgeInsets.only(left: 5),
                   child: Column(
                     children: [
-                      // const SizedBox(
-                      //   height: 50,
-                      //   child: ListTile(
-                      //     leading: Icon(
-                      //       Icons.bookmark,
-                      //       color: iconColor,
-                      //     ),
-                      //     title: Text("DOANH THU THEO BÀN",
-                      //         style: textStyleTitleGrayBold20),
-                      //   ),
-                      // ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(
-                      //       vertical: kDefaultPadding / 2),
-                      //   height: 35,
-                      //   child: ListView.builder(
-                      //     scrollDirection: Axis.horizontal,
-                      //     itemCount: options.length,
-                      //     itemBuilder: (context, index) => GestureDetector(
-                      //       onTap: () {
-                      //         setState(() {
-                      //           selectedIndexPieChartTable = index;
-                      //           reportController.getReportPieChartTable(
-                      //               Utils.getTimeOption(index).startDate,
-                      //               Utils.getTimeOption(index).endDate);
-                      //         });
-                      //       },
-                      //       child: Container(
-                      //         alignment: Alignment.center,
-                      //         margin: EdgeInsets.only(
-                      //           left: kDefaultPadding,
-                      //           // At end item it add extra 20 right  padding
-                      //           right: index == options.length - 1
-                      //               ? kDefaultPadding
-                      //               : 0,
-                      //         ),
-                      //         padding: const EdgeInsets.symmetric(
-                      //             horizontal: kDefaultPadding),
-                      //         decoration: BoxDecoration(
-                      //             color: index == selectedIndexPieChartTable
-                      //                 ? primaryColor
-                      //                 : textWhiteColor,
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             border: index == selectedIndexPieChartTable
-                      //                 ? Border.all(
-                      //                     width: 5, color: primaryColor)
-                      //                 : Border.all(
-                      //                     width: 1, color: primaryColor)),
-                      //         child: Text(
-                      //           options[index],
-                      //           style: index == selectedIndexPieChartTable
-                      //               ? const TextStyle(
-                      //                   color: textWhiteColor,
-                      //                   fontWeight: FontWeight.bold)
-                      //               : const TextStyle(
-                      //                   color: primaryColor,
-                      //                   fontWeight: FontWeight.normal),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      
                       marginTop30,
                       PieChartSample3(
                         data: reportController.reportPieChartEmployee,
@@ -915,58 +733,7 @@ class _HomePageState extends State<HomePage> {
                         data: reportController.reportBarChart,
                         isShowImage: false,
                       ),
-                      // marginTop10,
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(
-                      //       vertical: kDefaultPadding / 2),
-                      //   height: 35,
-                      //   child: ListView.builder(
-                      //     scrollDirection: Axis.horizontal,
-                      //     itemCount: options.length,
-                      //     itemBuilder: (context, index) => GestureDetector(
-                      //       onTap: () {
-                      //         setState(() {
-                      //           selectedIndexPieChart = index;
-                      //           reportController.getReportPieChartAll(
-                      //               Utils.getTimeOption(index).startDate,
-                      //               Utils.getTimeOption(index).endDate);
-                      //         });
-                      //       },
-                      //       child: Container(
-                      //         alignment: Alignment.center,
-                      //         margin: EdgeInsets.only(
-                      //           left: kDefaultPadding,
-                      //           // At end item it add extra 20 right  padding
-                      //           right: index == options.length - 1
-                      //               ? kDefaultPadding
-                      //               : 0,
-                      //         ),
-                      //         padding: const EdgeInsets.symmetric(
-                      //             horizontal: kDefaultPadding),
-                      //         decoration: BoxDecoration(
-                      //             color: index == selectedIndexPieChart
-                      //                 ? primaryColor
-                      //                 : textWhiteColor,
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             border: index == selectedIndexPieChart
-                      //                 ? Border.all(
-                      //                     width: 5, color: primaryColor)
-                      //                 : Border.all(
-                      //                     width: 1, color: primaryColor)),
-                      //         child: Text(
-                      //           options[index],
-                      //           style: index == selectedIndexPieChart
-                      //               ? const TextStyle(
-                      //                   color: textWhiteColor,
-                      //                   fontWeight: FontWeight.bold)
-                      //               : const TextStyle(
-                      //                   color: primaryColor,
-                      //                   fontWeight: FontWeight.normal),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      
                       marginTop30,
                       PieChartSample3(
                         data: reportController.reportPieChartAll,

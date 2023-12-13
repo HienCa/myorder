@@ -41,7 +41,7 @@ class _ManagementSupplierPageState extends State<ManagementSupplierPage> {
           leading: InkWell(
               onTap: () => {Navigator.pop(context)},
               child: const Icon(Icons.arrow_back_ios)),
-          title: const Center(child: Text("QUẢN LÝ NHÂN VIÊN")),
+          title: const Center(child: Text("QUẢN LÝ NHÀ CUNG CẤP")),
           actions: [
             Container(
                 margin: const EdgeInsets.only(right: 10),
@@ -56,7 +56,7 @@ class _ManagementSupplierPageState extends State<ManagementSupplierPage> {
                         Utils.showStylishDialog(
                             context,
                             'THÀNH CÔNG!',
-                            'Thêm mới nhân viên thành công!',
+                            'Thêm mới nhà cung cấp thành công!',
                             StylishDialogType.SUCCESS);
                       }
                     },
@@ -146,7 +146,7 @@ class _ManagementSupplierPageState extends State<ManagementSupplierPage> {
                                       )
                                     : CircleAvatar(
                                         child: Image.asset(
-                                          'assets/images/user-default.png',
+                                          defaultFoodImageString,
                                           width: 100,
                                           height: 100,
                                         ),

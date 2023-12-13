@@ -227,7 +227,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height * 0.9,
             color: backgroundColor,
             child: Column(
               children: [

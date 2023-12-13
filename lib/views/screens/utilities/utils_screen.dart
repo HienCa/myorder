@@ -8,6 +8,7 @@ import 'package:myorder/views/screens/managements/dashboard/dashboard_screen.dar
 import 'package:myorder/views/screens/quantity_foods_order/quantity_foods_order_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
 import 'package:myorder/views/screens/utilities/utils_manage_screen.dart';
+import 'package:myorder/views/widgets/dialogs/dialog_confirm_pop_screen.dart';
 
 class UtilsPage extends StatefulWidget {
   const UtilsPage({super.key});
@@ -217,7 +218,19 @@ class _UtilsPageState extends State<UtilsPage> {
             ),
             const Spacer(),
             InkWell(
-              onTap: () => {authController.signOut()},
+              onTap: () async {
+                final result = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const MyDialogMessagePopScreen(
+                        title: "ĐĂNG XUẤT",
+                        discription: "Bạn muốn đăng xuất ứng dụng?");
+                  },
+                );
+                if (result == "success") {
+                  authController.signOut();
+                }
+              },
               child: Container(
                 height: buttonHeight,
                 width: MediaQuery.of(context).size.width * 0.9,

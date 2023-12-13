@@ -32,7 +32,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
   var isActive = true;
   String? selectedImagePath;
   final Rx<File?> _pickedImage = Rx<File?>(null);
-
+  String roleString = "";
   String? errorTextName = "";
   String? errorTextRole = "";
   String? errorTextCCCD = "";
@@ -75,6 +75,18 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
     if (result.employee_id != "") {
       setState(() {
         employee = result;
+        roleString = result.role == ROLE_CUSTOMER
+            ? ROLE_CUSTOMER_STRING
+            : employee.role == ROLE_STAFF
+                ? ROLE_STAFF_STRING
+                : employee.role == ROLE_MANAGER
+                    ? ROLE_MANAGER_STRING
+                    : employee.role == ROLE_CASHIER
+                        ? ROLE_CASHIER_STRING
+                        : employee.role == ROLE_OWNER
+                            ? ROLE_OWNER_STRING
+                            : ROLE_STAFF_STRING;
+        roleController.text = roleString;
         nameController.text = employee.name;
         cccdController.text = employee.cccd;
         phoneController.text = employee.phone;
@@ -82,7 +94,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
         birthdayController.text = employee.birthday;
         genderController.text = employee.gender;
         addressController.text = employee.address;
-        roleController.text = employee.role.toString();
+        roleIdController.text = employee.role.toString();
         if (employee.gender == MALE) {
           isMaleSelected = true;
           isFemaleSelected = false;
@@ -96,6 +108,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController roleController = TextEditingController();
+  final TextEditingController roleIdController = TextEditingController();
   final TextEditingController cccdController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController birthdayController = TextEditingController();
@@ -568,9 +581,8 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
                                           phoneController.text,
                                           emailController.text,
                                           "00000000",
-                                         
                                           addressController.text,
-                                           (int.parse(roleController.text) )),
+                                          (int.parse(roleIdController.text))),
                                       Utils.showStylishDialog(
                                           context,
                                           'THÀNH CÔNG',
