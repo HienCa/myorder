@@ -110,27 +110,30 @@ class _ManagementChefBarOtherPageState
               style: TextStyle(color: secondColor),
             )),
             actions: [
-            Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: InkWell(
-                    onTap: () async {
-                      final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DailySaleTodayScreen()));
-                      if (result == 'success') {
-                        Utils.showStylishDialog(
+              Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  child: InkWell(
+                      onTap: () async {
+                        final result = await Navigator.push(
                             context,
-                            'THÀNH CÔNG!',
-                            'Cập nhật  thành công!',
-                            StylishDialogType.SUCCESS);
-                      }
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Icon(Icons.add_circle_outline),
-                    )))
-          ],
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const DailySaleTodayScreen()));
+                        if (result == 'success') {
+                          Utils.showStylishDialog(
+                              context,
+                              'THÀNH CÔNG!',
+                              'Cập nhật  thành công!',
+                              StylishDialogType.SUCCESS);
+                        }
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          Icons.task_rounded,
+                        ),
+                      )))
+            ],
             backgroundColor: primaryColor,
           ),
           body: TabBarView(
