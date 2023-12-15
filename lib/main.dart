@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, avoid_print
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,7 +17,7 @@ void main() async {
   await Firebase.initializeApp().then((value) {
     Get.put(AuthController());
   });
-  final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
+  // final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
 
   //  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);

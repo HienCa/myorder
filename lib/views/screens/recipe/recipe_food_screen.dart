@@ -9,9 +9,11 @@ import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/models/price_percent.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/dashboard/take_away/take_away_screen.dart';
 import 'package:myorder/views/screens/recipe/recipe_food_detail_screen.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
+import 'package:myorder/views/widgets/videos/rotate_phone.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
 class RecipesScreen extends StatefulWidget {
@@ -100,7 +102,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Utils.isLandscapeOrientation(context)
+        ? Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: grayColor200,
       body: Theme(
@@ -315,6 +318,6 @@ class _RecipesScreenState extends State<RecipesScreen> {
           ),
         ),
       ),
-    );
+    ) : const RequiredRotatePhoneToLanscape();
   }
 }
