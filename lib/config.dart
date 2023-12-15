@@ -4,7 +4,7 @@
 import 'package:myorder/caches/caches.dart';
 import 'package:myorder/models/role.dart';
 
-String RESTAURANT_NAME = "MỲ CAY HIỀN CA";
+String RESTAURANT_NAME = "VH Funny Food";
 int ACTIVE = 1; // HOẠT ĐỘNG
 int DEACTIVE = 0;
 // NGỪNG HOẠT ĐỘNG

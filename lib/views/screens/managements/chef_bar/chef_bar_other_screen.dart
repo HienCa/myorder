@@ -1,15 +1,19 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
+import 'package:myorder/controllers/daily_sales/daily_sale_detail_controller.dart';
 import 'package:myorder/models/order_detail.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/chef_bar/bar_screen.dart';
 import 'package:myorder/views/screens/managements/chef_bar/chef_screen.dart';
 import 'package:myorder/views/screens/managements/chef_bar/other_screen.dart';
+import 'package:myorder/views/screens/managements/chef_bar/update_daily_sale_today.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementChefBarOtherPage extends StatefulWidget {
   const ManagementChefBarOtherPage({Key? key}) : super(key: key);
@@ -23,6 +27,8 @@ class _ManagementChefBarOtherPageState
     extends State<ManagementChefBarOtherPage> {
   ChefBarOtherController chefBarOtherController =
       Get.put(ChefBarOtherController());
+  DailySaleDetailController dailySaleDetailController =
+      Get.put(DailySaleDetailController());
   var keySearch = "";
   // var countChef = 0;
   // var countBar = 0;
@@ -96,7 +102,6 @@ class _ManagementChefBarOtherPageState
                           style: textStyleWhiteBold14,
                         );
                 })),
-                
               ],
             ),
             title: const Center(
@@ -105,17 +110,27 @@ class _ManagementChefBarOtherPageState
               style: TextStyle(color: secondColor),
             )),
             actions: [
-              Container(
+            Container(
                 margin: const EdgeInsets.only(right: 10),
-                child: const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Icon(
-                    Icons.add_circle_outline,
-                    color: transparentColor,
-                  ),
-                ),
-              ),
-            ],
+                child: InkWell(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const DailySaleTodayScreen()));
+                      if (result == 'success') {
+                        Utils.showStylishDialog(
+                            context,
+                            'THÀNH CÔNG!',
+                            'Cập nhật  thành công!',
+                            StylishDialogType.SUCCESS);
+                      }
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Icon(Icons.add_circle_outline),
+                    )))
+          ],
             backgroundColor: primaryColor,
           ),
           body: TabBarView(

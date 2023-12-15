@@ -8,6 +8,7 @@ class DailySales {
   String name;
   Timestamp date_apply;
   int active;
+  List<DailySaleDetail>? dailySaleDetails;
 
   DailySales({
     required this.daily_sale_id,

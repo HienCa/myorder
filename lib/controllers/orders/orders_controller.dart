@@ -3577,12 +3577,7 @@ class OrderController extends GetxController {
 
         double vat_price = (total * VAT_PERCENT) / 100;
         totalAmount = order.total_amount + vat_price;
-        print("APPLY VAT");
 
-        print(order.order_id);
-        print(total);
-        print(vat_price);
-        print(totalAmount);
         // cập nhật lại tổng tiền cho order
         await firestore.collection('orders').doc(order.order_id).update({
           "total_amount": totalAmount,

@@ -4,22 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/daily_sales/daily_sale_detail_controller.dart';
-import 'package:myorder/models/daily_sales.dart';
+import 'package:myorder/controllers/foods/foods_controller.dart';
+import 'package:myorder/models/food_order.dart';
 
-class CustomDialogUpdateDailySaleDetail extends StatefulWidget {
-  final DailySales dailySale;
-  const CustomDialogUpdateDailySaleDetail({
+class CustomDialogUpdateSoldOut extends StatefulWidget {
+  final FoodOrder food;
+
+  const CustomDialogUpdateSoldOut({
     Key? key,
-    required this.dailySale,
+    required this.food,
   }) : super(key: key);
 
   @override
-  State<CustomDialogUpdateDailySaleDetail> createState() =>
-      _CustomDialogUpdateDailySaleDetailState();
+  State<CustomDialogUpdateSoldOut> createState() =>
+      _CustomDialogUpdateSoldOutState();
 }
 
-class _CustomDialogUpdateDailySaleDetailState
-    extends State<CustomDialogUpdateDailySaleDetail> {
+class _CustomDialogUpdateSoldOutState extends State<CustomDialogUpdateSoldOut> {
+  FoodController foodController = Get.put(FoodController());
+
   @override
   void dispose() {
     super.dispose();
@@ -55,7 +58,7 @@ class _CustomDialogUpdateDailySaleDetailState
                   children: [
                     const Center(
                       child: Text(
-                        'CẬP NHẬT SỐ LƯỢNG BÁN',
+                        'MÓN ĐÃ HẾT',
                         style: textStylePrimaryBold,
                       ),
                     ),
@@ -94,9 +97,8 @@ class _CustomDialogUpdateDailySaleDetailState
                           ),
                           InkWell(
                             onTap: () => {
-                              dailySaleDetailController.updatedailySaleDetail(
-                                  widget.dailySale,
-                                  dailySaleDetailController.dailySaleDetails),
+                              dailySaleDetailController
+                                  .updateCurrentOrderCountSoldOut(widget.food),
                               Navigator.pop(context, 'success')
                             },
                             child: Container(

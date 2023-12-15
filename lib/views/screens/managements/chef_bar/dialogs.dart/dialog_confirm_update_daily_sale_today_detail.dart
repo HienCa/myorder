@@ -4,22 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/daily_sales/daily_sale_detail_controller.dart';
-import 'package:myorder/models/daily_sales.dart';
+import 'package:myorder/controllers/foods/foods_controller.dart';
 
-class CustomDialogUpdateDailySaleDetail extends StatefulWidget {
-  final DailySales dailySale;
-  const CustomDialogUpdateDailySaleDetail({
-    Key? key,
-    required this.dailySale,
+
+class CustomDialogUpdateCurrentCountOrder extends StatefulWidget {
+  const CustomDialogUpdateCurrentCountOrder({
+    Key? key, 
   }) : super(key: key);
 
   @override
-  State<CustomDialogUpdateDailySaleDetail> createState() =>
-      _CustomDialogUpdateDailySaleDetailState();
+  State<CustomDialogUpdateCurrentCountOrder> createState() =>
+      _CustomDialogUpdateCurrentCountOrderState();
 }
 
-class _CustomDialogUpdateDailySaleDetailState
-    extends State<CustomDialogUpdateDailySaleDetail> {
+class _CustomDialogUpdateCurrentCountOrderState
+    extends State<CustomDialogUpdateCurrentCountOrder> {
+  FoodController foodController = Get.put(FoodController());
+
   @override
   void dispose() {
     super.dispose();
@@ -55,7 +56,7 @@ class _CustomDialogUpdateDailySaleDetailState
                   children: [
                     const Center(
                       child: Text(
-                        'CẬP NHẬT SỐ LƯỢNG BÁN',
+                        'SỐ LƯỢNG BÁN HÔM NAY',
                         style: textStylePrimaryBold,
                       ),
                     ),
@@ -94,9 +95,8 @@ class _CustomDialogUpdateDailySaleDetailState
                           ),
                           InkWell(
                             onTap: () => {
-                              dailySaleDetailController.updatedailySaleDetail(
-                                  widget.dailySale,
-                                  dailySaleDetailController.dailySaleDetails),
+                              dailySaleDetailController.updateCurrentOrderCount(
+                                  foodController.foodsToOrder),
                               Navigator.pop(context, 'success')
                             },
                             child: Container(

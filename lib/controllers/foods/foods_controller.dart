@@ -238,7 +238,6 @@ class FoodController extends GetxController {
             List<model.Food> retValue = [];
             for (var element in query.docs) {
               model.Food food = model.Food.fromSnap(element);
-
               List<model.Food> listFoodComboDetail = [];
               if (food.food_combo_ids.isNotEmpty) {
                 // Lấy thông tin món combo
@@ -370,11 +369,7 @@ class FoodController extends GetxController {
             List<FoodOrder> retValue = [];
             for (var element in query.docs) {
               FoodOrder food = FoodOrder.fromSnap(element);
-              print("food.max_order_limit");
-              print(food.max_order_limit);
-              print(food.current_order_count);
-
-
+              food.new_current_order_count = food.current_order_count;
               food.isSelected = false;
               food.quantity = 1;
 
@@ -1026,8 +1021,6 @@ class FoodController extends GetxController {
       );
     }
   }
-
-  
 
   // Block account
   updateToggleActive(

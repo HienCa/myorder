@@ -29,6 +29,7 @@ class FoodOrder {
   List<Food> listAddition = []; //món bán kèm
   int? max_order_limit;
   int? current_order_count;
+  int? new_current_order_count;
   FoodOrder({
     required this.food_id,
     required this.name,
