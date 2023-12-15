@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/models/warehouse_receipt_detail.dart';
 
@@ -135,33 +136,53 @@ class WarehouseReceiptController extends GetxController {
     }
   }
 
-  Future<List<WarehouseReceiptDetail>> getWarehouseReceiptDetails(
-      String warehouseReceiptId) async {
+  final Rx<List<WarehouseReceiptDetail>> _warehouseReceiptDetails =
+      Rx<List<WarehouseReceiptDetail>>([]);
+  List<WarehouseReceiptDetail> get warehouseReceiptDetails =>
+      _warehouseReceiptDetails.value;
+
+  void getWarehouseReceiptDetails(
+      String warehouseReceiptId, String keySearch) async {
     try {
-      var warehouseReceiptDetailCollection = FirebaseFirestore.instance
-          .collection('warehouseReceipts')
-          .doc(warehouseReceiptId)
-          .collection('warehouseReceiptDetails');
-
-      var warehouseReceiptDetailCollectionQuery =
-          await warehouseReceiptDetailCollection.get();
-
-      List<WarehouseReceiptDetail> warehouseReceiptDetails = [];
-
-      for (var warehouseReceiptDetailData
-          in warehouseReceiptDetailCollectionQuery.docs) {
-        WarehouseReceiptDetail warehouseReceiptDetail =
-            WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
-
-        warehouseReceiptDetail.new_quantity = warehouseReceiptDetail.quantity;
-        warehouseReceiptDetails.add(warehouseReceiptDetail);
+      if (keySearch.isEmpty) {
+        _warehouseReceiptDetails.bindStream(
+          firestore
+              .collection('warehouseReceipts')
+              .doc(warehouseReceiptId)
+              .collection('warehouseReceiptDetails')
+              .snapshots()
+              .map(
+            (QuerySnapshot query) {
+              List<WarehouseReceiptDetail> retValue = [];
+              for (var element in query.docs) {
+                retValue.add(WarehouseReceiptDetail.fromSnap(element));
+              }
+              return retValue;
+            },
+          ),
+        );
+      } else {
+        _warehouseReceiptDetails.bindStream(firestore
+            .collection('warehouseReceipts')
+            .doc(warehouseReceiptId)
+            .collection('warehouseReceiptDetails')
+            .snapshots()
+            .map((QuerySnapshot query) {
+          List<WarehouseReceiptDetail> retVal = [];
+          for (var elem in query.docs) {
+            String name = elem['ingredient_name'].toLowerCase();
+            String search = keySearch.toLowerCase().trim();
+            if (name.contains(search)) {
+              retVal.add(WarehouseReceiptDetail.fromSnap(elem));
+            }
+          }
+          return retVal;
+        }));
       }
-
-      return warehouseReceiptDetails;
     } catch (error) {
       // Xử lý lỗi nếu cần thiết
       print('Error fetching warehouse receipt details: $error');
-      return [];
+      return null;
     }
   }
 
@@ -253,11 +274,12 @@ class WarehouseReceiptController extends GetxController {
 
   updateWarehouseReceipt(
     WarehouseReceipt warehouseRecceipt,
-    List<WarehouseReceiptDetail> newWarehouseRecceiptDetails,
+    List<WarehouseReceiptDetail> warehouseRecceiptDetails,
+    List<Ingredient> newWarehouseRecceiptDetails,
   ) async {
     try {
       for (WarehouseReceiptDetail warehouseRecceiptDetail
-          in warehouseRecceipt.warehouseRecceiptDetails ?? []) {
+          in warehouseRecceiptDetails) {
         await firestore
             .collection("warehouseReceipts")
             .doc(warehouseRecceipt.warehouse_receipt_id)
@@ -265,11 +287,33 @@ class WarehouseReceiptController extends GetxController {
             .doc(warehouseRecceiptDetail.warehouse_receipt_detail_id)
             .delete();
       }
-      //MỚI
+      //Update
       for (WarehouseReceiptDetail warehouseRecceiptDetail
-          in newWarehouseRecceiptDetails) {
+          in warehouseRecceiptDetails) {
         String idDetail = Utils.generateUUID();
         warehouseRecceiptDetail.warehouse_receipt_detail_id = idDetail;
+
+        await firestore
+            .collection("warehouseReceipts")
+            .doc(warehouseRecceipt.warehouse_receipt_id)
+            .collection("warehouseReceiptDetails")
+            .doc(idDetail)
+            .set(warehouseRecceiptDetail.toJson());
+      }
+      //Mới
+      for (Ingredient ingredient in newWarehouseRecceiptDetails) {
+        String idDetail = Utils.generateUUID();
+        WarehouseReceiptDetail warehouseRecceiptDetail = WarehouseReceiptDetail(
+            warehouse_receipt_detail_id: idDetail,
+            ingredient_id: ingredient.ingredient_id,
+            ingredient_name: ingredient.name,
+            quantity: ingredient.quantity ?? 0,
+            quantity_in_stock: ingredient.quantity ?? 0,
+            price: ingredient.price ?? 0,
+            unit_id: ingredient.unit_id ?? "",
+            unit_name: ingredient.unit_name ?? "",
+            expiration_date: ingredient.expiration_date,
+            batch_number: ingredient.batch_number ?? "");
 
         await firestore
             .collection("warehouseReceipts")

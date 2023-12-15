@@ -56,6 +56,7 @@ class _StaffDetailPageState extends State<StaffDetailPage> {
                         ? ROLE_OWNER_STRING
                         : ROLE_STAFF_STRING;
     roleController.text = roleString;
+    roleIdController.text = widget.employee.role.toString();
     nameController.text = widget.employee.name;
     cccdController.text = widget.employee.cccd;
     birthdayController.text = widget.employee.birthday;
@@ -531,7 +532,7 @@ class _StaffDetailPageState extends State<StaffDetailPage> {
                                           emailController.text,
                                           "00000000",
                                           addressController.text,
-                                          (int.parse(roleIdController.text))),
+                                          (int.parse(roleIdController.text)), widget.employee),
                                       Utils.myPopSuccess(context)
                                     }
                                 },

@@ -61,7 +61,7 @@ class _WarehouseReceiptDetailScreenState
     //setup warehouseReceipt
     if (widget.warehouseReceipt != null) {
       warehouseReceiptController.getWarehouseReceiptDetails(
-          widget.warehouseReceipt?.warehouse_receipt_id ?? "");
+          widget.warehouseReceipt?.warehouse_receipt_id ?? "", "");
       //update
       discountTextEditingController.text =
           Utils.formatCurrency(widget.warehouseReceipt?.discount ?? 0);
@@ -685,10 +685,6 @@ class _WarehouseReceiptDetailScreenState
                               MaterialPageRoute(
                                   builder: (context) =>
                                       AddIngredientToWarehouseReceiptScreen(
-                                        listIngredientSelected:
-                                            listIngredientSelected,
-                                        listIngredient:
-                                            ingredientController.ingredients,
                                         isUpdate:
                                             widget.warehouseReceipt != null
                                                 ? true

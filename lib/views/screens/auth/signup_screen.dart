@@ -57,7 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'HIENCA-ORDER',
+              'VANHIEN-ORDER',
               style: GoogleFonts.bungee(
                 fontSize: 40,
                 color: buttonColor,
@@ -85,7 +85,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     },
                     child: ClipOval(
                       child: Image.asset(
-                        "assets/images/user-default.png",
+                        defaultLogoImageString,
                         width: 150,
                         height: 150,
                         fit: BoxFit.cover,

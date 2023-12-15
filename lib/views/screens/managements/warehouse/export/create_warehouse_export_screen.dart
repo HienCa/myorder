@@ -529,10 +529,6 @@ class _WarehouseExportDetailScreenState
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         AddIngredientToWarehouseExportScreen(
-                                          listIngredientSelected:
-                                              listIngredientSelected,
-                                          listIngredient:
-                                              ingredientController.ingredients,
                                           isUpdate:
                                               widget.warehouseExport != null
                                                   ? true

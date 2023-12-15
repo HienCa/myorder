@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
 import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_export_controller.dart';
@@ -39,14 +38,11 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
       Get.put(WarehouseReceiptController());
   WarehouseExportController warehouseExportController =
       Get.put(WarehouseExportController());
-  IngredientController ingredientController = Get.put(IngredientController());
 
   int warehouseStatus = WAREHOUSE_STATUS_WAITING;
   @override
   void initState() {
     super.initState();
-
-    ingredientController.getIngredients("");
 
     isReceipt = true;
     isExport = false;

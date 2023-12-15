@@ -582,7 +582,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
                                           emailController.text,
                                           "00000000",
                                           addressController.text,
-                                          (int.parse(roleIdController.text))),
+                                          (int.parse(roleIdController.text)), employee),
                                       Utils.showStylishDialog(
                                           context,
                                           'THÀNH CÔNG',

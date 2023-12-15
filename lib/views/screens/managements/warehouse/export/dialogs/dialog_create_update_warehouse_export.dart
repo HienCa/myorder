@@ -142,7 +142,9 @@ class _CustomDialogCreateWarehouseExportState
                                   warehouseExportController
                                       .updateWarehouseExport(
                                           widget.warehouseExport,
-                                          warehouseExportDetails),
+                                          warehouseExportController
+                                              .warehouseExportDetails,
+                                          widget.listIngredientSelected),
                                   Utils.myPopResult(context, 'update')
                                 }
                             },

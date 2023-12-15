@@ -26,9 +26,7 @@ class ReportController extends GetxController {
 
   void getReportServingOrders() {
     Report report = Report.empty();
-    final now = DateTime.now();
-    final startOfDay = DateTime(now.year, now.month, now.day);
-    final endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
+
     FirebaseFirestore.instance
         .collection('orders')
         .where("active", isEqualTo: ACTIVE)

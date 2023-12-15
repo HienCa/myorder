@@ -207,10 +207,11 @@ class _LoginPhoneState extends State<LoginPhone> {
     auth.verifyPhoneNumber(
       phoneNumber: "+84${phoneController.text}",
       verificationCompleted: (PhoneAuthCredential credential) async {
-        await auth.signInWithCredential(credential).then((value) {
-          // context.goNamed(RouterName.home);
-          print("Bạn đã đăng nhập thành công");
-        });
+        // await auth.signInWithCredential(credential).then((value) {
+        //   // context.goNamed(RouterName.home);
+        //   print("Bạn đã đăng nhập thành công");
+        // });
+        print("Bạn đã đăng nhập thành công");
       },
       verificationFailed: (FirebaseAuthException e) {
         print(e.message);

@@ -30,7 +30,6 @@ class EmployeeController extends GetxController {
     _pickedImage = Rx<File?>(File(pickedImage!.path));
   }
 
-  
   Future<String> _uploadToStorage(File image) async {
     String fileName =
         '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
@@ -58,7 +57,7 @@ class EmployeeController extends GetxController {
           String phone = userData['phone'] ?? '';
           String email = userData['email'] ?? '';
           String password = userData['password'] ?? '';
-         
+
           String address = userData['address'] ?? '';
           int role = userData['role'] ?? 1;
           int active = userData['active'] ?? 1;
@@ -72,7 +71,6 @@ class EmployeeController extends GetxController {
             phone: phone,
             email: email,
             password: password,
-          
             address: address,
             role: role,
             active: active,
@@ -141,7 +139,6 @@ class EmployeeController extends GetxController {
       String phone,
       String email,
       String password,
-      
       String address,
       int role) async {
     try {
@@ -151,8 +148,7 @@ class EmployeeController extends GetxController {
           gender.isNotEmpty &&
           birthday.isNotEmpty &&
           phone.isNotEmpty &&
-          address.isNotEmpty
-        ) {
+          address.isNotEmpty) {
         UserCredential cred = await firebaseAuth.createUserWithEmailAndPassword(
           email: email.trim(),
           password: password,
@@ -173,7 +169,6 @@ class EmployeeController extends GetxController {
           phone: phone.trim(),
           email: email.trim(),
           password: password.trim(),
-        
           address: address.trim(),
           role: role,
           active: 1,
@@ -182,6 +177,7 @@ class EmployeeController extends GetxController {
             FirebaseFirestore.instance.collection('employees');
 
         await usersCollection.doc(cred.user!.uid).set(employee.toJson());
+
         // Get.snackbar(
         //   'THÀNH CÔNG!',
         //   'Thêm nhân viên mới thành công!',
@@ -220,9 +216,9 @@ class EmployeeController extends GetxController {
       String phone,
       String email,
       String password,
-     
       String address,
-      int role) async {
+      int role,
+      Employee employee) async {
     // var doc = await firestore.collection('employees').doc(employee_id).get();
     String downloadUrl = "";
     try {
@@ -244,7 +240,6 @@ class EmployeeController extends GetxController {
           "phone": phone.trim(),
           "email": email.trim(),
           "password": password.trim(),
-        
           "address": address.trim(),
           "role": role,
         });
@@ -261,10 +256,35 @@ class EmployeeController extends GetxController {
           "phone": phone.trim(),
           "email": email.trim(),
           "password": password.trim(),
-          
           "address": address.trim(),
           "role": role,
         });
+      }
+
+      try {
+        // Lấy thông tin người dùng từ Firebase Authentication bằng UID
+        User? user = await FirebaseAuth.instance
+            .authStateChanges()
+            .firstWhere((u) => u?.uid == employee_id);
+        print(user);
+        if (user != null) {
+          AuthCredential credential = EmailAuthProvider.credential(
+              email: employee.email, password: employee.password);
+          await user.reauthenticateWithCredential(credential);
+
+          await user.updateEmail(email);
+
+          print('Email updated successfully.');
+        } else {
+          print('User not found.');
+
+          await firebaseAuth.createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password,
+          );
+        }
+      } catch (e) {
+        print('Error updating email: $e');
       }
       // Get.snackbar(
       //   'THÀNH CÔNG!',

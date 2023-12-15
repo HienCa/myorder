@@ -146,7 +146,9 @@ class _CustomDialogCreateWarehouseReceiptState
                                   warehouseReceiptController
                                       .updateWarehouseReceipt(
                                           widget.warehouseReceipt,
-                                          warehouseRecceiptDetails),
+                                          warehouseReceiptController
+                                              .warehouseReceiptDetails,
+                                          widget.listIngredientSelected),
                                   Utils.myPopResult(context, 'update')
                                 }
                             },

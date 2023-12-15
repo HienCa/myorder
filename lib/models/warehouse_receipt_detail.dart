@@ -12,8 +12,9 @@ class WarehouseReceiptDetail {
   double price;
   String unit_id;
   String unit_name;
-  Timestamp? expiration_date;//hạn sử dụng
-  String batch_number;//số lô
+  Timestamp? expiration_date; //hạn sử dụng
+  String batch_number; //số lô
+  bool isSelected = false;
 
   WarehouseReceiptDetail({
     required this.warehouse_receipt_detail_id,

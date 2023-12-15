@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/warehouse_export.dart';
 import 'package:myorder/models/warehouse_export_detail.dart';
 
@@ -117,34 +118,52 @@ class WarehouseExportController extends GetxController {
     }
   }
 
-  Future<List<WarehouseExportDetail>> getWarehouseExportDetails(
-      String warehouseExportId) async {
+  final Rx<List<WarehouseExportDetail>> _warehouseExportDetails =
+      Rx<List<WarehouseExportDetail>>([]);
+  List<WarehouseExportDetail> get warehouseExportDetails =>
+      _warehouseExportDetails.value;
+  void getWarehouseExportDetails(
+      String warehouseExportId, String keySearch) async {
     try {
-      var WarehouseExportDetailCollection = firestore
-          .collection('warehouseExports')
-          .doc(warehouseExportId)
-          .collection('warehouseExportDetails');
-
-      List<WarehouseExportDetail> warehouseRecceiptDetails =
-          []; //danh sách chi tiết
-      var WarehouseExportDetailCollectionQuery =
-          await WarehouseExportDetailCollection.get();
-      for (var WarehouseExportDetailData
-          in WarehouseExportDetailCollectionQuery.docs) {
-        // chi tiết phiếu xuất
-
-        WarehouseExportDetail warehouseRecceiptDetail =
-            WarehouseExportDetail.fromSnap(WarehouseExportDetailData);
-
-        warehouseRecceiptDetail.new_quantity = warehouseRecceiptDetail.quantity;
-        warehouseRecceiptDetails.add(warehouseRecceiptDetail);
+      if (keySearch.isEmpty) {
+        _warehouseExportDetails.bindStream(
+          firestore
+              .collection('warehouseExports')
+              .doc(warehouseExportId)
+              .collection('warehouseExportDetails')
+              .snapshots()
+              .map(
+            (QuerySnapshot query) {
+              List<WarehouseExportDetail> retValue = [];
+              for (var element in query.docs) {
+                retValue.add(WarehouseExportDetail.fromSnap(element));
+              }
+              return retValue;
+            },
+          ),
+        );
+      } else {
+        _warehouseExportDetails.bindStream(firestore
+            .collection('warehouseExports')
+            .doc(warehouseExportId)
+            .collection('warehouseExportDetails')
+            .snapshots()
+            .map((QuerySnapshot query) {
+          List<WarehouseExportDetail> retVal = [];
+          for (var elem in query.docs) {
+            String name = elem['ingredient_name'].toLowerCase();
+            String search = keySearch.toLowerCase().trim();
+            if (name.contains(search)) {
+              retVal.add(WarehouseExportDetail.fromSnap(elem));
+            }
+          }
+          return retVal;
+        }));
       }
-
-      return warehouseRecceiptDetails;
     } catch (error) {
       // Xử lý lỗi nếu cần thiết
       print('Error fetching warehouse receipt details: $error');
-      return [];
+      return null;
     }
   }
 
@@ -236,11 +255,12 @@ class WarehouseExportController extends GetxController {
 
   updateWarehouseExport(
     WarehouseExport warehouseExport,
-    List<WarehouseExportDetail> newWarehouseRecceiptDetails,
+    List<WarehouseExportDetail> warehouseRecceiptDetails,
+    List<Ingredient> newWarehouseRecceiptDetails,
   ) async {
     try {
       for (WarehouseExportDetail warehouseRecceiptDetail
-          in warehouseExport.warehouseExportDetails ?? []) {
+          in warehouseRecceiptDetails) {
         await firestore
             .collection("warehouseExports")
             .doc(warehouseExport.warehouse_export_id)
@@ -248,9 +268,9 @@ class WarehouseExportController extends GetxController {
             .doc(warehouseRecceiptDetail.warehouse_export_detail_id)
             .delete();
       }
-      //MỚI
+      //CẬP NHẬT
       for (WarehouseExportDetail warehouseExportDetail
-          in newWarehouseRecceiptDetails) {
+          in warehouseRecceiptDetails) {
         String idDetail = Utils.generateUUID();
         warehouseExportDetail.warehouse_export_detail_id = idDetail;
 
@@ -260,6 +280,24 @@ class WarehouseExportController extends GetxController {
             .collection("warehouseExportDetails")
             .doc(idDetail)
             .set(warehouseExportDetail.toJson());
+      }
+      //MỚI
+      for (Ingredient warehouseExportDetail in newWarehouseRecceiptDetails) {
+        String idDetail = Utils.generateUUID();
+        WarehouseExportDetail detail = WarehouseExportDetail(
+            warehouse_export_detail_id: idDetail,
+            ingredient_id: warehouseExportDetail.ingredient_id,
+            ingredient_name: warehouseExportDetail.name,
+            quantity: warehouseExportDetail.quantity ?? 0,
+            price: warehouseExportDetail.price ?? 0,
+            unit_id: warehouseExportDetail.unit_id ?? "",
+            unit_name: warehouseExportDetail.unit_name ?? "");
+        await firestore
+            .collection("warehouseExports")
+            .doc(warehouseExport.warehouse_export_id)
+            .collection("warehouseExportDetails")
+            .doc(idDetail)
+            .set(detail.toJson());
       }
 
       update();
