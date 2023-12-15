@@ -1266,14 +1266,7 @@ class _DashboardBookingState extends State<DashboardBooking> {
 
                               orderDetailList.add(orderDetail);
 
-                              //show thong tin console
-                              print("--------------------------------");
-                              print("ID: ${foodOrder.food_id}");
-                              print("Name: ${foodOrder.name}");
-                              print("Price: ${foodOrder.price}");
-                              print("Quantity: ${foodOrder.quantity}");
-                              print("Is Selected: ${foodOrder.isSelected}");
-                              print("--------------------------------");
+                              
                             }
 
                             //Món bán kèm nếu chọn

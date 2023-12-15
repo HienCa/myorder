@@ -14,6 +14,7 @@ import 'package:myorder/views/screens/order/actions/split/food/choose_target_tab
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
 import 'package:myorder/views/screens/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -748,11 +749,12 @@ class _OrderPageState extends State<OrderPage> {
                                                       );
                                                       if (result ==
                                                           "MOVE-TABLE") {
-                                                        Utils.showSuccessFlushbar(
+                                                        Utils.showStylishDialog(
                                                             context,
-                                                            '',
-                                                            'Chuyển bàn thành công!');
-
+                                                            "THÔNG BÁO",
+                                                            "Chuyển bàn thành công!",
+                                                            StylishDialogType
+                                                                .SUCCESS);
                                                         setState(() {
                                                           orderController.getOrders(
                                                               employeeIdSelected,
@@ -761,10 +763,12 @@ class _OrderPageState extends State<OrderPage> {
                                                         });
                                                       } else if (result ==
                                                           "MERGE-TABLE") {
-                                                        Utils.showSuccessFlushbar(
+                                                        Utils.showStylishDialog(
                                                             context,
-                                                            '',
-                                                            'Gộp bàn thành công!');
+                                                            "THÔNG BÁO",
+                                                            "Gộp bàn thành công!",
+                                                            StylishDialogType
+                                                                .SUCCESS);
                                                         setState(() {
                                                           orderController.getOrders(
                                                               employeeIdSelected,
@@ -773,16 +777,20 @@ class _OrderPageState extends State<OrderPage> {
                                                         });
                                                       } else if (result ==
                                                           "SPLIT-FOOD") {
-                                                        Utils.showSuccessFlushbar(
+                                                        Utils.showStylishDialog(
                                                             context,
-                                                            '',
-                                                            'Tách món thành công!');
+                                                            "THÔNG BÁO",
+                                                            "Tách món thành công!",
+                                                            StylishDialogType
+                                                                .SUCCESS);
                                                       } else if (result ==
                                                           "CANCEL-TABLE") {
-                                                        Utils.showSuccessFlushbar(
+                                                        Utils.showStylishDialog(
                                                             context,
-                                                            '',
-                                                            'Hủy bàn thành công!');
+                                                            "THÔNG BÁO",
+                                                            "Hủy bàn thành công!",
+                                                            StylishDialogType
+                                                                .SUCCESS);
                                                         setState(() {
                                                           orderController.getOrders(
                                                               employeeIdSelected,
@@ -791,10 +799,12 @@ class _OrderPageState extends State<OrderPage> {
                                                         });
                                                       } else if (result ==
                                                           'FAIL-CANCEL-TABLE') {
-                                                        Utils.showErrorFlushbar(
+                                                        Utils.showStylishDialog(
                                                             context,
-                                                            'Thông báo',
-                                                            'Chỉ có thể hủy bàn khi các món ăn ở trạng thái CHỜ CHẾ BIẾN HOẶC ĐÃ HỦY');
+                                                            "THÔNG BÁO",
+                                                            "Chỉ có thể hủy bàn khi các món ăn ở trạng thái CHỜ CHẾ BIẾN HOẶC ĐÃ HỦY",
+                                                            StylishDialogType
+                                                                .ERROR);
                                                       } else if (result ==
                                                           'PAID') {
                                                         Utils.showErrorFlushbar(

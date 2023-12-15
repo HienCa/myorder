@@ -278,7 +278,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
                                               : ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(5),
-                                                  child: defaultFoodImage),
+                                                  child: defaultFoodImage100hw),
                                           //NAME
                                           Marquee(
                                               direction: Axis.horizontal,

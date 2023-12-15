@@ -742,50 +742,50 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-                //CHỌN LỊCH BÁO CÁO DOANH THU - CHI PHÍ - LỢI NHUẬN
-                Container(
-                  // height: 240,
-                  margin: const EdgeInsets.all(0),
-                  child: const Column(
-                    children: [
-                      ListTile(
-                        leading: Icon(
-                          Icons.bookmark,
-                          color: iconColor,
-                        ),
-                        title: Text("DOANH THU - CHI PHÍ - LỢI NHUẬN",
-                            style: textStyleTitleGrayBold20),
-                        subtitle: Text("100,000,000",
-                            style: textStyleSubTitlePrimaryRegular20),
-                      ),
-                      ListTile(
-                        title: Text("Doanh thu",
-                            style: textStyleTrailingPrimaryRegular16),
-                        trailing: Text("999,000,000",
-                            style: textStyleTrailingPrimaryRegular16),
-                      ),
-                      ListTile(
-                        title: Text("Chi phí",
-                            style: textStyleTrailingCostRegular16),
-                        trailing: Text("100,000,000",
-                            style: textStyleTrailingCostRegular16),
-                      ),
-                      ListTile(
-                        title: Text("Lợi nhuận",
-                            style: textStyleTrailingProfitRegular16),
-                        trailing: Text("800,000,000",
-                            style: textStyleTrailingProfitRegular16),
-                      ),
+                // //CHỌN LỊCH BÁO CÁO DOANH THU - CHI PHÍ - LỢI NHUẬN
+                // Container(
+                //   // height: 240,
+                //   margin: const EdgeInsets.all(0),
+                //   child: const Column(
+                //     children: [
+                //       ListTile(
+                //         leading: Icon(
+                //           Icons.bookmark,
+                //           color: iconColor,
+                //         ),
+                //         title: Text("DOANH THU - CHI PHÍ - LỢI NHUẬN",
+                //             style: textStyleTitleGrayBold20),
+                //         subtitle: Text("100,000,000",
+                //             style: textStyleSubTitlePrimaryRegular20),
+                //       ),
+                //       ListTile(
+                //         title: Text("Doanh thu",
+                //             style: textStyleTrailingPrimaryRegular16),
+                //         trailing: Text("999,000,000",
+                //             style: textStyleTrailingPrimaryRegular16),
+                //       ),
+                //       ListTile(
+                //         title: Text("Chi phí",
+                //             style: textStyleTrailingCostRegular16),
+                //         trailing: Text("100,000,000",
+                //             style: textStyleTrailingCostRegular16),
+                //       ),
+                //       ListTile(
+                //         title: Text("Lợi nhuận",
+                //             style: textStyleTrailingProfitRegular16),
+                //         trailing: Text("800,000,000",
+                //             style: textStyleTrailingProfitRegular16),
+                //       ),
 
-                      // BarChartSample2(
-                      //   data: data,
-                      //   maxY: 20,
-                      //   title: 'Thống kê số lượng bán',
-                      //   bottomTitle: bottomTitles,
-                      // ),
-                    ],
-                  ),
-                ),
+                //       // BarChartSample2(
+                //       //   data: data,
+                //       //   maxY: 20,
+                //       //   title: 'Thống kê số lượng bán',
+                //       //   bottomTitle: bottomTitles,
+                //       // ),
+                //     ],
+                //   ),
+                // ),
               ],
             );
           }))),

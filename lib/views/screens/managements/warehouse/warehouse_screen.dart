@@ -294,169 +294,169 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 60,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      // margin: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                child: InkWell(
-                              onTap: () {
-                                setUpSecondScreen(SubWarehouse.Waiting);
-                              },
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "CHỜ XỬ LÝ",
-                                        style: isWaiting
-                                            ? textStylePriceBold14
-                                            : textStyleGreyBold14,
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: colorCancel,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        child: const Text(
-                                          "99",
-                                          style: textStyleWhiteBold14,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Container(
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: isWaiting
-                                          ? primaryColor
-                                          : transparentColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )),
-                            Expanded(
-                                child: InkWell(
-                              onTap: () {
-                                setUpSecondScreen(SubWarehouse.Main);
-                              },
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "NHẬP KHO",
-                                        style: isMain
-                                            ? textStylePriceBold14
-                                            : textStyleGreyBold14,
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: colorCancel,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        child: const Text(
-                                          "99",
-                                          style: textStyleWhiteBold14,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Container(
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: isMain
-                                          ? primaryColor
-                                          : transparentColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )),
-                            Expanded(
-                                child: InkWell(
-                              onTap: () {
-                                setUpSecondScreen(SubWarehouse.Finish);
-                              },
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "HOÀN THÀNH",
-                                        style: isFinish
-                                            ? textStylePriceBold14
-                                            : textStyleGreyBold14,
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: isFinish
-                                              ? colorSuccess
-                                              : colorCancel,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        child: const Text(
-                                          "99",
-                                          style: textStyleWhiteBold14,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Container(
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: isFinish
-                                          ? primaryColor
-                                          : transparentColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )),
-                          ]),
-                    ),
-                  ),
-                ),
+                // SizedBox(
+                //   height: 60,
+                //   child: SingleChildScrollView(
+                //     scrollDirection: Axis.horizontal,
+                //     child: SizedBox(
+                //       width: MediaQuery.of(context).size.width,
+                //       // margin: const EdgeInsets.symmetric(horizontal: 16),
+                //       child: Row(
+                //           crossAxisAlignment: CrossAxisAlignment.center,
+                //           children: [
+                //             Expanded(
+                //                 child: InkWell(
+                //               onTap: () {
+                //                 setUpSecondScreen(SubWarehouse.Waiting);
+                //               },
+                //               child: Column(
+                //                 mainAxisAlignment:
+                //                     MainAxisAlignment.spaceEvenly,
+                //                 children: [
+                //                   Row(
+                //                     crossAxisAlignment:
+                //                         CrossAxisAlignment.center,
+                //                     mainAxisAlignment: MainAxisAlignment.center,
+                //                     children: [
+                //                       Text(
+                //                         "CHỜ XỬ LÝ",
+                //                         style: isWaiting
+                //                             ? textStylePriceBold14
+                //                             : textStyleGreyBold14,
+                //                       ),
+                //                       Container(
+                //                         decoration: BoxDecoration(
+                //                           color: colorCancel,
+                //                           borderRadius:
+                //                               BorderRadius.circular(5),
+                //                         ),
+                //                         margin: const EdgeInsets.symmetric(
+                //                             horizontal: 4),
+                //                         padding: const EdgeInsets.symmetric(
+                //                             horizontal: 4),
+                //                         child: const Text(
+                //                           "99",
+                //                           style: textStyleWhiteBold14,
+                //                         ),
+                //                       )
+                //                     ],
+                //                   ),
+                //                   Container(
+                //                     height: 4,
+                //                     decoration: BoxDecoration(
+                //                       color: isWaiting
+                //                           ? primaryColor
+                //                           : transparentColor,
+                //                       borderRadius: BorderRadius.circular(5),
+                //                     ),
+                //                   )
+                //                 ],
+                //               ),
+                //             )),
+                //             Expanded(
+                //                 child: InkWell(
+                //               onTap: () {
+                //                 setUpSecondScreen(SubWarehouse.Main);
+                //               },
+                //               child: Column(
+                //                 mainAxisAlignment:
+                //                     MainAxisAlignment.spaceEvenly,
+                //                 children: [
+                //                   Row(
+                //                     crossAxisAlignment:
+                //                         CrossAxisAlignment.center,
+                //                     mainAxisAlignment: MainAxisAlignment.center,
+                //                     children: [
+                //                       Text(
+                //                         "NHẬP KHO",
+                //                         style: isMain
+                //                             ? textStylePriceBold14
+                //                             : textStyleGreyBold14,
+                //                       ),
+                //                       Container(
+                //                         decoration: BoxDecoration(
+                //                           color: colorCancel,
+                //                           borderRadius:
+                //                               BorderRadius.circular(5),
+                //                         ),
+                //                         margin: const EdgeInsets.symmetric(
+                //                             horizontal: 4),
+                //                         padding: const EdgeInsets.symmetric(
+                //                             horizontal: 4),
+                //                         child: const Text(
+                //                           "99",
+                //                           style: textStyleWhiteBold14,
+                //                         ),
+                //                       )
+                //                     ],
+                //                   ),
+                //                   Container(
+                //                     height: 4,
+                //                     decoration: BoxDecoration(
+                //                       color: isMain
+                //                           ? primaryColor
+                //                           : transparentColor,
+                //                       borderRadius: BorderRadius.circular(5),
+                //                     ),
+                //                   )
+                //                 ],
+                //               ),
+                //             )),
+                //             Expanded(
+                //                 child: InkWell(
+                //               onTap: () {
+                //                 setUpSecondScreen(SubWarehouse.Finish);
+                //               },
+                //               child: Column(
+                //                 mainAxisAlignment:
+                //                     MainAxisAlignment.spaceEvenly,
+                //                 children: [
+                //                   Row(
+                //                     crossAxisAlignment:
+                //                         CrossAxisAlignment.center,
+                //                     mainAxisAlignment: MainAxisAlignment.center,
+                //                     children: [
+                //                       Text(
+                //                         "HOÀN THÀNH",
+                //                         style: isFinish
+                //                             ? textStylePriceBold14
+                //                             : textStyleGreyBold14,
+                //                       ),
+                //                       Container(
+                //                         decoration: BoxDecoration(
+                //                           color: isFinish
+                //                               ? colorSuccess
+                //                               : colorCancel,
+                //                           borderRadius:
+                //                               BorderRadius.circular(5),
+                //                         ),
+                //                         margin: const EdgeInsets.symmetric(
+                //                             horizontal: 4),
+                //                         padding: const EdgeInsets.symmetric(
+                //                             horizontal: 4),
+                //                         child: const Text(
+                //                           "99",
+                //                           style: textStyleWhiteBold14,
+                //                         ),
+                //                       )
+                //                     ],
+                //                   ),
+                //                   Container(
+                //                     height: 4,
+                //                     decoration: BoxDecoration(
+                //                       color: isFinish
+                //                           ? primaryColor
+                //                           : transparentColor,
+                //                       borderRadius: BorderRadius.circular(5),
+                //                     ),
+                //                   )
+                //                 ],
+                //               ),
+                //             )),
+                //           ]),
+                //     ),
+                //   ),
+                // ),
                 //Bộ lọc
                 SizedBox(
                   height: 50,

@@ -13,6 +13,7 @@ import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart' as model;
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 class AddGiftFoodToOrderPage extends StatefulWidget {
   final model.Table table;
@@ -238,18 +239,31 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                                         .isSelected ??
                                                     false,
                                                 onChanged: (bool? value) {
-                                                  setState(() {
-                                                    foodController
-                                                        .foodsToOrder[index]
-                                                        .isSelected = value;
-                                                    //kiem tra xem co bat ky mon nao da duoc chon khong
-                                                    isAddFood =
-                                                        Utils.isAnyFoodSelected(
-                                                            foodController
-                                                                .foodsToOrder);
-                                                    print(
-                                                        "isChecked - $value: ${foodController.foodsToOrder[index].name}");
-                                                  });
+                                                  if ((foodController
+                                                              .foodsToOrder[
+                                                                  index]
+                                                              .current_order_count ??
+                                                          0) <=
+                                                      0) {
+                                                    setState(() {
+                                                      foodController
+                                                          .foodsToOrder[index]
+                                                          .isSelected = value;
+                                                      //kiem tra xem co bat ky mon nao da duoc chon khong
+                                                      isAddFood = Utils
+                                                          .isAnyFoodSelected(
+                                                              foodController
+                                                                  .foodsToOrder);
+                                                      print(
+                                                          "isChecked - $value: ${foodController.foodsToOrder[index].name}");
+                                                    });
+                                                  } else {
+                                                    Utils.showStylishDialog(
+                                                        context,
+                                                        "THÔNG BÁO",
+                                                        "Số lượng món này hiện tại đã hết",
+                                                        StylishDialogType.INFO);
+                                                  }
                                                 },
                                                 activeColor: primaryColor,
                                               ),
@@ -322,98 +336,112 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                                           ],
                                         ),
                                       ),
-                                      trailing: foodController
-                                                  .foodsToOrder[index]
-                                                  .isSelected ==
-                                              true
-                                          ? SizedBox(
-                                              width: 100,
-                                              child: Row(
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      if (foodController
-                                                              .foodsToOrder[
-                                                                  index]
-                                                              .quantity! >
-                                                          1) {
-                                                        setState(() {
-                                                          foodController
+                                      trailing: (foodController
+                                                      .foodsToOrder[index]
+                                                      .current_order_count ??
+                                                  0) <=
+                                              0
+                                          ? foodController.foodsToOrder[index]
+                                                      .isSelected ==
+                                                  true
+                                              ? SizedBox(
+                                                  width: 100,
+                                                  child: Row(
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          if (foodController
                                                                   .foodsToOrder[
                                                                       index]
-                                                                  .quantity =
+                                                                  .quantity! >
+                                                              1) {
+                                                            setState(() {
                                                               foodController
+                                                                  .foodsToOrder[
+                                                                      index]
+                                                                  .quantity = foodController
                                                                       .foodsToOrder[
                                                                           index]
                                                                       .quantity! -
                                                                   1;
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: iconColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: iconColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                          ),
+                                                          height: 30,
+                                                          width: 30,
+                                                          child: const Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Icon(
+                                                                Icons.remove,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
                                                       ),
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: const Align(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Icon(
-                                                            Icons.remove,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  Text(
-                                                      foodController
-                                                          .foodsToOrder[index]
-                                                          .quantity!
-                                                          .toString(),
-                                                      style:
-                                                          textStyleWhiteBold16),
-                                                  const SizedBox(width: 5),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        foodController
-                                                            .foodsToOrder[index]
-                                                            .quantity = foodController
+                                                      const SizedBox(width: 5),
+                                                      Text(
+                                                          foodController
+                                                              .foodsToOrder[
+                                                                  index]
+                                                              .quantity!
+                                                              .toString(),
+                                                          style:
+                                                              textStyleWhiteBold16),
+                                                      const SizedBox(width: 5),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            foodController
                                                                 .foodsToOrder[
                                                                     index]
-                                                                .quantity! +
-                                                            1;
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: iconColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
+                                                                .quantity = foodController
+                                                                    .foodsToOrder[
+                                                                        index]
+                                                                    .quantity! +
+                                                                1;
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: iconColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                          ),
+                                                          height: 30,
+                                                          width: 30,
+                                                          child: const Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Icon(
+                                                                Icons.add,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
                                                       ),
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: const Align(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Icon(Icons.add,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            )
-                                          : const SizedBox(
-                                              // width: 40,
-                                              ),
+                                                )
+                                              : const SizedBox(
+                                                  // width: 40,
+                                                  )
+                                          : const Text(
+                                              "Hết món",
+                                              style: textStyleCancel16,
+                                            ),
                                     ),
                                     //Danh sách món combo
                                     foodController.foodsToOrder[index]
@@ -578,22 +606,24 @@ class _AddGiftFoodToOrderPageState extends State<AddGiftFoodToOrderPage> {
                               if (foodOrder.isSelected == true) {
                                 //chi tiet don hang
                                 //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
-                                        Food foodDetail = Food.empty();
+                                Food foodDetail = Food.empty();
                                 foodDetail.name = foodOrder.name;
-                                foodDetail.food_combo_details = foodOrder.food_combo_details;
-                                foodDetail.addition_food_details = foodOrder.addition_food_details;
+                                foodDetail.food_combo_details =
+                                    foodOrder.food_combo_details;
+                                foodDetail.addition_food_details =
+                                    foodOrder.addition_food_details;
                                 OrderDetail orderDetail = OrderDetail(
-                                  order_detail_id: "",
-                                  price: 0,
-                                  quantity: foodOrder.quantity!,
-                                  food_status: FOOD_STATUS_IN_CHEF,
-                                  food_id: foodOrder.food_id,
-                                  is_gift: false,
-                                  category_id: '',
-                                  category_code: foodOrder.category_code,
-                                  chef_bar_status: CHEF_BAR_STATUS, is_addition: false,
-                                  food: foodDetail
-                                );
+                                    order_detail_id: "",
+                                    price: 0,
+                                    quantity: foodOrder.quantity!,
+                                    food_status: FOOD_STATUS_IN_CHEF,
+                                    food_id: foodOrder.food_id,
+                                    is_gift: false,
+                                    category_id: '',
+                                    category_code: foodOrder.category_code,
+                                    chef_bar_status: CHEF_BAR_STATUS,
+                                    is_addition: false,
+                                    food: foodDetail);
 
                                 orderDetailList.add(orderDetail);
 

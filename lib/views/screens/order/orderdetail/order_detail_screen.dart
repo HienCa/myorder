@@ -65,6 +65,11 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
     print("========================Refeshed(========================");
   }
 
+  double getTotalAmount() {  
+    
+    return 0;
+  }
+
   int selectedIndex = 0;
   bool isChecked = false;
   bool hasChanges = false;

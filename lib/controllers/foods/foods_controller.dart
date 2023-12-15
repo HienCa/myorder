@@ -314,16 +314,7 @@ class FoodController extends GetxController {
                 print(element);
               }
             }
-            // if (retValue.isNotEmpty) {
-            //   for (var item in retValue[0].listFood) {
-            //     print(item.name);
-            //     print(item.price);
-            //     print(item.food_id);
-            //     print(item.unit_id);
-            //     print(item.category_code);
-            //     print(item.category_id);
-            //   }
-            // }
+
             return retValue;
           },
         ),
@@ -362,6 +353,7 @@ class FoodController extends GetxController {
       _foodsToOrder.bindStream(
         firestore
             .collection('foods')
+            .where("is_addition_food", isEqualTo: DEACTIVE)
             .where("active", isEqualTo: ACTIVE)
             .snapshots()
             .asyncMap(
@@ -425,6 +417,8 @@ class FoodController extends GetxController {
         firestore
             .collection('foods')
             .where('category_id', isEqualTo: categoryIdSelected)
+            .where("is_addition_food", isEqualTo: DEACTIVE)
+            .where("active", isEqualTo: ACTIVE)
             .snapshots()
             .asyncMap(
           (QuerySnapshot query) async {
@@ -488,6 +482,8 @@ class FoodController extends GetxController {
       _foodsToOrder.bindStream(firestore
           .collection('foods')
           .where('category_id', isEqualTo: categoryIdSelected)
+          .where("is_addition_food", isEqualTo: DEACTIVE)
+          .where("active", isEqualTo: ACTIVE)
           .orderBy('name')
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
@@ -528,6 +524,7 @@ class FoodController extends GetxController {
       print("tìm kiếm theo danh muc");
       _foodsToOrder.bindStream(firestore
           .collection('foods')
+          .where("is_addition_food", isEqualTo: DEACTIVE)
           .where("active", isEqualTo: ACTIVE)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {

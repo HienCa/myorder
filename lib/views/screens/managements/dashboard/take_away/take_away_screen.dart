@@ -9,6 +9,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/constants/app_constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/controllers/orders/orders_controller.dart';
+import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/price_percent.dart';
 import 'package:myorder/utils.dart';
@@ -670,7 +671,9 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                                                     DirectionMarguee
                                                                         .TwoDirection,
                                                                 child: RichText(
-                                                                  textAlign: TextAlign.center,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
                                                                   text:
                                                                       TextSpan(
                                                                     style: DefaultTextStyle.of(
@@ -1483,6 +1486,12 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                             if (foodOrder.isSelected == true) {
                               //chi tiet don hang
                               //Nếu món ăn có giá thời vụ thì lấy giá thời vụ, ngược lại lấy giá gốc
+                              Food foodDetail = Food.empty();
+                              foodDetail.name = foodOrder.name;
+                              foodDetail.food_combo_details =
+                                  foodOrder.food_combo_details;
+                              foodDetail.addition_food_details =
+                                  foodOrder.addition_food_details;
                               OrderDetail orderDetail = OrderDetail(
                                 order_detail_id: "",
                                 price: Utils.isDateTimeInRange(
@@ -1494,6 +1503,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                 quantity: foodOrder.quantity!,
                                 food_status: FOOD_STATUS_IN_CHEF,
                                 food_id: foodOrder.food_id,
+                                food: foodDetail,
                                 is_gift: (foodOrder.isGift ?? false),
                                 category_id: '',
                                 category_code: foodOrder.category_code,
@@ -1545,15 +1555,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
 
                                 orderDetailList.add(orderDetail);
 
-                                //show thong tin console
-                                print("--------------------------------");
-                                print("ID: ${additionFood.food_id}");
-                                print("Name: ${additionFood.name}");
-                                print("Price: ${additionFood.price}");
-                                print("Quantity: ${additionFood.quantity}");
-                                print(
-                                    "Is Selected: ${additionFood.isSelected}");
-                                print("--------------------------------");
+                             
                               }
                             }
                           }
