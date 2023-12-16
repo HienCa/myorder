@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                'HIENCA-ORDER',
+                'VANHIEN-ORDER',
                 style: GoogleFonts.bungee(
                   fontSize: 24,
                   color: buttonColor,
