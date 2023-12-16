@@ -130,13 +130,14 @@ class BillController extends GetxController {
               if (orderCollection.exists) {
                 final orderData = orderCollection.data();
                 if (orderData != null && orderData is Map<String, dynamic>) {
+                  print(bill.bill_id);
                   String order_code = orderData['order_code'] ?? '';
                   String employee_id = orderData['employee_id'] ?? '';
                   String table_id = orderData['table_id'] ?? '';
                   int order_status = orderData['order_status'] ?? '';
                   String note = orderData['note'] ?? '';
                   Timestamp create_at = orderData['create_at'] ?? '';
-                  Timestamp payment_at = orderData['payment_at'] ?? '';
+                  Timestamp payment_at = orderData['payment_at'];
                   String vat_id = orderData['vat_id'] ?? '';
                   String discount_id = orderData['discount_id'] ?? '';
                   List table_merge_names = orderData['table_merge_names'] ?? [];
@@ -154,7 +155,7 @@ class BillController extends GetxController {
                   bill.order!.table_merge_names = table_merge_names;
                 }
               }
-
+              print(bill.bill_id);
               //Thông tin nhân viên phụ trách đơn hàng
               DocumentSnapshot employeeCollection = await firestore
                   .collection('employees')
@@ -200,27 +201,37 @@ class BillController extends GetxController {
               }
               bill.order_details = orderDetails;
 
-              // lấy tên bàn, tên bàn đã gộp
-              DocumentSnapshot tableCollection = await firestore
-                  .collection('tables')
-                  .doc(bill.order!.table_id)
-                  .get();
-              if (tableCollection.exists) {
-                final tableData = tableCollection.data();
-                if (tableData != null && tableData is Map<String, dynamic>) {
-                  String name = tableData['name'] ?? '';
-                  int total_slot = tableData['total_slot'] ?? '';
-                  int status = tableData['status'] ?? '';
-                  int active = tableData['active'] ?? '';
-                  String area_id = tableData['area_id'] ?? '';
-                  bill.order!.table = table.Table(
-                      table_id: bill.order!.table_id,
-                      name: name,
-                      total_slot: total_slot,
-                      status: status,
-                      active: active,
-                      area_id: area_id);
+              // lấy tên bàn
+              if (bill.order!.table_id != "") {
+                DocumentSnapshot tableCollection = await firestore
+                    .collection('tables')
+                    .doc(bill.order!.table_id)
+                    .get();
+                if (tableCollection.exists) {
+                  final tableData = tableCollection.data();
+                  if (tableData != null && tableData is Map<String, dynamic>) {
+                    String name = tableData['name'] ?? '';
+                    int total_slot = tableData['total_slot'] ?? '';
+                    int status = tableData['status'] ?? '';
+                    int active = tableData['active'] ?? '';
+                    String area_id = tableData['area_id'] ?? '';
+                    bill.order!.table = table.Table(
+                        table_id: bill.order!.table_id,
+                        name: name,
+                        total_slot: total_slot,
+                        status: status,
+                        active: active,
+                        area_id: area_id);
+                  }
                 }
+              } else {
+                bill.order!.table = table.Table(
+                    table_id: bill.order!.table_id,
+                    name: "MV",
+                    total_slot: 0,
+                    status: TABLE_STATUS_TAKE_AWAY,
+                    active: 1,
+                    area_id: "");
               }
 
               retValue.add(bill);

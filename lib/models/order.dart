@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/table.dart';
-
+//thêm isBooking và isTakeAway cho tương lai
 class Order {
   String order_id;
   String order_code;

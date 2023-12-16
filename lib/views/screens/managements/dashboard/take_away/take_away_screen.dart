@@ -126,7 +126,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
   void getTotalAmount() {
     double totalSelectedAmount =
         Utils.getSumPriceQuantitySelected(foodController.foodsToOrder);
-
+    print(totalSelectedAmount);
     //Tính lại VAT
     //TỔNG VAT THEO ĐƠN HÀNG
     if (isCheckedGTGT) {
@@ -1505,7 +1505,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                 food_id: foodOrder.food_id,
                                 food: foodDetail,
                                 is_gift: (foodOrder.isGift ?? false),
-                                category_id: '',
+                                category_id: foodOrder.category_id,
                                 category_code: foodOrder.category_code,
                                 chef_bar_status: CHEF_BAR_STATUS,
                                 is_addition: false,
@@ -1517,15 +1517,6 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                               }
 
                               orderDetailList.add(orderDetail);
-
-                              //show thong tin console
-                              print("--------------------------------");
-                              print("ID: ${foodOrder.food_id}");
-                              print("Name: ${foodOrder.name}");
-                              print("Price: ${foodOrder.price}");
-                              print("Quantity: ${foodOrder.quantity}");
-                              print("Is Selected: ${foodOrder.isSelected}");
-                              print("--------------------------------");
                             }
 
                             //Món bán kèm nếu chọn
@@ -1547,15 +1538,13 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                   food_status: FOOD_STATUS_IN_CHEF,
                                   food_id: additionFood.food_id,
                                   is_gift: false,
-                                  category_id: '',
+                                  category_id: additionFood.category_id,
                                   category_code: additionFood.category_code,
                                   chef_bar_status: CHEF_BAR_STATUS,
                                   is_addition: true,
                                 );
 
                                 orderDetailList.add(orderDetail);
-
-                             
                               }
                             }
                           }
@@ -1586,6 +1575,8 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                                             TYPE_PERCENT
                                         ? pricePercentResult.value
                                         : 0,
+                                customer_name: nameTextEditingController.text,
+                                customer_phone: phoneTextEditingController.text,
                               );
                             },
                           );
@@ -1593,7 +1584,7 @@ class _DashboardTakeAwayState extends State<DashboardTakeAway> {
                             Utils.showToast('Lập đơn hàng mang về thành công!',
                                 TypeToast.SUCCESS);
 
-                            Utils.myPopSuccess(context);
+                            Utils.myPop(context);
                           }
                         }
                       },

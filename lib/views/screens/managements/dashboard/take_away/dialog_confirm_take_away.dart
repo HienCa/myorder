@@ -15,7 +15,8 @@ class MyDialogConfirmOrderTakeAway extends StatefulWidget {
   final double total_surcharge_amount;
   final double total_amount;
   final double discount_percent;
-
+  final String customer_name;
+  final String customer_phone;
   final List<OrderDetail> orderDetailList;
   const MyDialogConfirmOrderTakeAway({
     Key? key,
@@ -24,7 +25,9 @@ class MyDialogConfirmOrderTakeAway extends StatefulWidget {
     required this.total_vat_amount,
     required this.total_discount_amount,
     required this.total_surcharge_amount,
-    required this.orderDetailList, required this.total_amount, required this.discount_percent,
+    required this.orderDetailList,
+    required this.total_amount,
+    required this.discount_percent, required this.customer_name, required this.customer_phone,
   }) : super(key: key);
 
   @override
@@ -114,8 +117,9 @@ class _MyDialogConfirmOrderTakeAwayState
                                   widget.total_vat_amount,
                                   widget.total_surcharge_amount,
                                   widget.total_amount,
+                                  widget.customer_name,
+                                  widget.customer_phone,
                                   context),
-                                  
                               Navigator.pop(context, 'success')
                             },
                             child: Container(

@@ -1868,92 +1868,112 @@ class OrderController extends GetxController {
     double total_vat_amount,
     double total_surcharge_amount,
     double total_amount,
+    String customer_name,
+    String customer_phone,
     BuildContext context,
   ) async {
     try {
       if (orderDetailList.isNotEmpty) {
         String id = Utils.generateUUID();
-        // bo sung them note neu can
-        model.Order order = model.Order.empty();
-        order.order_id = id;
-        // order.table_id = "MV";
-        order.employee_id = authController.user.uid;
-        order.order_status = ORDER_STATUS_TAKE_AWAY;
-        order.create_at = Timestamp.fromDate(DateTime.now());
-        order.payment_at = Timestamp.fromDate(DateTime.now());
-        order.active = DEACTIVE;
-        order.order_code = id.substring(0, 8);
-        order.total_slot = 0;
-        order.total_amount = total_amount;
-        order.total_discount_amount = total_discount_amount;
-        order.total_vat_amount = total_vat_amount;
-        order.total_surcharge_amount = total_surcharge_amount;
+        print("ID MỚI");
+        print(id);
+        print(total_discount_amount);
+
+        model.Order Order = model.Order(
+          order_id: id,
+          table_id: "",
+          employee_id: authController.user.uid,
+          order_status: ORDER_STATUS_PAID,
+          note: "",
+          create_at: Timestamp.now(),
+          payment_at: Timestamp.now(),
+          is_vat: 0,
+          discount_amount_all: 0,
+          discount_amount_food: 0,
+          discount_amount_drink: 0,
+          active: DEACTIVE,
+          table_merge_ids: [],
+          table_merge_names: [],
+          order_code: id.substring(0, 8),
+          total_amount: total_amount,
+          discount_reason: '',
+          is_discount: 0,
+          total_vat_amount: total_vat_amount,
+          total_discount_amount: total_discount_amount,
+          discount_percent: discount_percent.toInt(),
+          discount_amount_other: 0,
+          total_slot: 0,
+          total_surcharge_amount: total_surcharge_amount,
+          customer_name: customer_name,
+          customer_phone: customer_phone,
+          customer_time_booking: null,
+          deposit_amount: 0,
+        );
 
         CollectionReference ordersCollection =
             FirebaseFirestore.instance.collection('orders');
 
-        await ordersCollection.doc(id).set(order.toJson());
-
-        // add order detail
-        var allDocsOrderDetail = await firestore
-            .collection('orders')
-            .doc(id)
-            .collection("orderDetails")
-            .get();
-        String description = 'Đơn hàng mang về đã được tạo.\\\n';
-
-        for (OrderDetail orderDetail in orderDetailList) {
-          String idDetail = Utils.generateUUID();
-          orderDetail.order_detail_id = idDetail;
-          if (orderDetail.is_gift == true) {
-            orderDetail.price = 0;
-            description +=
-                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): Món tặng\\\n';
-          } else {
-            description +=
-                '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): ${Utils.formatCurrency(orderDetail.price * orderDetail.quantity)}\\\n';
-          }
-
-          orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
-
-          await firestore
+        await ordersCollection.doc(id).set(Order.toJson()).then((_) async {
+          // add order detail
+          var allDocsOrderDetail = await firestore
               .collection('orders')
               .doc(id)
               .collection("orderDetails")
-              .doc(idDetail)
-              .set(orderDetail.toJson());
-        }
-        createBillTakeAway(id, id.substring(0, 8), total_vat_amount,
-            total_discount_amount, total_amount);
+              .get();
+          String description = 'Đơn hàng mang về đã được tạo.\\\n';
 
-        //Tạo lịch sử đơn hàng
-        String idOrderHistory = Utils.generateUUID();
-        //Thông tin nhân viên phụ trách đơn hàng
-        DocumentSnapshot employeeCollection = await firestore
-            .collection('employees')
-            .doc(authController.user.uid)
-            .get();
-        OrderHistory orderHistory = OrderHistory(
-            history_id: idOrderHistory,
-            order_id: id,
-            employee_id: authController.user.uid,
-            employee_name: '',
-            description: description,
-            create_at: Timestamp.now());
-        if (employeeCollection.exists) {
-          final employeeData = employeeCollection.data();
-          if (employeeData != null && employeeData is Map<String, dynamic>) {
-            String name = employeeData['name'] ?? '';
-            orderHistory.employee_name = name;
+          for (OrderDetail orderDetail in orderDetailList) {
+            String idDetail = Utils.generateUUID();
+            orderDetail.order_detail_id = idDetail;
+            if (orderDetail.is_gift == true) {
+              orderDetail.price = 0;
+              description +=
+                  '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): Món tặng\\\n';
+            } else {
+              description +=
+                  '+ ${orderDetail.food!.name} (x ${orderDetail.quantity}): ${Utils.formatCurrency(orderDetail.price * orderDetail.quantity)}\\\n';
+            }
+
+            orderDetail.chef_bar_status = CHEF_BAR_STATUS_ACTIVE;
+
+            await firestore
+                .collection('orders')
+                .doc(id)
+                .collection("orderDetails")
+                .doc(idDetail)
+                .set(orderDetail.toJson());
           }
-        }
-        orderHistory.description = description;
-        orderHistoryController.createOrderHistory(orderHistory);
 
-        //GỬI BẾP BAR
-        sendToChefBar(id, "MV", orderDetailList);
+          //Tạo lịch sử đơn hàng
+          String idOrderHistory = Utils.generateUUID();
+          //Thông tin nhân viên phụ trách đơn hàng
+          DocumentSnapshot employeeCollection = await firestore
+              .collection('employees')
+              .doc(authController.user.uid)
+              .get();
+          OrderHistory orderHistory = OrderHistory(
+              history_id: idOrderHistory,
+              order_id: id,
+              employee_id: authController.user.uid,
+              employee_name: '',
+              description: description,
+              create_at: Timestamp.now());
+          if (employeeCollection.exists) {
+            final employeeData = employeeCollection.data();
+            if (employeeData != null && employeeData is Map<String, dynamic>) {
+              String name = employeeData['name'] ?? '';
+              orderHistory.employee_name = name;
+            }
+          }
+          orderHistory.description = description;
+          orderHistoryController.createOrderHistory(orderHistory);
+
+          // GỬI BẾP BAR
+          sendToChefBar(id, "MV", orderDetailList);
+          createBillTakeAway(id, id.substring(0, 8), total_vat_amount,
+              total_discount_amount, total_amount);
+        });
       }
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         'Error!',
@@ -2012,7 +2032,7 @@ class OrderController extends GetxController {
           .get();
       OrderHistory orderHistory = OrderHistory(
           history_id: idOrderHistory,
-          order_id: id,
+          order_id: order_id,
           employee_id: authController.user.uid,
           employee_name: '',
           description:
@@ -2087,7 +2107,7 @@ class OrderController extends GetxController {
         order_id: id,
         table_id: table_id,
         employee_id: authController.user.uid,
-        order_status: ORDER_STATUS_BOOKING,
+        order_status: ORDER_STATUS_PAID,
         note: "",
         create_at: Timestamp.fromDate(DateTime.now()),
         payment_at: null,

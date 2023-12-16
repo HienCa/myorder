@@ -758,7 +758,6 @@ class Utils {
     return totalAmount + totalVat - discountPrice;
   }
 
-
   //Tính tổng tiền sau khi trừ thuế và giảm giá đã format tiền tệ
   static String getFormatedTotalAmountFromVatDiscount(
       double totalAmount, int vatPercent, double discountPrice) {
@@ -804,7 +803,8 @@ class Utils {
         if (item.isSelected == true &&
             Utils.isDateTimeInRange(
                 item.temporary_price_from_date, item.temporary_price_to_date)) {
-          total += ((item.price_with_temporary ?? 0) * item.quantity);
+          total +=
+              (((item.price_with_temporary ?? 0) + item.price) * item.quantity);
         } else if (item.isSelected == true) {
           total += (item.price * item.quantity);
         }

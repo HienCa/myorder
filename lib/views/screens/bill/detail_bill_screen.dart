@@ -248,7 +248,7 @@ class _BillDetailPageState extends State<BillDetailPage> {
                           child: ListTile(
                             selectedColor: primaryColor,
                             leading:
-                                widget.bill.order_details[index].food != null
+                                widget.bill.order_details[index].food!.image != ""
                                     ? ClipRRect(
                                         borderRadius: BorderRadius.circular(5),
                                         child: Image.network(
