@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myorder/models/ingredient.dart';
 
 class WarehouseReceiptDetail {
   String warehouse_receipt_detail_id;
@@ -15,7 +16,7 @@ class WarehouseReceiptDetail {
   Timestamp? expiration_date; //hạn sử dụng
   String batch_number; //số lô
   bool isSelected = false;
-
+  Ingredient? ingredient;
   WarehouseReceiptDetail({
     required this.warehouse_receipt_detail_id,
     required this.ingredient_id,

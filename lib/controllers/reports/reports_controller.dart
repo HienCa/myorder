@@ -423,6 +423,7 @@ class ReportController extends GetxController {
           .snapshots()
           .asyncMap(
         (QuerySnapshot query) async {
+          
           List<BarData> listDataBarChart = [];
 
           for (var element in query.docs) {

@@ -99,7 +99,7 @@ class IngredientController extends GetxController {
                   unit_name: "",
                   name: ingredient.name,
                   unit_id: '',
-                  unit_value_conversion: 1);
+                  unit_value_conversion: 1,);
 
               // if (ingredient.is_weight == ACTIVE) {
               //   recipeDetail.quantity = 0.1;

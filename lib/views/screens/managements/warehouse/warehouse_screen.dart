@@ -12,6 +12,7 @@ import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart'
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/update_warehouse_export_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/create_warehouse_export_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/create_warehouse_receipt_from_recommend_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/update_warehouse_receipt_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/create_warehouse_receipt_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -190,7 +191,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const WarehouseReceiptDetailScreen()));
+                                    const WarehouseReceiptDetailFromRecommendScreen()));
                         if (result == 'success') {
                           Utils.showStylishDialog(
                               context,
