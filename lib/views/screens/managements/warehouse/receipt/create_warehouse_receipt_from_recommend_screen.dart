@@ -18,6 +18,7 @@ import 'package:myorder/models/warehouse_receipt_detail.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/add_ingredient_to_warehouse_receipt_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/dialogs/dialog_create_update_warehouse_receipt.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/dialogs/dialog_recommend_ingredients.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
@@ -59,6 +60,8 @@ class _WarehouseReceiptDetailFromRecommendScreenState
   void initState() {
     super.initState();
     now = DateTime(now.year, now.month, now.day, 0, 0, 0, 0);
+    //gợi ý nguyên liệu cần có theo ngày
+    warehouseReceiptController.getRecommendedIngredients(now);
 
     listIngredientSelected = [];
 
@@ -144,11 +147,21 @@ class _WarehouseReceiptDetailFromRecommendScreenState
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 10),
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(10),
-              child: Icon(
-                Icons.add_circle_outline,
-                color: transparentColor,
+              child: InkWell(
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomDialogRecommendIngredients(date: now,);
+                    },
+                  );
+                },
+                child: Icon(
+                  Icons.book,
+                  color: secondColor,
+                ),
               ),
             ),
           ),
@@ -406,320 +419,594 @@ class _WarehouseReceiptDetailFromRecommendScreenState
                         ),
                       ]),
                     ),
-                    FutureBuilder(
-                      future: warehouseReceiptController
-                          .getRecommendedIngredients(now),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Đã xảy ra lỗi: ${snapshot.error}'));
-                        } else {
-                        List<Ingredient> list = List.from(snapshot.data ?? []);
+                    SingleChildScrollView(
+                      child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.25,
+                          child: Obx(() {
+                            return ListView.builder(
+                                itemCount: warehouseReceiptController
+                                    .recommendedingredients.length,
+                                itemBuilder: (context, index) {
+                                  Ingredient ingredient =
+                                      warehouseReceiptController
+                                          .recommendedingredients[index];
+                                  return SizedBox(
+                                    height: 50,
+                                    child: Row(children: [
+                                      Expanded(
+                                          flex: 4,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              DateTime? expirationDateSelected =
+                                                  await Utils.selectDate(
+                                                      context);
 
-                          return SingleChildScrollView(
-                            child: SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.25,
-                                child: ListView.builder(
-                                    itemCount: list.length,
-                                    itemBuilder: (context, index) {
-                                      Ingredient ingredient =
-                                          list[index];
-                                      return SizedBox(
-                                        height: 50,
-                                        child: Row(children: [
-                                          Expanded(
-                                              flex: 4,
-                                              child: InkWell(
-                                                onTap: () async {
-                                                  DateTime?
-                                                      expirationDateSelected =
-                                                      await Utils.selectDate(
-                                                          context);
-
-                                                  if (expirationDateSelected !=
-                                                      null) {
-                                                    setState(() {
-                                                      ingredient
-                                                              .expiration_date =
-                                                          Utils.convertDatetimeToTimestamp(
-                                                              expirationDateSelected);
-                                                    });
-                                                  }
-                                                },
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Marquee(
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      textDirection:
-                                                          TextDirection.ltr,
-                                                      animationDuration:
-                                                          const Duration(
-                                                              seconds: 1),
-                                                      backDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  4000),
-                                                      pauseDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  1000),
-                                                      directionMarguee:
-                                                          DirectionMarguee
-                                                              .TwoDirection,
-                                                      child: Text(
-                                                          ingredient.name,
-                                                          style:
-                                                              textStyleFoodNameBold16,
-                                                          textAlign:
-                                                              TextAlign.left),
-                                                    ),
-                                                    marginRight5,
-                                                    Row(
-                                                      children: [
-                                                        ingredient.expiration_date !=
-                                                                null
-                                                            ? Text(
-                                                                Utils.formatTimestamp(
-                                                                    ingredient
-                                                                        .expiration_date),
-                                                                style:
-                                                                    textStyleGreen14)
-                                                            : Text("Không",
-                                                                style:
-                                                                    textStyleRed14),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              )),
-                                          Expanded(
-                                            flex: 2,
+                                              if (expirationDateSelected !=
+                                                  null) {
+                                                setState(() {
+                                                  ingredient.expiration_date = Utils
+                                                      .convertDatetimeToTimestamp(
+                                                          expirationDateSelected);
+                                                });
+                                              }
+                                            },
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.start,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                InkWell(
-                                                    onTap: () async {
-                                                      String result =
-                                                          await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return MyDialogTextFieldString(
-                                                                  label:
-                                                                      "Lô hàng",
-                                                                  textDefault:
-                                                                      ingredient
-                                                                              .batch_number ??
-                                                                          "",
-                                                                  minLength: 0,
-                                                                  maxLength:
-                                                                      255,
-                                                                  placeholder:
-                                                                      "Nhập",
-                                                                  isRequire:
-                                                                      false,
-                                                                  title:
-                                                                      'LÔ HÀNG NHẬP KHO',
-                                                                );
-                                                              });
-                                                      if (result != "") {
-                                                        setState(() {
-                                                          print(result);
-                                                          ingredient
-                                                                  .batch_number =
-                                                              result;
-                                                        });
-                                                      }
-                                                    },
-                                                    child: ingredient
-                                                                .isSelected ==
-                                                            true
-                                                        ? ingredient.batch_number !=
-                                                                ""
-                                                            ? Marquee(
-                                                                direction: Axis
-                                                                    .horizontal,
-                                                                textDirection:
-                                                                    TextDirection
-                                                                        .ltr,
-                                                                animationDuration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                backDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            4000),
-                                                                pauseDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            1000),
-                                                                directionMarguee:
-                                                                    DirectionMarguee
-                                                                        .TwoDirection,
-                                                                child: Center(
-                                                                  child: Text(
-                                                                      ingredient
-                                                                              .batch_number ??
-                                                                          "",
-                                                                      style:
-                                                                          textStyleGreen14,
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center),
-                                                                ),
-                                                              )
-                                                            : Marquee(
-                                                                direction: Axis
-                                                                    .horizontal,
-                                                                textDirection:
-                                                                    TextDirection
-                                                                        .ltr,
-                                                                animationDuration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                backDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            4000),
-                                                                pauseDuration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            1000),
-                                                                directionMarguee:
-                                                                    DirectionMarguee
-                                                                        .TwoDirection,
-                                                                child: Text(
-                                                                    "Không",
-                                                                    style:
-                                                                        textStyleRed14,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .left),
-                                                              )
-                                                        : emptyBox),
+                                                Marquee(
+                                                  direction: Axis.horizontal,
+                                                  textDirection:
+                                                      TextDirection.ltr,
+                                                  animationDuration:
+                                                      const Duration(
+                                                          seconds: 1),
+                                                  backDuration: const Duration(
+                                                      milliseconds: 4000),
+                                                  pauseDuration: const Duration(
+                                                      milliseconds: 1000),
+                                                  directionMarguee:
+                                                      DirectionMarguee
+                                                          .TwoDirection,
+                                                  child: Text(ingredient.name,
+                                                      style:
+                                                          textStyleFoodNameBold16,
+                                                      textAlign:
+                                                          TextAlign.left),
+                                                ),
+                                                marginRight5,
+                                                Row(
+                                                  children: [
+                                                    ingredient.expiration_date !=
+                                                            null
+                                                        ? Text(
+                                                            Utils.formatTimestamp(
+                                                                ingredient
+                                                                    .expiration_date),
+                                                            style:
+                                                                textStyleGreen14)
+                                                        : Text("Không",
+                                                            style:
+                                                                textStyleRed14),
+                                                  ],
+                                                ),
                                               ],
                                             ),
+                                          )),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            InkWell(
+                                                onTap: () async {
+                                                  String result =
+                                                      await showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return MyDialogTextFieldString(
+                                                              label: "Lô hàng",
+                                                              textDefault:
+                                                                  ingredient
+                                                                          .batch_number ??
+                                                                      "",
+                                                              minLength: 0,
+                                                              maxLength: 255,
+                                                              placeholder:
+                                                                  "Nhập",
+                                                              isRequire: false,
+                                                              title:
+                                                                  'LÔ HÀNG NHẬP KHO',
+                                                            );
+                                                          });
+                                                  if (result != "") {
+                                                    setState(() {
+                                                      print(result);
+                                                      ingredient.batch_number =
+                                                          result;
+                                                    });
+                                                  }
+                                                },
+                                                child: ingredient.isSelected ==
+                                                        true
+                                                    ? ingredient.batch_number !=
+                                                            ""
+                                                        ? Marquee(
+                                                            direction:
+                                                                Axis.horizontal,
+                                                            textDirection:
+                                                                TextDirection
+                                                                    .ltr,
+                                                            animationDuration:
+                                                                const Duration(
+                                                                    seconds: 1),
+                                                            backDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        4000),
+                                                            pauseDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        1000),
+                                                            directionMarguee:
+                                                                DirectionMarguee
+                                                                    .TwoDirection,
+                                                            child: Center(
+                                                              child: Text(
+                                                                  ingredient
+                                                                          .batch_number ??
+                                                                      "",
+                                                                  style:
+                                                                      textStyleGreen14,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center),
+                                                            ),
+                                                          )
+                                                        : Marquee(
+                                                            direction:
+                                                                Axis.horizontal,
+                                                            textDirection:
+                                                                TextDirection
+                                                                    .ltr,
+                                                            animationDuration:
+                                                                const Duration(
+                                                                    seconds: 1),
+                                                            backDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        4000),
+                                                            pauseDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        1000),
+                                                            directionMarguee:
+                                                                DirectionMarguee
+                                                                    .TwoDirection,
+                                                            child: Text("Không",
+                                                                style:
+                                                                    textStyleRed14,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .left),
+                                                          )
+                                                    : emptyBox),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            final result = await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return MyDialogCalculator2(
+                                                  value:
+                                                      ingredient.quantity ?? 0,
+                                                );
+                                              },
+                                            );
+                                            if (result != null) {
+                                              setState(() {
+                                                print(result);
+                                                ingredient.quantity =
+                                                    double.parse(result);
+                                              });
+                                            }
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                  (ingredient.quantity ?? 0)
+                                                      .toString(),
+                                                  style: textStyleOrange14),
+                                              marginTop5,
+                                              Text(
+                                                  (ingredient.unit_name ?? "")
+                                                      .toString(),
+                                                  style: textStylePrimary14),
+                                            ],
                                           ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: InkWell(
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            InkWell(
                                               onTap: () async {
                                                 final result = await showDialog(
                                                   context: context,
                                                   builder:
                                                       (BuildContext context) {
-                                                    return MyDialogCalculator2(
-                                                      value:
-                                                          ingredient.quantity ??
-                                                              0,
+                                                    return MyCalculator(
+                                                      priceDefault:
+                                                          ingredient.price ?? 0,
+                                                      min: 0,
+                                                      max: MAX_PRICE,
                                                     );
                                                   },
                                                 );
                                                 if (result != null) {
                                                   setState(() {
                                                     print(result);
-                                                    ingredient.quantity =
-                                                        double.parse(result);
+                                                    ingredient.price = Utils
+                                                        .stringConvertToDouble(Utils
+                                                            .formatCurrencytoDouble(
+                                                                result));
                                                   });
                                                 }
                                               },
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                      (ingredient.quantity ?? 0)
-                                                          .toString(),
-                                                      style: textStyleOrange14),
-                                                  marginTop5,
-                                                  Text(
-                                                      (ingredient.unit_name ??
-                                                              "")
-                                                          .toString(),
-                                                      style:
-                                                          textStylePrimary14),
-                                                ],
+                                              child: Text(
+                                                Utils.formatCurrency(
+                                                    (ingredient.price ?? 0)),
+                                                style: textStyleOrange14,
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () async {
-                                                    final result =
-                                                        await showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return MyCalculator(
-                                                          priceDefault:
-                                                              ingredient
-                                                                      .price ??
-                                                                  0,
-                                                          min: 0,
-                                                          max: MAX_PRICE,
-                                                        );
-                                                      },
-                                                    );
-                                                    if (result != null) {
-                                                      setState(() {
-                                                        print(result);
-                                                        ingredient.price = Utils
-                                                            .stringConvertToDouble(
-                                                                Utils.formatCurrencytoDouble(
-                                                                    result));
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Text(
-                                                    Utils.formatCurrency(
-                                                        (ingredient.price ??
-                                                            0)),
-                                                    style: textStyleOrange14,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  Utils.formatCurrency(
-                                                      ((ingredient.quantity ??
-                                                              0) *
-                                                          (ingredient.price ??
-                                                              0))),
-                                                  style: textStylePrimary14,
-                                                  textAlign: TextAlign.right,
-                                                ),
-                                              ],
+                                            Text(
+                                              Utils.formatCurrency(
+                                                  ((ingredient.quantity ?? 0) *
+                                                      (ingredient.price ?? 0))),
+                                              style: textStylePrimary14,
+                                              textAlign: TextAlign.right,
                                             ),
-                                          ),
-                                        ]),
-                                      );
-                                    })),
-                          );
-                        }
-                      },
-                    ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]),
+                                  );
+                                });
+                          })),
+                    )
+                    // FutureBuilder(
+                    //   future: warehouseReceiptController
+                    //       .getRecommendedIngredients(now),
+                    //   builder: (context, snapshot) {
+                    //     if (snapshot.connectionState ==
+                    //         ConnectionState.waiting) {
+                    //       return Center(child: CircularProgressIndicator());
+                    //     } else if (snapshot.hasError) {
+                    //       return Center(
+                    //           child: Text('Đã xảy ra lỗi: ${snapshot.error}'));
+                    //     } else {
+                    //     List<Ingredient> list = List.from(snapshot.data ?? []);
+
+                    //       return SingleChildScrollView(
+                    //         child: SizedBox(
+                    //             height:
+                    //                 MediaQuery.of(context).size.height * 0.25,
+                    //             child: ListView.builder(
+                    //                 itemCount: list.length,
+                    //                 itemBuilder: (context, index) {
+                    //                   Ingredient ingredient =
+                    //                       list[index];
+                    //                   return SizedBox(
+                    //                     height: 50,
+                    //                     child: Row(children: [
+                    //                       Expanded(
+                    //                           flex: 4,
+                    //                           child: InkWell(
+                    //                             onTap: () async {
+                    //                               DateTime?
+                    //                                   expirationDateSelected =
+                    //                                   await Utils.selectDate(
+                    //                                       context);
+
+                    //                               if (expirationDateSelected !=
+                    //                                   null) {
+                    //                                 setState(() {
+                    //                                   ingredient
+                    //                                           .expiration_date =
+                    //                                       Utils.convertDatetimeToTimestamp(
+                    //                                           expirationDateSelected);
+                    //                                 });
+                    //                               }
+                    //                             },
+                    //                             child: Column(
+                    //                               crossAxisAlignment:
+                    //                                   CrossAxisAlignment.start,
+                    //                               mainAxisAlignment:
+                    //                                   MainAxisAlignment.center,
+                    //                               children: [
+                    //                                 Marquee(
+                    //                                   direction:
+                    //                                       Axis.horizontal,
+                    //                                   textDirection:
+                    //                                       TextDirection.ltr,
+                    //                                   animationDuration:
+                    //                                       const Duration(
+                    //                                           seconds: 1),
+                    //                                   backDuration:
+                    //                                       const Duration(
+                    //                                           milliseconds:
+                    //                                               4000),
+                    //                                   pauseDuration:
+                    //                                       const Duration(
+                    //                                           milliseconds:
+                    //                                               1000),
+                    //                                   directionMarguee:
+                    //                                       DirectionMarguee
+                    //                                           .TwoDirection,
+                    //                                   child: Text(
+                    //                                       ingredient.name,
+                    //                                       style:
+                    //                                           textStyleFoodNameBold16,
+                    //                                       textAlign:
+                    //                                           TextAlign.left),
+                    //                                 ),
+                    //                                 marginRight5,
+                    //                                 Row(
+                    //                                   children: [
+                    //                                     ingredient.expiration_date !=
+                    //                                             null
+                    //                                         ? Text(
+                    //                                             Utils.formatTimestamp(
+                    //                                                 ingredient
+                    //                                                     .expiration_date),
+                    //                                             style:
+                    //                                                 textStyleGreen14)
+                    //                                         : Text("Không",
+                    //                                             style:
+                    //                                                 textStyleRed14),
+                    //                                   ],
+                    //                                 ),
+                    //                               ],
+                    //                             ),
+                    //                           )),
+                    //                       Expanded(
+                    //                         flex: 2,
+                    //                         child: Column(
+                    //                           crossAxisAlignment:
+                    //                               CrossAxisAlignment.center,
+                    //                           mainAxisAlignment:
+                    //                               MainAxisAlignment.center,
+                    //                           children: [
+                    //                             InkWell(
+                    //                                 onTap: () async {
+                    //                                   String result =
+                    //                                       await showDialog(
+                    //                                           context: context,
+                    //                                           builder:
+                    //                                               (BuildContext
+                    //                                                   context) {
+                    //                                             return MyDialogTextFieldString(
+                    //                                               label:
+                    //                                                   "Lô hàng",
+                    //                                               textDefault:
+                    //                                                   ingredient
+                    //                                                           .batch_number ??
+                    //                                                       "",
+                    //                                               minLength: 0,
+                    //                                               maxLength:
+                    //                                                   255,
+                    //                                               placeholder:
+                    //                                                   "Nhập",
+                    //                                               isRequire:
+                    //                                                   false,
+                    //                                               title:
+                    //                                                   'LÔ HÀNG NHẬP KHO',
+                    //                                             );
+                    //                                           });
+                    //                                   if (result != "") {
+                    //                                     setState(() {
+                    //                                       print(result);
+                    //                                       ingredient
+                    //                                               .batch_number =
+                    //                                           result;
+                    //                                     });
+                    //                                   }
+                    //                                 },
+                    //                                 child: ingredient
+                    //                                             .isSelected ==
+                    //                                         true
+                    //                                     ? ingredient.batch_number !=
+                    //                                             ""
+                    //                                         ? Marquee(
+                    //                                             direction: Axis
+                    //                                                 .horizontal,
+                    //                                             textDirection:
+                    //                                                 TextDirection
+                    //                                                     .ltr,
+                    //                                             animationDuration:
+                    //                                                 const Duration(
+                    //                                                     seconds:
+                    //                                                         1),
+                    //                                             backDuration:
+                    //                                                 const Duration(
+                    //                                                     milliseconds:
+                    //                                                         4000),
+                    //                                             pauseDuration:
+                    //                                                 const Duration(
+                    //                                                     milliseconds:
+                    //                                                         1000),
+                    //                                             directionMarguee:
+                    //                                                 DirectionMarguee
+                    //                                                     .TwoDirection,
+                    //                                             child: Center(
+                    //                                               child: Text(
+                    //                                                   ingredient
+                    //                                                           .batch_number ??
+                    //                                                       "",
+                    //                                                   style:
+                    //                                                       textStyleGreen14,
+                    //                                                   textAlign:
+                    //                                                       TextAlign
+                    //                                                           .center),
+                    //                                             ),
+                    //                                           )
+                    //                                         : Marquee(
+                    //                                             direction: Axis
+                    //                                                 .horizontal,
+                    //                                             textDirection:
+                    //                                                 TextDirection
+                    //                                                     .ltr,
+                    //                                             animationDuration:
+                    //                                                 const Duration(
+                    //                                                     seconds:
+                    //                                                         1),
+                    //                                             backDuration:
+                    //                                                 const Duration(
+                    //                                                     milliseconds:
+                    //                                                         4000),
+                    //                                             pauseDuration:
+                    //                                                 const Duration(
+                    //                                                     milliseconds:
+                    //                                                         1000),
+                    //                                             directionMarguee:
+                    //                                                 DirectionMarguee
+                    //                                                     .TwoDirection,
+                    //                                             child: Text(
+                    //                                                 "Không",
+                    //                                                 style:
+                    //                                                     textStyleRed14,
+                    //                                                 textAlign:
+                    //                                                     TextAlign
+                    //                                                         .left),
+                    //                                           )
+                    //                                     : emptyBox),
+                    //                           ],
+                    //                         ),
+                    //                       ),
+                    //                       Expanded(
+                    //                         flex: 3,
+                    //                         child: InkWell(
+                    //                           onTap: () async {
+                    //                             final result = await showDialog(
+                    //                               context: context,
+                    //                               builder:
+                    //                                   (BuildContext context) {
+                    //                                 return MyDialogCalculator2(
+                    //                                   value:
+                    //                                       ingredient.quantity ??
+                    //                                           0,
+                    //                                 );
+                    //                               },
+                    //                             );
+                    //                             if (result != null) {
+                    //                               setState(() {
+                    //                                 print(result);
+                    //                                 ingredient.quantity =
+                    //                                     double.parse(result);
+                    //                               });
+                    //                             }
+                    //                           },
+                    //                           child: Column(
+                    //                             crossAxisAlignment:
+                    //                                 CrossAxisAlignment.center,
+                    //                             mainAxisAlignment:
+                    //                                 MainAxisAlignment.center,
+                    //                             children: [
+                    //                               Text(
+                    //                                   (ingredient.quantity ?? 0)
+                    //                                       .toString(),
+                    //                                   style: textStyleOrange14),
+                    //                               marginTop5,
+                    //                               Text(
+                    //                                   (ingredient.unit_name ??
+                    //                                           "")
+                    //                                       .toString(),
+                    //                                   style:
+                    //                                       textStylePrimary14),
+                    //                             ],
+                    //                           ),
+                    //                         ),
+                    //                       ),
+                    //                       Expanded(
+                    //                         flex: 3,
+                    //                         child: Column(
+                    //                           crossAxisAlignment:
+                    //                               CrossAxisAlignment.end,
+                    //                           mainAxisAlignment:
+                    //                               MainAxisAlignment.center,
+                    //                           children: [
+                    //                             InkWell(
+                    //                               onTap: () async {
+                    //                                 final result =
+                    //                                     await showDialog(
+                    //                                   context: context,
+                    //                                   builder: (BuildContext
+                    //                                       context) {
+                    //                                     return MyCalculator(
+                    //                                       priceDefault:
+                    //                                           ingredient
+                    //                                                   .price ??
+                    //                                               0,
+                    //                                       min: 0,
+                    //                                       max: MAX_PRICE,
+                    //                                     );
+                    //                                   },
+                    //                                 );
+                    //                                 if (result != null) {
+                    //                                   setState(() {
+                    //                                     print(result);
+                    //                                     ingredient.price = Utils
+                    //                                         .stringConvertToDouble(
+                    //                                             Utils.formatCurrencytoDouble(
+                    //                                                 result));
+                    //                                   });
+                    //                                 }
+                    //                               },
+                    //                               child: Text(
+                    //                                 Utils.formatCurrency(
+                    //                                     (ingredient.price ??
+                    //                                         0)),
+                    //                                 style: textStyleOrange14,
+                    //                               ),
+                    //                             ),
+                    //                             Text(
+                    //                               Utils.formatCurrency(
+                    //                                   ((ingredient.quantity ??
+                    //                                           0) *
+                    //                                       (ingredient.price ??
+                    //                                           0))),
+                    //                               style: textStylePrimary14,
+                    //                               textAlign: TextAlign.right,
+                    //                             ),
+                    //                           ],
+                    //                         ),
+                    //                       ),
+                    //                     ]),
+                    //                   );
+                    //                 })),
+                    //       );
+                    //     }
+                    //   },
+                    // ),
                     //DANH SÁCH NGUYÊN LIỆU CỦA PHIẾU NHẬP KHO
                   ],
                 ),

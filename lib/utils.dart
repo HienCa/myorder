@@ -211,6 +211,23 @@ class Utils {
     return startDateTime1.isAtSameMomentAs(startDateTime2);
   }
 
+   //So sánh TIMESTAMP
+  static bool isBeforeDateFromTimstamp(
+      Timestamp timestamp1, Timestamp timestamp2) {
+    // Chuyển đổi Timestamp thành DateTime
+    DateTime date1 = timestamp1.toDate();
+    DateTime date2 = timestamp2.toDate();
+
+    // Chuyển đổi DateTime thành DateTime với giờ, phút, giây là 0
+    DateTime startDateTime1 =
+        DateTime(date1.year, date1.month, date1.day, 0, 0, 0);
+    DateTime startDateTime2 =
+        DateTime(date2.year, date2.month, date2.day, 0, 0, 0);
+
+    // So sánh giá trị ngày tháng năm
+    return startDateTime1.isBefore(startDateTime2);
+  }
+
   static Timestamp getOnlyDateFromTimestamp(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
     date = DateTime(date.year, date.month, date.day, 0, 0, 0, 0);

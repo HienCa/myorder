@@ -9,10 +9,11 @@ import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_export_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
+import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/update_warehouse_export_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/create_warehouse_export_screen.dart';
-import 'package:myorder/views/screens/managements/warehouse/receipt/create_warehouse_receipt_from_recommend_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/dialogs/dialog_create_cancellation_receipt.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/update_warehouse_receipt_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/create_warehouse_receipt_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -191,7 +192,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const WarehouseReceiptDetailFromRecommendScreen()));
+                                    const WarehouseReceiptDetailScreen()));
                         if (result == 'success') {
                           Utils.showStylishDialog(
                               context,
@@ -611,7 +612,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                               itemCount: warehouseReceiptController
                                   .warehouseReceipts.length,
                               itemBuilder: (context, index) {
-                                final warehouseReceipt =
+                                WarehouseReceipt warehouseReceipt =
                                     warehouseReceiptController
                                         .warehouseReceipts[index];
 
@@ -690,33 +691,75 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                                                       .center,
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
-                                                                      .center,
+                                                                      .spaceEvenly,
                                                               children: [
                                                                 const FaIcon(
                                                                     FontAwesomeIcons
                                                                         .clockRotateLeft,
                                                                     color:
-                                                                        secondColor,
+                                                                        transparentColor,
                                                                     size: 16),
-                                                                marginRight5,
-                                                                warehouseReceipt
-                                                                            .status ==
-                                                                        WAREHOUSE_STATUS_WAITING
-                                                                    ? Text(
-                                                                        WAREHOUSE_STATUS_WAITING_STRING,
-                                                                        style:
-                                                                            textStyleWhiteBold16)
-                                                                    : const Text(
-                                                                        ""),
-                                                                warehouseReceipt
-                                                                            .status ==
-                                                                        WAREHOUSE_STATUS_FINISH
-                                                                    ? Text(
-                                                                        WAREHOUSE_STATUS_FINISH_STRING,
-                                                                        style:
-                                                                            textStyleWhiteBold16)
-                                                                    : const Text(
-                                                                        ""),
+                                                                Row(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    const FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .clockRotateLeft,
+                                                                        color:
+                                                                            secondColor,
+                                                                        size:
+                                                                            16),
+                                                                    marginRight5,
+                                                                    warehouseReceipt.status ==
+                                                                            WAREHOUSE_STATUS_WAITING
+                                                                        ? Text(
+                                                                            WAREHOUSE_STATUS_WAITING_STRING,
+                                                                            style:
+                                                                                textStyleWhiteBold16)
+                                                                        : const Text(
+                                                                            ""),
+                                                                    warehouseReceipt.status ==
+                                                                            WAREHOUSE_STATUS_FINISH
+                                                                        ? Text(
+                                                                            WAREHOUSE_STATUS_FINISH_STRING,
+                                                                            style:
+                                                                                textStyleWhiteBold16)
+                                                                        : const Text(
+                                                                            ""),
+                                                                  ],
+                                                                ),
+                                                                //Tạo phiếu hủy cho các nguyên liệu đã hết hạn
+                                                                //cho nguyên liệu có quantity_in_stock = 0 của chi tiết phiếu nhập
+                                                                InkWell(
+                                                                  onTap:
+                                                                      () async {
+                                                                    showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return CustomDialogCreateCancellationReceipt(
+                                                                          expiredIngredients:
+                                                                              warehouseReceipt.expiredIngredients ?? [],
+                                                                          warehouseReceipt:
+                                                                              warehouseReceipt,
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  child: FaIcon(FontAwesomeIcons.triangleExclamation,
+                                                                      color: (warehouseReceipt.expiredIngredients?.length ?? 0) >
+                                                                              0
+                                                                          ? colorWarning
+                                                                          : transparentColor,
+                                                                      size: 16),
+                                                                ),
                                                               ],
                                                             )),
                                                       ),

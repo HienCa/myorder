@@ -18,6 +18,7 @@ import 'package:myorder/models/warehouse_receipt_detail.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/add_ingredient_to_warehouse_receipt_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/dialogs/dialog_create_update_warehouse_receipt.dart';
+import 'package:myorder/views/screens/managements/warehouse/receipt/dialogs/dialog_recommend_ingredients.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_double.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
@@ -53,9 +54,13 @@ class _WarehouseReceiptDetailScreenState
       Get.put(WarehouseReceiptController());
   WarehouseExportController warehouseExportController =
       Get.put(WarehouseExportController());
+  DateTime now = Timestamp.now().toDate();
+
   @override
   void initState() {
     super.initState();
+    now = DateTime(now.year, now.month, now.day, 0, 0, 0, 0);
+
     listIngredientSelected = [];
 
     //setup warehouseReceipt
@@ -140,11 +145,23 @@ class _WarehouseReceiptDetailScreenState
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 10),
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(10),
-              child: Icon(
-                Icons.add_circle_outline,
-                color: transparentColor,
+              child: InkWell(
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomDialogRecommendIngredients(
+                        date: now,
+                      );
+                    },
+                  );
+                },
+                child: Icon(
+                  Icons.book,
+                  color: secondColor,
+                ),
               ),
             ),
           ),

@@ -17,8 +17,9 @@ class Ingredient {
   String? unit_name = "";
   double? new_quantity;
   Timestamp? expiration_date;
-  String? batch_number = "";//số lô
-
+  String? batch_number = ""; //số lô
+  double? quantity_in_stock = 0;
+  String? quantity_in_stock_note = "";//còn trong kho
   Ingredient({
     required this.ingredient_id,
     // required this.unit_id,
@@ -27,7 +28,7 @@ class Ingredient {
     // required this.is_weight ,
     required this.active,
   });
- 
+
   Ingredient.empty()
       : ingredient_id = '',
         name = '',
@@ -56,8 +57,4 @@ class Ingredient {
       active: snapshot['active'],
     );
   }
-
-
-
- 
 }

@@ -47,7 +47,8 @@ class WarehouseReceiptController extends GetxController {
             for (var element in query.docs) {
               WarehouseReceipt warehouseReceipt =
                   WarehouseReceipt.fromSnap(element);
-
+              //reset về rỗng mỗi khi gọi
+              warehouseReceipt.expiredIngredients = [];
               //Detail
               var warehouseReceiptDetailCollection = firestore
                   .collection('warehouseReceipts')
@@ -64,10 +65,29 @@ class WarehouseReceiptController extends GetxController {
 
                 WarehouseReceiptDetail warehouseRecceiptDetail =
                     WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
-
                 warehouseRecceiptDetail.new_quantity =
                     warehouseRecceiptDetail.quantity;
                 warehouseRecceiptDetails.add(warehouseRecceiptDetail);
+
+                //Kiểm tra có nguyên liệu nào hết hạn không?
+                print(
+                    "${warehouseRecceiptDetail.ingredient_name} - Ngày hết hạn: ${Utils.formatTimestamp(warehouseRecceiptDetail.expiration_date)}");
+                if (warehouseRecceiptDetail.expiration_date != null) {
+                  bool isExpired = Utils.isBeforeDateFromTimstamp(
+                      Timestamp.now(),
+                      warehouseRecceiptDetail.expiration_date ??
+                          Timestamp.now());
+                  print(isExpired);
+                  //quantity_in_stock > 0 thì chưa được hủy
+                  if (isExpired &&
+                      warehouseRecceiptDetail.quantity_in_stock > 0) {
+                    //đánh dấu nguyên liệu này đã hết hạn
+                    warehouseReceipt.isExpired = true;
+                    //danh sách các nguyên liệu đã hết hạn -> cần hủy
+                    warehouseReceipt.expiredIngredients!
+                        .add(warehouseRecceiptDetail);
+                  }
+                }
               }
               //Danh sách mặt hàng đã nhập
               warehouseReceipt.warehouseRecceiptDetails =
@@ -99,6 +119,8 @@ class WarehouseReceiptController extends GetxController {
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search) || warehouseReceiptCode.contains(search)) {
             WarehouseReceipt warehouseReceipt = WarehouseReceipt.fromSnap(elem);
+            //reset về rỗng mỗi khi gọi
+            warehouseReceipt.expiredIngredients = [];
             //Detail
             var warehouseReceiptDetailCollection = firestore
                 .collection('warehouseReceipts')
@@ -119,6 +141,24 @@ class WarehouseReceiptController extends GetxController {
               warehouseRecceiptDetail.new_quantity =
                   warehouseRecceiptDetail.quantity;
               warehouseRecceiptDetails.add(warehouseRecceiptDetail);
+              
+              //Kiểm tra có nguyên liệu nào hết hạn không?
+              print(
+                  "${warehouseRecceiptDetail.ingredient_name} - Ngày hết hạn: ${Utils.formatTimestamp(warehouseRecceiptDetail.expiration_date)}");
+              if (warehouseRecceiptDetail.expiration_date != null) {
+                bool isExpired = Utils.isBeforeDateFromTimstamp(Timestamp.now(),
+                    warehouseRecceiptDetail.expiration_date ?? Timestamp.now());
+                print(isExpired);
+                //quantity_in_stock > 0 thì chưa được hủy
+                if (isExpired &&
+                    warehouseRecceiptDetail.quantity_in_stock > 0) {
+                  //đánh dấu nguyên liệu này đã hết hạn
+                  warehouseReceipt.isExpired = true;
+                  //danh sách các nguyên liệu đã hết hạn -> cần hủy
+                  warehouseReceipt.expiredIngredients!
+                      .add(warehouseRecceiptDetail);
+                }
+              }
             }
             //Danh sách mặt hàng đã nhập
             warehouseReceipt.warehouseRecceiptDetails =
@@ -367,167 +407,299 @@ class WarehouseReceiptController extends GetxController {
     }
   }
 
-  //gợi ý nhập kho từ nguyên liệu của món ăn
-  Future<List<Ingredient>> getRecommendedIngredients(DateTime dateApply) async {
-    // List<Ingredient> listRecommendedIngredients = [];
-    List<Ingredient> listIngredient = [];
-
-    try {
-      //Lấy daily sale của ngày cần gợi ý nhập
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  final Rx<List<Ingredient>> _recommendedingredients = Rx<List<Ingredient>>([]);
+  List<Ingredient> get recommendedingredients => _recommendedingredients.value;
+  getRecommendedIngredients(DateTime dateApply) async {
+    _recommendedingredients.bindStream(
+      firestore
           .collection('dailySales')
           .where('date_apply', isEqualTo: Timestamp.fromDate(dateApply))
-          .get();
+          .snapshots()
+          .asyncMap(
+        (QuerySnapshot query) async {
+          List<Ingredient> listIngredient = [];
 
-      if (querySnapshot.docs.isNotEmpty) {
-        DailySales dailySales = DailySales.fromSnap(querySnapshot.docs.first);
+          try {
+            //Lấy daily sale của ngày cần gợi ý nhập
+            QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                .collection('dailySales')
+                .where('date_apply', isEqualTo: Timestamp.fromDate(dateApply))
+                .get();
 
-        //danh sách nguyên liệu
-        var ingredientCollection =
-            FirebaseFirestore.instance.collection('ingredients');
-        var IngredientCollectionQuery = await ingredientCollection.get();
+            if (querySnapshot.docs.isNotEmpty) {
+              DailySales dailySales =
+                  DailySales.fromSnap(querySnapshot.docs.first);
 
-        for (var item in IngredientCollectionQuery.docs) {
-          Ingredient ingredient = Ingredient.fromSnap(item);
-          listIngredient.add(ingredient);
-        }
+              //danh sách nguyên liệu
+              var ingredientCollection =
+                  FirebaseFirestore.instance.collection('ingredients');
+              var IngredientCollectionQuery = await ingredientCollection.get();
 
-        //thông tin chi tiết daily sale -> các món cần phục vụ kèm số lượng
-        var dailySaleDetailCollection = FirebaseFirestore.instance
-            .collection('dailySales')
-            .doc(dailySales.daily_sale_id)
-            .collection('dailySaleDetails');
+              for (var item in IngredientCollectionQuery.docs) {
+                Ingredient ingredient = Ingredient.fromSnap(item);
+                listIngredient.add(ingredient);
+              }
 
-        var dailySaleDetailCollectionQuery =
-            await dailySaleDetailCollection.get();
+              //thông tin chi tiết daily sale -> các món cần phục vụ kèm số lượng
+              var dailySaleDetailCollection = FirebaseFirestore.instance
+                  .collection('dailySales')
+                  .doc(dailySales.daily_sale_id)
+                  .collection('dailySaleDetails');
 
-        for (var dailySaleDetailData in dailySaleDetailCollectionQuery.docs) {
-          //thông tin chi tiết daily sale -> các món cần phục vụ kèm số lượng
-          DailySaleDetail dailySaleDetail =
-              DailySaleDetail.fromSnap(dailySaleDetailData);
+              var dailySaleDetailCollectionQuery =
+                  await dailySaleDetailCollection.get();
 
-          //thông tin công thức
-          var recipeOfFoodCollection = FirebaseFirestore.instance
-              .collection('foods')
-              .doc(dailySaleDetail.food_id)
-              .collection('recipes');
+              for (var dailySaleDetailData
+                  in dailySaleDetailCollectionQuery.docs) {
+                //thông tin chi tiết daily sale -> các món cần phục vụ kèm số lượng
+                DailySaleDetail dailySaleDetail =
+                    DailySaleDetail.fromSnap(dailySaleDetailData);
+                if (dailySaleDetail.quantity_for_sell > 0) {
+                  //thông tin công thức
+                  var recipeOfFoodCollection = FirebaseFirestore.instance
+                      .collection('foods')
+                      .doc(dailySaleDetail.food_id)
+                      .collection('recipes');
 
-          var recipeOfFoodCollectionQuery = await recipeOfFoodCollection.get();
+                  var recipeOfFoodCollectionQuery =
+                      await recipeOfFoodCollection.get();
 
-          if (recipeOfFoodCollectionQuery.docs.isNotEmpty) {
-            for (var item in recipeOfFoodCollectionQuery.docs) {
-              RecipeDetail recipeDetail = RecipeDetail.fromSnap(item);
+                  if (recipeOfFoodCollectionQuery.docs.isNotEmpty) {
+                    for (var item in recipeOfFoodCollectionQuery.docs) {
+                      RecipeDetail recipeDetail = RecipeDetail.fromSnap(item);
 
-              print(recipeDetail.new_quantity);
+                      print(recipeDetail.new_quantity);
 
-              //xét danh sách nguyên liệu bàn đầu
-              for (Ingredient item in listIngredient) {
-                if (recipeDetail.ingredient_id == item.ingredient_id) {
-                  item.isSelected = true;
-                  String unitId = "";
-                  String unitName = "";
-                  //Nếu có chuyển đổi đơn vị
-                  if (recipeDetail.unit_value_conversion > 1) {
-                    print("CẦN CHUYỂN ĐỔI ĐƠN VỊ");
-                    //lấy thông tin unit chuyển đổi
-                    QuerySnapshot querySnapshot = await FirebaseFirestore
-                        .instance
-                        .collection('units')
-                        .where('unit_id', isEqualTo: item.unit_id)
-                        .get();
+                      //xét danh sách nguyên liệu ban đầu
+                      for (Ingredient item in listIngredient) {
+                        if (recipeDetail.ingredient_id == item.ingredient_id) {
+                          item.isSelected = true;
+                          String unitId = recipeDetail.unit_id;
+                          String unitName = recipeDetail.unit_name;
+                          //Đơn vị không cần chuyển đổi
+                          double quantity = recipeDetail.quantity *
+                              dailySaleDetail.quantity_for_sell;
+                          // Nếu có chuyển đổi đơn vị
+                          //Tìm xem unit_id của từng thằng có là con của unit id khác không, nếu là con thì chuyển về gốc
+                          if (unitId != "") {
+                            var unitCollection =
+                                FirebaseFirestore.instance.collection('units');
 
-                    if (querySnapshot.docs.isNotEmpty) {
-                      //đã chuyển đổi
-                      Unit converedUnit =
-                          Unit.fromSnap(querySnapshot.docs.first);
-                      unitId = converedUnit.unit_id_conversion;
-                      unitName = converedUnit.unit_name_conversion;
+                            var unitCollectionQuery =
+                                await unitCollection.get();
+
+                            if (unitCollectionQuery.docs.isNotEmpty) {
+                              for (var itemUnit in unitCollectionQuery.docs) {
+                                Unit unit = Unit.fromSnap(itemUnit);
+                                if (unit.unit_id_conversion == unitId) {
+                                  unitId = unit.unit_id;
+                                  unitName = unit.name;
+                                  print(
+                                      "SL daily sale: ${dailySaleDetail.quantity_for_sell}");
+                                  print(
+                                      "Gía trị đã chuyển đổi từ ${unit.unit_name_conversion} -> ${unit.name} là ${recipeDetail.quantity / unit.value_conversion}");
+                                  quantity = (recipeDetail.quantity /
+                                          unit.value_conversion) *
+                                      dailySaleDetail.quantity_for_sell;
+                                }
+                              }
+                            }
+                          }
+                          quantity = quantity.ceil().toDouble();
+                          item.quantity = quantity;
+                          item.new_quantity = item.quantity;
+                          item.unit_id = unitId;
+                          item.unit_name = unitName;
+                          print(item.name.toUpperCase());
+                          print(
+                              "${recipeDetail.quantity} : SL trong công thức ");
+                          print(
+                              "${recipeDetail.unit_value_conversion} : Giá trị đơn vị chuyển đổi ");
+                          print(
+                              "${dailySaleDetail.quantity_for_sell} : Số lượng muốn bán ");
+                          print("${item.unit_id} : ID đơn vị ");
+                          print("${item.unit_name} : Tên đơn vị ");
+
+                          //SỐ LƯỢNG NGUYÊN LIỆU CÒN TRONG KHO
+                          item.quantity_in_stock =
+                              await getInventoryOfIngredient(
+                                  item.ingredient_id);
+                          print(
+                              "${item.quantity_in_stock} : SỐ LƯỢNG TỒN KHO ");
+                        }
+                      }
                     }
-                  } else {
-                    //Không có đơn vị chuyển đổi
-                    unitId = recipeDetail.unit_id;
-                    unitName = recipeDetail.unit_name;
                   }
-
-                  item.quantity = (recipeDetail.quantity /
-                          recipeDetail.unit_value_conversion) *
-                      dailySaleDetail.quantity_for_sell;
-                  item.new_quantity = item.quantity;
-
-                  item.unit_id = unitId;
-                  item.unit_name = unitName;
-                  print(item.name.toUpperCase());
-                  print(recipeDetail.quantity);
-                  print(recipeDetail.unit_value_conversion);
-                  print(dailySaleDetail.quantity_for_sell);
-                  print(item.new_quantity);
-                  print(unitName);
-                  //chỉ áp dụng được với đơn vị chuyển từ nhỏ sang lớn
-                  // WarehouseReceiptDetail warehouseReceiptDetail =
-                  //     WarehouseReceiptDetail(
-                  //         warehouse_receipt_detail_id: "",
-                  //         ingredient_id: item.ingredient_id,
-                  //         ingredient_name: item.name,
-                  //         quantity: (recipeDetail.quantity /
-                  //                 recipeDetail.unit_value_conversion) *
-                  //             dailySaleDetail
-                  //                 .quantity_for_sell, // số lượng cần dùng của nguyên liệu (đơn vị gốc/giá trị đơn vị cần chuyển đổi * sl muốn bán),
-                  //         quantity_in_stock: 0,
-                  //         price: 0,
-                  //         unit_id: unitId, //đơn vị đã được chuyển đổi
-                  //         unit_name: unitName,
-                  //         expiration_date: null,
-                  //         batch_number: "");
-                  // listRecommendedIngredients.add(warehouseReceiptDetail);
                 }
               }
+            } else {}
+          } catch (error) {
+            print('Lỗi khi truy vấn: $error');
+          }
+          return listIngredient
+              .where((ingredient) => ingredient.isSelected == true)
+              .toList();
+        },
+      ),
+    );
+  }
+
+  Future<double> getInventoryOfIngredient(String ingredientId) async {
+    double quantity = 0;
+    var warehouseReceiptCollection =
+        FirebaseFirestore.instance.collection('warehouseReceipts');
+
+    var warehouseReceiptCollectionQuery =
+        await warehouseReceiptCollection.get();
+
+    if (warehouseReceiptCollectionQuery.docs.isNotEmpty) {
+      for (var warehouseReceiptDocs in warehouseReceiptCollectionQuery.docs) {
+        WarehouseReceipt warehouseReceipt =
+            WarehouseReceipt.fromSnap(warehouseReceiptDocs);
+        var warehouseReceiptDetailCollection = FirebaseFirestore.instance
+            .collection('warehouseReceipts')
+            .doc(warehouseReceipt.warehouse_receipt_id)
+            .collection("warehouseReceiptDetails");
+
+        var warehouseReceiptDetailCollectionQuery =
+            await warehouseReceiptDetailCollection.get();
+        if (warehouseReceiptDetailCollectionQuery.docs.isNotEmpty) {
+          for (var warehouseReceiptDetailDocs
+              in warehouseReceiptDetailCollectionQuery.docs) {
+            WarehouseReceiptDetail warehouseReceiptDetail =
+                WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailDocs);
+            if (warehouseReceiptDetail.ingredient_id == ingredientId) {
+              if (warehouseReceiptDetail.expiration_date != null &&
+                  Utils.isSameDateFromTimstamp(Timestamp.now(),
+                      warehouseReceiptDetail.expiration_date!)) {
+                print(
+                    "NGUYÊN LIỆU ${warehouseReceiptDetail.ingredient_name} : SL ${warehouseReceiptDetail.quantity_in_stock} ĐÃ HẾT HẠN (Id phiếu nhập là ${warehouseReceiptDetail.warehouse_receipt_detail_id})");
+              } else {
+                // Số lượng còn trong kho
+                quantity += warehouseReceiptDetail.quantity_in_stock;
+                print(
+                    "${warehouseReceiptDetail.ingredient_name} ${warehouseReceiptDetail.quantity_in_stock}");
+              }
             }
-          } else {
-            //không có recipe
-            // for (Ingredient item in listIngredient) {
-            //     if (dailySaleDetail.ingredient_id == item.ingredient_id) {
-            //       String unitId = "";
-            //       String unitName = "";
-            //       //Nếu có chuyển đổi đơn vị
-            //       if (recipeDetail.unit_value_conversion > 1) {
-            //         //lấy thông tin unit chuyển đổi
-            //         QuerySnapshot querySnapshot = await FirebaseFirestore
-            //             .instance
-            //             .collection('units')
-            //             .where('unit_id', isEqualTo: item.unit_id)
-            //             .get();
-
-            //         if (querySnapshot.docs.isNotEmpty) {
-            //           //đã chuyển đổi
-            //           Unit converedUnit =
-            //               Unit.fromSnap(querySnapshot.docs.first);
-            //           unitId = converedUnit.unit_id_conversion;
-            //           unitName = converedUnit.unit_name_conversion;
-            //         }
-            //       } else {
-            //         //Không có đơn vị chuyển đổi
-            //         unitId = recipeDetail.unit_id;
-            //         unitName = recipeDetail.unit_name;
-            //       }
-
-            //       item.quantity = (recipeDetail.quantity /
-            //               recipeDetail.unit_value_conversion) *
-            //           dailySaleDetail.quantity_for_sell;
-            //       item.new_quantity = item.quantity;
-
-            //       item.unit_id = unitId;
-            //       item.unit_name = unitName;
-
-            //     }
-            //   }
+            ;
           }
         }
-      } else {}
-    } catch (error) {
-      print('Lỗi khi truy vấn: $error');
+      }
     }
-    return Future.value(listIngredient
-        .where((ingredient) => ingredient.isSelected == true)
-        .toList());
+    return quantity;
   }
+
+  //gợi ý nhập kho từ nguyên liệu của món ăn
+  // Future<List<Ingredient>> getRecommendedIngredients(DateTime dateApply) async {
+  //   // List<Ingredient> listRecommendedIngredients = [];
+  //   List<Ingredient> listIngredient = [];
+
+  //   try {
+  //     //Lấy daily sale của ngày cần gợi ý nhập
+  //     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  //         .collection('dailySales')
+  //         .where('date_apply', isEqualTo: Timestamp.fromDate(dateApply))
+  //         .get();
+
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       DailySales dailySales = DailySales.fromSnap(querySnapshot.docs.first);
+
+  //       //danh sách nguyên liệu
+  //       var ingredientCollection =
+  //           FirebaseFirestore.instance.collection('ingredients');
+  //       var IngredientCollectionQuery = await ingredientCollection.get();
+
+  //       for (var item in IngredientCollectionQuery.docs) {
+  //         Ingredient ingredient = Ingredient.fromSnap(item);
+  //         listIngredient.add(ingredient);
+  //       }
+
+  //       //thông tin chi tiết daily sale -> các món cần phục vụ kèm số lượng
+  //       var dailySaleDetailCollection = FirebaseFirestore.instance
+  //           .collection('dailySales')
+  //           .doc(dailySales.daily_sale_id)
+  //           .collection('dailySaleDetails');
+
+  //       var dailySaleDetailCollectionQuery =
+  //           await dailySaleDetailCollection.get();
+
+  //       for (var dailySaleDetailData in dailySaleDetailCollectionQuery.docs) {
+  //         //thông tin chi tiết daily sale -> các món cần phục vụ kèm số lượng
+  //         DailySaleDetail dailySaleDetail =
+  //             DailySaleDetail.fromSnap(dailySaleDetailData);
+  //         if (dailySaleDetail.quantity_for_sell > 0) {
+  //           //thông tin công thức
+  //           var recipeOfFoodCollection = FirebaseFirestore.instance
+  //               .collection('foods')
+  //               .doc(dailySaleDetail.food_id)
+  //               .collection('recipes');
+
+  //           var recipeOfFoodCollectionQuery =
+  //               await recipeOfFoodCollection.get();
+
+  //           if (recipeOfFoodCollectionQuery.docs.isNotEmpty) {
+  //             for (var item in recipeOfFoodCollectionQuery.docs) {
+  //               RecipeDetail recipeDetail = RecipeDetail.fromSnap(item);
+
+  //               print(recipeDetail.new_quantity);
+
+  //               //xét danh sách nguyên liệu bàn đầu
+  //               for (Ingredient item in listIngredient) {
+  //                 if (recipeDetail.ingredient_id == item.ingredient_id) {
+  //                   item.isSelected = true;
+  //                   // String unitId = "";
+  //                   // String unitName = "";
+  //                   //Nếu có chuyển đổi đơn vị
+  //                   // if (recipeDetail.unit_value_conversion > 1) {
+  //                   //   print("CẦN CHUYỂN ĐỔI ĐƠN VỊ");
+  //                   //   //lấy thông tin unit chuyển đổi
+  //                   //   QuerySnapshot querySnapshot = await FirebaseFirestore
+  //                   //       .instance
+  //                   //       .collection('units')
+  //                   //       .where('unit_id', isEqualTo: item.unit_id)
+  //                   //       .get();
+
+  //                   //   if (querySnapshot.docs.isNotEmpty) {
+  //                   //     //đã chuyển đổi
+  //                   //     Unit converedUnit =
+  //                   //         Unit.fromSnap(querySnapshot.docs.first);
+  //                   //     unitId = converedUnit.unit_id_conversion;
+  //                   //     unitName = converedUnit.unit_name_conversion;
+  //                   //   }
+  //                   // } else {
+  //                   //   //Không có đơn vị chuyển đổi
+  //                   //   unitId = recipeDetail.unit_id;
+  //                   //   unitName = recipeDetail.unit_name;
+  //                   // }
+
+  //                   // item.quantity = (recipeDetail.quantity /
+  //                   //         recipeDetail.unit_value_conversion) *
+  //                   //     dailySaleDetail.quantity_for_sell;
+  //                   item.quantity = recipeDetail.quantity *
+  //                       dailySaleDetail.quantity_for_sell;
+  //                   item.new_quantity = item.quantity;
+  //                   item.unit_id = recipeDetail.unit_id;
+  //                   item.unit_name = recipeDetail.unit_name;
+  //                   print(item.name.toUpperCase());
+  //                   print("${recipeDetail.quantity} : SL trong công thức ");
+  //                   print(
+  //                       "${recipeDetail.unit_value_conversion} : Giá trị đơn vị chuyển đổi ");
+  //                   print(
+  //                       "${dailySaleDetail.quantity_for_sell} : Số lượng muốn bán ");
+  //                   print("${item.unit_id} : ID đơn vị ");
+  //                   print("${item.unit_name} : Tên đơn vị ");
+  //                 }
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     } else {}
+  //   } catch (error) {
+  //     print('Lỗi khi truy vấn: $error');
+  //   }
+  //   return Future.value(listIngredient
+  //       .where((ingredient) => ingredient.isSelected == true)
+  //       .toList());
+  // }
 }

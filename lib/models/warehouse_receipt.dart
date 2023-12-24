@@ -17,7 +17,8 @@ class WarehouseReceipt {
   double discount;
   int active;
   List<WarehouseReceiptDetail>? warehouseRecceiptDetails;
-
+  List<WarehouseReceiptDetail>? expiredIngredients = [];
+  bool? isExpired = false;
   WarehouseReceipt({
     required this.warehouse_receipt_id,
     required this.warehouse_receipt_code,
@@ -67,4 +68,3 @@ class WarehouseReceipt {
     );
   }
 }
-
