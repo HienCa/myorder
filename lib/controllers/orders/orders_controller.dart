@@ -1749,8 +1749,7 @@ class OrderController extends GetxController {
             String name = employeeData['name'] ?? '';
             orderHistory.employee_name = name;
           }
-          print("description :$orderHistory");
-          print("description :$description");
+
           orderHistory.description = description;
           orderHistoryController.createOrderHistory(orderHistory);
 
@@ -3190,6 +3189,7 @@ class OrderController extends GetxController {
             table_name: table_name,
             create_at: Timestamp.now(),
             quantity: 0,
+            // area_id: area_id,
           );
 
           // lấy thông tin của món

@@ -109,10 +109,66 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (idx) {
-          setState(() {
-            pageIdx = idx;
-          });
+        onTap: (idx) async {
+          /*
+            0 TỔNG QUAN: QUẢN LÝ, CHỦ QUÁN
+            1 ĐƠN HÀNG: QUẢN LÝ, CHỦ QUÁN, NHÂN VIÊN PHỤC VỤ
+            2
+            3 KHU VỰC: QUẢN LÝ, CHỦ QUÁN, NHÂN VIÊN PHỤC VỤ
+            4 TIỆN ÍCH: QUẢN LÝ, CHỦ QUÁN, BẾP/BAR/OTHER
+            
+          */
+          int? role = int.tryParse(
+              await myCacheManager.getFromCache(CACHE_EMPLOYEE_ROLE_KEY) ??
+                  "0");
+          if (idx == 0) {
+            //TỔNG QUAN: QUẢN LÝ, CHỦ QUÁN
+            if (role == ROLE_OWNER || role == ROLE_MANAGER) {
+              setState(() {
+                pageIdx = idx;
+              });
+            } else {
+              Utils.showStylishDialog(
+                  context,
+                  "THÔNG BÁO",
+                  "Bạn chưa có quyền truy cập tính năng này!",
+                  StylishDialogType.WARNING);
+            }
+          } else if (idx == 1 || idx == 3) {
+            //ĐƠN HÀNG: QUẢN LÝ, CHỦ QUÁN, NHÂN VIÊN PHỤC VỤ
+            // KHU VỰC: QUẢN LÝ, CHỦ QUÁN, NHÂN VIÊN PHỤC VỤ
+            if (role == ROLE_OWNER ||
+                role == ROLE_MANAGER ||
+                role == ROLE_STAFF) {
+              setState(() {
+                pageIdx = idx;
+              });
+            } else {
+              Utils.showStylishDialog(
+                  context,
+                  "THÔNG BÁO",
+                  "Bạn chưa có quyền truy cập tính năng này!",
+                  StylishDialogType.WARNING);
+            }
+          } else if (idx == 4) {
+            //TIỆN ÍCH: QUẢN LÝ, CHỦ QUÁN, BẾP/BAR/OTHER
+            if (role == ROLE_OWNER ||
+                role == ROLE_MANAGER ||
+                role == ROLE_CHEF ||
+                role == ROLE_BAR ||
+                role == ROLE_OTHER ||
+                role == ROLE_CASHIER) {
+              setState(() {
+                pageIdx = idx;
+              });
+            } else {
+              Utils.showStylishDialog(
+                  context,
+                  "THÔNG BÁO",
+                  "Bạn chưa có quyền truy cập tính năng này!",
+                  StylishDialogType.WARNING);
+            }
+          }
         },
         type: BottomNavigationBarType.fixed,
         backgroundColor: backgroundColor,

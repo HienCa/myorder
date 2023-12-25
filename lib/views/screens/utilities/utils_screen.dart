@@ -24,6 +24,7 @@ class _UtilsPageState extends State<UtilsPage> {
     getCurrentUser();
   }
 
+  int role = ROLE_STAFF;
   String roleString = "";
   String employeeName = "";
   Future<void> getCurrentUser() async {
@@ -33,7 +34,7 @@ class _UtilsPageState extends State<UtilsPage> {
         await myCacheManager.getFromCache(CACHE_EMPLOYEE_ROLE_KEY);
     String? name = await myCacheManager.getFromCache(CACHE_EMPLOYEE_NAME_KEY);
 
-    int role = int.tryParse(dateDailySaleString ?? ROLE_STAFF.toString()) ?? 0;
+    role = int.tryParse(dateDailySaleString ?? ROLE_STAFF.toString()) ?? 0;
     setState(() {
       employeeName = name ?? "Nhân viên mới";
       roleString = role == ROLE_CUSTOMER
@@ -128,88 +129,122 @@ class _UtilsPageState extends State<UtilsPage> {
                     decoration: const BoxDecoration(color: backgroundColor),
                     child: Column(
                       children: [
-                        InkWell(
-                          onTap: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const UtilsManagePage()))
-                          },
-                          child: const ListTile(
-                            leading: Icon(Icons.ad_units, color: iconColor),
-                            title:
-                                Text("Quản Lý", style: textStyleBlackRegular),
-                            trailing: Icon(Icons.arrow_forward_ios_outlined,
-                                color: iconColor),
-                          ),
-                        ),
+                        (role == ROLE_OWNER || role == ROLE_MANAGER)
+                            ? InkWell(
+                                onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const UtilsManagePage()))
+                                },
+                                child: const ListTile(
+                                  leading:
+                                      Icon(Icons.ad_units, color: iconColor),
+                                  title: Text("Quản Lý",
+                                      style: textStyleBlackRegular),
+                                  trailing: Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      color: iconColor),
+                                ),
+                              )
+                            : emptyBox,
                         deviderColor1,
-                        InkWell(
-                          onTap: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const MyDashBoard()))
-                          },
-                          child: const ListTile(
-                            leading: Icon(Icons.ad_units, color: iconColor),
-                            title: Text("Dash Board",
-                                style: textStyleBlackRegular),
-                            trailing: Icon(Icons.arrow_forward_ios_outlined,
-                                color: iconColor),
-                          ),
-                        ),
+                        (role == ROLE_OWNER ||
+                                role == ROLE_MANAGER ||
+                                role == ROLE_CASHIER)
+                            ? InkWell(
+                                onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const MyDashBoard()))
+                                },
+                                child: const ListTile(
+                                  leading:
+                                      Icon(Icons.ad_units, color: iconColor),
+                                  title: Text("Dash Board",
+                                      style: textStyleBlackRegular),
+                                  trailing: Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      color: iconColor),
+                                ),
+                              )
+                            : emptyBox,
                         deviderColor1,
-                        InkWell(
-                          onTap: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ManagementQuantityFoodOrderPage()))
-                          },
-                          child: const ListTile(
-                            leading: Icon(Icons.ad_units, color: iconColor),
-                            title: Text("Số Lượng Bán Hôm Nay",
-                                style: textStyleBlackRegular),
-                            trailing: Icon(Icons.arrow_forward_ios_outlined,
-                                color: iconColor),
-                          ),
-                        ),
+                        (role == ROLE_OWNER ||
+                                role == ROLE_MANAGER ||
+                                role == ROLE_CHEF ||
+                                role == ROLE_BAR ||
+                                role == ROLE_OTHER)
+                            ? InkWell(
+                                onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ManagementQuantityFoodOrderPage()))
+                                },
+                                child: const ListTile(
+                                  leading:
+                                      Icon(Icons.ad_units, color: iconColor),
+                                  title: Text("Số Lượng Bán Hôm Nay",
+                                      style: textStyleBlackRegular),
+                                  trailing: Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      color: iconColor),
+                                ),
+                              )
+                            : emptyBox,
                         deviderColor1,
-                        InkWell(
-                          onTap: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ManagementChefBarOtherPage()))
-                          },
-                          child: const ListTile(
-                            leading: Icon(Icons.ad_units, color: iconColor),
-                            title:
-                                Text("BẾP/BAR", style: textStyleBlackRegular),
-                            trailing: Icon(Icons.arrow_forward_ios_outlined,
-                                color: iconColor),
-                          ),
-                        ),
+                        (role == ROLE_OWNER ||
+                                role == ROLE_MANAGER ||
+                                role == ROLE_CHEF ||
+                                role == ROLE_BAR ||
+                                role == ROLE_OTHER)
+                            ? InkWell(
+                                onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ManagementChefBarOtherPage(
+                                                role: role,
+                                              )))
+                                },
+                                child: const ListTile(
+                                  leading:
+                                      Icon(Icons.ad_units, color: iconColor),
+                                  title: Text("BẾP/BAR",
+                                      style: textStyleBlackRegular),
+                                  trailing: Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      color: iconColor),
+                                ),
+                              )
+                            : emptyBox,
                         deviderColor1,
-                        InkWell(
-                          onTap: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const BillPage()))
-                          },
-                          child: const ListTile(
-                            leading: Icon(Icons.receipt_long, color: iconColor),
-                            title: Text("Hóa Đơn Đã Thanh Toán",
-                                style: textStyleBlackRegular),
-                            trailing: Icon(Icons.arrow_forward_ios_outlined,
-                                color: iconColor),
-                          ),
-                        ),
+                        (role == ROLE_OWNER || role == ROLE_MANAGER)
+                            ? InkWell(
+                                onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const BillPage()))
+                                },
+                                child: const ListTile(
+                                  leading: Icon(Icons.receipt_long,
+                                      color: iconColor),
+                                  title: Text("Hóa Đơn Đã Thanh Toán",
+                                      style: textStyleBlackRegular),
+                                  trailing: Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      color: iconColor),
+                                ),
+                              )
+                            : emptyBox,
                       ],
                     ),
                   ),

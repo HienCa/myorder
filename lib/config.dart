@@ -206,17 +206,26 @@ var LIST_ROLE_OPTION = [
   Role(role_id: ROLE_MANAGER, name: ROLE_MANAGER_STRING),
   Role(role_id: ROLE_CASHIER, name: ROLE_CASHIER_STRING),
   Role(role_id: ROLE_OWNER, name: ROLE_OWNER_STRING),
+  Role(role_id: ROLE_CHEF, name: ROLE_CHEF_STRING),
+  Role(role_id: ROLE_BAR, name: ROLE_BAR_STRING),
+  Role(role_id: ROLE_OTHER, name: ROLE_OTHER_STRING),
 ];
 const int ROLE_CUSTOMER = 1;
 const int ROLE_STAFF = 2;
 const int ROLE_MANAGER = 3;
 const int ROLE_CASHIER = 4;
 const int ROLE_OWNER = 5;
+const int ROLE_CHEF = 6;
+const int ROLE_BAR = 7;
+const int ROLE_OTHER = 8;
 const String ROLE_CUSTOMER_STRING = "Khách hàng";
 const String ROLE_STAFF_STRING = "Nhân viên phục vụ";
 const String ROLE_MANAGER_STRING = "Quản lý";
 const String ROLE_CASHIER_STRING = "Thu Ngân";
 const String ROLE_OWNER_STRING = "Chủ quán";
+const String ROLE_CHEF_STRING = "Nhân viên bếp";
+const String ROLE_BAR_STRING = "Nhân viên quầy bar";
+const String ROLE_OTHER_STRING = "Nhân viên khác";
 
 //KEY SharedPreferences
 const CACHE_DAILY_SALE_KEY = "date_dailySale";

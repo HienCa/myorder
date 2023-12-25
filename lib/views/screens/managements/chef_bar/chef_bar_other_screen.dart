@@ -3,6 +3,7 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
 import 'package:myorder/controllers/daily_sales/daily_sale_detail_controller.dart';
@@ -16,7 +17,9 @@ import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementChefBarOtherPage extends StatefulWidget {
-  const ManagementChefBarOtherPage({Key? key}) : super(key: key);
+  final int role;
+  const ManagementChefBarOtherPage({Key? key, required this.role})
+      : super(key: key);
 
   @override
   State<ManagementChefBarOtherPage> createState() =>
@@ -41,12 +44,13 @@ class _ManagementChefBarOtherPageState
     chefBarOtherController.getChefs(keySearch);
     chefBarOtherController.getBars(keySearch);
     chefBarOtherController.getOthers(keySearch);
+   
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 3,
+        length: widget.role == ROLE_OWNER ? 3 : 1,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
@@ -69,39 +73,45 @@ class _ManagementChefBarOtherPageState
                 ),
               ),
               tabs: [
-                Tab(child: Obx(() {
-                  return chefBarOtherController.chefs.isNotEmpty
-                      ? Text(
-                          'KHU BẾP (${chefBarOtherController.chefs.length})',
-                          style: textStyleWhiteBold14,
-                        )
-                      : const Text(
-                          'KHU BẾP',
-                          style: textStyleWhiteBold14,
-                        );
-                })),
-                Tab(child: Obx(() {
-                  return chefBarOtherController.bars.isNotEmpty
-                      ? Text(
-                          'QUẦY BAR (${chefBarOtherController.bars.length})',
-                          style: textStyleWhiteBold14,
-                        )
-                      : const Text(
-                          'QUẦY BAR',
-                          style: textStyleWhiteBold14,
-                        );
-                })),
-                Tab(child: Obx(() {
-                  return chefBarOtherController.others.isNotEmpty
-                      ? Text(
-                          'KHÁC (${chefBarOtherController.others.length})',
-                          style: textStyleWhiteBold14,
-                        )
-                      : const Text(
-                          'KHÁC',
-                          style: textStyleWhiteBold14,
-                        );
-                })),
+                (widget.role == ROLE_OWNER || widget.role == ROLE_CHEF)
+                    ? Tab(child: Obx(() {
+                        return chefBarOtherController.chefs.isNotEmpty
+                            ? Text(
+                                'KHU BẾP (${chefBarOtherController.chefs.length})',
+                                style: textStyleWhiteBold14,
+                              )
+                            : const Text(
+                                'KHU BẾP',
+                                style: textStyleWhiteBold14,
+                              );
+                      }))
+                    : emptyBox,
+                (widget.role == ROLE_OWNER || widget.role == ROLE_BAR)
+                    ? Tab(child: Obx(() {
+                        return chefBarOtherController.bars.isNotEmpty
+                            ? Text(
+                                'QUẦY BAR (${chefBarOtherController.bars.length})',
+                                style: textStyleWhiteBold14,
+                              )
+                            : const Text(
+                                'QUẦY BAR',
+                                style: textStyleWhiteBold14,
+                              );
+                      }))
+                    : emptyBox,
+                (widget.role == ROLE_OWNER || widget.role == ROLE_OTHER)
+                    ? Tab(child: Obx(() {
+                        return chefBarOtherController.others.isNotEmpty
+                            ? Text(
+                                'KHÁC (${chefBarOtherController.others.length})',
+                                style: textStyleWhiteBold14,
+                              )
+                            : const Text(
+                                'KHÁC',
+                                style: textStyleWhiteBold14,
+                              );
+                      }))
+                    : emptyBox,
               ],
             ),
             title: const Center(

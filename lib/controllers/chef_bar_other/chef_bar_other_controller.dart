@@ -27,12 +27,23 @@ class ChefBarOtherController extends GetxController {
             .collection('chefs')
             .orderBy('create_at', descending: true)
             .snapshots()
-            .map(
-          (QuerySnapshot query) {
+            .asyncMap(
+          (QuerySnapshot query) async {
             List<ChefBar> retValue = [];
             for (var element in query.docs) {
-              retValue.add(ChefBar.fromSnap(element));
-              print(element);
+              ChefBar chefBar = ChefBar.fromSnap(element);
+              // DocumentSnapshot employee = await firestore
+              //     .collection('areas')
+              //     .doc(chefBar.area_id)
+              //     .get();
+              // if (employee.exists) {
+              //   final data = employee.data();
+              //   if (data != null && data is Map<String, dynamic>) {
+              //     String name = data['area_name'] ?? '';
+              //     chefBar.area_name = name;
+              //   }
+              // }
+              retValue.add(chefBar);
             }
             print("CÓ ${retValue.length} TRONG BẾP");
             return retValue;
@@ -44,13 +55,23 @@ class ChefBarOtherController extends GetxController {
           .collection('chefs')
           .orderBy('create_at', descending: true)
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<ChefBar> retVal = [];
         for (var elem in query.docs) {
           String name = elem['table_name'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
-            retVal.add(ChefBar.fromSnap(elem));
+            ChefBar chefBar = ChefBar.fromSnap(elem);
+            // DocumentSnapshot employee =
+            //     await firestore.collection('areas').doc(chefBar.area_id).get();
+            // if (employee.exists) {
+            //   final data = employee.data();
+            //   if (data != null && data is Map<String, dynamic>) {
+            //     String name = data['area_name'] ?? '';
+            //     chefBar.area_name = name;
+            //   }
+            // }
+            retVal.add(chefBar);
           }
         }
         print("GET CHEF..........${retVal.length}");
@@ -73,12 +94,23 @@ class ChefBarOtherController extends GetxController {
             .collection('bars')
             .orderBy('create_at', descending: true)
             .snapshots()
-            .map(
-          (QuerySnapshot query) {
+            .asyncMap(
+          (QuerySnapshot query) async {
             List<ChefBar> retValue = [];
             for (var element in query.docs) {
-              retValue.add(ChefBar.fromSnap(element));
-              print(element);
+              ChefBar chefBar = ChefBar.fromSnap(element);
+              // DocumentSnapshot employee = await firestore
+              //     .collection('areas')
+              //     .doc(chefBar.area_id)
+              //     .get();
+              // if (employee.exists) {
+              //   final data = employee.data();
+              //   if (data != null && data is Map<String, dynamic>) {
+              //     String name = data['area_name'] ?? '';
+              //     chefBar.area_name = name;
+              //   }
+              // }
+              retValue.add(chefBar);
             }
             return retValue;
           },
@@ -89,13 +121,23 @@ class ChefBarOtherController extends GetxController {
           .collection('bars')
           .orderBy('create_at', descending: true)
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<ChefBar> retVal = [];
         for (var elem in query.docs) {
           String name = elem['table_name'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
-            retVal.add(ChefBar.fromSnap(elem));
+            ChefBar chefBar = ChefBar.fromSnap(elem);
+            // DocumentSnapshot employee =
+            //     await firestore.collection('areas').doc(chefBar.area_id).get();
+            // if (employee.exists) {
+            //   final data = employee.data();
+            //   if (data != null && data is Map<String, dynamic>) {
+            //     String name = data['area_name'] ?? '';
+            //     chefBar.area_name = name;
+            //   }
+            // }
+            retVal.add(chefBar);
           }
         }
         return retVal;
@@ -116,12 +158,23 @@ class ChefBarOtherController extends GetxController {
             .collection('others')
             .orderBy('create_at', descending: true)
             .snapshots()
-            .map(
-          (QuerySnapshot query) {
+            .asyncMap(
+          (QuerySnapshot query) async {
             List<ChefBar> retValue = [];
             for (var element in query.docs) {
-              retValue.add(ChefBar.fromSnap(element));
-              print(element);
+              ChefBar chefBar = ChefBar.fromSnap(element);
+              // DocumentSnapshot employee = await firestore
+              //     .collection('areas')
+              //     .doc(chefBar.area_id)
+              //     .get();
+              // if (employee.exists) {
+              //   final data = employee.data();
+              //   if (data != null && data is Map<String, dynamic>) {
+              //     String name = data['area_name'] ?? '';
+              //     chefBar.area_name = name;
+              //   }
+              // }
+              retValue.add(chefBar);
             }
             return retValue;
           },
@@ -132,56 +185,29 @@ class ChefBarOtherController extends GetxController {
           .collection('others')
           .orderBy('create_at', descending: true)
           .snapshots()
-          .map((QuerySnapshot query) {
+          .asyncMap((QuerySnapshot query) async {
         List<ChefBar> retVal = [];
         for (var elem in query.docs) {
           String name = elem['table_name'].toLowerCase();
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
-            retVal.add(ChefBar.fromSnap(elem));
+            ChefBar chefBar = ChefBar.fromSnap(elem);
+            // DocumentSnapshot employee =
+            //     await firestore.collection('areas').doc(chefBar.area_id).get();
+            // if (employee.exists) {
+            //   final data = employee.data();
+            //   if (data != null && data is Map<String, dynamic>) {
+            //     String name = data['area_name'] ?? '';
+            //     chefBar.area_name = name;
+            //   }
+            // }
+            retVal.add(chefBar);
           }
         }
         return retVal;
       }));
     }
   }
-
-  // //Count Chef
-  // final Rx<int> _countCheft = Rx<int>(0);
-  // int get countCheft => _countCheft.value;
-  // void getCountChef() {
-  //   FirebaseFirestore.instance
-  //       .collection('chefs')
-  //       .snapshots()
-  //       .listen((QuerySnapshot query) {
-  //     final int count = query.size;
-  //     _countCheft.value = count;
-  //   });
-  // }
-  // //Count Bar
-  // final Rx<int> _countBar = Rx<int>(0);
-  // int get countBar => _countBar.value;
-  // void getCountBar() {
-  //   FirebaseFirestore.instance
-  //       .collection('bars')
-  //       .snapshots()
-  //       .listen((QuerySnapshot query) {
-  //     final int count = query.size;
-  //     _countBar.value = count;
-  //   });
-  // }
-  // //Count Other
-  // final Rx<int> _countOther = Rx<int>(0);
-  // int get countOther => _countOther.value;
-  // void getCountOther() {
-  //   FirebaseFirestore.instance
-  //       .collection('others')
-  //       .snapshots()
-  //       .listen((QuerySnapshot query) {
-  //     final int count = query.size;
-  //     _countOther.value = count;
-  //   });
-  // }
 
   //lấy 1 order
   final Rx<model.Order> _orderDetailOfChef = Rx<model.Order>(model.Order(
