@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/models/cancellation_receipt.dart';
-import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/models/warehouse_receipt_detail.dart';
 
@@ -47,7 +46,7 @@ class CancellationReceiptController extends GetxController {
                 WarehouseReceiptDetail cancellationReceiptDetail =
                     WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
                 cancellationReceiptDetail.new_quantity =
-                    cancellationReceiptDetail.quantity;
+                    cancellationReceiptDetail.quantity_in_stock;
                 cancellationReceiptDetails.add(cancellationReceiptDetail);
               }
               cancellationReceipt.warehouseReceiptDetails =
@@ -96,7 +95,7 @@ class CancellationReceiptController extends GetxController {
               WarehouseReceiptDetail cancellationReceiptDetail =
                   WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
               cancellationReceiptDetail.new_quantity =
-                  cancellationReceiptDetail.quantity;
+                  cancellationReceiptDetail.quantity_in_stock;
               cancellationReceiptDetails.add(cancellationReceiptDetail);
             }
             cancellationReceipt.warehouseReceiptDetails =
@@ -116,16 +115,16 @@ class CancellationReceiptController extends GetxController {
     }
   }
 
-  final Rx<List<WarehouseReceiptDetail>> _warehouseReceiptDetails =
+  final Rx<List<WarehouseReceiptDetail>> _cancellationReceiptDetails =
       Rx<List<WarehouseReceiptDetail>>([]);
-  List<WarehouseReceiptDetail> get warehouseReceiptDetails =>
-      _warehouseReceiptDetails.value;
+  List<WarehouseReceiptDetail> get cancellationReceiptDetails =>
+      _cancellationReceiptDetails.value;
 
   void getCancellationReceiptDetails(
       String cancellationReceiptId, String keySearch) async {
     try {
       if (keySearch.isEmpty) {
-        _warehouseReceiptDetails.bindStream(
+        _cancellationReceiptDetails.bindStream(
           firestore
               .collection('cancellationReceipts')
               .doc(cancellationReceiptId)
@@ -135,14 +134,19 @@ class CancellationReceiptController extends GetxController {
             (QuerySnapshot query) {
               List<WarehouseReceiptDetail> retValue = [];
               for (var element in query.docs) {
-                retValue.add(WarehouseReceiptDetail.fromSnap(element));
+                WarehouseReceiptDetail cancellationReceiptDetail =
+                    WarehouseReceiptDetail.fromSnap(element);
+                cancellationReceiptDetail.new_quantity =
+                    cancellationReceiptDetail.quantity_in_stock;
+
+                retValue.add(cancellationReceiptDetail);
               }
               return retValue;
             },
           ),
         );
       } else {
-        _warehouseReceiptDetails.bindStream(firestore
+        _cancellationReceiptDetails.bindStream(firestore
             .collection('cancellationReceipts')
             .doc(cancellationReceiptId)
             .collection('cancellationReceiptDetails')
@@ -153,7 +157,92 @@ class CancellationReceiptController extends GetxController {
             String name = elem['ingredient_name'].toLowerCase();
             String search = keySearch.toLowerCase().trim();
             if (name.contains(search)) {
-              retVal.add(WarehouseReceiptDetail.fromSnap(elem));
+              WarehouseReceiptDetail cancellationReceiptDetail =
+                  WarehouseReceiptDetail.fromSnap(elem);
+              cancellationReceiptDetail.new_quantity =
+                  cancellationReceiptDetail.quantity_in_stock;
+
+              retVal.add(cancellationReceiptDetail);
+            }
+          }
+          return retVal;
+        }));
+      }
+    } catch (error) {
+      // Xử lý lỗi nếu cần thiết
+      print('Error fetching warehouse receipt details: $error');
+      return null;
+    }
+  }
+
+  final Rx<List<WarehouseReceiptDetail>> _checkCancellationReceips =
+      Rx<List<WarehouseReceiptDetail>>([]);
+  List<WarehouseReceiptDetail> get checkCancellationReceips =>
+      _checkCancellationReceips.value;
+  //Lấy râ danh sách
+  void getCheckCancellationReceiptDetails(String keySearch) async {
+    try {
+      if (keySearch.isEmpty) {
+        _checkCancellationReceips.bindStream(
+          firestore.collection('warehouseReceipts').snapshots().asyncMap(
+            (QuerySnapshot query) async {
+              List<WarehouseReceiptDetail> retValue = [];
+              for (var element in query.docs) {
+                WarehouseReceipt cancellationReceipt =
+                    WarehouseReceipt.fromSnap(element);
+
+                var cancellationReceiptDetailCollection = firestore
+                    .collection('warehouseReceipts')
+                    .doc(cancellationReceipt.warehouse_receipt_id)
+                    .collection('warehouseReceiptDetails')
+                    .where("expiration_date",
+                        isLessThanOrEqualTo: Timestamp.now());
+
+                var cancellationReceiptDetailCollectionQuery =
+                    await cancellationReceiptDetailCollection.get();
+                for (var warehouseReceiptDetailData
+                    in cancellationReceiptDetailCollectionQuery.docs) {
+                  // chi tiết phiếu
+                  WarehouseReceiptDetail item = WarehouseReceiptDetail.fromSnap(
+                      warehouseReceiptDetailData);
+                  //item.quantity_in_stock = 0 là đã hủy hoặc hết rồi
+                  if (item.quantity_in_stock > 0) {
+                    retValue.add(item);
+                  }
+                }
+              }
+              return retValue;
+            },
+          ),
+        );
+      } else {
+        _checkCancellationReceips.bindStream(firestore
+            .collection('warehouseReceipts')
+            .snapshots()
+            .asyncMap((QuerySnapshot query) async {
+          List<WarehouseReceiptDetail> retVal = [];
+          for (var elem in query.docs) {
+            WarehouseReceipt cancellationReceipt =
+                WarehouseReceipt.fromSnap(elem);
+            String name = cancellationReceipt.employee_name.toLowerCase();
+            String search = keySearch.toLowerCase().trim();
+            if (name.contains(search)) {
+              var cancellationReceiptDetailCollection = firestore
+                  .collection('warehouseReceipts')
+                  .doc(cancellationReceipt.warehouse_receipt_id)
+                  .collection('warehouseReceiptDetails')
+                  .where("expiration_date",
+                      isLessThanOrEqualTo: Timestamp.now());
+
+              var cancellationReceiptDetailCollectionQuery =
+                  await cancellationReceiptDetailCollection.get();
+              for (var warehouseReceiptDetailData
+                  in cancellationReceiptDetailCollectionQuery.docs) {
+                // chi tiết phiếu
+                WarehouseReceiptDetail item =
+                    WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailData);
+                retVal.add(item);
+              }
             }
           }
           return retVal;
@@ -190,7 +279,6 @@ class CancellationReceiptController extends GetxController {
   }
 
   Future<bool> createCancellationReceipt(
-    WarehouseReceipt warehouseReceipt,
     String code,
     List<WarehouseReceiptDetail> warehouseRecceiptDetails,
   ) async {
@@ -199,18 +287,17 @@ class CancellationReceiptController extends GetxController {
         String id = Utils.generateUUID();
 
         CancellationReceipt cancellationReceipt = CancellationReceipt(
-            cancellation_receipt_id: id,
-            cancellation_receipt_code: code,
-            reason: "Nguyên liệu đã hết hạn sử dụng",
-            create_at: Timestamp.now(),
-            employee_id:
-                await myCacheManager.getFromCache(CACHE_EMPLOYEE_ID_KEY) ?? "",
-            employee_name:
-                await myCacheManager.getFromCache(CACHE_EMPLOYEE_NAME_KEY) ??
-                    "",
-            status: WAREHOUSE_STATUS_FINISH,
-            active: ACTIVE,
-            warehouse_receipt_id: warehouseReceipt.warehouse_receipt_id);
+          cancellation_receipt_id: id,
+          cancellation_receipt_code: code,
+          reason: "Nguyên liệu đã hết hạn sử dụng",
+          create_at: Timestamp.now(),
+          employee_id:
+              await myCacheManager.getFromCache(CACHE_EMPLOYEE_ID_KEY) ?? "",
+          employee_name:
+              await myCacheManager.getFromCache(CACHE_EMPLOYEE_NAME_KEY) ?? "",
+          status: WAREHOUSE_STATUS_FINISH,
+          active: ACTIVE,
+        );
 
         CollectionReference collection =
             FirebaseFirestore.instance.collection('cancellationReceipts');
@@ -222,21 +309,18 @@ class CancellationReceiptController extends GetxController {
             in warehouseRecceiptDetails) {
           //Id trong chi tiết phiếu nhập
           String idDetail = warehouseReceiptDetail.warehouse_receipt_detail_id;
-          //Id mới lưu trong phiếu hủy
-          String newdDetail = Utils.generateUUID();
-          warehouseReceiptDetail.warehouse_receipt_detail_id = newdDetail;
 
           await collection
               .doc(id)
               .collection("cancellationReceiptDetails")
-              .doc(newdDetail)
+              .doc(idDetail)
               .set(warehouseReceiptDetail.toJson());
 
           //Cập nhật tồn kho phiếu nhập
 
           await firestore
               .collection("warehouseReceipts")
-              .doc(warehouseReceipt.warehouse_receipt_id)
+              .doc(warehouseReceiptDetail.warehouse_receipt_id)
               .collection("warehouseReceiptDetails")
               .doc(idDetail)
               .update({
@@ -268,12 +352,12 @@ class CancellationReceiptController extends GetxController {
   }
 
   updateCancallationReceipt(
+    String reason,
     CancellationReceipt cancellationReceipt,
-    List<WarehouseReceiptDetail> warehouseRecceiptDetails,
-    List<Ingredient> newWarehouseRecceiptDetails,
   ) async {
     try {
-      for (WarehouseReceiptDetail item in warehouseRecceiptDetails) {
+      for (WarehouseReceiptDetail item
+          in cancellationReceipt.warehouseReceiptDetails ?? []) {
         if (item.quantity != item.new_quantity) {
           await firestore
             ..collection("cancellationReceipts")
@@ -281,7 +365,8 @@ class CancellationReceiptController extends GetxController {
                 .collection("cancellationReceiptDetails")
                 .doc(item.warehouse_receipt_detail_id)
                 .update({
-              "quantity": item.new_quantity,
+              "quantity_in_stock": item.new_quantity,
+              "reason": reason,
             });
         }
       }

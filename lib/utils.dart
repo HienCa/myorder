@@ -1206,6 +1206,4 @@ class Utils {
         active: ACTIVE);
     return employee;
   }
-
-  
 }

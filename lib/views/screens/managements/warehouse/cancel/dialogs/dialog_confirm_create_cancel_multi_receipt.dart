@@ -4,40 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/warehouse/cancellation_receipt_controller.dart';
-import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
-import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/models/warehouse_receipt_detail.dart';
 
-class CustomDialogConfirmCancelationReceipt extends StatefulWidget {
-  final WarehouseReceipt warehouseReceipt;
-  final String code;
+import 'package:myorder/utils.dart';
+
+class CustomDialogConfirmCancelMultiReceipt extends StatefulWidget {
   final List<WarehouseReceiptDetail> expiredIngredients;
-  const CustomDialogConfirmCancelationReceipt({
+
+  const CustomDialogConfirmCancelMultiReceipt({
     Key? key,
     required this.expiredIngredients,
-    required this.code,
-    required this.warehouseReceipt,
   }) : super(key: key);
 
   @override
-  State<CustomDialogConfirmCancelationReceipt> createState() =>
-      _CustomDialogConfirmCancelationReceiptState();
+  State<CustomDialogConfirmCancelMultiReceipt> createState() =>
+      _CustomDialogConfirmCancelMultiReceipt();
 }
 
-class _CustomDialogConfirmCancelationReceiptState
-    extends State<CustomDialogConfirmCancelationReceipt> {
+class _CustomDialogConfirmCancelMultiReceipt
+    extends State<CustomDialogConfirmCancelMultiReceipt> {
+  CancellationReceiptController cancellationReceiptController =
+      Get.put(CancellationReceiptController());
   @override
   void dispose() {
     super.dispose();
   }
 
-  WarehouseReceiptController warehouseReceiptController =
-      Get.put(WarehouseReceiptController());
-  CancellationReceiptController cancellationReceiptController =
-      Get.put(CancellationReceiptController());
+  String code = "";
+
   @override
   void initState() {
     super.initState();
+    code = Utils.generateInvoiceCode("PH");
   }
 
   @override
@@ -62,17 +60,15 @@ class _CustomDialogConfirmCancelationReceiptState
                   children: [
                     const Center(
                       child: Text(
-                        'PHIẾU HỦY',
+                        'TẠO PHIẾU HỦY',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
-                    const ListTile(
-                      title: Center(
-                        child: Text(
-                          "Bạn có chắc chắn muốn tạo phiếu hủy này?",
-                          style: textStyleBlackRegular,
-                        ),
+                    ListTile(
+                      title: Text(
+                        "Mã phiếu hủy: ${code}",
+                        style: textStyleBlackRegular,
                       ),
                     ),
                     marginTop20,
@@ -82,7 +78,7 @@ class _CustomDialogConfirmCancelationReceiptState
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
-                            onTap: () => {Navigator.pop(context)},
+                            onTap: () => {Utils.myPopCancel(context)},
                             child: Container(
                               height: 50,
                               width: 136,
@@ -103,8 +99,8 @@ class _CustomDialogConfirmCancelationReceiptState
                             onTap: () => {
                               cancellationReceiptController
                                   .createCancellationReceipt(
-                                      widget.code, widget.expiredIngredients),
-                              Navigator.pop(context, 'success')
+                                      code, widget.expiredIngredients),
+                              Utils.myPopSuccess(context, )
                             },
                             child: Container(
                               height: 50,

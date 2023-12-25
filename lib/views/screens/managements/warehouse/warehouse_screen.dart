@@ -12,6 +12,7 @@ import 'package:myorder/controllers/warehouse/warehouse_export_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
 import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/managements/warehouse/cancel/create_cancel_multi_receipt_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/cancel/dialogs/dialog_create_cancellation_receipt.dart';
 import 'package:myorder/views/screens/managements/warehouse/cancel/update_cancel_receipt_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/update_warehouse_export_detail_screen.dart';
@@ -211,7 +212,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                           Utils.showStylishDialog(
                               context,
                               'THÀNH CÔNG!',
-                              'Thêm phiếu nhập thành công!',
+                              'Tạo phiếu nhập thành công!',
                               StylishDialogType.SUCCESS);
                         }
                       } else if (isExport) {
@@ -225,7 +226,22 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                           Utils.showStylishDialog(
                               context,
                               'THÀNH CÔNG!',
-                              'Thêm phiếu xuất thành công!',
+                              'Tạo phiếu xuất thành công!',
+                              StylishDialogType.SUCCESS);
+                        }
+                      } else if (isCancel) {
+                        print(isCancel);
+                        //Phiếu hủy nguyên liệu
+                        final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const CancelMultiReceiptDetailScreen()));
+                        if (result == 'PH_success') {
+                          Utils.showStylishDialog(
+                              context,
+                              'THÀNH CÔNG!',
+                              'Tạo phiếu hủy thành công!',
                               StylishDialogType.SUCCESS);
                         }
                       }
@@ -1432,7 +1448,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                         }),
                       )
                     : emptyBox,
-
+                //PHIẾU HỦY
                 isCancel
                     ? Expanded(
                         child: Obx(() {
@@ -1587,7 +1603,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                                                         cancellationReceipt
                                                                             .cancellation_receipt_code,
                                                                         style:
-                                                                            textStylePrimary14,
+                                                                            textStyleRed14,
                                                                       ),
                                                                     ],
                                                                   )),

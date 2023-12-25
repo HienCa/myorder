@@ -4,40 +4,40 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/warehouse/cancellation_receipt_controller.dart';
-import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
-import 'package:myorder/models/warehouse_receipt.dart';
-import 'package:myorder/models/warehouse_receipt_detail.dart';
+import 'package:myorder/models/cancellation_receipt.dart';
 
-class CustomDialogConfirmCancelationReceipt extends StatefulWidget {
-  final WarehouseReceipt warehouseReceipt;
-  final String code;
-  final List<WarehouseReceiptDetail> expiredIngredients;
-  const CustomDialogConfirmCancelationReceipt({
+import 'package:myorder/utils.dart';
+
+class CustomDialogConfirmUpdateQuantityCancelMultiReceipt
+    extends StatefulWidget {
+  final CancellationReceipt cancellationReceipt;
+  final String reason;
+
+  const CustomDialogConfirmUpdateQuantityCancelMultiReceipt({
     Key? key,
-    required this.expiredIngredients,
-    required this.code,
-    required this.warehouseReceipt,
+    required this.cancellationReceipt, required this.reason,
   }) : super(key: key);
 
   @override
-  State<CustomDialogConfirmCancelationReceipt> createState() =>
-      _CustomDialogConfirmCancelationReceiptState();
+  State<CustomDialogConfirmUpdateQuantityCancelMultiReceipt> createState() =>
+      _CustomDialogConfirmUpdateQuantityCancelMultiReceiptSate();
 }
 
-class _CustomDialogConfirmCancelationReceiptState
-    extends State<CustomDialogConfirmCancelationReceipt> {
+class _CustomDialogConfirmUpdateQuantityCancelMultiReceiptSate
+    extends State<CustomDialogConfirmUpdateQuantityCancelMultiReceipt> {
+  CancellationReceiptController cancellationReceiptController =
+      Get.put(CancellationReceiptController());
   @override
   void dispose() {
     super.dispose();
   }
 
-  WarehouseReceiptController warehouseReceiptController =
-      Get.put(WarehouseReceiptController());
-  CancellationReceiptController cancellationReceiptController =
-      Get.put(CancellationReceiptController());
+  String code = "";
+
   @override
   void initState() {
     super.initState();
+    code = Utils.generateInvoiceCode("PH");
   }
 
   @override
@@ -62,17 +62,15 @@ class _CustomDialogConfirmCancelationReceiptState
                   children: [
                     const Center(
                       child: Text(
-                        'PHIẾU HỦY',
+                        'CẬP NHẬT PHIẾU HỦY',
                         style: textStylePrimaryBold,
                       ),
                     ),
                     marginTop20,
-                    const ListTile(
-                      title: Center(
-                        child: Text(
-                          "Bạn có chắc chắn muốn tạo phiếu hủy này?",
-                          style: textStyleBlackRegular,
-                        ),
+                    ListTile(
+                      title: Text(
+                        "Cập nhật mã phiếu hủy: ${widget.cancellationReceipt.cancellation_receipt_code}",
+                        style: textStyleBlackRegular,
                       ),
                     ),
                     marginTop20,
@@ -82,7 +80,7 @@ class _CustomDialogConfirmCancelationReceiptState
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
-                            onTap: () => {Navigator.pop(context)},
+                            onTap: () => {Utils.myPopCancel(context)},
                             child: Container(
                               height: 50,
                               width: 136,
@@ -102,9 +100,10 @@ class _CustomDialogConfirmCancelationReceiptState
                           InkWell(
                             onTap: () => {
                               cancellationReceiptController
-                                  .createCancellationReceipt(
-                                      widget.code, widget.expiredIngredients),
-                              Navigator.pop(context, 'success')
+                                  .updateCancallationReceipt(widget.reason, widget.cancellationReceipt),
+                              Utils.myPopSuccess(
+                                context,
+                              )
                             },
                             child: Container(
                               height: 50,

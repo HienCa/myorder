@@ -356,7 +356,7 @@ class WarehouseReceiptController extends GetxController {
             unit_id: ingredient.unit_id ?? "",
             unit_name: ingredient.unit_name ?? "",
             expiration_date: ingredient.expiration_date,
-            batch_number: ingredient.batch_number ?? "");
+            batch_number: ingredient.batch_number ?? "", warehouse_receipt_id: warehouseRecceipt.warehouse_receipt_id);
 
         await firestore
             .collection("warehouseReceipts")

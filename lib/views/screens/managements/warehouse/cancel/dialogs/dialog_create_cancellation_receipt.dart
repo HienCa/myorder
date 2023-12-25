@@ -225,7 +225,7 @@ class _CustomDialogCreateCancellationReceiptState
                     ),
                     InkWell(
                       onTap: () async {
-                        cancellationReceiptController.createCancellationReceipt(widget.warehouseReceipt,
+                        cancellationReceiptController.createCancellationReceipt(
                             code, widget.expiredIngredients);
                         Utils.myPopResult(context, "PH_success");
                         
