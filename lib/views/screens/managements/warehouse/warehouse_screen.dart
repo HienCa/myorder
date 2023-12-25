@@ -7,18 +7,20 @@ import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/controllers/units/units_controller.dart';
+import 'package:myorder/controllers/warehouse/cancellation_receipt_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_export_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
 import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/utils.dart';
+import 'package:myorder/views/screens/managements/warehouse/cancel/dialogs/dialog_create_cancellation_receipt.dart';
+import 'package:myorder/views/screens/managements/warehouse/cancel/update_cancel_receipt_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/update_warehouse_export_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/create_warehouse_export_screen.dart';
-import 'package:myorder/views/screens/managements/warehouse/receipt/dialogs/dialog_create_cancellation_receipt.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/update_warehouse_receipt_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/create_warehouse_receipt_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
-enum Warehouse { Receipt, Export }
+enum Warehouse { Receipt, Export, Cancel }
 
 enum DateType { From, To }
 
@@ -40,14 +42,17 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
       Get.put(WarehouseReceiptController());
   WarehouseExportController warehouseExportController =
       Get.put(WarehouseExportController());
-
+  CancellationReceiptController cancellationReceiptController =
+      Get.put(CancellationReceiptController());
   int warehouseStatus = WAREHOUSE_STATUS_WAITING;
+  String keySearch = "";
   @override
   void initState() {
     super.initState();
 
     isReceipt = true;
     isExport = false;
+    isCancel = false;
 
     //sub
     isWaiting = true;
@@ -64,12 +69,14 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
     unitController.getUnits("");
     warehouseReceiptController.getWarehouseReceipts("", null, null);
     warehouseExportController.getwarehouseExports("", null, null);
+    cancellationReceiptController.getCancellationReceipts("", null, null);
     //trạng thái phiếu nhập kho
     warehouseStatus = WAREHOUSE_STATUS_FINISH;
   }
 
   bool isReceipt = true;
   bool isExport = false;
+  bool isCancel = false;
 
   void setUpScreen(Warehouse warehouse) {
     switch (warehouse) {
@@ -77,13 +84,20 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
         setState(() {
           isReceipt = true;
           isExport = false;
+          isCancel = false;
         });
       case Warehouse.Export:
         setState(() {
           isReceipt = false;
           isExport = true;
+          isCancel = false;
         });
-
+      case Warehouse.Cancel:
+        setState(() {
+          isReceipt = false;
+          isExport = false;
+          isCancel = true;
+        });
       default:
     }
   }
@@ -290,6 +304,30 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                 ),
                               ),
                             ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                setUpScreen(Warehouse.Cancel);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isCancel
+                                      ? primaryColor
+                                      : transparentColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                height: 40,
+                                child: Center(
+                                  child: Text(
+                                    "PHIẾU HỦY",
+                                    style: isCancel
+                                        ? textStyleWhiteBold16
+                                        : textStyleGreyBold16,
+                                  ),
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -484,6 +522,7 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                 controller: searchTextEditingController,
                                 onChanged: (value) {
                                   setState(() {
+                                    keySearch = value;
                                     if (isReceipt) {
                                       if (fromDateTextEditingController.text !=
                                               "" &&
@@ -520,6 +559,25 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                       } else {
                                         warehouseExportController
                                             .getwarehouseExports(
+                                                value, null, null);
+                                      }
+                                    } else if (isCancel) {
+                                      if (fromDateTextEditingController.text !=
+                                              "" &&
+                                          toDateTextEditingController.text !=
+                                              "") {
+                                        cancellationReceiptController
+                                            .getCancellationReceipts(
+                                                value,
+                                                Utils.stringToDateTimeVN(
+                                                    fromDateTextEditingController
+                                                        .text),
+                                                Utils.stringToDateTimeVN(
+                                                    toDateTextEditingController
+                                                        .text));
+                                      } else {
+                                        cancellationReceiptController
+                                            .getCancellationReceipts(
                                                 value, null, null);
                                       }
                                     }
@@ -738,20 +796,47 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                                                 InkWell(
                                                                   onTap:
                                                                       () async {
-                                                                    showDialog(
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return CustomDialogCreateCancellationReceipt(
-                                                                          expiredIngredients:
-                                                                              warehouseReceipt.expiredIngredients ?? [],
-                                                                          warehouseReceipt:
-                                                                              warehouseReceipt,
-                                                                        );
-                                                                      },
-                                                                    );
+                                                                    if ((warehouseReceipt.expiredIngredients?.length ??
+                                                                            0) >
+                                                                        0) {
+                                                                      final result =
+                                                                          await showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return CustomDialogCreateCancellationReceipt(
+                                                                            expiredIngredients:
+                                                                                warehouseReceipt.expiredIngredients ?? [],
+                                                                            warehouseReceipt:
+                                                                                warehouseReceipt,
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                      if (result ==
+                                                                          'PH_success') {
+                                                                        if (fromDateTextEditingController.text !=
+                                                                                "" &&
+                                                                            toDateTextEditingController.text !=
+                                                                                "") {
+                                                                          warehouseReceiptController.getWarehouseReceipts(
+                                                                              keySearch,
+                                                                              Utils.stringToDateTimeVN(fromDateTextEditingController.text),
+                                                                              Utils.stringToDateTimeVN(toDateTextEditingController.text));
+                                                                        } else {
+                                                                          warehouseReceiptController.getWarehouseReceipts(
+                                                                              keySearch,
+                                                                              null,
+                                                                              null);
+                                                                        }
+                                                                        Utils.showStylishDialog(
+                                                                            context,
+                                                                            "PHIẾU HỦY",
+                                                                            "Tạo phiếu hủy thành công!",
+                                                                            StylishDialogType.SUCCESS);
+                                                                      }
+                                                                    }
                                                                   },
                                                                   child: FaIcon(FontAwesomeIcons.triangleExclamation,
                                                                       color: (warehouseReceipt.expiredIngredients?.length ?? 0) >
@@ -1323,6 +1408,353 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                                                                   child: Text(
                                                                 warehouseExport
                                                                     .note,
+                                                                style:
+                                                                    textStyleLabelOrange16,
+                                                                softWrap: true,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .visible,
+                                                              )),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              });
+                        }),
+                      )
+                    : emptyBox,
+
+                isCancel
+                    ? Expanded(
+                        child: Obx(() {
+                          return ListView.builder(
+                              itemCount: cancellationReceiptController
+                                  .cancellationReceipts.length,
+                              itemBuilder: (context, index) {
+                                final cancellationReceipt =
+                                    cancellationReceiptController
+                                        .cancellationReceipts[index];
+
+                                return warehouseStatus ==
+                                        cancellationReceipt.status
+                                    ? InkWell(
+                                        onTap: () async {
+                                          final result = await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      UpdateCancelReceiptDetailScreen(
+                                                        cancellationReceipt:
+                                                            cancellationReceipt,
+                                                      )));
+                                          if (result == 'success') {
+                                            Utils.showStylishDialog(
+                                                context,
+                                                'THÀNH CÔNG!',
+                                                'Cập nhật phiếu nhập kho thành công!',
+                                                StylishDialogType.SUCCESS);
+                                            // ingredientController.getIngredients("");
+                                          }
+                                        },
+                                        child: Container(
+                                          // height: 60,
+                                          color: grayColor100,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: backgroundColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 4,
+                                                                right: 4,
+                                                                top: 4),
+                                                        child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: cancellationReceipt
+                                                                          .status ==
+                                                                      WAREHOUSE_STATUS_WAITING
+                                                                  ? colorWarning
+                                                                  : cancellationReceipt
+                                                                              .status ==
+                                                                          WAREHOUSE_STATUS_FINISH
+                                                                      ? colorSuccess
+                                                                      : cancellationReceipt.status ==
+                                                                              WAREHOUSE_STATUS_CANCEL
+                                                                          ? colorCancel
+                                                                          : greenColor200,
+                                                              borderRadius: const BorderRadius
+                                                                  .only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          10)),
+                                                            ),
+                                                            height: 40,
+                                                            child: Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                const FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .clockRotateLeft,
+                                                                    color:
+                                                                        secondColor,
+                                                                    size: 16),
+                                                                marginRight5,
+                                                                cancellationReceipt
+                                                                            .status ==
+                                                                        WAREHOUSE_STATUS_WAITING
+                                                                    ? Text(
+                                                                        WAREHOUSE_STATUS_WAITING_STRING,
+                                                                        style:
+                                                                            textStyleWhiteBold16)
+                                                                    : const Text(
+                                                                        ""),
+                                                                cancellationReceipt
+                                                                            .status ==
+                                                                        WAREHOUSE_STATUS_FINISH
+                                                                    ? Text(
+                                                                        WAREHOUSE_STATUS_FINISH_STRING,
+                                                                        style:
+                                                                            textStyleWhiteBold16)
+                                                                    : const Text(
+                                                                        ""),
+                                                              ],
+                                                            )),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 16,
+                                                                right: 16),
+                                                        child: Container(
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color:
+                                                                backgroundColor,
+                                                          ),
+                                                          height: 50,
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            // mainAxisAlignment: MainAxisAlignment.start,
+                                                            children: [
+                                                              Expanded(
+                                                                  flex: 1,
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Text(
+                                                                          Utils.formatTimestamp(cancellationReceipt
+                                                                              .create_at),
+                                                                          style:
+                                                                              textStyleLabel14),
+                                                                      Text(
+                                                                        cancellationReceipt
+                                                                            .cancellation_receipt_code,
+                                                                        style:
+                                                                            textStylePrimary14,
+                                                                      ),
+                                                                    ],
+                                                                  )),
+                                                              Text(
+                                                                  Utils.formatCurrency(
+                                                                      Utils.getTotalAmountCancelReceipt(
+                                                                          cancellationReceipt.warehouseReceiptDetails ??
+                                                                              [])),
+                                                                  style:
+                                                                      textStylePrimaryBold16),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 16,
+                                                                right: 16),
+                                                        child: Container(
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color:
+                                                                backgroundColor,
+                                                          ),
+                                                          height: 40,
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Expanded(
+                                                                  flex: 1,
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Text(
+                                                                          "Tổng mặt hàng",
+                                                                          style:
+                                                                              textStyleLabel14),
+                                                                    ],
+                                                                  )),
+                                                              Text(
+                                                                  "${cancellationReceipt.warehouseReceiptDetails?.length ?? "0"}",
+                                                                  style:
+                                                                      textStyleLabel16),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 16,
+                                                                right: 16),
+                                                        child: Container(
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color:
+                                                                backgroundColor,
+                                                          ),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  top: 10,
+                                                                  bottom: 10),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Expanded(
+                                                                  flex: 1,
+                                                                  child: Row(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .userPen,
+                                                                          color:
+                                                                              grayColor,
+                                                                          size:
+                                                                              16),
+                                                                      marginRight5,
+                                                                      Text(
+                                                                          "Nhân viên tạo",
+                                                                          style:
+                                                                              textStyleLabel14),
+                                                                    ],
+                                                                  )),
+                                                              Expanded(
+                                                                  child: Text(
+                                                                cancellationReceipt
+                                                                    .employee_name,
+                                                                style:
+                                                                    textStylePrimary14,
+                                                                softWrap: true,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .visible,
+                                                              )),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 16,
+                                                                right: 16),
+                                                        child: Container(
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color:
+                                                                backgroundColor,
+                                                          ),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  top: 10,
+                                                                  bottom: 10),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Expanded(
+                                                                  flex: 1,
+                                                                  child: Row(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .clipboard,
+                                                                          color:
+                                                                              grayColor,
+                                                                          size:
+                                                                              16),
+                                                                      marginRight5,
+                                                                      Text(
+                                                                          "Lý do hủy",
+                                                                          style:
+                                                                              textStyleLabel14),
+                                                                    ],
+                                                                  )),
+                                                              Expanded(
+                                                                  child: Text(
+                                                                cancellationReceipt
+                                                                    .reason,
                                                                 style:
                                                                     textStyleLabelOrange16,
                                                                 softWrap: true,

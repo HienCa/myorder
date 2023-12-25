@@ -74,9 +74,9 @@ class WarehouseReceiptController extends GetxController {
                     "${warehouseRecceiptDetail.ingredient_name} - Ngày hết hạn: ${Utils.formatTimestamp(warehouseRecceiptDetail.expiration_date)}");
                 if (warehouseRecceiptDetail.expiration_date != null) {
                   bool isExpired = Utils.isBeforeDateFromTimstamp(
-                      Timestamp.now(),
                       warehouseRecceiptDetail.expiration_date ??
-                          Timestamp.now());
+                          Timestamp.now(),
+                      Timestamp.now());
                   print(isExpired);
                   //quantity_in_stock > 0 thì chưa được hủy
                   if (isExpired &&
@@ -141,7 +141,7 @@ class WarehouseReceiptController extends GetxController {
               warehouseRecceiptDetail.new_quantity =
                   warehouseRecceiptDetail.quantity;
               warehouseRecceiptDetails.add(warehouseRecceiptDetail);
-              
+
               //Kiểm tra có nguyên liệu nào hết hạn không?
               print(
                   "${warehouseRecceiptDetail.ingredient_name} - Ngày hết hạn: ${Utils.formatTimestamp(warehouseRecceiptDetail.expiration_date)}");

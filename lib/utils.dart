@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/employee.dart';
 import 'package:myorder/models/food.dart';
 import 'package:myorder/models/food_combo.dart';
 import 'package:myorder/models/food_order.dart';
@@ -211,7 +212,7 @@ class Utils {
     return startDateTime1.isAtSameMomentAs(startDateTime2);
   }
 
-   //So sánh TIMESTAMP
+  //So sánh TIMESTAMP
   static bool isBeforeDateFromTimstamp(
       Timestamp timestamp1, Timestamp timestamp2) {
     // Chuyển đổi Timestamp thành DateTime
@@ -812,6 +813,15 @@ class Utils {
     return total;
   }
 
+  //Tính tổng tiền theo quantity_in_stock
+  static double getTotalAmountCancelReceipt(List<dynamic> list) {
+    double total = 0;
+    for (var item in list) {
+      total += (item.price * item.quantity_in_stock);
+    }
+    return total;
+  }
+
   //Tính tổng tiền theo total_amount
   static double getSumPriceQuantitySelected(List<dynamic> list) {
     double total = 0;
@@ -1175,5 +1185,25 @@ class Utils {
     }
 
     return colors;
+  }
+
+  static Future<Employee> getCurrentEmployee() async {
+    Employee employee = Employee(
+        employee_id:
+            await myCacheManager.getFromCache(CACHE_EMPLOYEE_ID_KEY) ?? "",
+        name: await myCacheManager.getFromCache(CACHE_EMPLOYEE_NAME_KEY) ?? "",
+        cccd: "",
+        gender: "",
+        birthday: "",
+        phone: "",
+        email: "",
+        password: "",
+        address: "",
+        role: int.tryParse(
+                await myCacheManager.getFromCache(CACHE_EMPLOYEE_ROLE_KEY) ??
+                    "1") ??
+            1,
+        active: ACTIVE);
+    return employee;
   }
 }

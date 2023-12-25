@@ -5,9 +5,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/warehouse/cancellation_receipt_controller.dart';
 import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
 import 'package:myorder/models/warehouse_receipt.dart';
 import 'package:myorder/models/warehouse_receipt_detail.dart';
+import 'package:myorder/utils.dart';
 import 'package:myorder/views/widgets/icons/icon_close.dart';
 
 class CustomDialogCreateCancellationReceipt extends StatefulWidget {
@@ -28,14 +30,19 @@ class _CustomDialogCreateCancellationReceiptState
     extends State<CustomDialogCreateCancellationReceipt> {
   WarehouseReceiptController warehouseReceiptController =
       Get.put(WarehouseReceiptController());
+  CancellationReceiptController cancellationReceiptController =
+      Get.put(CancellationReceiptController());
   @override
   void dispose() {
     super.dispose();
   }
 
+  String code = "";
+
   @override
   void initState() {
     super.initState();
+    code = Utils.generateInvoiceCode("PH");
   }
 
   @override
@@ -80,7 +87,10 @@ class _CustomDialogCreateCancellationReceiptState
                             ],
                           ),
                         ),
-                        MyCloseIcon(heightWidth: 40, sizeIcon: 20,)
+                        MyCloseIcon(
+                          heightWidth: 40,
+                          sizeIcon: 20,
+                        )
                       ],
                     ),
                     marginTop10,
@@ -212,6 +222,45 @@ class _CustomDialogCreateCancellationReceiptState
                                   ]),
                                 );
                               })),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        cancellationReceiptController.createCancellationReceipt(widget.warehouseReceipt,
+                            code, widget.expiredIngredients);
+                        Utils.myPopResult(context, "PH_success");
+                        
+                        // final result = await Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) =>
+                        //             CustomDialogConfirmCancelationReceipt(
+                        //               code: '',
+                        //               expiredIngredients:
+                        //                   widget.expiredIngredients,
+                        //             )));
+                        // if (result == 'success') {
+
+                        // Utils.myPopResult(context, "PH_success");
+                        // }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: greenColor50,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        margin: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 14),
+                        child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.plus,
+                                  color: colorSuccess, size: 16),
+                              marginRight5,
+                              Text("TẠO PHIẾU HỦY",
+                                  style: textStyleSuccessBold16),
+                            ]),
+                      ),
                     ),
                     marginTop20,
                   ],
