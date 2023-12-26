@@ -27,6 +27,7 @@ class _CustomDialogRecommendIngredientsState
     extends State<CustomDialogRecommendIngredients> {
   WarehouseReceiptController warehouseReceiptController =
       Get.put(WarehouseReceiptController());
+  DateTime dateSelected = DateTime.now();
   @override
   void dispose() {
     super.dispose();
@@ -35,6 +36,9 @@ class _CustomDialogRecommendIngredientsState
   @override
   void initState() {
     super.initState();
+    dateSelected = widget.date;
+    dateSelected = DateTime(dateSelected.year, dateSelected.month, dateSelected.day, 0, 0, 0, 0);
+    warehouseReceiptController.getRecommendedIngredients(dateSelected);
   }
 
   @override
@@ -63,6 +67,9 @@ class _CustomDialogRecommendIngredientsState
                         DateTime now = Timestamp.now().toDate();
                         DateTime? date = await Utils.selectDate(context);
                         if (date != null) {
+                          setState(() {
+                            dateSelected = date ?? DateTime.now();
+                          });
                           date = DateTime(
                               date.year, date.month, date.day, 0, 0, 0, 0);
                           warehouseReceiptController
@@ -90,7 +97,7 @@ class _CustomDialogRecommendIngredientsState
                                   style: textStylePrimaryBold,
                                 ),
                                 Text(
-                                  '(${Utils.formatDateTime(widget.date)})',
+                                  '(${Utils.formatDateTime(dateSelected)})',
                                   style: textStylePrimaryBold,
                                 ),
                               ],
@@ -271,7 +278,14 @@ class _CustomDialogRecommendIngredientsState
                                                               ?.toInt() ??
                                                           0)
                                                       .toString(),
-                                                  style: textStyleGreen14),
+                                                  style: (ingredient
+                                                                  .quantity_in_stock ??
+                                                              0) >=
+                                                          (ingredient
+                                                                  .quantity ??
+                                                              0)
+                                                      ? textStyleGreen14
+                                                      : textStyleRed14),
                                               marginTop5,
                                             ],
                                           ),

@@ -189,7 +189,14 @@ class WarehouseExportController extends GetxController {
       ),
     );
   }
-
+  /*
+    Nhập kho theo lịch bán hằng ngày - đảm bảo số lượng bán (nhiên viên ql kho chịu trách nhiệm)
+      - Chọn lịch cần nhập (giới hạn là ngày hiện tại) -> hiển thị danh sách lịch date_apply >= now
+      - cho phép chọn nhiều lịch cùng 1 lúc
+      - gợi ý số lượng cần nhập vào cho các lịch đã được chọn
+    check SL theo lịch - thiếu thì nhập thêm (hiển thị tồn hiện tại)
+    Xuất kho theo lịch bán (sl món muốn bán * sl nguyên liệu cần dùng trong công thức) xuất dư: vd 1.6kg xuất 2kg  
+  */
   void createWarehouseExport(
     WarehouseExport warehouseExport,
     List<WarehouseExportDetail> warehouseRecceiptDetails,

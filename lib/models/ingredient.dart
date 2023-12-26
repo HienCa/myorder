@@ -20,6 +20,7 @@ class Ingredient {
   String? batch_number = ""; //số lô
   double? quantity_in_stock = 0;
   String? quantity_in_stock_note = "";//còn trong kho
+
   Ingredient({
     required this.ingredient_id,
     // required this.unit_id,

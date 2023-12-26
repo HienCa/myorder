@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myorder/models/food.dart';
+import 'package:myorder/models/ingredient.dart';
 
 class DailySales {
   String daily_sale_id;
@@ -9,7 +10,8 @@ class DailySales {
   Timestamp date_apply;
   int active;
   List<DailySaleDetail>? dailySaleDetails;
-
+  List<Ingredient>? ingredients;
+  bool isSelected = false;
   DailySales({
     required this.daily_sale_id,
     required this.name,

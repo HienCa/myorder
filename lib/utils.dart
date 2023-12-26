@@ -165,6 +165,14 @@ class Utils {
     return pickedDate;
   }
 
+  //Khi truy vấn firebase thì firebase so sánh lun cả ngày tháng năm giờ phút giây -> bỏ giờ phút giây
+  //Convert timestamp dd/mm/yyy truy vấn firebase
+  static Timestamp convertTimestampFirebase(Timestamp timestamp) {
+    DateTime date = timestamp.toDate();
+    DateTime formatedDate = DateTime(date.year, date.month, date.day, 0, 0, 0);
+    return Timestamp.fromDate(formatedDate);
+  }
+
   //DATETIME
   static String formatDateTime(DateTime? dateTime) {
     if (dateTime != null) {

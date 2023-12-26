@@ -6,11 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/warehouse/warehouse_receipt_controller.dart';
 import 'package:myorder/models/daily_sales.dart';
 import 'package:myorder/models/food.dart';
 import 'package:myorder/utils.dart';
 
 class DailySalesController extends GetxController {
+  WarehouseReceiptController warehouseReceiptController =
+      Get.put(WarehouseReceiptController());
+
   getDailySaleById(String daily_sale_id) async {
     try {
       DocumentSnapshot dailySale =
@@ -78,6 +82,110 @@ class DailySalesController extends GetxController {
     }
   }
 
+  final Rx<List<DailySales>> _dailySalesByTimestamp = Rx<List<DailySales>>([]);
+  List<DailySales> get dailySalesByTimestamp => _dailySalesByTimestamp.value;
+  getDailySalesByTimestamp(String keySearch) async {
+    if (keySearch.isEmpty) {
+      _dailySalesByTimestamp.bindStream(
+        firestore
+            .collection('dailySales')
+            .where('date_apply',
+                isGreaterThanOrEqualTo:
+                    Utils.convertTimestampFirebase(Timestamp.now()))
+            .orderBy('date_apply', descending: true)
+            .snapshots()
+            .asyncMap(
+          (QuerySnapshot query) async {
+            List<DailySales> retValue = [];
+            for (var element in query.docs) {
+              DailySales dailySale = DailySales.fromSnap(element);
+              //thông tin chi tiết daily sale
+              var dailySaleDetailCollection = FirebaseFirestore.instance
+                  .collection('dailySales')
+                  .doc(dailySale.daily_sale_id)
+                  .collection('dailySaleDetails');
+              var dailySaleDetailCollectionQuery =
+                  await dailySaleDetailCollection.get();
+              List<DailySaleDetail> dailySaleDetails = [];
+
+              for (var dailySaleDetailData
+                  in dailySaleDetailCollectionQuery.docs) {
+                DailySaleDetail dailySaleDetail =
+                    DailySaleDetail.fromSnap(dailySaleDetailData);
+
+                // DocumentSnapshot foodCollection = await firestore
+                //     .collection('foods')
+                //     .doc(dailySaleDetail.food_id)
+                //     .get();
+                // if (foodCollection.exists) {
+                //   final foodData = foodCollection.data();
+                //   if (foodData != null && foodData is Map<String, dynamic>) {
+                //     Food food = Food.fromSnap(foodCollection);
+                //     dailySaleDetail.food = food;
+                //   }
+                // }
+
+                dailySaleDetails.add(dailySaleDetail);
+              }
+              dailySale.dailySaleDetails = dailySaleDetails;
+              dailySale.ingredients = await warehouseReceiptController
+                  .getRecommendedIngredientsFromRecipe(dailySale.date_apply);
+              retValue.add(dailySale);
+            }
+            return retValue;
+          },
+        ),
+      );
+    } else {
+      _dailySalesByTimestamp.bindStream(firestore
+          .collection('dailySales')
+          .where('date_apply', isGreaterThanOrEqualTo: Timestamp.now())
+          .orderBy('date_apply', descending: true)
+          .snapshots()
+          .asyncMap((QuerySnapshot query) async {
+        List<DailySales> retVal = [];
+        for (var element in query.docs) {
+          String name = element['name'].toLowerCase();
+          String search = keySearch.toLowerCase().trim();
+          if (name.contains(search)) {
+            DailySales dailySale = DailySales.fromSnap(element);
+            //thông tin chi tiết daily sale
+            var dailySaleDetailCollection = FirebaseFirestore.instance
+                .collection('dailySales')
+                .doc(dailySale.daily_sale_id)
+                .collection('dailySaleDetails');
+            var dailySaleDetailCollectionQuery =
+                await dailySaleDetailCollection.get();
+            List<DailySaleDetail> dailySaleDetails = [];
+
+            for (var dailySaleDetailData
+                in dailySaleDetailCollectionQuery.docs) {
+              DailySaleDetail dailySaleDetail =
+                  DailySaleDetail.fromSnap(dailySaleDetailData);
+              // DocumentSnapshot foodCollection = await firestore
+              //     .collection('foods')
+              //     .doc(dailySaleDetail.food_id)
+              //     .get();
+              // if (foodCollection.exists) {
+              //   final foodData = foodCollection.data();
+              //   if (foodData != null && foodData is Map<String, dynamic>) {
+              //     Food food = Food.fromSnap(foodCollection);
+              //     dailySaleDetail.food = food;
+              //   }
+              // }
+              dailySaleDetails.add(dailySaleDetail);
+            }
+            dailySale.dailySaleDetails = dailySaleDetails;
+            dailySale.ingredients = await warehouseReceiptController
+                .getRecommendedIngredientsFromRecipe(dailySale.date_apply);
+            retVal.add(dailySale);
+          }
+        }
+        return retVal;
+      }));
+    }
+  }
+
   Future<bool> isDailySalesByDateTime(DateTime targetDateTime) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -124,8 +232,8 @@ class DailySalesController extends GetxController {
               DailySaleDetail.fromSnap(dailySaleDetailData);
 
           //cập nhật số lượng tối đa có thể bán trong ngày theo daily sale
-          updateDailySaleForFood(dailySaleDetai.food_id,
-              dailySaleDetai.quantity_for_sell.toInt());
+          updateDailySaleForFood(
+              dailySaleDetai.food_id, dailySaleDetai.quantity_for_sell.toInt());
         }
         print('ĐÃ HOÀN TẤT THIẾT LẬP DAILY SALE');
       } else {}
@@ -312,8 +420,8 @@ class DailySalesController extends GetxController {
               .doc(idDetail)
               .set(dailySaleDetail.toJson());
         }
-        if(Utils.isSameDateFromTimstamp(date_apply, Timestamp.now())){
-           setUpDailySalesByDateTime(date_apply.toDate());
+        if (Utils.isSameDateFromTimstamp(date_apply, Timestamp.now())) {
+          setUpDailySalesByDateTime(date_apply.toDate());
         }
       } else {
         Get.snackbar(
