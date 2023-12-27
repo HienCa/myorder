@@ -173,6 +173,14 @@ class Utils {
     return Timestamp.fromDate(formatedDate);
   }
 
+  static Timestamp convertTimestampFirebaseAddDay(
+      Timestamp timestamp, int numberOfday) {
+    Timestamp currentTimestamp = Timestamp.now();
+    DateTime currentDateTime = currentTimestamp.toDate();
+    DateTime formatedDate = currentDateTime.add(Duration(days: 1));
+    return Timestamp.fromDate(formatedDate);
+  }
+
   //DATETIME
   static String formatDateTime(DateTime? dateTime) {
     if (dateTime != null) {

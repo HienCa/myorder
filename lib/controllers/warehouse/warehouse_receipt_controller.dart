@@ -287,7 +287,7 @@ class WarehouseReceiptController extends GetxController {
             in warehouseRecceiptDetails) {
           String idDetail = Utils.generateUUID();
           warehouseRecceiptDetail.warehouse_receipt_detail_id = idDetail;
-
+          warehouseRecceiptDetail.warehouse_receipt_id = id;
           await usersCollection
               .doc(id)
               .collection("warehouseReceiptDetails")
@@ -315,57 +315,76 @@ class WarehouseReceiptController extends GetxController {
     }
   }
 
+  //cập nhật số lượng không tạo mới
+  // khi tạo mới quantity_in_stock sẽ sai
+  //cập nhật quantity xuất -> cập nhật lại quanity nhập
+  /*
+    Tạm thời chỉ cho update thông tin phiếu -> kiểm soát chặt chẽ sl nhập vào xuất ra
+      - cần nhập -> tạo phiếu nhập
+      - cần xuất -> tạo phiếu xuất
+    */
   updateWarehouseReceipt(
-    WarehouseReceipt warehouseRecceipt,
-    List<WarehouseReceiptDetail> warehouseRecceiptDetails,
-    List<Ingredient> newWarehouseRecceiptDetails,
+    WarehouseReceipt warehouseReceipt,
+    // List<WarehouseReceiptDetail> warehouseRecceiptDetails,
+    // List<Ingredient> newWarehouseRecceiptDetails,
   ) async {
     try {
-      for (WarehouseReceiptDetail warehouseRecceiptDetail
-          in warehouseRecceiptDetails) {
-        await firestore
-            .collection("warehouseReceipts")
-            .doc(warehouseRecceipt.warehouse_receipt_id)
-            .collection("warehouseReceiptDetails")
-            .doc(warehouseRecceiptDetail.warehouse_receipt_detail_id)
-            .delete();
-      }
-      //Update
-      for (WarehouseReceiptDetail warehouseRecceiptDetail
-          in warehouseRecceiptDetails) {
-        String idDetail = Utils.generateUUID();
-        warehouseRecceiptDetail.warehouse_receipt_detail_id = idDetail;
+      await firestore
+          .collection("warehouseReceipts")
+          .doc(warehouseReceipt.warehouse_receipt_id)
+          .update({
+        "note": warehouseReceipt.note,
+        "supplier_id": warehouseReceipt.supplier_id,
+        "supplier_name": warehouseReceipt.supplier_name,
+        "vat": warehouseReceipt.vat,
+        "discount": warehouseReceipt.discount,
+      });
 
-        await firestore
-            .collection("warehouseReceipts")
-            .doc(warehouseRecceipt.warehouse_receipt_id)
-            .collection("warehouseReceiptDetails")
-            .doc(idDetail)
-            .set(warehouseRecceiptDetail.toJson());
-      }
-      //Mới
-      for (Ingredient ingredient in newWarehouseRecceiptDetails) {
-        String idDetail = Utils.generateUUID();
-        WarehouseReceiptDetail warehouseRecceiptDetail = WarehouseReceiptDetail(
-            warehouse_receipt_detail_id: idDetail,
-            ingredient_id: ingredient.ingredient_id,
-            ingredient_name: ingredient.name,
-            quantity: ingredient.quantity ?? 0,
-            quantity_in_stock: ingredient.quantity ?? 0,
-            price: ingredient.price ?? 0,
-            unit_id: ingredient.unit_id ?? "",
-            unit_name: ingredient.unit_name ?? "",
-            expiration_date: ingredient.expiration_date,
-            batch_number: ingredient.batch_number ?? "",
-            warehouse_receipt_id: warehouseRecceipt.warehouse_receipt_id);
+      // for (WarehouseReceiptDetail warehouseRecceiptDetail
+      //     in warehouseRecceiptDetails) {
+      //   await firestore
+      //       .collection("warehouseReceipts")
+      //       .doc(warehouseReceipt.warehouse_receipt_id)
+      //       .collection("warehouseReceiptDetails")
+      //       .doc(warehouseRecceiptDetail.warehouse_receipt_detail_id)
+      //       .delete();
+      // }
+      // //Update
+      // for (WarehouseReceiptDetail warehouseRecceiptDetail
+      //     in warehouseRecceiptDetails) {
+      //   String idDetail = Utils.generateUUID();
+      //   warehouseRecceiptDetail.warehouse_receipt_detail_id = idDetail;
 
-        await firestore
-            .collection("warehouseReceipts")
-            .doc(warehouseRecceipt.warehouse_receipt_id)
-            .collection("warehouseReceiptDetails")
-            .doc(idDetail)
-            .set(warehouseRecceiptDetail.toJson());
-      }
+      //   await firestore
+      //       .collection("warehouseReceipts")
+      //       .doc(warehouseReceipt.warehouse_receipt_id)
+      //       .collection("warehouseReceiptDetails")
+      //       .doc(idDetail)
+      //       .set(warehouseRecceiptDetail.toJson());
+      // }
+      // //Mới
+      // for (Ingredient ingredient in newWarehouseRecceiptDetails) {
+      //   String idDetail = Utils.generateUUID();
+      //   WarehouseReceiptDetail warehouseRecceiptDetail = WarehouseReceiptDetail(
+      //       warehouse_receipt_detail_id: idDetail,
+      //       ingredient_id: ingredient.ingredient_id,
+      //       ingredient_name: ingredient.name,
+      //       quantity: ingredient.quantity ?? 0,
+      //       quantity_in_stock: ingredient.quantity ?? 0,
+      //       price: ingredient.price ?? 0,
+      //       unit_id: ingredient.unit_id ?? "",
+      //       unit_name: ingredient.unit_name ?? "",
+      //       expiration_date: ingredient.expiration_date,
+      //       batch_number: ingredient.batch_number ?? "",
+      //       warehouse_receipt_id: warehouseReceipt.warehouse_receipt_id);
+
+      //   await firestore
+      //       .collection("warehouseReceipts")
+      //       .doc(warehouseReceipt.warehouse_receipt_id)
+      //       .collection("warehouseReceiptDetails")
+      //       .doc(idDetail)
+      //       .set(warehouseRecceiptDetail.toJson());
+      // }
 
       update();
     } catch (e) {
@@ -544,7 +563,7 @@ class WarehouseReceiptController extends GetxController {
       ),
     );
   }
-  
+
   Future<List<Ingredient>> getRecommendedIngredientsFromRecipe(
       Timestamp dateApply) async {
     List<Ingredient> listIngredient = [];

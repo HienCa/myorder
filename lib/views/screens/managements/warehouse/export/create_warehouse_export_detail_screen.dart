@@ -63,29 +63,23 @@ class _WarehouseExportDetailScreenState
 
       for (WarehouseExportDetail warehouseRecceiptDetail
           in widget.warehouseExport?.warehouseExportDetails ?? []) {
-        // Tìm kiếm phần tử tương ứng trong danh sách ingredients
-        Ingredient? foundIngredient = ingredientController.ingredients
-            .firstWhere(
-                (ingredient) =>
-                    ingredient.ingredient_id ==
-                    warehouseRecceiptDetail.ingredient_id,
-                orElse: () =>
-                    Ingredient(ingredient_id: "", name: "", active: 0));
-
-        // Nếu tìm thấy, thiết lập giá trị
-        if (foundIngredient.ingredient_id != "") {
-          Ingredient ingredient = Ingredient(
-              ingredient_id: warehouseRecceiptDetail.ingredient_id,
-              name: warehouseRecceiptDetail.ingredient_name,
-              active: 1);
-          ingredient.price = warehouseRecceiptDetail.price;
-          ingredient.quantity = warehouseRecceiptDetail.quantity;
-          ingredient.new_quantity = warehouseRecceiptDetail.new_quantity;
-          ingredient.unit_id = warehouseRecceiptDetail.unit_id;
-          ingredient.unit_name = warehouseRecceiptDetail.unit_name;
-          ingredient.isSelected = true;
-          listIngredientFromReceipt.add(ingredient);
-        }
+        Ingredient ingredient = Ingredient.empty();
+        ingredient.ingredient_id = warehouseRecceiptDetail.ingredient_id;
+        ingredient.name = warehouseRecceiptDetail.ingredient_name;
+        ingredient.price = warehouseRecceiptDetail.price;
+        ingredient.quantity = warehouseRecceiptDetail.quantity;
+        ingredient.new_quantity = warehouseRecceiptDetail.new_quantity;
+        ingredient.unit_id = warehouseRecceiptDetail.unit_id;
+        ingredient.unit_name = warehouseRecceiptDetail.unit_name;
+        //lưu lại vị trí
+        ingredient.warehouse_export_detail_id =
+            warehouseRecceiptDetail.warehouse_export_detail_id;
+        ingredient.warehouse_receipt_id =
+            warehouseRecceiptDetail.warehouse_receipt_id;
+        ingredient.warehouse_receipt_detail_id =
+            warehouseRecceiptDetail.warehouse_receipt_detail_id;
+        ingredient.isSelected = true;
+        listIngredientFromReceipt.add(ingredient);
       }
       listIngredientSelected = listIngredientFromReceipt;
     } else {
@@ -282,7 +276,7 @@ class _WarehouseExportDetailScreenState
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Expanded(
-                              child: Text("THANH TOÁN",
+                              child: Text("TỔNG CỘNG",
                                   style: textStylePriceBold16),
                             ),
                             Expanded(
@@ -309,7 +303,7 @@ class _WarehouseExportDetailScreenState
                         height: 50,
                         child: Row(children: [
                           Expanded(
-                            flex: 4,
+                            flex: 5,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -326,6 +320,12 @@ class _WarehouseExportDetailScreenState
                               ],
                             ),
                           ),
+                          // const Expanded(
+                          //   flex: 2,
+                          //   child: Center(
+                          //     child: Text("Số lô", style: textStyleLabel14),
+                          //   ),
+                          // ),
                           const Expanded(
                             flex: 2,
                             child: Column(
@@ -339,26 +339,21 @@ class _WarehouseExportDetailScreenState
                           ),
                           const Expanded(
                             flex: 3,
-                            child: Center(
-                              child: Text("Đơn giá", style: textStyleLabel14),
-                            ),
-                          ),
-                          const Expanded(
-                            flex: 3,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Text("Đơn giá", style: textStyleLabel14),
                                 Text("Thành tiền", style: textStyleLabel14),
                               ],
                             ),
                           ),
                         ]),
                       ),
-                      //DANH SÁCH NGUYÊN LIỆU CỦA PHIẾU NHẬP KHO
+                      //DANH SÁCH NGUYÊN LIỆU CỦA PHIẾU XUẤT KHO
                       SingleChildScrollView(
                         child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.25,
+                            height: MediaQuery.of(context).size.height * 0.3,
                             child: ListView.builder(
                                 itemCount: listIngredientSelected.length,
                                 itemBuilder: (context, index) {
@@ -368,7 +363,7 @@ class _WarehouseExportDetailScreenState
                                     height: 50,
                                     child: Row(children: [
                                       Expanded(
-                                          flex: 4,
+                                          flex: 5,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -404,6 +399,33 @@ class _WarehouseExportDetailScreenState
                                               ),
                                             ],
                                           )),
+                                      // Expanded(
+                                      //   flex: 2,
+                                      //   child: Column(
+                                      //     crossAxisAlignment:
+                                      //         CrossAxisAlignment.center,
+                                      //     mainAxisAlignment:
+                                      //         MainAxisAlignment.center,
+                                      //     children: [
+                                      //       Marquee(
+                                      //         direction: Axis.horizontal,
+                                      //         textDirection: TextDirection.ltr,
+                                      //         animationDuration:
+                                      //             const Duration(seconds: 1),
+                                      //         backDuration: const Duration(
+                                      //             milliseconds: 4000),
+                                      //         pauseDuration: const Duration(
+                                      //             milliseconds: 1000),
+                                      //         directionMarguee:
+                                      //             DirectionMarguee.TwoDirection,
+                                      //         child: Text(
+                                      //           ingredient.batch_number ?? "",
+                                      //           style: textStyleOrange14,
+                                      //         ),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // ),
                                       Expanded(
                                         flex: 2,
                                         child: InkWell(
@@ -454,46 +476,42 @@ class _WarehouseExportDetailScreenState
                                       ),
                                       Expanded(
                                         flex: 3,
-                                        child: InkWell(
-                                          onTap: () async {
-                                            final result = await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return MyCalculator(
-                                                  priceDefault:
-                                                      ingredient.price ?? 0,
-                                                  min: 0,
-                                                  max: MAX_PRICE,
-                                                );
-                                              },
-                                            );
-                                            if (result != null) {
-                                              setState(() {
-                                                print(result);
-                                                ingredient.price = Utils
-                                                    .stringConvertToDouble(Utils
-                                                        .formatCurrencytoDouble(
-                                                            result));
-                                              });
-                                            }
-                                          },
-                                          child: Center(
-                                            child: Text(
-                                              Utils.formatCurrency(
-                                                  (ingredient.price ?? 0)),
-                                              style: textStyleOrange14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 3,
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                final result = await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return MyCalculator(
+                                                      priceDefault:
+                                                          ingredient.price ?? 0,
+                                                      min: 0,
+                                                      max: MAX_PRICE,
+                                                    );
+                                                  },
+                                                );
+                                                if (result != null) {
+                                                  setState(() {
+                                                    print(result);
+                                                    ingredient.price = Utils
+                                                        .stringConvertToDouble(Utils
+                                                            .formatCurrencytoDouble(
+                                                                result));
+                                                  });
+                                                }
+                                              },
+                                              child: Text(
+                                                Utils.formatCurrency(
+                                                    (ingredient.price ?? 0)),
+                                                style: textStyleOrange14,
+                                              ),
+                                            ),
                                             Text(
                                               Utils.formatCurrency(
                                                   ((ingredient.quantity ?? 0) *
@@ -614,8 +632,8 @@ class _WarehouseExportDetailScreenState
                                     builder: (BuildContext context) {
                                       return CustomDialogCreateWarehouseExport(
                                         warehouseExport:
-                                            widget.warehouseExport!,
-                                        ingredients: listIngredientSelected,
+                                            widget.warehouseExport!,//cập nhật số lượng nguyên liệu cũ
+                                        ingredients: listIngredientSelected,// nguyên liệu mới
                                         note: noteTextEditingController.text,
                                         vat: vatPercent,
                                         discount: discountPrice,
@@ -654,7 +672,7 @@ class _WarehouseExportDetailScreenState
                           margin: EdgeInsets.all(0),
                           child: InkWell(
                             onTap: () async {
-                              List<Ingredient> result = await Navigator.push(
+                              List<Ingredient>? result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
@@ -664,9 +682,9 @@ class _WarehouseExportDetailScreenState
                                                     ? true
                                                     : false,
                                           )));
-                              if (result.isNotEmpty) {
+                              if ((result ?? []).isNotEmpty) {
                                 setState(() {
-                                  listIngredientSelected = result;
+                                  listIngredientSelected = result ?? [];
                                 });
                               }
                             },

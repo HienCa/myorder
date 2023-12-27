@@ -57,7 +57,8 @@ class _CustomDialogCreateWarehouseReceiptState
         quantity_in_stock:
             ingredient.quantity ?? 0, //khi nhập thì sl tồn bằng sl mới nhập
         expiration_date: ingredient.expiration_date,
-        batch_number: ingredient.batch_number ?? "", warehouse_receipt_id: widget.warehouseReceipt.warehouse_receipt_id,
+        batch_number: ingredient.batch_number ?? "",
+        warehouse_receipt_id: widget.warehouseReceipt.warehouse_receipt_id,
       );
       warehouseRecceiptDetails.add(warehouseRecceiptDetail);
     }
@@ -145,10 +146,11 @@ class _CustomDialogCreateWarehouseReceiptState
                                   print("update"),
                                   warehouseReceiptController
                                       .updateWarehouseReceipt(
-                                          widget.warehouseReceipt,
-                                          warehouseReceiptController
-                                              .warehouseReceiptDetails,
-                                          widget.listIngredientSelected),
+                                    widget.warehouseReceipt,
+                                    // warehouseReceiptController
+                                    //     .warehouseReceiptDetails,
+                                    // widget.listIngredientSelected
+                                  ),
                                   Utils.myPopResult(context, 'update')
                                 }
                             },

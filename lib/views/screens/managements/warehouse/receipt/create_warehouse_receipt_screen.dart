@@ -153,7 +153,7 @@ class _WarehouseReceiptDetailScreenState
               padding: EdgeInsets.all(10),
               child: InkWell(
                 onTap: () async {
-                  List<Ingredient> ingredients = await showDialog(
+                  List<Ingredient>? ingredients = await showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return CustomDialogRecommendIngredients(
@@ -163,7 +163,7 @@ class _WarehouseReceiptDetailScreenState
                   );
                   setState(() {
                     //danh sách nguyên liệu được chọn từ gợi ý
-                    recommendedIngredients = ingredients;
+                    recommendedIngredients = ingredients ?? [];
                   });
                 },
                 child: Icon(

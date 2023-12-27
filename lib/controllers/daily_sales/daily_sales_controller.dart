@@ -84,6 +84,8 @@ class DailySalesController extends GetxController {
 
   final Rx<List<DailySales>> _dailySalesByTimestamp = Rx<List<DailySales>>([]);
   List<DailySales> get dailySalesByTimestamp => _dailySalesByTimestamp.value;
+  //GỢI Ý XUẤT THEO LỊCH
+  //gợi ý trong 2 ngày: hôm nay và ngày mai
   getDailySalesByTimestamp(String keySearch) async {
     if (keySearch.isEmpty) {
       _dailySalesByTimestamp.bindStream(
@@ -92,6 +94,9 @@ class DailySalesController extends GetxController {
             .where('date_apply',
                 isGreaterThanOrEqualTo:
                     Utils.convertTimestampFirebase(Timestamp.now()))
+            .where('date_apply',
+                isLessThanOrEqualTo:
+                    Utils.convertTimestampFirebaseAddDay(Timestamp.now(), 1))
             .orderBy('date_apply', descending: true)
             .snapshots()
             .asyncMap(
@@ -140,6 +145,9 @@ class DailySalesController extends GetxController {
       _dailySalesByTimestamp.bindStream(firestore
           .collection('dailySales')
           .where('date_apply', isGreaterThanOrEqualTo: Timestamp.now())
+          .where('date_apply',
+              isLessThanOrEqualTo:
+                  Utils.convertTimestampFirebaseAddDay(Timestamp.now(), 1))
           .orderBy('date_apply', descending: true)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {

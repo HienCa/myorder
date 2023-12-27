@@ -42,9 +42,9 @@ class _CustomDialogRecommendIngredientsState
     dateSelected = widget.date;
     dateSelected = DateTime(
         dateSelected.year, dateSelected.month, dateSelected.day, 0, 0, 0, 0);
-    if (warehouseReceiptController.recommendedingredients.isEmpty) {
+    // if (warehouseReceiptController.recommendedingredients.isEmpty) {
       warehouseReceiptController.getRecommendedIngredients(dateSelected);
-    }
+    // }
   }
 
   @override

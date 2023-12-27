@@ -219,7 +219,7 @@ class WarehouseExportController extends GetxController {
         String id = Utils.generateUUID();
         WarehouseExport warehouseExport = WarehouseExport(
             warehouse_export_id: id,
-            warehouse_export_code: id.substring(8),
+            warehouse_export_code: code,
             employee_id: currentEmployee.employee_id,
             employee_name: currentEmployee.name,
             created_at: Timestamp.now(),
@@ -259,12 +259,14 @@ class WarehouseExportController extends GetxController {
               .collection('warehouseReceipts')
               .doc(warehouseReceipt.warehouse_receipt_id)
               .collection('warehouseReceiptDetails')
-              .where('quantity_in_stock', isGreaterThan: 0)
-              .orderBy('expiration_date', descending: false);
+              .where('quantity_in_stock', isGreaterThan: 0);
+          // .orderBy('expiration_date', descending: false);
           var warehouseReceiptDetailsCollectionQuery =
               await warehouseReceiptDetailsCollection.get();
           for (var warehouseReceiptDetailsData
               in warehouseReceiptDetailsCollectionQuery.docs) {
+            print("ĐÃ VÀO ĐÂY");
+
             WarehouseReceiptDetail warehouseReceiptDetail =
                 WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailsData);
 
@@ -277,13 +279,21 @@ class WarehouseExportController extends GetxController {
         //2.
         //xét trên mỗi nguyên liệu cần xuất
         for (Ingredient ingredient in ingredients) {
-          double totalQuantity = 0;
+          print("ĐÃ VÀO ĐÂY 2.");
+
+          double totalQuantity = 0; // Tổng Số lượng cần xuất
           //duyệt qua từng phiếu
           for (WarehouseReceipt warehouseReceipt in warehouseReceipts) {
             //sắp xếp lại lần nữa hạn sử dụng nếu cùng 1 phiếu có 2 nguyên liệu giống nhau khác hạn sử dụng
             warehouseReceipt.warehouseRecceiptDetails?.sort((a, b) {
-              DateTime dateA = (a.expiration_date ?? Timestamp.now()).toDate();
-              DateTime dateB = (b.expiration_date ?? Timestamp.now()).toDate();
+              DateTime dateA = (a.expiration_date ??
+                      Utils.convertTimestampFirebaseAddDay(
+                          Timestamp.now(), 200))
+                  .toDate();
+              DateTime dateB = (b.expiration_date ??
+                      Utils.convertTimestampFirebaseAddDay(
+                          Timestamp.now(), 200))
+                  .toDate();
               return dateA.compareTo(dateB);
             });
             //duyệt qua từng chi tiết phiếu
@@ -291,12 +301,15 @@ class WarehouseExportController extends GetxController {
                 in warehouseReceipt.warehouseRecceiptDetails ?? []) {
               if (ingredient.ingredient_id ==
                   warehouseReceiptDetail.ingredient_id) {
-                double quanity_export = 0;
-                double remainingQuantity = 0;
+                double quanity_export = 0; // Số lượng xuất
+                double remainingQuantity = 0; // Số lượng còn lại
                 totalQuantity += warehouseReceiptDetail.quantity_in_stock;
                 //Nếu lớn hơn số lượng cần xuất thì set lại số lượng bằng số lượng muốn xuất
-                if (totalQuantity > (ingredient.quantity ?? 0)) {
-                  totalQuantity = (ingredient.quantity ?? 0);
+                if (warehouseReceiptDetail.quantity_in_stock >
+                    (ingredient.quantity ?? 0)) {
+                  // totalQuantity = (ingredient.quantity ?? 0);
+                  //Số lượng xuất
+                  quanity_export = ingredient.quantity ?? 0;
                   //số lượng còn lại trong kho
                   remainingQuantity =
                       totalQuantity - (ingredient.quantity ?? 0);
@@ -332,24 +345,28 @@ class WarehouseExportController extends GetxController {
                     .collection("warehouseReceipts")
                     .doc(warehouseReceipt.warehouse_receipt_id)
                     .collection("warehouseReceiptDetails")
-                    .doc(idDetail)
+                    .doc(warehouseReceiptDetail.warehouse_receipt_detail_id)
                     .update({
                   "quantity_in_stock": remainingQuantity.floorToDouble(),
                 });
-                //Nếu đã lớn hoặc bằng thì ra tín hiệu dừng
-                if (totalQuantity >= (ingredient.quantity ?? 0)) {
-                  totalQuantity = (ingredient.quantity ?? 0);
-                  break;
-                }
+                print(
+                    "===============CẬP NHẬT LẠI SỐ LƯỢNG TỒN KHO===============");
+                print(
+                    "SL BAN ĐẦU: ${warehouseReceiptDetail.quantity_in_stock} -> SL ĐÃ XUẤT: ${ingredient.quantity} -> SL HIỆN TẠI: ${remainingQuantity.floorToDouble()}");
+                // //Nếu đã lớn hoặc bằng thì ra tín hiệu dừng
+                // if (totalQuantity >= (ingredient.quantity ?? 0)) {
+                //   totalQuantity = (ingredient.quantity ?? 0);
+                //   break;
+                // }
                 //Có thể trong cùng 1 phiếu có 2 nguyên liệu giống nhau nhưng khác nhau về hạn sử dụng
                 //kiểm tra nếu đã đủ thì chuyển qua xuất nguyên liệu tiếp theo
-                if (totalQuantity == ingredient.quantity) {
+                if (totalQuantity >= (ingredient.quantity ?? 0)) {
                   break;
                 }
               }
             }
             //kiểm tra nếu đã đủ thì chuyển qua xuất nguyên liệu tiếp theo
-            if (totalQuantity == ingredient.quantity) {
+            if (totalQuantity >= (ingredient.quantity ?? 0)) {
               break;
             }
           }
@@ -429,63 +446,82 @@ class WarehouseExportController extends GetxController {
   //   }
   // }
 
-  // updateWarehouseExport(
-  //   WarehouseExport warehouseExport,
-  //   List<WarehouseExportDetail> warehouseRecceiptDetails,
-  //   List<Ingredient> newWarehouseRecceiptDetails,
-  // ) async {
-  //   try {
-  //     for (WarehouseExportDetail warehouseRecceiptDetail
-  //         in warehouseRecceiptDetails) {
-  //       await firestore
-  //           .collection("warehouseExports")
-  //           .doc(warehouseExport.warehouse_export_id)
-  //           .collection("warehouseExportDetails")
-  //           .doc(warehouseRecceiptDetail.warehouse_export_detail_id)
-  //           .delete();
-  //     }
-  //     //CẬP NHẬT
-  //     for (WarehouseExportDetail warehouseExportDetail
-  //         in warehouseRecceiptDetails) {
-  //       String idDetail = Utils.generateUUID();
-  //       warehouseExportDetail.warehouse_export_detail_id = idDetail;
+  //cập nhật quantity xuất -> cập nhật lại quanity nhập
+  /*
+    Tạm thời chỉ cho update thông tin phiếu -> kiểm soát chặt chẽ sl nhập vào xuất ra
+      - cần nhập -> tạo phiếu nhập
+      - cần xuất -> tạo phiếu xuất
+    */
+  updateWarehouseExport(
+    WarehouseExport warehouseExport,
+    // List<WarehouseExportDetail> warehouseRecceiptDetails,
+    // List<Ingredient> newWarehouseRecceiptDetails,
+  ) async {
+    try {
+      await firestore
+          .collection("warehouseReceipts")
+          .doc(warehouseExport.warehouse_export_id)
+          .update({
+        "note": warehouseExport.note,
+        "vat": warehouseExport.vat,
+        "discount": warehouseExport.discount,
+      });
+      // for (WarehouseExportDetail warehouseRecceiptDetail
+      //     in warehouseRecceiptDetails) {
+      //   await firestore
+      //       .collection("warehouseExports")
+      //       .doc(warehouseExport.warehouse_export_id)
+      //       .collection("warehouseExportDetails")
+      //       .doc(warehouseRecceiptDetail.warehouse_export_detail_id)
+      //       .delete();
+      // }
+      // //CẬP NHẬT
+      // for (WarehouseExportDetail warehouseExportDetail
+      //     in warehouseRecceiptDetails) {
+      //   String idDetail = Utils.generateUUID();
+      //   warehouseExportDetail.warehouse_export_detail_id = idDetail;
 
-  //       await firestore
-  //           .collection("warehouseExports")
-  //           .doc(warehouseExport.warehouse_export_id)
-  //           .collection("warehouseExportDetails")
-  //           .doc(idDetail)
-  //           .set(warehouseExportDetail.toJson());
-  //     }
-  //     //MỚI
-  //     for (Ingredient warehouseExportDetail in newWarehouseRecceiptDetails) {
-  //       String idDetail = Utils.generateUUID();
-  //       WarehouseExportDetail detail = WarehouseExportDetail(
-  //           warehouse_export_detail_id: idDetail,
-  //           ingredient_id: warehouseExportDetail.ingredient_id,
-  //           ingredient_name: warehouseExportDetail.name,
-  //           quantity: warehouseExportDetail.quantity ?? 0,
-  //           price: warehouseExportDetail.price ?? 0,
-  //           unit_id: warehouseExportDetail.unit_id ?? "",
-  //           unit_name: warehouseExportDetail.unit_name ?? "");
-  //       await firestore
-  //           .collection("warehouseExports")
-  //           .doc(warehouseExport.warehouse_export_id)
-  //           .collection("warehouseExportDetails")
-  //           .doc(idDetail)
-  //           .set(detail.toJson());
-  //     }
+      //   await firestore
+      //       .collection("warehouseExports")
+      //       .doc(warehouseExport.warehouse_export_id)
+      //       .collection("warehouseExportDetails")
+      //       .doc(idDetail)
+      //       .set(warehouseExportDetail.toJson());
+      // }
+      // //MỚI
+      // for (Ingredient warehouseExportDetail in newWarehouseRecceiptDetails) {
+      //   String idDetail = Utils.generateUUID();
+      //   WarehouseExportDetail detail = WarehouseExportDetail(
+      //     warehouse_export_detail_id: idDetail,
+      //     ingredient_id: warehouseExportDetail.ingredient_id,
+      //     ingredient_name: warehouseExportDetail.name,
+      //     quantity: warehouseExportDetail.quantity ?? 0,
+      //     price: warehouseExportDetail.price ?? 0,
+      //     unit_id: warehouseExportDetail.unit_id ?? "",
+      //     unit_name: warehouseExportDetail.unit_name ?? "",
+      //     warehouse_receipt_detail_id:
+      //         warehouseExportDetail.warehouse_receipt_detail_id ?? "",
+      //     warehouse_receipt_id:
+      //         warehouseExportDetail.warehouse_receipt_id ?? "",
+      //   );
+      //   await firestore
+      //       .collection("warehouseExports")
+      //       .doc(warehouseExport.warehouse_export_id)
+      //       .collection("warehouseExportDetails")
+      //       .doc(idDetail)
+      //       .set(detail.toJson());
+      // }
 
-  //     update();
-  //   } catch (e) {
-  //     Get.snackbar(
-  //       'Cập nhật thất bại!',
-  //       e.toString(),
-  //       backgroundColor: backgroundFailureColor,
-  //       colorText: Colors.white,
-  //     );
-  //   }
-  // }
+      update();
+    } catch (e) {
+      Get.snackbar(
+        'Cập nhật thất bại!',
+        e.toString(),
+        backgroundColor: backgroundFailureColor,
+        colorText: Colors.white,
+      );
+    }
+  }
 
   // Block account
   updateToggleActive(

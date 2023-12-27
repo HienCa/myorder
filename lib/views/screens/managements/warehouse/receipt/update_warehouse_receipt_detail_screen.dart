@@ -192,9 +192,10 @@ class _UpdateWarehouseReceiptDetailScreenState
                                     child: Text(
                                       Utils.formatCurrency(
                                           Utils.getSumPriceQuantity2(
-                                              warehouseReceiptController
-                                                  .warehouseReceiptDetails) + Utils.getSumPriceQuantity2(
-                                              listIngredientSelected)),
+                                                  warehouseReceiptController
+                                                      .warehouseReceiptDetails) +
+                                              Utils.getSumPriceQuantity2(
+                                                  listIngredientSelected)),
                                       style: textStyleLabel14,
                                       textAlign: TextAlign.right,
                                     ),
@@ -418,16 +419,18 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                           Expanded(
                                                               flex: 4,
                                                               child: InkWell(
-                                                                onTap: () async {
+                                                                onTap:
+                                                                    () async {
                                                                   DateTime?
                                                                       expirationDateSelected =
                                                                       await Utils
                                                                           .selectDate(
                                                                               context);
-                                  
+
                                                                   if (expirationDateSelected !=
                                                                       null) {
-                                                                    setState(() {
+                                                                    setState(
+                                                                        () {
                                                                       item.expiration_date =
                                                                           Utils.convertDatetimeToTimestamp(
                                                                               expirationDateSelected);
@@ -443,23 +446,20 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                           .center,
                                                                   children: [
                                                                     Marquee(
-                                                                      direction: Axis
-                                                                          .horizontal,
+                                                                      direction:
+                                                                          Axis.horizontal,
                                                                       textDirection:
                                                                           TextDirection
                                                                               .ltr,
                                                                       animationDuration:
                                                                           const Duration(
-                                                                              seconds:
-                                                                                  1),
+                                                                              seconds: 1),
                                                                       backDuration:
                                                                           const Duration(
-                                                                              milliseconds:
-                                                                                  4000),
+                                                                              milliseconds: 4000),
                                                                       pauseDuration:
                                                                           const Duration(
-                                                                              milliseconds:
-                                                                                  1000),
+                                                                              milliseconds: 1000),
                                                                       directionMarguee:
                                                                           DirectionMarguee
                                                                               .TwoDirection,
@@ -477,11 +477,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         item.expiration_date !=
                                                                                 null
                                                                             ? Text(Utils.formatTimestamp(item.expiration_date),
-                                                                                style:
-                                                                                    textStyleGreen14)
-                                                                            : Text(
-                                                                                "Không",
-                                                                                style: textStyleRed14),
+                                                                                style: textStyleGreen14)
+                                                                            : Text("Không", style: textStyleRed14),
                                                                       ],
                                                                     ),
                                                                   ],
@@ -503,10 +500,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                       String
                                                                           result =
                                                                           await showDialog(
-                                                                              context:
-                                                                                  context,
-                                                                              builder:
-                                                                                  (BuildContext context) {
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
                                                                                 return MyDialogTextFieldString(
                                                                                   label: "Lô hàng",
                                                                                   textDefault: item.batch_number ?? "",
@@ -543,8 +538,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                                 const Duration(milliseconds: 1000),
                                                                             directionMarguee:
                                                                                 DirectionMarguee.TwoDirection,
-                                                                            child: Text(
-                                                                                item.batch_number ?? "",
+                                                                            child: Text(item.batch_number ?? "",
                                                                                 style: textStyleGreen14,
                                                                                 textAlign: TextAlign.left),
                                                                           )
@@ -561,8 +555,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                                 const Duration(milliseconds: 1000),
                                                                             directionMarguee:
                                                                                 DirectionMarguee.TwoDirection,
-                                                                            child: Text(
-                                                                                "",
+                                                                            child: Text("",
                                                                                 style: textStyleRed14,
                                                                                 textAlign: TextAlign.left),
                                                                           )),
@@ -591,8 +584,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                               context) {
                                                                         return MyDialogCalculator2(
                                                                           value:
-                                                                              item.quantity ??
-                                                                                  0,
+                                                                              item.quantity ?? 0,
                                                                         );
                                                                       },
                                                                     );
@@ -603,8 +595,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         print(
                                                                             result);
                                                                         item.quantity =
-                                                                            double.parse(
-                                                                                result);
+                                                                            double.parse(result);
                                                                       });
                                                                     }
                                                                   },
@@ -618,7 +609,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                 InkWell(
                                                                   onTap:
                                                                       () async {
-                                                                    Unit result =
+                                                                    Unit
+                                                                        result =
                                                                         await showDialog(
                                                                       context:
                                                                           context,
@@ -628,10 +620,9 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         return MyDialogSelect(
                                                                             lable:
                                                                                 "DANH SÁCH ĐƠN VỊ",
-                                                                            list: Utils.filterActive(unitController
-                                                                                .units),
-                                                                            keyNameSearch:
-                                                                                "name");
+                                                                            list:
+                                                                                Utils.filterActive(unitController.units),
+                                                                            keyNameSearch: "name");
                                                                       },
                                                                     );
                                                                     if (result
@@ -640,15 +631,14 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                       setState(
                                                                           () {
                                                                         item.unit_name =
-                                                                            result
-                                                                                .name;
+                                                                            result.name;
                                                                         item.unit_id =
-                                                                            result
-                                                                                .unit_id;
+                                                                            result.unit_id;
                                                                       });
                                                                     }
                                                                   },
-                                                                  child: Marquee(
+                                                                  child:
+                                                                      Marquee(
                                                                     direction: Axis
                                                                         .horizontal,
                                                                     textDirection:
@@ -675,8 +665,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         style:
                                                                             textStyleGreen14,
                                                                         textAlign:
-                                                                            TextAlign
-                                                                                .left),
+                                                                            TextAlign.left),
                                                                   ),
                                                                 ),
                                                               ],
@@ -704,9 +693,9 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                               context) {
                                                                         return MyCalculator(
                                                                           priceDefault:
-                                                                              item.price ??
-                                                                                  0,
-                                                                          min: 0,
+                                                                              item.price ?? 0,
+                                                                          min:
+                                                                              0,
                                                                           max:
                                                                               MAX_PRICE,
                                                                         );
@@ -719,8 +708,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         print(
                                                                             result);
                                                                         item.price =
-                                                                            Utils.stringConvertToDouble(
-                                                                                Utils.formatCurrencytoDouble(result));
+                                                                            Utils.stringConvertToDouble(Utils.formatCurrencytoDouble(result));
                                                                       });
                                                                     }
                                                                   },
@@ -733,11 +721,11 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                   ),
                                                                 ),
                                                                 Text(
-                                                                  Utils.formatCurrency(
-                                                                      ((item.quantity ??
-                                                                              0) *
-                                                                          (item.price ??
-                                                                              0))),
+                                                                  Utils.formatCurrency(((item
+                                                                              .quantity ??
+                                                                          0) *
+                                                                      (item.price ??
+                                                                          0))),
                                                                   style:
                                                                       textStylePrimary14,
                                                                   textAlign:
@@ -751,7 +739,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                       );
                                                     }),
                                               ),
-                                  
+
                                               Container(
                                                 height: warehouseReceiptController
                                                         .warehouseReceiptDetails
@@ -776,16 +764,18 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                           Expanded(
                                                               flex: 4,
                                                               child: InkWell(
-                                                                onTap: () async {
+                                                                onTap:
+                                                                    () async {
                                                                   DateTime?
                                                                       expirationDateSelected =
                                                                       await Utils
                                                                           .selectDate(
                                                                               context);
-                                  
+
                                                                   if (expirationDateSelected !=
                                                                       null) {
-                                                                    setState(() {
+                                                                    setState(
+                                                                        () {
                                                                       item.expiration_date =
                                                                           Utils.convertDatetimeToTimestamp(
                                                                               expirationDateSelected);
@@ -801,23 +791,20 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                           .center,
                                                                   children: [
                                                                     Marquee(
-                                                                      direction: Axis
-                                                                          .horizontal,
+                                                                      direction:
+                                                                          Axis.horizontal,
                                                                       textDirection:
                                                                           TextDirection
                                                                               .ltr,
                                                                       animationDuration:
                                                                           const Duration(
-                                                                              seconds:
-                                                                                  1),
+                                                                              seconds: 1),
                                                                       backDuration:
                                                                           const Duration(
-                                                                              milliseconds:
-                                                                                  4000),
+                                                                              milliseconds: 4000),
                                                                       pauseDuration:
                                                                           const Duration(
-                                                                              milliseconds:
-                                                                                  1000),
+                                                                              milliseconds: 1000),
                                                                       directionMarguee:
                                                                           DirectionMarguee
                                                                               .TwoDirection,
@@ -835,11 +822,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         item.expiration_date !=
                                                                                 null
                                                                             ? Text(Utils.formatTimestamp(item.expiration_date),
-                                                                                style:
-                                                                                    textStyleGreen14)
-                                                                            : Text(
-                                                                                "Không",
-                                                                                style: textStyleRed14),
+                                                                                style: textStyleGreen14)
+                                                                            : Text("Không", style: textStyleRed14),
                                                                       ],
                                                                     ),
                                                                   ],
@@ -861,10 +845,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                       String
                                                                           result =
                                                                           await showDialog(
-                                                                              context:
-                                                                                  context,
-                                                                              builder:
-                                                                                  (BuildContext context) {
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
                                                                                 return MyDialogTextFieldString(
                                                                                   label: "Lô hàng",
                                                                                   textDefault: item.batch_number,
@@ -901,8 +883,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                                 const Duration(milliseconds: 1000),
                                                                             directionMarguee:
                                                                                 DirectionMarguee.TwoDirection,
-                                                                            child: Text(
-                                                                                item.batch_number,
+                                                                            child: Text(item.batch_number,
                                                                                 style: textStyleGreen14,
                                                                                 textAlign: TextAlign.left),
                                                                           )
@@ -919,8 +900,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                                 const Duration(milliseconds: 1000),
                                                                             directionMarguee:
                                                                                 DirectionMarguee.TwoDirection,
-                                                                            child: Text(
-                                                                                "",
+                                                                            child: Text("",
                                                                                 style: textStyleRed14,
                                                                                 textAlign: TextAlign.left),
                                                                           ))
@@ -948,8 +928,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                           (BuildContext
                                                                               context) {
                                                                         return MyDialogCalculator2(
-                                                                          value: item
-                                                                              .quantity,
+                                                                          value:
+                                                                              item.quantity,
                                                                         );
                                                                       },
                                                                     );
@@ -960,8 +940,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         print(
                                                                             result);
                                                                         item.quantity =
-                                                                            double.parse(
-                                                                                result);
+                                                                            double.parse(result);
                                                                       });
                                                                     }
                                                                   },
@@ -975,7 +954,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                 InkWell(
                                                                   onTap:
                                                                       () async {
-                                                                    Unit result =
+                                                                    Unit
+                                                                        result =
                                                                         await showDialog(
                                                                       context:
                                                                           context,
@@ -985,10 +965,9 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         return MyDialogSelect(
                                                                             lable:
                                                                                 "DANH SÁCH ĐƠN VỊ",
-                                                                            list: Utils.filterActive(unitController
-                                                                                .units),
-                                                                            keyNameSearch:
-                                                                                "name");
+                                                                            list:
+                                                                                Utils.filterActive(unitController.units),
+                                                                            keyNameSearch: "name");
                                                                       },
                                                                     );
                                                                     if (result
@@ -997,15 +976,14 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                       setState(
                                                                           () {
                                                                         item.unit_name =
-                                                                            result
-                                                                                .name;
+                                                                            result.name;
                                                                         item.unit_id =
-                                                                            result
-                                                                                .unit_id;
+                                                                            result.unit_id;
                                                                       });
                                                                     }
                                                                   },
-                                                                  child: Marquee(
+                                                                  child:
+                                                                      Marquee(
                                                                     direction: Axis
                                                                         .horizontal,
                                                                     textDirection:
@@ -1032,8 +1010,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         style:
                                                                             textStyleGreen14,
                                                                         textAlign:
-                                                                            TextAlign
-                                                                                .left),
+                                                                            TextAlign.left),
                                                                   ),
                                                                 ),
                                                               ],
@@ -1062,7 +1039,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         return MyCalculator(
                                                                           priceDefault:
                                                                               item.price,
-                                                                          min: 0,
+                                                                          min:
+                                                                              0,
                                                                           max:
                                                                               MAX_PRICE,
                                                                         );
@@ -1075,8 +1053,7 @@ class _UpdateWarehouseReceiptDetailScreenState
                                                                         print(
                                                                             result);
                                                                         item.price =
-                                                                            Utils.stringConvertToDouble(
-                                                                                Utils.formatCurrencytoDouble(result));
+                                                                            Utils.stringConvertToDouble(Utils.formatCurrencytoDouble(result));
                                                                       });
                                                                     }
                                                                   },
@@ -1194,7 +1171,8 @@ class _UpdateWarehouseReceiptDetailScreenState
                                     widget.warehouseReceipt.supplier_name =
                                         nameSupplierTextEditingController.text
                                             .trim();
-
+                                    widget.warehouseReceipt.note =
+                                        noteTextEditingController.text.trim();
                                     await showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
