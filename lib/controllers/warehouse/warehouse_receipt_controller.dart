@@ -41,7 +41,11 @@ class WarehouseReceiptController extends GetxController {
       //       .where('create_at', isLessThanOrEqualTo: toDate);
       // }
       _warehouseReceipts.bindStream(
-        firestore.collection('warehouseReceipts').snapshots().asyncMap(
+        firestore
+            .collection('warehouseReceipts')
+            .orderBy('created_at', descending: true)
+            .snapshots()
+            .asyncMap(
           (QuerySnapshot query) async {
             List<WarehouseReceipt> retValue = [];
             for (var element in query.docs) {
@@ -109,6 +113,7 @@ class WarehouseReceiptController extends GetxController {
     } else {
       _warehouseReceipts.bindStream(firestore
           .collection('warehouseReceipts')
+          .orderBy('created_at', descending: true)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<WarehouseReceipt> retVal = [];
@@ -251,6 +256,7 @@ class WarehouseReceiptController extends GetxController {
       ),
     );
   }
+
   // gợi ý nhập từ phiếu đã xuất
   void createWarehouseReceipt(
     WarehouseReceipt warehouseReceipt,

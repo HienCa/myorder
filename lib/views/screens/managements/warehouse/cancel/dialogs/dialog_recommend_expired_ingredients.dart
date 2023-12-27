@@ -33,7 +33,7 @@ class _CustomDialogRecommendExpiredIngredientsState
   @override
   void initState() {
     super.initState();
-    // cancellationReceiptController.getCheckCancellationReceiptDetails("");
+    cancellationReceiptController.getCheckCancellationReceiptDetails("");
   }
 
   void checkedAll() {

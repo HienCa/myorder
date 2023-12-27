@@ -23,7 +23,11 @@ class WarehouseExportController extends GetxController {
       String keySearch, DateTime? fromDate, DateTime? toDate) async {
     if (keySearch.isEmpty) {
       _warehouseExports.bindStream(
-        firestore.collection('warehouseExports').snapshots().asyncMap(
+        firestore
+            .collection('warehouseExports')
+            .orderBy('created_at', descending: true)
+            .snapshots()
+            .asyncMap(
           (QuerySnapshot query) async {
             List<WarehouseExport> retValue = [];
             for (var element in query.docs) {
@@ -72,6 +76,7 @@ class WarehouseExportController extends GetxController {
     } else {
       _warehouseExports.bindStream(firestore
           .collection('warehouseExports')
+          .orderBy('created_at', descending: true)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<WarehouseExport> retVal = [];
@@ -459,7 +464,7 @@ class WarehouseExportController extends GetxController {
   ) async {
     try {
       await firestore
-          .collection("warehouseReceipts")
+          .collection("warehouseExports")
           .doc(warehouseExport.warehouse_export_id)
           .update({
         "note": warehouseExport.note,

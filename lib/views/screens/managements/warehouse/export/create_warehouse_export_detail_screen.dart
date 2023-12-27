@@ -619,8 +619,8 @@ class _WarehouseExportDetailScreenState
                                     note: noteTextEditingController.text.trim(),
                                     vat: vatPercent,
                                     discount: discountPrice,
-                                    status: 1,
-                                    active: 1,
+                                    status: WAREHOUSE_STATUS_FINISH,
+                                    active: ACTIVE,
                                   );
                                   //Tạo mới
                                   final result = await showDialog(
@@ -629,9 +629,7 @@ class _WarehouseExportDetailScreenState
                                       return CustomDialogCreateWarehouseExport(
                                         warehouseExport: warehouseExport,
                                         ingredients: listIngredientSelected,
-                                        note: noteTextEditingController.text,
-                                        vat: vatPercent,
-                                        discount: discountPrice,
+                                       
                                       );
                                     },
                                   );
@@ -640,18 +638,27 @@ class _WarehouseExportDetailScreenState
                                   }
                                 } else {
                                   //Cập nhật
-
+                                  WarehouseExport warehouseExport =
+                                      WarehouseExport(
+                                    warehouse_export_id: widget.warehouseExport?.warehouse_export_id ?? "",
+                                    warehouse_export_code: widget.warehouseExport?.warehouse_export_code ?? "",
+                                    employee_id: widget.warehouseExport?.employee_id ?? "",
+                                    employee_name: widget.warehouseExport?.employee_name ?? "",
+                                    created_at: widget.warehouseExport?.created_at ?? Timestamp.now(),
+                                    note: noteTextEditingController.text.trim(),
+                                    vat: vatPercent,
+                                    discount: discountPrice,
+                                    status: widget.warehouseExport?.status ?? WAREHOUSE_STATUS_FINISH,
+                                    active: widget.warehouseExport?.active ?? ACTIVE,
+                                  );
                                   final result = await showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return CustomDialogCreateWarehouseExport(
-                                        warehouseExport: widget
-                                            .warehouseExport!, //cập nhật số lượng nguyên liệu cũ
+                                        warehouseExport: warehouseExport, //cập nhật số lượng nguyên liệu cũ
                                         ingredients:
                                             listIngredientSelected, // nguyên liệu mới
-                                        note: noteTextEditingController.text,
-                                        vat: vatPercent,
-                                        discount: discountPrice,
+                                       
                                       );
                                     },
                                   );

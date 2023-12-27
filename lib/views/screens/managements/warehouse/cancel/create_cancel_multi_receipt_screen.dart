@@ -71,14 +71,14 @@ class _CancelMultiReceiptDetailScreenState
             child: Padding(
               padding: EdgeInsets.all(10),
               child: InkWell(
-                // onTap: () async {
-                //   showDialog(
-                //     context: context,
-                //     builder: (BuildContext context) {
-                //       return CustomDialogRecommendExpiredIngredients();
-                //     },
-                //   );
-                // },
+                onTap: () async {
+                  // showDialog(
+                  //   context: context,
+                  //   builder: (BuildContext context) {
+                  //     return CustomDialogRecommendExpiredIngredients();
+                  //   },
+                  // );
+                },
                 child: Icon(
                   Icons.book,
                   color: transparentColor,

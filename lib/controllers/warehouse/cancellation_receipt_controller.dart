@@ -22,7 +22,11 @@ class CancellationReceiptController extends GetxController {
       String keySearch, DateTime? fromDate, DateTime? toDate) async {
     if (keySearch.isEmpty) {
       _cancellationReceipts.bindStream(
-        firestore.collection('cancellationReceipts').snapshots().asyncMap(
+        firestore
+            .collection('cancellationReceipts')
+            .orderBy('created_at', descending: true)
+            .snapshots()
+            .asyncMap(
           (QuerySnapshot query) async {
             List<CancellationReceipt> retValue = [];
             for (var element in query.docs) {
@@ -67,6 +71,7 @@ class CancellationReceiptController extends GetxController {
     } else {
       _cancellationReceipts.bindStream(firestore
           .collection('cancellationReceipts')
+          .orderBy('created_at', descending: true)
           .snapshots()
           .asyncMap((QuerySnapshot query) async {
         List<CancellationReceipt> retVal = [];

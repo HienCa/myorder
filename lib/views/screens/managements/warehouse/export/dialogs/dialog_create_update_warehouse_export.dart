@@ -11,18 +11,12 @@ import 'package:myorder/models/warehouse_export_detail.dart';
 import 'package:myorder/utils.dart';
 
 class CustomDialogCreateWarehouseExport extends StatefulWidget {
-  final String note;
-  final int vat;
-  final double discount;
   final WarehouseExport warehouseExport;
   final List<Ingredient> ingredients;
   const CustomDialogCreateWarehouseExport({
     Key? key,
-    required this.note,
     required this.warehouseExport,
     required this.ingredients,
-    required this.vat,
-    required this.discount,
   }) : super(key: key);
 
   @override
@@ -55,9 +49,6 @@ class _CustomDialogCreateWarehouseExportState
       discount = widget.warehouseExport.discount;
     } else {
       code = Utils.generateInvoiceCode("PXK");
-      note = widget.note;
-      vat = widget.vat;
-      discount = widget.discount;
     }
   }
 
@@ -130,8 +121,12 @@ class _CustomDialogCreateWarehouseExportState
                                 {
                                   print("add"),
                                   warehouseExportController
-                                      .createWarehouseExport(vat, discount,
-                                          code, note, widget.ingredients),
+                                      .createWarehouseExport(
+                                          widget.warehouseExport.vat,
+                                          widget.warehouseExport.discount,
+                                          code,
+                                          widget.warehouseExport.note,
+                                          widget.ingredients),
                                   Utils.myPopResult(context, 'add')
                                 }
                               else
