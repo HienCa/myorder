@@ -140,7 +140,6 @@ class _CustomDialogRecommendIngredientsDailySalesState
                                         DailySales dailySale =
                                             dailySalesController
                                                 .dailySalesByTimestamp[index];
-
                                         return Column(
                                           children: [
                                             SizedBox(
@@ -332,6 +331,8 @@ class _CustomDialogRecommendIngredientsDailySalesState
                                                                         ingredient.quantity_in_stock_note =
                                                                             "(Đủ)";
                                                                       }
+                                                                    
+
                                                                       return SizedBox(
                                                                         height:
                                                                             50,

@@ -790,24 +790,19 @@ class _UpdateWarehouseExportDetailScreenState
                                   widget.warehouseExport.vat = vatPercent;
                                   widget.warehouseExport.discount =
                                       discountPrice;
-                                  widget.warehouseExport.supplier_id =
-                                      supplierIdTextEditingController.text;
-                                  widget.warehouseExport.supplier_name =
-                                      nameSupplierTextEditingController.text
-                                          .trim();
 
-                                  
                                   await showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return CustomDialogCreateWarehouseExport(
-                                          warehouseExport:
-                                              widget.warehouseExport,
-                                          listIngredientSelected:
-                                              listIngredientSelected);
+                                        warehouseExport: widget.warehouseExport,
+                                        ingredients: listIngredientSelected,
+                                        vat: vatPercent,
+                                        discount: discountPrice,
+                                        note: noteTextEditingController.text,
+                                      );
                                     },
                                   );
-                                 
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(

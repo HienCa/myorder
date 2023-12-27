@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WarehouseExportDetail {
   String warehouse_export_detail_id;
+  String warehouse_receipt_detail_id;
+  String warehouse_receipt_id;
   String ingredient_id;
   String ingredient_name;
   double quantity;
@@ -15,6 +17,8 @@ class WarehouseExportDetail {
 
   WarehouseExportDetail({
     required this.warehouse_export_detail_id,
+    required this.warehouse_receipt_detail_id,
+    required this.warehouse_receipt_id,
     required this.ingredient_id,
     required this.ingredient_name,
     required this.quantity,
@@ -25,6 +29,8 @@ class WarehouseExportDetail {
 
   Map<String, dynamic> toJson() => {
         "warehouse_export_detail_id": warehouse_export_detail_id,
+        "warehouse_receipt_detail_id": warehouse_receipt_detail_id,
+        "warehouse_receipt_id": warehouse_receipt_id,
         "ingredient_id": ingredient_id,
         "ingredient_name": ingredient_name,
         "quantity": quantity,
@@ -38,6 +44,8 @@ class WarehouseExportDetail {
 
     return WarehouseExportDetail(
       warehouse_export_detail_id: snapshot['warehouse_export_detail_id'],
+      warehouse_receipt_detail_id: snapshot['warehouse_receipt_detail_id'],
+      warehouse_receipt_id: snapshot['warehouse_receipt_id'],
       ingredient_id: snapshot['ingredient_id'],
       ingredient_name: snapshot['ingredient_name'],
       quantity: snapshot['quantity'],

@@ -8,8 +8,6 @@ class WarehouseExport {
   String warehouse_export_code;
   String employee_id;
   String employee_name;
-  String supplier_id;
-  String supplier_name;
   Timestamp created_at;
   String note;
   int vat;
@@ -23,8 +21,6 @@ class WarehouseExport {
     required this.warehouse_export_code,
     required this.employee_id,
     required this.employee_name,
-    required this.supplier_id,
-    required this.supplier_name,
     required this.created_at,
     required this.note,
     required this.vat,
@@ -38,8 +34,6 @@ class WarehouseExport {
         "warehouse_export_code": warehouse_export_code,
         "employee_id": employee_id,
         "employee_name": employee_name,
-        "supplier_id": supplier_id,
-        "supplier_name": supplier_name,
         "created_at": created_at,
         "note": note,
         "vat": vat,
@@ -56,8 +50,6 @@ class WarehouseExport {
       warehouse_export_code: snapshot['warehouse_export_code'],
       employee_id: snapshot['employee_id'],
       employee_name: snapshot['employee_name'],
-      supplier_id: snapshot['supplier_id'],
-      supplier_name: snapshot['supplier_name'],
       created_at: snapshot['created_at'],
       note: snapshot['note'],
       vat: snapshot['vat'],

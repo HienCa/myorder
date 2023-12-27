@@ -16,7 +16,7 @@ import 'package:myorder/views/screens/managements/warehouse/cancel/create_cancel
 import 'package:myorder/views/screens/managements/warehouse/cancel/dialogs/dialog_create_cancellation_receipt.dart';
 import 'package:myorder/views/screens/managements/warehouse/cancel/update_cancel_receipt_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/export/update_warehouse_export_detail_screen.dart';
-import 'package:myorder/views/screens/managements/warehouse/export/create_warehouse_export_screen.dart';
+import 'package:myorder/views/screens/managements/warehouse/export/warehouse_export_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/update_warehouse_receipt_detail_screen.dart';
 import 'package:myorder/views/screens/managements/warehouse/receipt/create_warehouse_receipt_screen.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
@@ -214,6 +214,8 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                               'THÀNH CÔNG!',
                               'Tạo phiếu nhập thành công!',
                               StylishDialogType.SUCCESS);
+                          warehouseReceiptController.getWarehouseReceipts(
+                              "", null, null);
                         }
                       } else if (isExport) {
                         //Xuất kho
@@ -228,6 +230,9 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                               'THÀNH CÔNG!',
                               'Tạo phiếu xuất thành công!',
                               StylishDialogType.SUCCESS);
+
+                          warehouseExportController.getwarehouseExports(
+                              "", null, null);
                         }
                       } else if (isCancel) {
                         print(isCancel);
@@ -243,6 +248,9 @@ class _WarehouseScreenState extends State<WarehouseScreen> {
                               'THÀNH CÔNG!',
                               'Tạo phiếu hủy thành công!',
                               StylishDialogType.SUCCESS);
+
+                          cancellationReceiptController.getCancellationReceipts(
+                              "", null, null);
                         }
                       }
                     },

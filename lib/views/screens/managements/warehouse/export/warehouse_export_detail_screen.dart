@@ -8,7 +8,6 @@ import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/ingredients/ingredients_controller.dart';
-import 'package:myorder/controllers/suppliers/suppliers_controller.dart';
 import 'package:myorder/models/daily_sales.dart';
 import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/warehouse_export.dart';
@@ -36,16 +35,12 @@ class _WarehouseExportDetailScreenState
     extends State<WarehouseExportDetailScreen> {
   TextEditingController nameSupplierTextEditingController =
       TextEditingController();
-  TextEditingController supplierIdTextEditingController =
-      TextEditingController();
-
   TextEditingController noteTextEditingController = TextEditingController();
   TextEditingController discountTextEditingController = TextEditingController();
   TextEditingController vatTextEditingController = TextEditingController();
   IngredientController ingredientController = Get.put(IngredientController());
 
   List<Ingredient> listIngredientSelected = [];
-  SupplierController supplierController = Get.put(SupplierController());
 
   @override
   void initState() {
@@ -62,12 +57,6 @@ class _WarehouseExportDetailScreenState
           widget.warehouseExport?.vat.toString() ?? "0";
 
       noteTextEditingController.text = widget.warehouseExport?.note ?? "";
-
-      supplierIdTextEditingController.text =
-          widget.warehouseExport?.supplier_id ?? "";
-
-      nameSupplierTextEditingController.text =
-          widget.warehouseExport?.supplier_name ?? "";
 
       //thiết lập danh sách mặt hàng của phiếu
       List<Ingredient> listIngredientFromReceipt = [];
@@ -533,6 +522,134 @@ class _WarehouseExportDetailScreenState
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        //GỢI Ý XUẤT
+                        Container(
+                          margin: EdgeInsets.all(0),
+                          child: InkWell(
+                            onTap: () async {
+                              DailySales dailySale = await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomDialogRecommendIngredientsDailySales();
+                                },
+                              );
+                              setState(() {
+                                listIngredientSelected =
+                                    dailySale.ingredients ?? [];
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: primaryColorOpacity,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 14),
+                              child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.plus,
+                                        color: primaryColor, size: 16),
+                                    marginRight5,
+                                    Text("GỢI Ý XUẤT",
+                                        style: textStylePrimaryBold16),
+                                  ]),
+                            ),
+                          ),
+                        ),
+
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 8),
+                          child: InkWell(
+                            onTap: () async {
+                              if (listIngredientSelected.isEmpty) {
+                                Utils.showStylishDialog(
+                                    context,
+                                    "THÔNG BÁO",
+                                    "Vui lòng thêm các mặt hàng cần xuất!",
+                                    StylishDialogType.INFO);
+                              } else {
+                                int vatPercent = int.tryParse(
+                                        vatTextEditingController.text) ??
+                                    0;
+                                double discountPrice =
+                                    Utils.stringConvertToDouble(
+                                        discountTextEditingController.text);
+
+                                if (widget.warehouseExport == null) {
+                                  WarehouseExport warehouseExport =
+                                      WarehouseExport(
+                                    warehouse_export_id: "",
+                                    warehouse_export_code: "",
+                                    employee_id: "",
+                                    employee_name: "",
+                                    created_at: Timestamp.now(),
+                                    note: noteTextEditingController.text.trim(),
+                                    vat: vatPercent,
+                                    discount: discountPrice,
+                                    status: 1,
+                                    active: 1,
+                                  );
+                                  //Tạo mới
+                                  final result = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialogCreateWarehouseExport(
+                                        warehouseExport: warehouseExport,
+                                        ingredients: listIngredientSelected,
+                                        note: noteTextEditingController.text,
+                                        vat: vatPercent,
+                                        discount: discountPrice,
+                                      );
+                                    },
+                                  );
+                                  if (result == 'add') {
+                                    Utils.myPopSuccess(context);
+                                  }
+                                } else {
+                                  //Cập nhật
+
+                                  final result = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialogCreateWarehouseExport(
+                                        warehouseExport:
+                                            widget.warehouseExport!,
+                                        ingredients: listIngredientSelected,
+                                        note: noteTextEditingController.text,
+                                        vat: vatPercent,
+                                        discount: discountPrice,
+                                      );
+                                    },
+                                  );
+                                  if (result == 'update') {
+                                    Utils.myPopSuccess(context);
+                                  }
+                                }
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: greenColor50,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 14),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const FaIcon(FontAwesomeIcons.check,
+                                        color: colorSuccess, size: 16),
+                                    marginRight5,
+                                    Text(
+                                        widget.warehouseExport == null
+                                            ? "TẠO PHIẾU"
+                                            : "CẬP NHẬT",
+                                        style: textStyleSuccessBold16),
+                                  ]),
+                            ),
+                          ),
+                        ),
                         Container(
                           margin: EdgeInsets.all(0),
                           child: InkWell(
@@ -567,140 +684,6 @@ class _WarehouseExportDetailScreenState
                                         color: primaryColor, size: 16),
                                     marginRight5,
                                     Text("MẶT HÀNG",
-                                        style: textStylePrimaryBold16),
-                                  ]),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 8),
-                          child: InkWell(
-                            onTap: () async {
-                              if (listIngredientSelected.isEmpty) {
-                                Utils.showStylishDialog(
-                                    context,
-                                    "THÔNG BÁO",
-                                    "Vui lòng thêm các mặt hàng cần xuất!",
-                                    StylishDialogType.INFO);
-                              } else {
-                                int vatPercent = int.tryParse(
-                                        vatTextEditingController.text) ??
-                                    0;
-                                double discountPrice =
-                                    Utils.stringConvertToDouble(
-                                        discountTextEditingController.text);
-
-                                if (widget.warehouseExport == null) {
-                                  WarehouseExport warehouseExport =
-                                      WarehouseExport(
-                                    warehouse_export_id: "",
-                                    warehouse_export_code: "",
-                                    employee_id: "",
-                                    employee_name: "",
-                                    created_at: Timestamp.now(),
-                                    note: noteTextEditingController.text.trim(),
-                                    vat: vatPercent,
-                                    discount: discountPrice,
-                                    status: 1,
-                                    active: 1,
-                                    supplier_id:
-                                        supplierIdTextEditingController.text,
-                                    supplier_name:
-                                        nameSupplierTextEditingController.text
-                                            .trim(),
-                                  );
-                                  //Tạo mới
-                                  final result = await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialogCreateWarehouseExport(
-                                          warehouseExport: warehouseExport,
-                                          listIngredientSelected:
-                                              listIngredientSelected);
-                                    },
-                                  );
-                                  if (result == 'add') {
-                                    Utils.myPopSuccess(context);
-                                  }
-                                } else {
-                                  //Cập nhật
-                                  widget.warehouseExport?.vat = vatPercent;
-                                  widget.warehouseExport?.discount =
-                                      discountPrice;
-                                  widget.warehouseExport?.supplier_id =
-                                      supplierIdTextEditingController.text;
-                                  widget.warehouseExport?.supplier_name =
-                                      nameSupplierTextEditingController.text
-                                          .trim();
-
-                                  final result = await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialogCreateWarehouseExport(
-                                          warehouseExport:
-                                              widget.warehouseExport!,
-                                          listIngredientSelected:
-                                              listIngredientSelected);
-                                    },
-                                  );
-                                  if (result == 'update') {
-                                    Utils.myPopSuccess(context);
-                                  }
-                                }
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: greenColor50,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 14),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const FaIcon(FontAwesomeIcons.check,
-                                        color: colorSuccess, size: 16),
-                                    marginRight5,
-                                    Text(
-                                        widget.warehouseExport == null
-                                            ? "TẠO PHIẾU"
-                                            : "CẬP NHẬT",
-                                        style: textStyleSuccessBold16),
-                                  ]),
-                            ),
-                          ),
-                        ),
-                        //GỢI Ý XUẤT
-                        Container(
-                          margin: EdgeInsets.all(0),
-                          child: InkWell(
-                            onTap: () async {
-                              DailySales dailySale = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialogRecommendIngredientsDailySales();
-                                },
-                              );
-                              setState(() {
-                                listIngredientSelected =
-                                    dailySale.ingredients ?? [];
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: primaryColorOpacity,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 14),
-                              child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.plus,
-                                        color: primaryColor, size: 16),
-                                    marginRight5,
-                                    Text("GỢI Ý XUẤT",
                                         style: textStylePrimaryBold16),
                                   ]),
                             ),

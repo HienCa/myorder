@@ -28,6 +28,7 @@ class _CustomDialogRecommendIngredientsState
   WarehouseReceiptController warehouseReceiptController =
       Get.put(WarehouseReceiptController());
   DateTime dateSelected = DateTime.now();
+  bool isCheckAll = true;
   @override
   void dispose() {
     super.dispose();
@@ -36,9 +37,14 @@ class _CustomDialogRecommendIngredientsState
   @override
   void initState() {
     super.initState();
+    isCheckAll = Utils.isCheckedAllDyamic(
+        warehouseReceiptController.recommendedingredients);
     dateSelected = widget.date;
-    dateSelected = DateTime(dateSelected.year, dateSelected.month, dateSelected.day, 0, 0, 0, 0);
-    warehouseReceiptController.getRecommendedIngredients(dateSelected);
+    dateSelected = DateTime(
+        dateSelected.year, dateSelected.month, dateSelected.day, 0, 0, 0, 0);
+    if (warehouseReceiptController.recommendedingredients.isEmpty) {
+      warehouseReceiptController.getRecommendedIngredients(dateSelected);
+    }
   }
 
   @override
@@ -116,12 +122,18 @@ class _CustomDialogRecommendIngredientsState
                       child: Row(children: [
                         Expanded(
                           flex: 1,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text("STT", style: textStyleLabel14),
-                            ],
+                          child: Checkbox(
+                            value: isCheckAll,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isCheckAll = value ?? false;
+                                Utils.toggleCheckAll(
+                                    warehouseReceiptController
+                                        .recommendedingredients,
+                                    value ?? false);
+                              });
+                            },
+                            activeColor: primaryColor,
                           ),
                         ),
                         Expanded(
@@ -190,9 +202,19 @@ class _CustomDialogRecommendIngredientsState
                                       //STT
                                       Expanded(
                                         flex: 1,
-                                        child: Text("${index + 1}.",
-                                            style: textStyleFoodNameBold16,
-                                            textAlign: TextAlign.left),
+                                        child: Checkbox(
+                                          value: ingredient.isSelected,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              ingredient.isSelected = value;
+                                              isCheckAll =
+                                                  Utils.isCheckedAllDyamic(
+                                                      warehouseReceiptController
+                                                          .recommendedingredients);
+                                            });
+                                          },
+                                          activeColor: primaryColor,
+                                        ),
                                       ),
                                       //MẶT HÀNG - TÌNH TRẠNG KHO
                                       Expanded(
@@ -297,6 +319,42 @@ class _CustomDialogRecommendIngredientsState
                           })),
                     ),
                     marginTop20,
+                    InkWell(
+                      onTap: () async {
+                        List<Ingredient> ingredientSelected = [];
+                        for (Ingredient ingredient in warehouseReceiptController
+                            .recommendedingredients) {
+                          //Chỉ chọn nguyên liệu được check và trong kho còn thiếu hoặc đủ dùng
+                          // if (ingredient.isSelected == true &&
+                          //     (ingredient.quantity_in_stock ?? 0) <=
+                          //         (ingredient.quantity ?? 0)) {
+                          //   ingredientSelected.add(ingredient);
+                          // }
+                          //Chọn tất tả nguyên liệu được check -> gợi ý nhập tất cả
+                          if (ingredient.isSelected == true) {
+                            ingredientSelected.add(ingredient);
+                          }
+                        }
+                        Utils.myPopResult(context, ingredientSelected);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: primaryColorOpacity,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        margin: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 14),
+                        child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.check,
+                                  color: primaryColor, size: 16),
+                              marginRight5,
+                              Text("CHỌN", style: textStylePrimaryBold16),
+                            ]),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -11,12 +11,18 @@ import 'package:myorder/models/warehouse_export_detail.dart';
 import 'package:myorder/utils.dart';
 
 class CustomDialogCreateWarehouseExport extends StatefulWidget {
+  final String note;
+  final int vat;
+  final double discount;
   final WarehouseExport warehouseExport;
-  final List<Ingredient> listIngredientSelected;
+  final List<Ingredient> ingredients;
   const CustomDialogCreateWarehouseExport({
     Key? key,
+    required this.note,
     required this.warehouseExport,
-    required this.listIngredientSelected,
+    required this.ingredients,
+    required this.vat,
+    required this.discount,
   }) : super(key: key);
 
   @override
@@ -34,29 +40,24 @@ class _CustomDialogCreateWarehouseExportState
   WarehouseExportController warehouseExportController =
       Get.put(WarehouseExportController());
   String code = "";
+  String note = "";
+  int vat = 0;
+  double discount = 0;
   List<WarehouseExportDetail> warehouseExportDetails = [];
   @override
   void initState() {
     super.initState();
     //mã phiếu
     if (widget.warehouseExport.warehouse_export_id != "") {
-      code = widget.warehouseExport.warehouse_export_id;
+      code = widget.warehouseExport.warehouse_export_code;
+      note = widget.warehouseExport.note;
+      vat = widget.warehouseExport.vat;
+      discount = widget.warehouseExport.discount;
     } else {
       code = Utils.generateInvoiceCode("PXK");
-    }
-
-    //chuyển đổi ingredient -> warehouseRecceiptDetail
-    for (Ingredient ingredient in widget.listIngredientSelected) {
-      WarehouseExportDetail warehouseRecceiptDetail = WarehouseExportDetail(
-        warehouse_export_detail_id: "",
-        ingredient_id: ingredient.ingredient_id,
-        quantity: ingredient.quantity ?? 0,
-        price: ingredient.price ?? 0,
-        unit_id: ingredient.unit_id ?? '',
-        ingredient_name: ingredient.name,
-        unit_name: ingredient.unit_name ?? "",
-      );
-      warehouseExportDetails.add(warehouseRecceiptDetail);
+      note = widget.note;
+      vat = widget.vat;
+      discount = widget.discount;
     }
   }
 
@@ -128,23 +129,20 @@ class _CustomDialogCreateWarehouseExportState
                                   "")
                                 {
                                   print("add"),
-                                  widget.warehouseExport.warehouse_export_code =
-                                      code,
                                   warehouseExportController
-                                      .createWarehouseExport(
-                                          widget.warehouseExport,
-                                          warehouseExportDetails),
+                                      .createWarehouseExport(vat, discount,
+                                          code, note, widget.ingredients),
                                   Utils.myPopResult(context, 'add')
                                 }
                               else
                                 {
                                   print("update"),
-                                  warehouseExportController
-                                      .updateWarehouseExport(
-                                          widget.warehouseExport,
-                                          warehouseExportController
-                                              .warehouseExportDetails,
-                                          widget.listIngredientSelected),
+                                  // warehouseExportController
+                                  //     .updateWarehouseExport(
+                                  //         widget.warehouseExport,
+                                  //         warehouseExportController
+                                  //             .warehouseExportDetails,
+                                  //         widget.listIngredientSelected),
                                   Utils.myPopResult(context, 'update')
                                 }
                             },

@@ -563,6 +563,27 @@ class Utils {
     return true;
   }
 
+  static bool isCheckedAllDyamic(List<dynamic> list) {
+    for (var item in list) {
+      if (item.isSelected == false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static void toggleCheckAll(List<dynamic> list, bool isCheck) {
+    for (var item in list) {
+      item.isSelected = isCheck;
+    }
+  }
+
+  static void checkAllDyamic(List<dynamic> list) {
+    for (var item in list) {
+      item.isSelected = true;
+    }
+  }
+
   static void checkAll(List<OrderDetail> foods) {
     for (var food in foods) {
       food.isSelected = true;
@@ -594,7 +615,6 @@ class Utils {
   }
 
   static bool isSelected(dynamic item) {
-    print('Name:${item.name} - ${item.isSelected}');
     if (item.isSelected == true) {
       return true;
     }

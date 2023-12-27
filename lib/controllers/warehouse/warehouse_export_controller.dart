@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/models/employee.dart';
 import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/warehouse_export.dart';
 import 'package:myorder/models/warehouse_export_detail.dart';
+import 'package:myorder/models/warehouse_receipt.dart';
+import 'package:myorder/models/warehouse_receipt_detail.dart';
 
 import 'package:myorder/utils.dart';
 
@@ -189,6 +192,7 @@ class WarehouseExportController extends GetxController {
       ),
     );
   }
+
   /*
     Nhập kho theo lịch bán hằng ngày - đảm bảo số lượng bán (nhiên viên ql kho chịu trách nhiệm)
       - Chọn lịch cần nhập (giới hạn là ngày hiện tại) -> hiển thị danh sách lịch date_apply >= now
@@ -196,48 +200,159 @@ class WarehouseExportController extends GetxController {
       - gợi ý số lượng cần nhập vào cho các lịch đã được chọn
     check SL theo lịch - thiếu thì nhập thêm (hiển thị tồn hiện tại)
     Xuất kho theo lịch bán (sl món muốn bán * sl nguyên liệu cần dùng trong công thức) xuất dư: vd 1.6kg xuất 2kg  
+
+
+    xuất theo Hạn sử dụng - xuất hạn sử dụng gần hết hạn xuất trước 
+    Nhập lại theo id phiếu nhập và chi tiết phiếu nhập nếu dư
   */
   void createWarehouseExport(
-    WarehouseExport warehouseExport,
-    List<WarehouseExportDetail> warehouseRecceiptDetails,
+    int vat,
+    double discount,
+    String code,
+    String note,
+    List<Ingredient> ingredients,
   ) async {
     try {
-      if (warehouseRecceiptDetails.isNotEmpty) {
+      if (ingredients.isNotEmpty) {
         //Thông tin nhân viên phụ trách đơn hàng
-        DocumentSnapshot employeeCollection = await firestore
-            .collection('employees')
-            .doc(authController.user.uid)
-            .get();
-        if (employeeCollection.exists) {
-          final employeeData = employeeCollection.data();
-          if (employeeData != null && employeeData is Map<String, dynamic>) {
-            String name = employeeData['name'] ?? '';
-            warehouseExport.employee_name = name;
-          }
-        }
+        Employee currentEmployee = await Utils.getCurrentEmployee();
         String id = Utils.generateUUID();
-        warehouseExport.warehouse_export_id = id;
-        warehouseExport.employee_id = authController.user.uid;
-        warehouseExport.created_at = Timestamp.now();
-        warehouseExport.status = WAREHOUSE_STATUS_FINISH;
-        warehouseExport.active = ACTIVE;
+        WarehouseExport warehouseExport = WarehouseExport(
+            warehouse_export_id: id,
+            warehouse_export_code: id.substring(8),
+            employee_id: currentEmployee.employee_id,
+            employee_name: currentEmployee.name,
+            created_at: Timestamp.now(),
+            note: note,
+            vat: vat,
+            discount: discount,
+            status: WAREHOUSE_STATUS_FINISH,
+            active: ACTIVE);
 
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('warehouseExports');
-
         await usersCollection.doc(id).set(warehouseExport.toJson());
 
-        //Detail
-        for (WarehouseExportDetail warehouseRecceiptDetail
-            in warehouseRecceiptDetails) {
-          String idDetail = Utils.generateUUID();
-          warehouseRecceiptDetail.warehouse_export_detail_id = idDetail;
+        /*
+           1.Danh sách chi tiết phiếu nhập orderby theo hạn sử dụng
 
-          await usersCollection
-              .doc(id)
-              .collection("warehouseExportDetails")
-              .doc(idDetail)
-              .set(warehouseRecceiptDetail.toJson());
+           2.Kiểm tra số lượng cần xuất - xuất trừ trên xuống không đủ lấy cái tiếp theo (tạo warehouseExportDetail mới)
+           Nhầm phân biệt các lô hàng khác nhau để nhập vào kho lại nếu dư
+
+          */
+        //1.
+        //danh sách phiếu
+        List<WarehouseReceipt> warehouseReceipts = [];
+        var warehouseReceiptsCollection = firestore
+            .collection('warehouseReceipts')
+            .where('active', isEqualTo: ACTIVE);
+        var warehouseReceiptsCollectionQuery =
+            await warehouseReceiptsCollection.get();
+        for (var warehouseReceiptsData
+            in warehouseReceiptsCollectionQuery.docs) {
+          WarehouseReceipt warehouseReceipt =
+              WarehouseReceipt.fromSnap(warehouseReceiptsData);
+
+          //danh sách chi tiết phiếu nhập
+          List<WarehouseReceiptDetail> warehouseReceiptDetails = [];
+          var warehouseReceiptDetailsCollection = firestore
+              .collection('warehouseReceipts')
+              .doc(warehouseReceipt.warehouse_receipt_id)
+              .collection('warehouseReceiptDetails')
+              .where('quantity_in_stock', isGreaterThan: 0)
+              .orderBy('expiration_date', descending: false);
+          var warehouseReceiptDetailsCollectionQuery =
+              await warehouseReceiptDetailsCollection.get();
+          for (var warehouseReceiptDetailsData
+              in warehouseReceiptDetailsCollectionQuery.docs) {
+            WarehouseReceiptDetail warehouseReceiptDetail =
+                WarehouseReceiptDetail.fromSnap(warehouseReceiptDetailsData);
+
+            warehouseReceiptDetails.add(warehouseReceiptDetail);
+          }
+          warehouseReceipt.warehouseRecceiptDetails = warehouseReceiptDetails;
+          warehouseReceipts.add(warehouseReceipt);
+        }
+
+        //2.
+        //xét trên mỗi nguyên liệu cần xuất
+        for (Ingredient ingredient in ingredients) {
+          double totalQuantity = 0;
+          //duyệt qua từng phiếu
+          for (WarehouseReceipt warehouseReceipt in warehouseReceipts) {
+            //sắp xếp lại lần nữa hạn sử dụng nếu cùng 1 phiếu có 2 nguyên liệu giống nhau khác hạn sử dụng
+            warehouseReceipt.warehouseRecceiptDetails?.sort((a, b) {
+              DateTime dateA = (a.expiration_date ?? Timestamp.now()).toDate();
+              DateTime dateB = (b.expiration_date ?? Timestamp.now()).toDate();
+              return dateA.compareTo(dateB);
+            });
+            //duyệt qua từng chi tiết phiếu
+            for (WarehouseReceiptDetail warehouseReceiptDetail
+                in warehouseReceipt.warehouseRecceiptDetails ?? []) {
+              if (ingredient.ingredient_id ==
+                  warehouseReceiptDetail.ingredient_id) {
+                double quanity_export = 0;
+                double remainingQuantity = 0;
+                totalQuantity += warehouseReceiptDetail.quantity_in_stock;
+                //Nếu lớn hơn số lượng cần xuất thì set lại số lượng bằng số lượng muốn xuất
+                if (totalQuantity > (ingredient.quantity ?? 0)) {
+                  totalQuantity = (ingredient.quantity ?? 0);
+                  //số lượng còn lại trong kho
+                  remainingQuantity =
+                      totalQuantity - (ingredient.quantity ?? 0);
+                } else {
+                  // bé hơn hoặc bằng -> xuất quantity_in_stock của chi tiết phiếu nhập này
+                  quanity_export = warehouseReceiptDetail.quantity_in_stock;
+                  remainingQuantity =
+                      0; // xuất hết số lượng có trong kho hiện tại
+                }
+                //Tạo chi tiết phiếu xuất
+                String idDetail = Utils.generateUUID();
+
+                WarehouseExportDetail warehouseExportDetail =
+                    WarehouseExportDetail(
+                  warehouse_export_detail_id: idDetail,
+                  warehouse_receipt_detail_id:
+                      warehouseReceiptDetail.warehouse_receipt_detail_id,
+                  warehouse_receipt_id: warehouseReceipt.warehouse_receipt_id,
+                  ingredient_id: ingredient.ingredient_id,
+                  ingredient_name: ingredient.name,
+                  quantity: quanity_export.ceilToDouble(), // 2.3 -> 2.0
+                  price: 0,
+                  unit_id: ingredient.unit_id ?? "",
+                  unit_name: ingredient.unit_name ?? "",
+                );
+                await usersCollection
+                    .doc(id)
+                    .collection("warehouseExportDetails")
+                    .doc(idDetail)
+                    .set(warehouseExportDetail.toJson());
+                //Cập nhật lại quantity_in_stock của chi tiết phiếu nhập
+                await firestore
+                    .collection("warehouseReceipts")
+                    .doc(warehouseReceipt.warehouse_receipt_id)
+                    .collection("warehouseReceiptDetails")
+                    .doc(idDetail)
+                    .update({
+                  "quantity_in_stock": remainingQuantity.floorToDouble(),
+                });
+                //Nếu đã lớn hoặc bằng thì ra tín hiệu dừng
+                if (totalQuantity >= (ingredient.quantity ?? 0)) {
+                  totalQuantity = (ingredient.quantity ?? 0);
+                  break;
+                }
+                //Có thể trong cùng 1 phiếu có 2 nguyên liệu giống nhau nhưng khác nhau về hạn sử dụng
+                //kiểm tra nếu đã đủ thì chuyển qua xuất nguyên liệu tiếp theo
+                if (totalQuantity == ingredient.quantity) {
+                  break;
+                }
+              }
+            }
+            //kiểm tra nếu đã đủ thì chuyển qua xuất nguyên liệu tiếp theo
+            if (totalQuantity == ingredient.quantity) {
+              break;
+            }
+          }
         }
       } else {
         Get.snackbar(
@@ -260,63 +375,117 @@ class WarehouseExportController extends GetxController {
     }
   }
 
-  updateWarehouseExport(
-    WarehouseExport warehouseExport,
-    List<WarehouseExportDetail> warehouseRecceiptDetails,
-    List<Ingredient> newWarehouseRecceiptDetails,
-  ) async {
-    try {
-      for (WarehouseExportDetail warehouseRecceiptDetail
-          in warehouseRecceiptDetails) {
-        await firestore
-            .collection("warehouseExports")
-            .doc(warehouseExport.warehouse_export_id)
-            .collection("warehouseExportDetails")
-            .doc(warehouseRecceiptDetail.warehouse_export_detail_id)
-            .delete();
-      }
-      //CẬP NHẬT
-      for (WarehouseExportDetail warehouseExportDetail
-          in warehouseRecceiptDetails) {
-        String idDetail = Utils.generateUUID();
-        warehouseExportDetail.warehouse_export_detail_id = idDetail;
+  // void createWarehouseExport(
+  //   WarehouseExport warehouseExport,
+  //   List<WarehouseExportDetail> warehouseRecceiptDetails,
+  // ) async {
+  //   try {
+  //     if (warehouseRecceiptDetails.isNotEmpty) {
+  //       //Thông tin nhân viên phụ trách đơn hàng
+  //       Employee currentEmployee = await Utils.getCurrentEmployee();
+  //       String id = Utils.generateUUID();
+  //       warehouseExport.warehouse_export_id = id;
+  //       warehouseExport.employee_id = currentEmployee.employee_id;
+  //       warehouseExport.employee_name = currentEmployee.name;
+  //       warehouseExport.created_at = Timestamp.now();
+  //       warehouseExport.status = WAREHOUSE_STATUS_FINISH;
+  //       warehouseExport.active = ACTIVE;
 
-        await firestore
-            .collection("warehouseExports")
-            .doc(warehouseExport.warehouse_export_id)
-            .collection("warehouseExportDetails")
-            .doc(idDetail)
-            .set(warehouseExportDetail.toJson());
-      }
-      //MỚI
-      for (Ingredient warehouseExportDetail in newWarehouseRecceiptDetails) {
-        String idDetail = Utils.generateUUID();
-        WarehouseExportDetail detail = WarehouseExportDetail(
-            warehouse_export_detail_id: idDetail,
-            ingredient_id: warehouseExportDetail.ingredient_id,
-            ingredient_name: warehouseExportDetail.name,
-            quantity: warehouseExportDetail.quantity ?? 0,
-            price: warehouseExportDetail.price ?? 0,
-            unit_id: warehouseExportDetail.unit_id ?? "",
-            unit_name: warehouseExportDetail.unit_name ?? "");
-        await firestore
-            .collection("warehouseExports")
-            .doc(warehouseExport.warehouse_export_id)
-            .collection("warehouseExportDetails")
-            .doc(idDetail)
-            .set(detail.toJson());
-      }
+  //       CollectionReference usersCollection =
+  //           FirebaseFirestore.instance.collection('warehouseExports');
 
-      update();
-    } catch (e) {
-      Get.snackbar(
-        'Cập nhật thất bại!',
-        e.toString(),
-        backgroundColor: backgroundFailureColor,
-        colorText: Colors.white,
-      );
-    }
-  }
+  //       await usersCollection.doc(id).set(warehouseExport.toJson());
+
+  //       //Detail
+  //       for (WarehouseExportDetail warehouseRecceiptDetail
+  //           in warehouseRecceiptDetails) {
+  //         String idDetail = Utils.generateUUID();
+  //         warehouseRecceiptDetail.warehouse_export_detail_id = idDetail;
+
+  //         await usersCollection
+  //             .doc(id)
+  //             .collection("warehouseExportDetails")
+  //             .doc(idDetail)
+  //             .set(warehouseRecceiptDetail.toJson());
+  //       }
+  //     } else {
+  //       Get.snackbar(
+  //         'Error!',
+  //         'Tạo phiếu thất bại!',
+  //         backgroundColor: backgroundFailureColor,
+  //         colorText: Colors.white,
+  //       );
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     Get.snackbar(
+  //       'Error!',
+  //       e.message ?? 'Có lỗi xãy ra.',
+  //     );
+  //   } catch (e) {
+  //     Get.snackbar(
+  //       'Error!',
+  //       e.toString(),
+  //     );
+  //   }
+  // }
+
+  // updateWarehouseExport(
+  //   WarehouseExport warehouseExport,
+  //   List<WarehouseExportDetail> warehouseRecceiptDetails,
+  //   List<Ingredient> newWarehouseRecceiptDetails,
+  // ) async {
+  //   try {
+  //     for (WarehouseExportDetail warehouseRecceiptDetail
+  //         in warehouseRecceiptDetails) {
+  //       await firestore
+  //           .collection("warehouseExports")
+  //           .doc(warehouseExport.warehouse_export_id)
+  //           .collection("warehouseExportDetails")
+  //           .doc(warehouseRecceiptDetail.warehouse_export_detail_id)
+  //           .delete();
+  //     }
+  //     //CẬP NHẬT
+  //     for (WarehouseExportDetail warehouseExportDetail
+  //         in warehouseRecceiptDetails) {
+  //       String idDetail = Utils.generateUUID();
+  //       warehouseExportDetail.warehouse_export_detail_id = idDetail;
+
+  //       await firestore
+  //           .collection("warehouseExports")
+  //           .doc(warehouseExport.warehouse_export_id)
+  //           .collection("warehouseExportDetails")
+  //           .doc(idDetail)
+  //           .set(warehouseExportDetail.toJson());
+  //     }
+  //     //MỚI
+  //     for (Ingredient warehouseExportDetail in newWarehouseRecceiptDetails) {
+  //       String idDetail = Utils.generateUUID();
+  //       WarehouseExportDetail detail = WarehouseExportDetail(
+  //           warehouse_export_detail_id: idDetail,
+  //           ingredient_id: warehouseExportDetail.ingredient_id,
+  //           ingredient_name: warehouseExportDetail.name,
+  //           quantity: warehouseExportDetail.quantity ?? 0,
+  //           price: warehouseExportDetail.price ?? 0,
+  //           unit_id: warehouseExportDetail.unit_id ?? "",
+  //           unit_name: warehouseExportDetail.unit_name ?? "");
+  //       await firestore
+  //           .collection("warehouseExports")
+  //           .doc(warehouseExport.warehouse_export_id)
+  //           .collection("warehouseExportDetails")
+  //           .doc(idDetail)
+  //           .set(detail.toJson());
+  //     }
+
+  //     update();
+  //   } catch (e) {
+  //     Get.snackbar(
+  //       'Cập nhật thất bại!',
+  //       e.toString(),
+  //       backgroundColor: backgroundFailureColor,
+  //       colorText: Colors.white,
+  //     );
+  //   }
+  // }
 
   // Block account
   updateToggleActive(
