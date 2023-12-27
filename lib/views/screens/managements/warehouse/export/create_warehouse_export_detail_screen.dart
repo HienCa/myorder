@@ -430,21 +430,26 @@ class _WarehouseExportDetailScreenState
                                         flex: 2,
                                         child: InkWell(
                                           onTap: () async {
-                                            final result = await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return MyDialogCalculator2(
-                                                  value:
-                                                      ingredient.quantity ?? 0,
-                                                );
-                                              },
-                                            );
-                                            if (result != null) {
-                                              setState(() {
-                                                print(result);
-                                                ingredient.quantity =
-                                                    double.parse(result);
-                                              });
+                                            if (widget.warehouseExport ==
+                                                null) {
+                                              final result = await showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return MyDialogCalculator2(
+                                                    value:
+                                                        ingredient.quantity ??
+                                                            0,
+                                                  );
+                                                },
+                                              );
+                                              if (result != null) {
+                                                setState(() {
+                                                  print(result);
+                                                  ingredient.quantity =
+                                                      double.parse(result);
+                                                });
+                                              }
                                             }
                                           },
                                           child: Column(
@@ -484,26 +489,32 @@ class _WarehouseExportDetailScreenState
                                           children: [
                                             InkWell(
                                               onTap: () async {
-                                                final result = await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return MyCalculator(
-                                                      priceDefault:
-                                                          ingredient.price ?? 0,
-                                                      min: 0,
-                                                      max: MAX_PRICE,
-                                                    );
-                                                  },
-                                                );
-                                                if (result != null) {
-                                                  setState(() {
-                                                    print(result);
-                                                    ingredient.price = Utils
-                                                        .stringConvertToDouble(Utils
-                                                            .formatCurrencytoDouble(
-                                                                result));
-                                                  });
+                                                if (widget.warehouseExport ==
+                                                    null) {
+                                                  final result =
+                                                      await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return MyCalculator(
+                                                        priceDefault:
+                                                            ingredient.price ??
+                                                                0,
+                                                        min: 0,
+                                                        max: MAX_PRICE,
+                                                      );
+                                                    },
+                                                  );
+                                                  if (result != null) {
+                                                    setState(() {
+                                                      print(result);
+                                                      ingredient.price = Utils
+                                                          .stringConvertToDouble(
+                                                              Utils
+                                                                  .formatCurrencytoDouble(
+                                                                      result));
+                                                    });
+                                                  }
                                                 }
                                               },
                                               child: Text(
@@ -541,40 +552,43 @@ class _WarehouseExportDetailScreenState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         //GỢI Ý XUẤT
-                        Container(
-                          margin: EdgeInsets.all(0),
-                          child: InkWell(
-                            onTap: () async {
-                              DailySales dailySale = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialogRecommendIngredientsDailySales();
-                                },
-                              );
-                              setState(() {
-                                listIngredientSelected =
-                                    dailySale.ingredients ?? [];
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: primaryColorOpacity,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 14),
-                              child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.plus,
-                                        color: primaryColor, size: 16),
-                                    marginRight5,
-                                    Text("GỢI Ý XUẤT",
-                                        style: textStylePrimaryBold16),
-                                  ]),
-                            ),
-                          ),
-                        ),
+                        widget.warehouseExport == null
+                            ? Container(
+                                margin: EdgeInsets.all(0),
+                                child: InkWell(
+                                  onTap: () async {
+                                    DailySales dailySale = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialogRecommendIngredientsDailySales();
+                                      },
+                                    );
+                                    setState(() {
+                                      listIngredientSelected =
+                                          dailySale.ingredients ?? [];
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: primaryColorOpacity,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 14),
+                                    child: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons.plus,
+                                              color: primaryColor, size: 16),
+                                          marginRight5,
+                                          Text("GỢI Ý XUẤT",
+                                              style: textStylePrimaryBold16),
+                                        ]),
+                                  ),
+                                ),
+                              )
+                            : emptyBox,
 
                         Container(
                           margin: EdgeInsets.symmetric(horizontal: 8),
@@ -631,9 +645,10 @@ class _WarehouseExportDetailScreenState
                                     context: context,
                                     builder: (BuildContext context) {
                                       return CustomDialogCreateWarehouseExport(
-                                        warehouseExport:
-                                            widget.warehouseExport!,//cập nhật số lượng nguyên liệu cũ
-                                        ingredients: listIngredientSelected,// nguyên liệu mới
+                                        warehouseExport: widget
+                                            .warehouseExport!, //cập nhật số lượng nguyên liệu cũ
+                                        ingredients:
+                                            listIngredientSelected, // nguyên liệu mới
                                         note: noteTextEditingController.text,
                                         vat: vatPercent,
                                         discount: discountPrice,
@@ -668,45 +683,50 @@ class _WarehouseExportDetailScreenState
                             ),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.all(0),
-                          child: InkWell(
-                            onTap: () async {
-                              List<Ingredient>? result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          AddIngredientToWarehouseExportScreen(
-                                            isUpdate:
-                                                widget.warehouseExport != null
-                                                    ? true
-                                                    : false,
-                                          )));
-                              if ((result ?? []).isNotEmpty) {
-                                setState(() {
-                                  listIngredientSelected = result ?? [];
-                                });
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: primaryColorOpacity,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 14),
-                              child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.plus,
-                                        color: primaryColor, size: 16),
-                                    marginRight5,
-                                    Text("MẶT HÀNG",
-                                        style: textStylePrimaryBold16),
-                                  ]),
-                            ),
-                          ),
-                        ),
+                        widget.warehouseExport == null
+                            ? Container(
+                                margin: EdgeInsets.all(0),
+                                child: InkWell(
+                                  onTap: () async {
+                                    List<Ingredient>? result =
+                                        await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddIngredientToWarehouseExportScreen(
+                                                      isUpdate:
+                                                          widget.warehouseExport !=
+                                                                  null
+                                                              ? true
+                                                              : false,
+                                                    )));
+                                    if ((result ?? []).isNotEmpty) {
+                                      setState(() {
+                                        listIngredientSelected = result ?? [];
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: primaryColorOpacity,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24, vertical: 14),
+                                    child: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons.plus,
+                                              color: primaryColor, size: 16),
+                                          marginRight5,
+                                          Text("MẶT HÀNG",
+                                              style: textStylePrimaryBold16),
+                                        ]),
+                                  ),
+                                ),
+                              )
+                            : emptyBox,
                       ]),
                 ),
               ),

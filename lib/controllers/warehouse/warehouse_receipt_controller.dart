@@ -251,7 +251,7 @@ class WarehouseReceiptController extends GetxController {
       ),
     );
   }
-
+  // gợi ý nhập từ phiếu đã xuất
   void createWarehouseReceipt(
     WarehouseReceipt warehouseReceipt,
     List<WarehouseReceiptDetail> warehouseRecceiptDetails,
