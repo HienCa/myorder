@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/firebaseAPI/firebase_api.dart';
 import 'package:myorder/models/employee.dart' as model;
 import 'package:myorder/views/screens/auth/login_screen.dart';
 import 'package:myorder/views/screens/home_screen.dart';
@@ -91,6 +92,7 @@ class AuthController extends GetxController {
           email: email,
           password: password,
           address: address,
+          device_token: await FirebaseApi().getDeviceToken(),
           role: role,
           active: 1,
         );

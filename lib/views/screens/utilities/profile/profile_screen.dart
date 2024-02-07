@@ -65,6 +65,7 @@ class _EmployeeDetailPageState extends State<ProfilePage> {
         email: '',
         password: '',
         address: '',
+        device_token: '',
         role: 1,
         active: 1);
   }

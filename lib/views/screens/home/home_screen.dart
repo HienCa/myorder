@@ -13,6 +13,7 @@ import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/auth/phone.dart';
 import 'package:myorder/views/screens/home/chart/bar_chart_sample7.dart';
 import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
+import 'package:myorder/views/screens/home/chart/line_chart1.dart';
 import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
 // import 'package:pie_chart/pie_chart.dart' as PieChart;
 
@@ -786,6 +787,79 @@ class _HomePageState extends State<HomePage> {
                 //     ],
                 //   ),
                 // ),
+
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  color: backgroundColor,
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.bookmark,
+                            color: iconColor,
+                          ),
+                          title: Text("NHẬP XUẤT KHO",
+                              style: textStyleTitleGrayBold20),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: kDefaultPadding / 2),
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: options.length,
+                          itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(
+                                left: kDefaultPadding,
+                                right: index == options.length - 1
+                                    ? kDefaultPadding
+                                    : 0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
+                              decoration: BoxDecoration(
+                                  color: index == selectedIndexBarChart
+                                      ? primaryColor
+                                      : textWhiteColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: index == selectedIndexBarChart
+                                      ? Border.all(
+                                          width: 5, color: primaryColor)
+                                      : Border.all(
+                                          width: 1, color: primaryColor)),
+                              child: Text(
+                                options[index],
+                                style: index == selectedIndexBarChart
+                                    ? const TextStyle(
+                                        color: textWhiteColor,
+                                        fontWeight: FontWeight.bold)
+                                    : const TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      marginTop20,
+                      LineChartSample1(),
+                      
+                      marginTop30,
+                      BarChartSample7(
+                        data: reportController.reportBarChart,
+                        isShowImage: false,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             );
           }))),

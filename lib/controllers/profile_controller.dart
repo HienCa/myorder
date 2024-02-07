@@ -52,26 +52,27 @@ class ProfileController extends GetxController {
           String phone = userData['phone'] ?? '';
           String email = userData['email'] ?? '';
           String password = userData['password'] ?? '';
-       
+
           String address = userData['address'] ?? '';
+          String device_token = userData['device_token'] ?? '';
           int role = userData['role'] ?? '';
           int active = userData['active'] ?? 1;
 
           return model.Employee(
-          employee_id: "",
-          name: name,
-          avatar: avatar,
-          cccd: cccd,
-          gender: gender,
-          birthday: birthday,
-          phone: phone,
-          email: email,
-          password: password,
-         
-          address: address,
-          role: role,
-          active: active,
-        );
+            employee_id: "",
+            name: name,
+            avatar: avatar,
+            cccd: cccd,
+            gender: gender,
+            birthday: birthday,
+            phone: phone,
+            email: email,
+            password: password,
+            address: address,
+            device_token: device_token,
+            role: role,
+            active: active,
+          );
         }
       }
     } catch (e) {

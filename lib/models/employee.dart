@@ -14,6 +14,7 @@ class Employee {
   String password;
 
   String address;
+  String device_token;
   int role;
   int active;
 
@@ -28,6 +29,7 @@ class Employee {
     required this.email,
     required this.password,
     required this.address,
+    required this.device_token,
     required this.role,
     required this.active,
   });
@@ -43,6 +45,7 @@ class Employee {
         "email": email,
         "password": password,
         "address": address,
+        "device_token": device_token,
         "role": role,
         "active": active,
       };
@@ -50,18 +53,19 @@ class Employee {
   static Employee fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Employee(
-      employee_id: snapshot['employee_id'],
-      name: snapshot['name'],
-      avatar: snapshot['avatar'],
-      cccd: snapshot['cccd'],
-      gender: snapshot['gender'],
-      birthday: snapshot['birthday'],
-      phone: snapshot['phone'],
-      email: snapshot['email'],
-      password: snapshot['password'],
-      address: snapshot['address'],
-      role: snapshot['role'],
-      active: snapshot['active'],
+      employee_id: snapshot['employee_id'] ?? "",
+      name: snapshot['name'] ?? "",
+      avatar: snapshot['avatar'] ?? "",
+      cccd: snapshot['cccd'] ?? "",
+      gender: snapshot['gender'] ?? "",
+      birthday: snapshot['birthday'] ?? "",
+      phone: snapshot['phone'] ?? "",
+      email: snapshot['email'] ?? "",
+      password: snapshot['password'] ?? "",
+      address: snapshot['address'] ?? "",
+      device_token: snapshot['device_token'] ?? "",
+      role: snapshot['role'] ?? "",
+      active: snapshot['active'] ?? "",
     );
   }
 }

@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     setDailySale(); //CACHE - THIẾT LẬP SỐ LƯỢNG BÁN TRONG NGÀY
     setCurrentEmployee(); //CACHE - THÔNG TIN NHÂN VIÊN
+    employeeController.updateTokenDevice();
   }
 
   int pageIdx = 0;

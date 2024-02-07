@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/firebaseAPI/firebase_api.dart';
 
 import 'package:myorder/models/employee.dart' as model;
 import 'package:myorder/models/employee.dart';
@@ -59,6 +60,7 @@ class EmployeeController extends GetxController {
           String password = userData['password'] ?? '';
 
           String address = userData['address'] ?? '';
+          String device_token = userData['device_token'] ?? '';
           int role = userData['role'] ?? 1;
           int active = userData['active'] ?? 1;
           return model.Employee(
@@ -74,6 +76,7 @@ class EmployeeController extends GetxController {
             address: address,
             role: role,
             active: active,
+            device_token: device_token,
           );
         }
       }
@@ -89,6 +92,7 @@ class EmployeeController extends GetxController {
           email: '',
           password: '',
           address: '',
+          device_token: '',
           role: ROLE_STAFF,
           active: 1);
     }
@@ -172,18 +176,12 @@ class EmployeeController extends GetxController {
           address: address.trim(),
           role: role,
           active: 1,
+          device_token: await FirebaseApi().getDeviceToken(),
         );
         CollectionReference usersCollection =
             FirebaseFirestore.instance.collection('employees');
 
         await usersCollection.doc(cred.user!.uid).set(employee.toJson());
-
-        // Get.snackbar(
-        //   'THÀNH CÔNG!',
-        //   'Thêm nhân viên mới thành công!',
-        //   backgroundColor: backgroundSuccessColor,
-        //   colorText: Colors.white,
-        // );
       } else {
         Get.snackbar(
           'Error!',
@@ -219,14 +217,10 @@ class EmployeeController extends GetxController {
       String address,
       int role,
       Employee employee) async {
-    // var doc = await firestore.collection('employees').doc(employee_id).get();
     String downloadUrl = "";
     try {
       if (image != null) {
         print("Image Selected");
-
-        // Xóa ảnh cũ nếu có
-        // await _deleteOldProfilePhoto(doc);// nếu xóa thì dùng chung ảnh có thể mất hết
 
         // Tải ảnh mới lên Firebase Storage và nhận URL
         downloadUrl = await _uploadToStorage(image);
@@ -286,12 +280,7 @@ class EmployeeController extends GetxController {
       } catch (e) {
         print('Error updating email: $e');
       }
-      // Get.snackbar(
-      //   'THÀNH CÔNG!',
-      //   'Cập nhật thông tin thành công!',
-      //   backgroundColor: backgroundSuccessColor,
-      //   colorText: Colors.white,
-      // );
+
       update();
     } catch (e) {
       Get.snackbar(
@@ -303,7 +292,21 @@ class EmployeeController extends GetxController {
     }
   }
 
-  // Block account
+  updateTokenDevice() async {
+    try {
+      await firestore
+          .collection('employees')
+          .doc(authController.user.uid)
+          .update({
+        "device_token": await FirebaseApi().getDeviceToken(),
+      });
+
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   updateToggleActive(
     String employee_id,
     int active,
@@ -327,9 +330,7 @@ class EmployeeController extends GetxController {
         backgroundColor: backgroundFailureColor,
         colorText: Colors.white,
       );
-      print("Fail...");
     }
-    print("bb...");
   }
 
   _deleteOldProfilePhoto(DocumentSnapshot doc) async {
@@ -338,17 +339,13 @@ class EmployeeController extends GetxController {
       String oldDownloadUrl = data['avatar'];
       if (oldDownloadUrl.isNotEmpty) {
         try {
-          // Tạo tham chiếu đến file trong Firebase Storage
           Reference storageRef =
               FirebaseStorage.instance.refFromURL(oldDownloadUrl);
 
-          // Kiểm tra URL tải xuống để kiểm tra sự tồn tại của tệp
           await storageRef.getDownloadURL();
 
-          // Nếu không xảy ra lỗi, tệp tồn tại và có thể xóa
           await storageRef.delete();
         } catch (e) {
-          // Xử lý lỗi nếu tệp không tồn tại hoặc có lỗi khác
           print("Error deleting file: $e");
         }
       }

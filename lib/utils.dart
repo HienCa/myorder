@@ -1239,7 +1239,8 @@ class Utils {
                 await myCacheManager.getFromCache(CACHE_EMPLOYEE_ROLE_KEY) ??
                     "1") ??
             1,
-        active: ACTIVE);
+        active: ACTIVE,
+        device_token: "");
     return employee;
   }
 }
