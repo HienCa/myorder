@@ -216,10 +216,10 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               )),
                               Center(child: Obx(() {
                                 return Text(
-                                    Utils.formatCurrency(Utils.getTotalAmount(
-                                        orderController.order,
-                                        orderController
-                                            .orderDetail.order_details)),
+                                    Utils.formatCurrency(
+                                        Utils.getProvisionalInvoice(
+                                            orderController
+                                                .orderDetail.order_details)),
                                     style: textStylePriceBold20);
                               }))
                             ],

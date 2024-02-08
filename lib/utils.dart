@@ -895,7 +895,7 @@ class Utils {
 
   //Tổng tạm tính
   static double getProvisionalInvoice(
-      orderModel.Order order, List<OrderDetail> orderdetails) {
+      List<OrderDetail> orderdetails) {
     double total = 0;
     for (OrderDetail orderdetail in orderdetails) {
       if (orderdetail.food_status != FOOD_STATUS_CANCEL) {

@@ -138,7 +138,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     return Center(
                         child: Text(
                             Utils.formatCurrency(Utils.getProvisionalInvoice(
-                                orderController.order,
+                          
                                 orderController.orderDetail.order_details)),
                             style: textStylePriceBold20));
                   })
