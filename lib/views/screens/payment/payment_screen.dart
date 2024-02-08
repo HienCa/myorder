@@ -137,8 +137,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   Obx(() {
                     return Center(
                         child: Text(
-                            Utils.formatCurrency(
-                                orderController.order.total_amount),
+                            Utils.formatCurrency(Utils.getProvisionalInvoice(
+                                orderController.order,
+                                orderController.orderDetail.order_details)),
                             style: textStylePriceBold20));
                   })
                 ],
@@ -727,8 +728,10 @@ class _PaymentPageState extends State<PaymentPage> {
                         trailing: Obx(() {
                           return Text(
                               Utils.formatCurrency(
-                                  orderController.order.total_amount -
-                                      orderController.order.deposit_amount),
+                                  Utils.getTotalAmount(
+                                        orderController.order,
+                                        orderController
+                                            .orderDetail.order_details)),
                               style: textStylePriceBold20);
                         }))),
                 const SizedBox(height: 10),

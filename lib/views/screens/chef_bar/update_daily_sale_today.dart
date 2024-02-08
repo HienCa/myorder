@@ -9,8 +9,8 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/foods/foods_controller.dart';
 import 'package:myorder/models/food_order.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/dialog_confirm_sold_out.dart';
-import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/dialog_confirm_update_daily_sale_today_detail.dart';
+import 'package:myorder/views/screens/chef_bar/dialogs.dart/dialog_confirm_sold_out.dart';
+import 'package:myorder/views/screens/chef_bar/dialogs.dart/dialog_confirm_update_daily_sale_today_detail.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 

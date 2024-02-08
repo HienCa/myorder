@@ -18,6 +18,7 @@ import 'package:myorder/models/ingredient.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 import 'package:uuid/uuid.dart';
+import 'package:myorder/models/order.dart' as orderModel;
 
 enum TypeToast {
   SUCCESS,
@@ -889,6 +890,35 @@ class Utils {
         total += (item.price * (item.quantity ?? 1));
       }
     }
+    return total;
+  }
+
+  //Tổng tạm tính
+  static double getProvisionalInvoice(
+      orderModel.Order order, List<OrderDetail> orderdetails) {
+    double total = 0;
+    for (OrderDetail orderdetail in orderdetails) {
+      if (orderdetail.food_status != FOOD_STATUS_CANCEL) {
+        total += (orderdetail.price * orderdetail.quantity);
+      }
+    }
+    return total;
+  }
+  //Tổng tiền cần thanh toán
+  static double getTotalAmount(
+      orderModel.Order order, List<OrderDetail> orderdetails) {
+    double total = 0;
+    for (OrderDetail orderdetail in orderdetails) {
+      if (orderdetail.food_status != FOOD_STATUS_CANCEL) {
+        total += (orderdetail.price * orderdetail.quantity);
+      }
+    }
+
+    total = total +
+        order.total_vat_amount -
+        order.total_discount_amount -
+        order.deposit_amount;
+
     return total;
   }
 

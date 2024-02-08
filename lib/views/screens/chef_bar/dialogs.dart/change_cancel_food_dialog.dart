@@ -9,11 +9,12 @@ import 'package:myorder/models/order_detail.dart';
 
 class ChangeCancelFoodConfirmDialog extends StatefulWidget {
   final String chefBarId;
+  final String tableName;
   final List<OrderDetail> orderDetailList;
   const ChangeCancelFoodConfirmDialog({
     Key? key,
     required this.chefBarId,
-    required this.orderDetailList,
+    required this.orderDetailList, required this.tableName,
   }) : super(key: key);
 
   @override
@@ -119,7 +120,7 @@ class _ChangeCancelFoodConfirmDialogState
                           InkWell(
                             onTap: () => {
                               chefBarOtherController.updateFoodStatusCancel(
-                                  widget.chefBarId, widget.orderDetailList),
+                                  widget.chefBarId,widget.tableName, widget.orderDetailList),
                               Navigator.pop(context, 'success')
                             },
                             child: Container(

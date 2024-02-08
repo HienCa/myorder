@@ -57,17 +57,11 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
 
   void _refreshOrderDetailArray() {
     getAllOrderDetails(widget.order.order_id);
-    print(orderDetailOriginArray.length);
     print("========================Refeshing(========================");
     for (int i = 0; i < orderDetailOriginArray.length; i++) {
       print(orderDetailOriginArray[i].food!.name);
     }
     print("========================Refeshed(========================");
-  }
-
-  double getTotalAmount() {  
-    
-    return 0;
   }
 
   int selectedIndex = 0;
@@ -222,8 +216,10 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                               )),
                               Center(child: Obx(() {
                                 return Text(
-                                    Utils.formatCurrency(
-                                        orderController.order.total_amount),
+                                    Utils.formatCurrency(Utils.getTotalAmount(
+                                        orderController.order,
+                                        orderController
+                                            .orderDetail.order_details)),
                                     style: textStylePriceBold20);
                               }))
                             ],
@@ -791,11 +787,13 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                                           MainAxisAlignment
                                                                               .center,
                                                                       children: [
-                                                                        const Icon(
-                                                                            Icons
-                                                                                .card_giftcard,
-                                                                            color:
-                                                                                colorWarning),
+                                                                        Tooltip(
+                                                                          message:
+                                                                              'Món tặng',
+                                                                          child: const Icon(
+                                                                              Icons.card_giftcard,
+                                                                              color: colorWarning),
+                                                                        ),
                                                                         SizedBox(
                                                                           width:
                                                                               100,
@@ -803,7 +801,12 @@ class _OrderdetailPageState extends State<OrderdetailPage> {
                                                                               Row(
                                                                             children: [
                                                                               const Text("Số lượng: ", style: textStylePriceBlackRegular16),
-                                                                              Text("${orderController.orderDetail.order_details[index].quantity}", style: textStyleCancel),
+                                                                              Text("${orderController.orderDetail.order_details[index].quantity}",
+                                                                                  style: orderController.orderDetail.order_details[index].food_status == FOOD_STATUS_FINISH
+                                                                                      ? textStyleSeccess
+                                                                                      : (orderController.orderDetail.order_details[index].food_status == FOOD_STATUS_CANCEL || orderController.orderDetail.order_details[index].food_status == FOOD_STATUS_IN_CHEF)
+                                                                                          ? textStyleCancel
+                                                                                          : textStyleCooking),
                                                                             ],
                                                                           ),
                                                                         ),

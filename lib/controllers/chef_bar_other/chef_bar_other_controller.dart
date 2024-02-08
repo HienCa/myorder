@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/order_history/order_history_controller.dart';
+import 'package:myorder/firebaseAPI/firebase_api.dart';
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/models/food.dart';
 import 'package:myorder/models/order.dart' as model;
@@ -32,17 +33,7 @@ class ChefBarOtherController extends GetxController {
             List<ChefBar> retValue = [];
             for (var element in query.docs) {
               ChefBar chefBar = ChefBar.fromSnap(element);
-              // DocumentSnapshot employee = await firestore
-              //     .collection('areas')
-              //     .doc(chefBar.area_id)
-              //     .get();
-              // if (employee.exists) {
-              //   final data = employee.data();
-              //   if (data != null && data is Map<String, dynamic>) {
-              //     String name = data['area_name'] ?? '';
-              //     chefBar.area_name = name;
-              //   }
-              // }
+
               retValue.add(chefBar);
             }
             print("CÓ ${retValue.length} TRONG BẾP");
@@ -62,15 +53,7 @@ class ChefBarOtherController extends GetxController {
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
             ChefBar chefBar = ChefBar.fromSnap(elem);
-            // DocumentSnapshot employee =
-            //     await firestore.collection('areas').doc(chefBar.area_id).get();
-            // if (employee.exists) {
-            //   final data = employee.data();
-            //   if (data != null && data is Map<String, dynamic>) {
-            //     String name = data['area_name'] ?? '';
-            //     chefBar.area_name = name;
-            //   }
-            // }
+
             retVal.add(chefBar);
           }
         }
@@ -99,17 +82,7 @@ class ChefBarOtherController extends GetxController {
             List<ChefBar> retValue = [];
             for (var element in query.docs) {
               ChefBar chefBar = ChefBar.fromSnap(element);
-              // DocumentSnapshot employee = await firestore
-              //     .collection('areas')
-              //     .doc(chefBar.area_id)
-              //     .get();
-              // if (employee.exists) {
-              //   final data = employee.data();
-              //   if (data != null && data is Map<String, dynamic>) {
-              //     String name = data['area_name'] ?? '';
-              //     chefBar.area_name = name;
-              //   }
-              // }
+
               retValue.add(chefBar);
             }
             return retValue;
@@ -128,15 +101,7 @@ class ChefBarOtherController extends GetxController {
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
             ChefBar chefBar = ChefBar.fromSnap(elem);
-            // DocumentSnapshot employee =
-            //     await firestore.collection('areas').doc(chefBar.area_id).get();
-            // if (employee.exists) {
-            //   final data = employee.data();
-            //   if (data != null && data is Map<String, dynamic>) {
-            //     String name = data['area_name'] ?? '';
-            //     chefBar.area_name = name;
-            //   }
-            // }
+
             retVal.add(chefBar);
           }
         }
@@ -163,17 +128,7 @@ class ChefBarOtherController extends GetxController {
             List<ChefBar> retValue = [];
             for (var element in query.docs) {
               ChefBar chefBar = ChefBar.fromSnap(element);
-              // DocumentSnapshot employee = await firestore
-              //     .collection('areas')
-              //     .doc(chefBar.area_id)
-              //     .get();
-              // if (employee.exists) {
-              //   final data = employee.data();
-              //   if (data != null && data is Map<String, dynamic>) {
-              //     String name = data['area_name'] ?? '';
-              //     chefBar.area_name = name;
-              //   }
-              // }
+
               retValue.add(chefBar);
             }
             return retValue;
@@ -192,15 +147,7 @@ class ChefBarOtherController extends GetxController {
           String search = keySearch.toLowerCase().trim();
           if (name.contains(search)) {
             ChefBar chefBar = ChefBar.fromSnap(elem);
-            // DocumentSnapshot employee =
-            //     await firestore.collection('areas').doc(chefBar.area_id).get();
-            // if (employee.exists) {
-            //   final data = employee.data();
-            //   if (data != null && data is Map<String, dynamic>) {
-            //     String name = data['area_name'] ?? '';
-            //     chefBar.area_name = name;
-            //   }
-            // }
+
             retVal.add(chefBar);
           }
         }
@@ -574,7 +521,7 @@ class ChefBarOtherController extends GetxController {
   }
 
   //CẬP NHẬT TẤT CẢ TRẠNG THÁI MÓN
-  updateFoodStatus(String order_id, List<OrderDetail> orderDetailList) async {
+  updateFoodStatus(String order_id, String table_name, List<OrderDetail> orderDetailList) async {
     try {
       if (order_id != '') {
         print(
@@ -585,6 +532,8 @@ class ChefBarOtherController extends GetxController {
             "=================$FOOD_STATUS_COOKING_STRING -> $FOOD_STATUS_FINISH_STRING=======================");
         //Cập nhật trạng thái món ăn theo foodStatus
         String description = 'Cập nhật trạng thái món: "\\\n"';
+        String body_description = 'Cập nhật trạng thái món:\n';
+
         for (OrderDetail item in orderDetailList) {
           if (item.isSelected) {
             if (item.food_status == FOOD_STATUS_IN_CHEF) {
@@ -599,6 +548,9 @@ class ChefBarOtherController extends GetxController {
               });
               description +=
                   '+ ${item.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING]\\\n';
+              body_description +=
+                  '+ ${item.food!.name}: [$FOOD_STATUS_IN_CHEF_STRING] -> [$FOOD_STATUS_COOKING_STRING] \n';
+
               print(
                   "${item.food!.name}: ${item.food_status}:FOOD_STATUS_IN_CHEF -> $FOOD_STATUS_COOKING: FOOD_STATUS_COOKING");
 
@@ -697,6 +649,7 @@ class ChefBarOtherController extends GetxController {
           }
           update();
         }
+        String device_token = '';
         //Tạo lịch sử đơn hàng
         String idOrderHistory = Utils.generateUUID();
         //Thông tin nhân viên phụ trách đơn hàng
@@ -715,11 +668,18 @@ class ChefBarOtherController extends GetxController {
           final employeeData = employeeCollection.data();
           if (employeeData != null && employeeData is Map<String, dynamic>) {
             String name = employeeData['name'] ?? '';
+            device_token = employeeData['device_token'] ?? '';
             orderHistory.employee_name = name;
           }
         }
         orderHistory.description = description;
         orderHistoryController.createOrderHistory(orderHistory);
+
+        //Push notification to employee's device
+        if (device_token.isNotEmpty) {
+          FirebaseApi().sendPushMessage(
+              device_token, body_description, 'Thông báo từ Bếp/Bar tới bàn ${table_name}!');
+        }
       }
     } catch (e) {
       Utils.showToast('Cập nhật trạng thái món thất bại!', TypeToast.ERROR);
@@ -728,7 +688,7 @@ class ChefBarOtherController extends GetxController {
 
   //CẬP NHẬT HỦY TRẠNG THÁI MÓN
   updateFoodStatusCancel(
-      String order_id, List<OrderDetail> orderDetailList) async {
+      String order_id, String table_name, List<OrderDetail> orderDetailList) async {
     try {
       if (order_id != '') {
         print(
@@ -737,10 +697,12 @@ class ChefBarOtherController extends GetxController {
             "=================$FOOD_STATUS_IN_CHEF_STRING -> $FOOD_STATUS_CANCEL_STRING=======================");
         //Cập nhật trạng thái món ăn theo foodStatus
         String description = 'Quán yêu cầu hủy món:\\\n';
+        String body_description = 'Bếp/Bar yêu cầu hủy món:\n';
         for (OrderDetail item in orderDetailList) {
           if (item.isSelected) {
             if (item.food_status == FOOD_STATUS_IN_CHEF) {
-              description += '+ ${item.food!.name}\\n';
+              description += '+ ${item.food!.name} x${item.quantity} \\n';
+              body_description += '+ ${item.food!.name} x${item.quantity}\n';
               //CHỜ CHẾ BIẾN -> ĐANG CHẾ BIẾN
               await firestore
                   .collection('orders')
@@ -819,6 +781,7 @@ class ChefBarOtherController extends GetxController {
           }
           update();
         }
+        String device_token = '';
         //Tạo lịch sử đơn hàng
         String idOrderHistory = Utils.generateUUID();
         //Thông tin nhân viên phụ trách đơn hàng
@@ -837,11 +800,18 @@ class ChefBarOtherController extends GetxController {
           final employeeData = employeeCollection.data();
           if (employeeData != null && employeeData is Map<String, dynamic>) {
             String name = employeeData['name'] ?? '';
+            device_token = employeeData['device_token'] ?? '';
             orderHistory.employee_name = name;
           }
         }
         orderHistory.description = description;
         orderHistoryController.createOrderHistory(orderHistory);
+
+        //Push notification to employee's device
+        if (device_token.isNotEmpty) {
+          FirebaseApi().sendPushMessage(
+              device_token, body_description, 'Thông báo từ Bếp/Bar tới bàn ${table_name}!');
+        }
       }
     } catch (e) {
       Utils.showToast('Cập nhật trạng thái món thất bại!', TypeToast.ERROR);

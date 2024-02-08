@@ -8,8 +8,8 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_all_status_food_dialog.dart';
-import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_cancel_food_dialog.dart';
+import 'package:myorder/views/screens/chef_bar/dialogs.dart/change_all_status_food_dialog.dart';
+import 'package:myorder/views/screens/chef_bar/dialogs.dart/change_cancel_food_dialog.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementChefDetailPage extends StatefulWidget {
@@ -152,7 +152,7 @@ class _ManagementChefPageState extends State<ManagementChefDetailPage> {
                                             orderDetailList:
                                                 chefBarOtherController
                                                     .orderDetailOfChef
-                                                    .order_details);
+                                                    .order_details, tableName: widget.chefBar.table_name,);
                                       },
                                     );
                                     if (result == 'success') {
@@ -197,7 +197,7 @@ class _ManagementChefPageState extends State<ManagementChefDetailPage> {
                                             orderDetailList:
                                                 chefBarOtherController
                                                     .orderDetailOfChef
-                                                    .order_details,
+                                                    .order_details,tableName: widget.chefBar.table_name
                                           );
                                         },
                                       );

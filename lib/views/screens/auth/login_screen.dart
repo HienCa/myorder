@@ -4,7 +4,7 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/auth/signup_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../controllers/profile_controller.dart';
+import '../../../controllers/employees/profile_controller.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);

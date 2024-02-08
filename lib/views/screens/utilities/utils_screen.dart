@@ -3,14 +3,12 @@ import 'package:myorder/caches/caches.dart';
 import 'package:myorder/config.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/views/screens/bill/bills_screen.dart';
-import 'package:myorder/views/screens/managements/chef_bar/chef_bar_other_screen.dart';
+import 'package:myorder/views/screens/chef_bar/chef_bar_other_screen.dart';
 import 'package:myorder/views/screens/managements/dashboard/dashboard_screen.dart';
 import 'package:myorder/views/screens/quantity_foods_order/quantity_foods_order_screen.dart';
 import 'package:myorder/views/screens/utilities/setting_screen.dart';
 import 'package:myorder/views/screens/utilities/utils_manage_screen.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_confirm_pop_screen.dart';
-
-import '../../../firebaseAPI/firebase_api.dart';
 
 class UtilsPage extends StatefulWidget {
   const UtilsPage({super.key});
@@ -24,10 +22,6 @@ class _UtilsPageState extends State<UtilsPage> {
   void initState() {
     super.initState();
     getCurrentUser();
-    FirebaseApi().sendPushMessage(
-        "d5Lzf8TlR_-qiYzBg94Fjc:APA91bEJ7iVDvsghK0mjxVRRJgRgxTa2IRSFC8ByWipNgoVrtk2OXM42xSC-cNhnDkVmWb5o7YhaPy7-CAz5H1pi81DyhbLi7nWDBdaDmJM0iBOqEVBcRAHCkAndJvN_Tkun9hyhirsv",
-        "Nguyen Van Hien",
-        "Yeu <3");
   }
 
   int role = ROLE_STAFF;

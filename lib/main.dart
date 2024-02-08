@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:myorder/constants.dart';
-import 'package:myorder/controllers/auth_controller.dart';
+import 'package:myorder/controllers/auth/auth_controller.dart';
 import 'package:myorder/firebaseAPI/firebase_api.dart';
 import 'package:myorder/views/screens/auth/login_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

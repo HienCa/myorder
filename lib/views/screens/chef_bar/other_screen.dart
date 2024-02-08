@@ -8,8 +8,8 @@ import 'package:myorder/constants.dart';
 import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dart';
 import 'package:myorder/models/chef_bar.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_all_status_food_dialog.dart';
-import 'package:myorder/views/screens/managements/chef_bar/dialogs.dart/change_cancel_food_dialog.dart';
+import 'package:myorder/views/screens/chef_bar/dialogs.dart/change_all_status_food_dialog.dart';
+import 'package:myorder/views/screens/chef_bar/dialogs.dart/change_cancel_food_dialog.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class ManagementOtherDetailPage extends StatefulWidget {
@@ -153,7 +153,9 @@ class _ManagementOtherDetailPageState extends State<ManagementOtherDetailPage> {
                                             orderDetailList:
                                                 chefBarOtherController
                                                     .orderDetailOfOther
-                                                    .order_details);
+                                                    .order_details,
+                                            tableName:
+                                                widget.chefBar.table_name);
                                       },
                                     );
                                     if (result == 'success') {
@@ -193,13 +195,14 @@ class _ManagementOtherDetailPageState extends State<ManagementOtherDetailPage> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return ChangeCancelFoodConfirmDialog(
-                                            chefBarId:
-                                                widget.chefBar.chef_bar_id,
-                                            orderDetailList:
-                                                chefBarOtherController
-                                                    .orderDetailOfOther
-                                                    .order_details,
-                                          );
+                                              chefBarId:
+                                                  widget.chefBar.chef_bar_id,
+                                              orderDetailList:
+                                                  chefBarOtherController
+                                                      .orderDetailOfOther
+                                                      .order_details,
+                                              tableName:
+                                                  widget.chefBar.table_name);
                                         },
                                       );
                                       if (result != null) {

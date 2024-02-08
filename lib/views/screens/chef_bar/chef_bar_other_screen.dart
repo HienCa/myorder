@@ -9,10 +9,10 @@ import 'package:myorder/controllers/chef_bar_other/chef_bar_other_controller.dar
 import 'package:myorder/controllers/daily_sales/daily_sale_detail_controller.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/managements/chef_bar/bar_screen.dart';
-import 'package:myorder/views/screens/managements/chef_bar/chef_screen.dart';
-import 'package:myorder/views/screens/managements/chef_bar/other_screen.dart';
-import 'package:myorder/views/screens/managements/chef_bar/update_daily_sale_today.dart';
+import 'package:myorder/views/screens/chef_bar/bar_screen.dart';
+import 'package:myorder/views/screens/chef_bar/chef_screen.dart';
+import 'package:myorder/views/screens/chef_bar/other_screen.dart';
+import 'package:myorder/views/screens/chef_bar/update_daily_sale_today.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
