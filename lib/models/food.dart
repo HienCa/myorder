@@ -22,7 +22,7 @@ class Food {
   List addition_food_ids = [];
   List<dynamic> addition_food_details = [];
   int is_addition_food;
-
+  String cooking_time;//ước lượng thời gian chế biến món xong
   //quản lý số lượng món trong thời gian chỉ định
   int max_order_limit;
   int current_order_count;
@@ -51,6 +51,7 @@ class Food {
     required this.quanity_start_date_time,
     required this.quanity_end_date_time,
     required this.is_addition_food,
+    required this.cooking_time,
   });
   Food.empty()
       : food_id = '',
@@ -66,6 +67,7 @@ class Food {
         is_addition_food = 0,
         category_id = '',
         unit_id = '',
+        cooking_time = '',
         temporary_percent = 0,
         food_combo_ids = [],
         food_combo_details = [],
@@ -99,6 +101,7 @@ class Food {
         "current_order_count": current_order_count,
         "quanity_start_date_time": quanity_start_date_time,
         "quanity_end_date_time": quanity_end_date_time,
+        "cooking_time": cooking_time,
       };
 
   static Food fromSnap(DocumentSnapshot snap) {
@@ -126,6 +129,7 @@ class Food {
       current_order_count: snapshot['current_order_count'] ?? 0,
       quanity_start_date_time: snapshot['quanity_start_date_time'],
       quanity_end_date_time: snapshot['quanity_end_date_time'],
+      cooking_time: snapshot['cooking_time'],
     );
   }
 }

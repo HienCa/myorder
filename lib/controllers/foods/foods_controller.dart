@@ -74,6 +74,7 @@ class FoodController extends GetxController {
           int category_code = foodData['category_code'] ?? CATEGORY_FOOD;
           String unit_id = foodData['unit_id'] ?? "";
           String vat_id = foodData['vat_id'] ?? "";
+          String cooking_time = foodData['cooking_time'] ?? "";
           int temporary_percent = foodData['temporary_percent'];
           int active = foodData['active'];
           List<String> food_combo_ids = foodData['food_combo_ids'] ?? [];
@@ -141,7 +142,7 @@ class FoodController extends GetxController {
             current_order_count: 0,
             quanity_start_date_time: null,
             quanity_end_date_time: null,
-            is_addition_food: DEACTIVE,
+            is_addition_food: DEACTIVE, cooking_time: cooking_time,
           );
         }
       }
@@ -682,6 +683,7 @@ class FoodController extends GetxController {
       String category_id,
       String unit_id,
       String? vat_id,
+      String cooking_time,
       int temporary_percent,
       int category_code,
       List<String> food_combo_ids,
@@ -720,7 +722,8 @@ class FoodController extends GetxController {
               current_order_count: 0,
               quanity_start_date_time: null,
               quanity_end_date_time: null,
-              is_addition_food: DEACTIVE);
+              is_addition_food: DEACTIVE,
+              cooking_time: cooking_time);
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
 
@@ -749,19 +752,13 @@ class FoodController extends GetxController {
               current_order_count: 0,
               quanity_start_date_time: null,
               quanity_end_date_time: null,
-              is_addition_food: DEACTIVE);
+              is_addition_food: DEACTIVE,
+              cooking_time: cooking_time);
           CollectionReference foodsCollection =
               FirebaseFirestore.instance.collection('foods');
 
           await foodsCollection.doc(id).set(Food.toJson());
         }
-
-        // Get.snackbar(
-        //   'THÀNH CÔNG!',
-        //   'Thêm món mới thành công!',
-        //   backgroundColor: backgroundSuccessColor,
-        //   colorText: Colors.white,
-        // );
       } else {
         Get.snackbar(
           'Error!',
@@ -897,23 +894,15 @@ class FoodController extends GetxController {
       int category_code,
       String unit_id,
       String vat_id,
+      String cooking_time,
       int temporary_percent,
       List<String> food_combo_ids,
       List<String> addition_food_ids) async {
     // var doc = await firestore.collection('foods').doc(Food_id).get();
     String downloadUrl = "";
     try {
-      print("food_id $food_id");
-      print("category_id $category_id");
-      print("unit_id $unit_id");
-      print("image $image");
-      print("price $price");
-      print("price_with_temporary $price_with_temporary");
       if (newImage != null) {
         print("Image Selected");
-
-        // Xóa ảnh cũ nếu có
-        // await _deleteOldProfilePhoto(doc);// nếu xóa thì dùng chung ảnh có thể mất hết
 
         // Tải ảnh mới lên Firebase Storage và nhận URL
         downloadUrl = await _uploadToStorage(newImage);
@@ -928,6 +917,7 @@ class FoodController extends GetxController {
             "image": downloadUrl,
             "price": double.tryParse(price) ?? 0.0,
             "vat_id": vat_id.trim(),
+            "cooking_time": cooking_time.trim(),
             "price_with_temporary":
                 double.tryParse(price_with_temporary!) ?? 0.0,
             "temporary_price_from_date": temporary_price_from_date,
@@ -957,6 +947,7 @@ class FoodController extends GetxController {
             "image": image,
             "price": double.tryParse(price) ?? 0.0,
             "vat_id": vat_id.trim(),
+            "cooking_time": cooking_time.trim(),
             "price_with_temporary":
                 double.tryParse(price_with_temporary!) ?? 0.0,
             "temporary_price_from_date": temporary_price_from_date,

@@ -82,6 +82,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       TextEditingController();
   final TextEditingController temporaryPercentController =
       TextEditingController();
+  final TextEditingController cookingTimeController = TextEditingController();
 
   final TextEditingController increasePriceController = TextEditingController();
   final TextEditingController decreasePriceController = TextEditingController();
@@ -264,7 +265,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     //Hiển thị combo có sẵn của món ăn
 
     refeshFoodSelected();
-    print("ppppppppppppppppppppppp");
 
     for (var i = 0; i < foodController.foods.length; i++) {
       if (foodController.foods[i].isSelected) {
@@ -293,6 +293,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     textCategoryIdController.text = widget.food.category_id;
     textUnitIdController.text = widget.food.unit_id;
     textVatIdController.text = widget.food.vat_id!;
+    cookingTimeController.text = widget.food.cooking_time;
+
     priceController.text = Utils.formatCurrency(widget.food.price);
     temporaryWithPercentController.text =
         widget.food.temporary_percent.toString();
@@ -301,9 +303,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         Utils.formatCurrency(widget.food.price_with_temporary!)
             .replaceAll(RegExp(r'-'), '');
 
-
     //giá thời vụ
- 
+
     if (widget.food.price_with_temporary.toString().startsWith('-')) {
       isCheckDecrease = true;
       print('Giảm giá');
@@ -349,7 +350,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       }
     }
 
-
     getCategoriesActive().then((categories) {
       setState(() {
         categoryOptions = categories;
@@ -368,7 +368,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         unitOptions = units;
         selectedUnitValue = unitList.firstWhere(
           (unit) => unit.unit_id == widget.food.unit_id,
-          orElse: () => Unit(unit_id: "", name: "", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: ''),
+          orElse: () => Unit(
+              unit_id: "",
+              name: "",
+              active: 1,
+              value_conversion: 1,
+              unit_id_conversion: '',
+              unit_name_conversion: ''),
         );
       });
     });
@@ -403,7 +409,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
   // get units
   List<Unit> unitOptions = List.empty();
-  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: '');
+  Unit unitFirstOption = Unit(
+      unit_id: "",
+      name: "titleUnit",
+      active: 1,
+      value_conversion: 1,
+      unit_id_conversion: '',
+      unit_name_conversion: '');
   bool isErrorTextUnitId = false;
   Unit? selectedUnitValue;
   List<Unit> unitList = [];
@@ -445,8 +457,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       for (final doc in querySnapshot.docs) {
         final vat = Vat.fromSnap(doc);
         vatList.add(vat);
-        // print("lits vat");
-        // print(vat.name);
       }
       // In danh sách bàn ra màn hình kiểm tra
       return vatList;
@@ -476,8 +486,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       for (final doc in querySnapshot.docs) {
         final category = model.Category.fromSnap(doc);
         categoryList.add(category);
-        // print("lits category");
-        // print(category.name);
       }
       // In danh sách bàn ra màn hình kiểm tra
       return categoryList;
@@ -493,14 +501,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     } else {
       food.isSelected = true;
     }
-    print("SELECTED");
-    print(food.name);
-    print(food.isSelected);
   }
 
   void unSelectedFood(Food food) {
-    print("UNSELECTED");
-    print(food.isSelected);
     if (food.isSelected == true) {
       food.isSelected = false;
       print(food.name);
@@ -670,13 +673,25 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                           isRequire: true,
                         ),
                         MyTextFieldPrice(
-                            textEditingController: priceController,
-                            label: 'Đơn giá',
-                            placeholder: 'Nhập giá món',
-                            min: MIN_PRICE,
-                            max: MAX_PERCENT,
-                            isRequire: true,
-                            defaultValue: widget.food.price, textAlignRight: false,),
+                          textEditingController: priceController,
+                          label: 'Đơn giá',
+                          placeholder: 'Nhập giá món',
+                          min: MIN_PRICE,
+                          max: MAX_PERCENT,
+                          isRequire: true,
+                          defaultValue: widget.food.price,
+                          textAlignRight: false,
+                        ),
+                        marginTop10,
+                        MyTextFieldString(
+                          textController: cookingTimeController,
+                          label: 'Thời gian chế biến',
+                          placeholder: 'Nhập thời gian ước lượng (VD: 30 phút)',
+                          isReadOnly: false,
+                          min: 0,
+                          max: maxlength255,
+                          isRequire: false,
+                        ),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
                           height: 50,
@@ -2200,6 +2215,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                             .text,
                                                         textVatIdController
                                                             .text,
+                                                        cookingTimeController
+                                                            .text,
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
@@ -2241,6 +2258,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                         CATEGORY_FOOD,
                                                     textUnitIdController.text,
                                                     textVatIdController.text,
+                                                    cookingTimeController.text,
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
@@ -2277,6 +2295,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                         CATEGORY_FOOD,
                                                     textUnitIdController.text,
                                                     "",
+                                                    cookingTimeController.text,
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??

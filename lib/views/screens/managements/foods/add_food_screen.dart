@@ -83,7 +83,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
       TextEditingController();
   final TextEditingController temporaryPercentController =
       TextEditingController();
-
+  final TextEditingController cookingTimeController = TextEditingController();
   final TextEditingController increasePriceController = TextEditingController();
   final TextEditingController decreasePriceController = TextEditingController();
   bool isCheckIncrease = true;
@@ -346,7 +346,13 @@ class _AddFoodPageState extends State<AddFoodPage> {
 
   // get units
   List<Unit> unitOptions = List.empty();
-  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: '');
+  Unit unitFirstOption = Unit(
+      unit_id: "",
+      name: "titleUnit",
+      active: 1,
+      value_conversion: 1,
+      unit_id_conversion: '',
+      unit_name_conversion: '');
   bool isErrorTextUnitId = false;
   Unit? selectedUnitValue;
   List<Unit> unitList = [];
@@ -556,12 +562,25 @@ class _AddFoodPageState extends State<AddFoodPage> {
                           isRequire: true,
                         ),
                         MyTextFieldPrice(
-                            textEditingController: priceController,
-                            label: 'Đơn giá',
-                            placeholder: 'Nhập giá món',
-                            min: MIN_PRICE,
-                            max: MAX_PERCENT,
-                            isRequire: true, textAlignRight: false,),
+                          textEditingController: priceController,
+                          label: 'Đơn giá',
+                          placeholder: 'Nhập giá món',
+                          min: MIN_PRICE,
+                          max: MAX_PERCENT,
+                          isRequire: true,
+                          textAlignRight: false,
+                        ),
+                        marginTop10,
+                        MyTextFieldString(
+                          textController: cookingTimeController,
+                          label: 'Thời gian chế biến',
+                          placeholder: 'Nhập thời gian ước lượng (VD: 30 phút)',
+                          isReadOnly: false,
+                          min: 0,
+                          max: maxlength255,
+                          isRequire: false,
+                        ),
+
                         Container(
                           margin: const EdgeInsets.only(left: 5),
                           height: 50,
@@ -1985,6 +2004,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         .text,
                                                     textUnitIdController.text,
                                                     textVatIdController.text,
+                                                    cookingTimeController.text,
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
@@ -2049,6 +2069,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         .text,
                                                     textUnitIdController.text,
                                                     textVatIdController.text,
+                                                    cookingTimeController.text,
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
@@ -2078,6 +2099,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         .text,
                                                     textUnitIdController.text,
                                                     textVatIdController.text,
+                                                    cookingTimeController.text,
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??
@@ -2105,6 +2127,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                         .text,
                                                     textUnitIdController.text,
                                                     "",
+                                                    cookingTimeController.text,
                                                     int.tryParse(
                                                             temporaryWithPercentController
                                                                 .text) ??

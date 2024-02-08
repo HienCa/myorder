@@ -82,6 +82,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
       TextEditingController();
   final TextEditingController temporaryPercentController =
       TextEditingController();
+  final TextEditingController cookingTimeController = TextEditingController();
 
   final TextEditingController increasePriceController = TextEditingController();
   final TextEditingController decreasePriceController = TextEditingController();
@@ -286,6 +287,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
     textCategoryIdController.text = widget.food.category_id;
     textUnitIdController.text = widget.food.unit_id;
     textVatIdController.text = widget.food.vat_id!;
+    cookingTimeController.text = widget.food.cooking_time;
     priceController.text = Utils.formatCurrency(widget.food.price);
     temporaryWithPercentController.text =
         widget.food.temporary_percent.toString();
@@ -294,13 +296,6 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
         Utils.formatCurrency(widget.food.price_with_temporary!)
             .replaceAll(RegExp(r'-'), '');
 
-    print(priceController.text);
-    print(temporaryWithPriceController.text);
-
-    //giá thời vụ
-    print(widget.food.price_with_temporary);
-    print(widget.food.price);
-    print("widget.food.price");
     if (widget.food.price_with_temporary.toString().startsWith('-')) {
       isCheckDecrease = true;
       print('Giảm giá');
@@ -321,8 +316,7 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
       // gán ngày giờ thời vụ mặc định
       pickedFromDateTime = widget.food.temporary_price_from_date!.toDate();
       pickedToDateTime = widget.food.temporary_price_to_date!.toDate();
-      print('widget.food.temporary_percent');
-      print(widget.food.temporary_percent);
+
       //vô hiệu hóa textfield
 
       if (widget.food.temporary_percent != 0) {
@@ -346,8 +340,6 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
         print("bỏ check percent - check price");
       }
     }
-    print("first");
-    print(widget.food.temporary_percent != 0);
 
     getCategoriesActive().then((categories) {
       setState(() {
@@ -367,7 +359,13 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
         unitOptions = units;
         selectedUnitValue = unitList.firstWhere(
           (unit) => unit.unit_id == widget.food.unit_id,
-          orElse: () => Unit(unit_id: "", name: "", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: ''),
+          orElse: () => Unit(
+              unit_id: "",
+              name: "",
+              active: 1,
+              value_conversion: 1,
+              unit_id_conversion: '',
+              unit_name_conversion: ''),
         );
       });
     });
@@ -402,7 +400,13 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
 
   // get units
   List<Unit> unitOptions = List.empty();
-  Unit unitFirstOption = Unit(unit_id: "", name: "titleUnit", active: 1, value_conversion: 1, unit_id_conversion: '', unit_name_conversion: '');
+  Unit unitFirstOption = Unit(
+      unit_id: "",
+      name: "titleUnit",
+      active: 1,
+      value_conversion: 1,
+      unit_id_conversion: '',
+      unit_name_conversion: '');
   bool isErrorTextUnitId = false;
   Unit? selectedUnitValue;
   List<Unit> unitList = [];
@@ -652,13 +656,25 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                           isRequire: true,
                         ),
                         MyTextFieldPrice(
-                            textEditingController: priceController,
-                            label: 'Đơn giá',
-                            placeholder: 'Nhập giá món',
-                            min: MIN_PRICE,
-                            max: MAX_PERCENT,
-                            isRequire: true,
-                            defaultValue: widget.food.price, textAlignRight: false,),
+                          textEditingController: priceController,
+                          label: 'Đơn giá',
+                          placeholder: 'Nhập giá món',
+                          min: MIN_PRICE,
+                          max: MAX_PERCENT,
+                          isRequire: true,
+                          defaultValue: widget.food.price,
+                          textAlignRight: false,
+                        ),
+                            marginTop10,
+                        MyTextFieldString(
+                          textController: cookingTimeController,
+                          label: 'Thời gian chế biến',
+                          placeholder: 'Nhập thời gian ước lượng (VD: 30 phút)',
+                          isReadOnly: false,
+                          min: 0,
+                          max: maxlength255,
+                          isRequire: false,
+                        ),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
                           height: 50,
@@ -1962,6 +1978,8 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                                 .text,
                                                             textVatIdController
                                                                 .text,
+                                                            cookingTimeController
+                                                                .text,
                                                             int.tryParse(
                                                                     temporaryWithPercentController
                                                                         .text) ??
@@ -2006,6 +2024,8 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                             .text,
                                                         textVatIdController
                                                             .text,
+                                                        cookingTimeController
+                                                            .text,
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
@@ -2044,6 +2064,8 @@ class _AdditionFoodDetailPageState extends State<AdditionFoodDetailPage> {
                                                         textUnitIdController
                                                             .text,
                                                         "",
+                                                        cookingTimeController
+                                                            .text,
                                                         int.tryParse(
                                                                 temporaryWithPercentController
                                                                     .text) ??
