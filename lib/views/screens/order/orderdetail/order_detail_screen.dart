@@ -20,7 +20,7 @@ import 'package:myorder/views/screens/order/orderdetail/add_gift_food_to_order_s
 import 'package:myorder/views/screens/order/orderdetail/dialog_confirm_update_quantity.dart';
 import 'package:myorder/views/screens/order/orderdetail/dialogs/dialog_confirm_finish_foos.dart';
 
-import 'package:myorder/views/screens/payment/payment_screen.dart';
+import 'package:myorder/views/screens/order/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 

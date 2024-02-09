@@ -18,7 +18,7 @@ import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_confirm_update_new_quantity.dart';
 import 'package:myorder/views/screens/managements/dashboard/home/dialogs/dialog_order_history.dart';
 import 'package:myorder/views/screens/order/orderdetail/dialogs/dialog_confirm_finish_foos.dart';
-import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
+import 'package:myorder/views/screens/order/payment/dialog_decrease_price.dart';
 import 'package:myorder/views/widgets/buttons/button_icon.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:myorder/views/widgets/dialogs/dialog_choose_price_calculator_int.dart';

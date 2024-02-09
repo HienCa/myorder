@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myorder/constants.dart';
+import 'package:myorder/controllers/employees/employees_controller.dart';
 import 'package:myorder/firebaseAPI/firebase_api.dart';
 import 'package:myorder/models/employee.dart' as model;
 import 'package:myorder/views/screens/auth/login_screen.dart';
 import 'package:myorder/views/screens/home_screen.dart';
 
 class AuthController extends GetxController {
+  EmployeeController employeeController = Get.put(EmployeeController());
+
   static AuthController instance = Get.find();
   late Rx<User?> _user;
   late Rx<File?> _pickedImage;
@@ -159,5 +162,6 @@ class AuthController extends GetxController {
       colorText: Colors.white, // M
     );
     await firebaseAuth.signOut();
+    employeeController.resetTokenDevice();
   }
 }

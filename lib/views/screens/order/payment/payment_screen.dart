@@ -14,7 +14,7 @@ import 'package:myorder/models/order.dart';
 import 'package:myorder/models/order_detail.dart';
 import 'package:myorder/models/vat.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/payment/dialog_decrease_price.dart';
+import 'package:myorder/views/screens/order/payment/dialog_decrease_price.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
 class PaymentPage extends StatefulWidget {

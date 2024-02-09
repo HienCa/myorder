@@ -12,7 +12,7 @@ import 'package:myorder/views/screens/order/actions/merge/merge_table_screen.dar
 import 'package:myorder/views/screens/order/actions/move/move_table_screen.dart';
 import 'package:myorder/views/screens/order/actions/split/food/choose_target_table_split_multi_food_screen.dart';
 import 'package:myorder/views/screens/order/orderdetail/order_detail_screen.dart';
-import 'package:myorder/views/screens/payment/payment_screen.dart';
+import 'package:myorder/views/screens/order/payment/payment_screen.dart';
 import 'package:myorder/views/widgets/dialogs.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 
@@ -400,8 +400,11 @@ class _OrderPageState extends State<OrderPage> {
                                           ),
                                         ),
                                         child: Text(
-                                          Utils.formatCurrency(orderController
-                                              .orders[index].total_amount),
+                                          Utils.formatCurrency(
+                                              Utils.getTotalAmount(
+                                                  orderController.orders[index],
+                                                  orderController.orders[index]
+                                                      .order_details)),
                                           style: textStyleWhiteBold20,
                                         ),
                                       ),

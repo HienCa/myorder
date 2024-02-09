@@ -307,6 +307,21 @@ class EmployeeController extends GetxController {
     }
   }
 
+  resetTokenDevice() async {
+    try {
+      await firestore
+          .collection('employees')
+          .doc(authController.user.uid)
+          .update({
+        "device_token": "",
+      });
+
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   updateToggleActive(
     String employee_id,
     int active,
