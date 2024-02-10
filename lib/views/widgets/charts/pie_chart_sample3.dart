@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
+import 'package:myorder/views/widgets/charts/color_of_charts/app_colors.dart';
 
 class PieChartSample3 extends StatefulWidget {
   final List<DataItemPieChart> data;

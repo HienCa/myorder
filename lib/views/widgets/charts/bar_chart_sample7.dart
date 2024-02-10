@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:myorder/constants.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
+import 'package:myorder/views/widgets/charts/color_of_charts/app_colors.dart';
 import 'dart:math' as math;
 
 class BarChartSample7 extends StatefulWidget {

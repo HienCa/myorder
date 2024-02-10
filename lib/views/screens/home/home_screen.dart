@@ -11,10 +11,10 @@ import 'package:myorder/models/bill.dart';
 import 'package:myorder/models/charts/data_chart.dart';
 import 'package:myorder/utils.dart';
 import 'package:myorder/views/screens/auth/phone.dart';
-import 'package:myorder/views/screens/home/chart/bar_chart_sample7.dart';
-import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
-import 'package:myorder/views/screens/home/chart/line_chart1.dart';
-import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
+import 'package:myorder/views/widgets/charts/bar_chart_sample7.dart';
+import 'package:myorder/views/widgets/charts/color_of_charts/app_colors.dart';
+import 'package:myorder/views/widgets/charts/line_chart1.dart';
+import 'package:myorder/views/widgets/charts/pie_chart_sample3.dart';
 // import 'package:pie_chart/pie_chart.dart' as PieChart;
 
 class HomePage extends StatefulWidget {

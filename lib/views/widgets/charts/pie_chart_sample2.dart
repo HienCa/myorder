@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
+import './color_of_charts/app_colors.dart';
+
 
 class PieChartSample2 extends StatefulWidget {
   const PieChartSample2({super.key});

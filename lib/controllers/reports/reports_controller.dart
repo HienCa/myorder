@@ -17,8 +17,8 @@ import 'package:myorder/models/order.dart' as model;
 import 'package:myorder/models/report.dart';
 import 'package:myorder/models/table.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/home/chart/bar_chart_sample7.dart';
-import 'package:myorder/views/screens/home/chart/pie_chart_sample3.dart';
+import 'package:myorder/views/widgets/charts/bar_chart_sample7.dart';
+import 'package:myorder/views/widgets/charts/pie_chart_sample3.dart';
 
 class ReportController extends GetxController {
   final Rx<Report> _reportServingOrder = Rx<Report>(Report.empty());

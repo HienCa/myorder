@@ -2,8 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:myorder/models/charts/data_chart.dart';
 import 'package:myorder/utils.dart';
-import 'package:myorder/views/screens/home/chart/color_of_charts/app_colors.dart';
-import 'package:myorder/views/screens/home/chart/color_extensions.dart';
+import 'package:myorder/views/widgets/charts/color_of_charts/app_colors.dart';
+import 'package:myorder/views/widgets/charts/color_extensions.dart';
 
 class BarChartSample2 extends StatefulWidget {
   // final MyDataBarChart data;
